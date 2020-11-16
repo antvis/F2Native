@@ -73,6 +73,16 @@ final class NativeChartProxy {
         return nSetLegend(mNativeChartHandler, field, config);
     }
 
+    int setGuideText(String config) {
+        if (mNativeChartHandler == 0) return F2Constants.CODE_FAIL_UNKNOWN;
+        return nSetGuideText(mNativeChartHandler, config);
+    }
+
+    int setGuideFlag(String config) {
+        if (mNativeChartHandler == 0) return F2Constants.CODE_FAIL_UNKNOWN;
+        return nSetGuideFlag(mNativeChartHandler, config);
+    }
+
     int sendTouchEvent(String event) {
         if (mNativeChartHandler == 0) return F2Constants.CODE_FAIL_UNKNOWN;
         return nSendTouchEvent(mNativeChartHandler, event);
@@ -100,11 +110,6 @@ final class NativeChartProxy {
             }
         }
         return null;
-    }
-
-    F2Guide getGuideController() {
-        if (mNativeChartHandler == 0) return null;
-        return new F2Guide(nGetGuideController(mNativeChartHandler));
     }
 
     void setGeomPosition(F2Geom geom, String field) {
@@ -186,14 +191,18 @@ final class NativeChartProxy {
     private native static int nSetAxis(long nativeChartHandler, String field, String json);
 
     private native static int nSetCoord(long nativeChartHandler, String json);
+
     private native static int nSetInteraction(long nativeChartHandler, String type);
+
     private native static int nSetToolTip(long nativeChartHandler, String config);
 
     private native static int nSetLegend(long nativeChartHandler, String field, String config);
 
-    private native static int nSendTouchEvent(long nativeChartHandler, String event);
+    private native static int nSetGuideText(long nativeChartHandler, String config);
 
-    private native static long nGetGuideController(long nativeChartHandler);
+    private native static int nSetGuideFlag(long nativeChartHandler, String config);
+
+    private native static int nSendTouchEvent(long nativeChartHandler, String event);
 
     private native static long nCreateGeom(long nativeChartHandler, String geomType);
 
@@ -216,8 +225,10 @@ final class NativeChartProxy {
     private native static int nGeomShape(long geomHandle, String type, String field, String[] shapes);
 
     private native static int nGeomShape(long geomHandle, String type, String shape);
+
     private native static int nGeomAdjust(long geomHandle, String type, String adjustType);
 
     private native static int nGeomIntervalTag(long geomHandle, String type, String config);
+
     private native static int nGeomIntervalStyle(long geomHandle, String type, String config);
 }

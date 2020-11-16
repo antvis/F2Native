@@ -125,7 +125,8 @@ public class F2Chart {
     }
 
     public F2Guide guide() {
-        return null;
+        assertRenderThread();
+        return new F2Guide(this);
     }
 
     public void render() {
@@ -164,7 +165,7 @@ public class F2Chart {
         }
     }
 
-    NativeChartProxy getChartProxy() {
+    final NativeChartProxy getChartProxy() {
         return mChartProxy;
     }
 
@@ -172,13 +173,40 @@ public class F2Chart {
         F2Log.i("F2Chart-" + mName, content);
     }
 
-    void assertRenderThread() {
+    final void assertRenderThread() {
         if (hasDestroyed || mCanvasView == null || mCanvasView.getCanvasHolder() == null) {
             F2Log.e("F2Chart-" + mName, "#runOnRenderThread chartView is null.");
             return;
         }
         if (!mCanvasView.getCanvasHolder().isOnRenderThread()) {
             throw new RuntimeException("F2Chart operations must on render thread.");
+        }
+    }
+
+    public static class TextConfigBuilder extends F2Config.Builder {
+        private static final String KEY_TEXT_COLOR = "textColor";
+        private static final String KEY_TEXT_SIZE = "textSize";
+        private static final String KEY_TEXT_ALIGN = "textAlign";
+        private static final String KEY_BASE_LINE = "textBaseline";
+
+        public TextConfigBuilder textColor(String color) {
+            setOption(KEY_TEXT_COLOR, color);
+            return this;
+        }
+
+        public TextConfigBuilder textSize(float textSize) {
+            setOption(KEY_TEXT_SIZE, textSize);
+            return this;
+        }
+
+        public TextConfigBuilder textAlign(String textAlign) {
+            setOption(KEY_TEXT_ALIGN, textAlign);
+            return this;
+        }
+
+        public TextConfigBuilder textBaseline(String textBaseline) {
+            setOption(KEY_BASE_LINE, textBaseline);
+            return this;
         }
     }
 
@@ -277,21 +305,32 @@ public class F2Chart {
         }
     }
 
-    public static class AxisLabelConfigBuilder extends F2Config.Builder {
-        private static final String KEY_TEXT_COLOR = "textColor";
-        private static final String KEY_TEXT_SIZE = "textSize";
+    public static class AxisLabelConfigBuilder extends TextConfigBuilder {
+
         private static final String KEY_LABEL_MARGIN = "labelMargin";
         private static final String KEY_LABEL_OFFSET = "labelOffset";
-        private static final String KEY_TEXT_ALIGN = "textAlign";
-        private static final String KEY_BASE_LINE = "textBaseline";
 
+        @Override
         public AxisLabelConfigBuilder textColor(String color) {
-            setOption(KEY_TEXT_COLOR, color);
+            super.textColor(color);
             return this;
         }
 
+        @Override
         public AxisLabelConfigBuilder textSize(float textSize) {
-            setOption(KEY_TEXT_SIZE, textSize);
+            super.textSize(textSize);
+            return this;
+        }
+
+        @Override
+        public AxisLabelConfigBuilder textAlign(String textAlign) {
+            super.textAlign(textAlign);
+            return this;
+        }
+
+        @Override
+        public AxisLabelConfigBuilder textBaseline(String textBaseline) {
+            super.textBaseline(textBaseline);
             return this;
         }
 
@@ -302,16 +341,6 @@ public class F2Chart {
 
         public AxisLabelConfigBuilder labelOffset(float labelOffset) {
             setOption(KEY_LABEL_OFFSET, labelOffset);
-            return this;
-        }
-
-        public AxisLabelConfigBuilder textAlign(String textAlign) {
-            setOption(KEY_TEXT_ALIGN, textAlign);
-            return this;
-        }
-
-        public AxisLabelConfigBuilder textBaseline(String textBaseline) {
-            setOption(KEY_BASE_LINE, textBaseline);
             return this;
         }
     }

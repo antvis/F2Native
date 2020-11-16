@@ -221,6 +221,32 @@ static jint SetChartLegend(JNIEnv *env, jclass clazz, jlong chart, jstring field
     return 0;
 }
 
+static jint SetChartGuideText(JNIEnv *env, jclass clazz, jlong chart, jstring config) {
+    xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
+
+    std::string _config = JavaStringToString(env, config);
+
+    nlohmann::json cfg = nlohmann::json::parse(_config, nullptr, false);
+    if(!cfg.is_object())
+        return 0;
+    _chart->Guide().Text(cfg);
+    F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartGuideText");
+    return 0;
+}
+
+static jint SetChartGuideFlag(JNIEnv *env, jclass clazz, jlong chart, jstring config) {
+    xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
+
+    std::string _config = JavaStringToString(env, config);
+
+    nlohmann::json cfg = nlohmann::json::parse(_config, nullptr, false);
+    if(!cfg.is_object())
+        return 0;
+    _chart->Guide().Flag(cfg);
+    F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartGuideFlag");
+    return 0;
+}
+
 static jint SendChartTouchEvent(JNIEnv *env, jclass clazz, jlong chart, jstring event) {
     std::string _event = JavaStringToString(env, event);
 
@@ -230,11 +256,6 @@ static jint SendChartTouchEvent(JNIEnv *env, jclass clazz, jlong chart, jstring 
         _chart->OnTouchEvent(eventJson);
     }
     return 0;
-}
-
-static jlong GetChartGuideController(JNIEnv *env, jclass clazz, jlong chart) {
-    xg::guide::GuideController *guide = &reinterpret_cast<xg::XChart *>(chart)->Guide();
-    return reinterpret_cast<jlong>(guide);
 }
 
 static jlong CreateChartGeom(JNIEnv *env, jclass clazz, jlong chart, jstring type) {
@@ -437,14 +458,19 @@ static const JNINativeMethod native_chart_methods[] = {{
                                                            .fnPtr = reinterpret_cast<void *>(SetChartLegend),
                                                        },
                                                        {
+                                                           .name = "nSetGuideText",
+                                                           .signature = "(JLjava/lang/String;)I",
+                                                           .fnPtr = reinterpret_cast<void *>(SetChartGuideText),
+                                                       },
+                                                       {
+                                                           .name = "nSetGuideFlag",
+                                                           .signature = "(JLjava/lang/String;)I",
+                                                           .fnPtr = reinterpret_cast<void *>(SetChartGuideFlag),
+                                                       },
+                                                       {
                                                            .name = "nSendTouchEvent",
                                                            .signature = "(JLjava/lang/String;)I",
                                                            .fnPtr = reinterpret_cast<void *>(SendChartTouchEvent),
-                                                       },
-                                                       {
-                                                           .name = "nGetGuideController",
-                                                           .signature = "(J)J",
-                                                           .fnPtr = reinterpret_cast<void *>(GetChartGuideController),
                                                        },
                                                        {
                                                            .name = "nCreateGeom",

@@ -91,6 +91,18 @@ public final class F2Config {
             return this;
         }
 
+        public Builder setOption(String key, String[] array) {
+            try {
+                JSONArray jsonArray = new JSONArray();
+                for (int i = 0; i < array.length; i++) {
+                    jsonArray.put(array[i]);
+                }
+                options.put(key, jsonArray);
+            } catch (Exception e) {
+            }
+            return this;
+        }
+
         public Builder setOption(String key, double[] array) {
             try {
                 JSONArray jsonArray = new JSONArray();

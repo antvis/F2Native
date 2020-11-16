@@ -15,7 +15,7 @@ jobs:
           # 注意替换为你的 GitHub 源仓库地址
           source-repo: 'https://github.com/antvis/F2Native.git'
           # 注意替换为你的 Gitee 目标仓库地址
-          destination-repo: 'git@gitee.com:antv-f2native/f2native.git'
+          destination-repo: 'git@gitee.com:antv-f2native/antv-f2native.git'
 
       - name: ✅ Build Gitee Pages
         uses: yanglbme/gitee-pages-action@master

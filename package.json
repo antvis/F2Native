@@ -1,0 +1,51 @@
+{
+  "name": "@antv/f2native",
+  "version": "1.0.0",
+  "description": "Charts for mobile visualization.",
+  "keywords": [
+    "f2",
+    "f2native",
+    "iOS",
+    "android",
+    "charts",
+    "mobile",
+    "visualization",
+    "data visualization",
+    "canvas",
+    "2d draw",
+    "mobile visualization",
+    "interactive"
+  ],
+  "homepage": "https://github.com/antvis/f2native",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/antvis/f2native"
+  },
+  "bugs": {
+    "url": "https://github.com/antvis/f2native/issues"
+  },
+  "scripts": {
+    "start": "npm run develop",
+    "develop": "gatsby develop -H 0.0.0.0 --open",
+    "build": "gatsby build --prefix-paths",
+    "deploy": "npm run build && gh-pages -d public",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "serve": "gatsby serve",
+    "clean": "gatsby clean",
+    "pretty-quick": "pretty-quick",
+    "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1"
+  },
+  "dependencies": {
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
+    "ptz-i18n": "^1.0.0",
+    "react": "^16.10.2",
+    "react-dom": "^16.10.2"
+  },
+  "devDependencies": {
+    "@antv/gatsby-theme-antv": "1.0.0-beta.11",
+    "gatsby": "^2.24.92",
+    "gh-pages": "^3.1.0",
+    "react-i18next": "^11.7.3"
+  }
+}

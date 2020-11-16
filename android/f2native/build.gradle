@@ -1,0 +1,55 @@
+apply plugin: 'com.android.library'
+
+android {
+
+    compileSdkVersion rootProject.extensions.sdks.CompileSDK
+    buildToolsVersion rootProject.extensions.sdks.BuildTool
+
+    defaultConfig {
+        minSdkVersion rootProject.extensions.sdks.MinSDK
+        targetSdkVersion rootProject.extensions.sdks.TargetSDK
+        versionCode 1
+        versionName "1.0"
+        externalNativeBuild {
+            cmake {
+                cppFlags "-std=c++14 -ffunction-sections -fdata-sections"
+                cFlags "-ffunction-sections -fdata-sections"
+                arguments "-DANDROID_STL=c++_shared"
+            }
+        }
+        ndk {
+            abiFilters = []
+            abiFilters.addAll(rootProject.extensions.sdks.ABIs) /*"armeabi-v7a","arm64-v8a"*/
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "../../CMakeLists.txt"
+        }
+    }
+
+//    packagingOptions {
+//        exclude '**/libc++_shared.so'
+//        exclude '**/**/libc++_shared.so'
+//    }
+}
+
+repositories {
+    flatDir {
+        // 先在根目录执行 `sh build_gcanvas_android.sh` 编译 Gcanvas 库
+        dirs '../../third_party/GCanvas/android/gcanvas_library/build/outputs/aar'
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation(name: 'gcanvas_library-1.2.0', ext: 'aar')
+}

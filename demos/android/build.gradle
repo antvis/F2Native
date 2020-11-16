@@ -1,0 +1,45 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion rootProject.extensions.sdks.CompileSDK
+    buildToolsVersion rootProject.extensions.sdks.BuildTool
+    defaultConfig {
+        applicationId "com.antgroup.antv.f2.samples"
+        minSdkVersion rootProject.extensions.sdks.MinSDK
+        targetSdkVersion rootProject.extensions.sdks.TargetSDK
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+repositories {
+    flatDir {
+        // TODO: 先去编译 gcanvas, 生成 gcanvas 包, 增加个 task
+        dirs '../../third_party/GCanvas/android/gcanvas_library/build/outputs/aar'
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation project(':android:f2native')
+
+
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation 'com.google.android.material:material:1.2.1'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    implementation "androidx.recyclerview:recyclerview:1.1.0"
+
+
+    implementation(name: 'gcanvas_library-1.2.0', ext: 'aar')
+}

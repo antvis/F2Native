@@ -25,6 +25,6 @@ jobs:
           # 注意在 Settings->Secrets 配置 GITEE_PASSWORD
           gitee-password: ${{ secrets.GITEE_PASSWORD }}
           # 注意替换为你的 Gitee 仓库
-          gitee-repo: antv-F2Native/F2Native
+          gitee-repo: antv-f2native/antv-f2native
           # 要部署的分支，默认是 master，若是其他分支，则需要指定
           branch: gh-pages

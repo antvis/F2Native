@@ -6,7 +6,7 @@ module.exports = {
       resolve: '@antv/gatsby-theme-antv',
       options: {
         // eslint-disable-next-line quotes
-        GATrackingId: `UA-148148901-2`
+        GATrackingId: `UA-148148901-13`
       }
     }
   ],

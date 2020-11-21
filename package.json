@@ -43,7 +43,7 @@
     "react-dom": "^16.10.2"
   },
   "devDependencies": {
-    "@antv/gatsby-theme-antv": "1.0.0-beta.11",
+    "@antv/gatsby-theme-antv": "1.0.0-beta.19",
     "gatsby": "^2.24.92",
     "gh-pages": "^3.1.0",
     "react-i18next": "^11.7.3"

@@ -2,8 +2,6 @@
 #include <jni.h>
 #include <string>
 
-#include <GCanvas/core/src/support/Log.h>
-
 #include "JNIUtil.h"
 
 #ifndef XG_F2_NATIVE_ANDROID_JNI_H
@@ -26,16 +24,12 @@ void InnerLog(int level, std::string traceId, const char *fmt, ...);
 } // namespace jni
 } // namespace xg
 
-#ifndef F2_LOG_I
-#define F2_LOG_I(traceId, ...) ((void)xg::jni::InnerLog(ANDROID_LOG_INFO, traceId, __VA_ARGS__))
-#endif // F2_LOG_I
+#define F2_LOG_INFO 1
+#define F2_LOG_WARN 2
+#define F2_LOG_ERROR 3
 
-#ifndef F2_LOG_W
-#define F2_LOG_W(traceId, ...) ((void)xg::jni::InnerLog(ANDROID_LOG_WARN, traceId, __VA_ARGS__))
-#endif // F2_LOG_W
-
-#ifndef F2_LOG_E
-#define F2_LOG_E(traceId, ...) ((void)xg::jni::InnerLog(ANDROID_LOG_ERROR, traceId, __VA_ARGS__))
-#endif // F2_LOG_E
+#define F2_LOG_I(traceId, ...) ((void)xg::jni::InnerLog(F2_LOG_INFO, traceId, __VA_ARGS__))
+#define F2_LOG_W(traceId, ...) ((void)xg::jni::InnerLog(F2_LOG_WARN, traceId, __VA_ARGS__))
+#define F2_LOG_E(traceId, ...) ((void)xg::jni::InnerLog(F2_LOG_ERROR, traceId, __VA_ARGS__))
 
 #endif // XG_F2_NATIVE_ANDROID_JNI_H

@@ -47,7 +47,7 @@ class GeomShapeBase {
         }
         vector<util::Point> rst;
         size_t size = points.size();
-        for(int i = 0; i < size; i++) {
+        for(std::size_t i = 0; i < size; i++) {
             const util::Point &point = points.at(i);
             rst.push_back(ParsePoint(coord, point));
         }

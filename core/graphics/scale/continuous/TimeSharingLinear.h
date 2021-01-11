@@ -60,7 +60,7 @@ class TimeSharingLinear : public AbstractScale {
         }
     }
 
-    double Scale(const nlohmann::json &key) const override {
+    double Scale(const nlohmann::json &key) override {
         double time = key;
 
         if(time < min_ || time > max_)
@@ -68,7 +68,7 @@ class TimeSharingLinear : public AbstractScale {
 
         double index = 0;
         const nlohmann::json &timeRange = config_["timeRange"];
-        for(int i = 0; i < timeRange.size(); ++i) {
+        for(std::size_t i = 0; i < timeRange.size(); ++i) {
             const nlohmann::json &range = timeRange[i];
             double range0 = range[0];
             double range1 = range[1];
@@ -98,7 +98,7 @@ class TimeSharingLinear : public AbstractScale {
 
     std::string GetTickText(const nlohmann::json &item) override {
         nlohmann::json &timeRange = config_["timeRange"];
-        for(int i = 0; i < timeRange.size(); ++i) {
+        for(std::size_t i = 0; i < timeRange.size(); ++i) {
             nlohmann::json &range = timeRange[i];
             if(item == range[0] && i > 0) {
                 long long lastEnd = timeRange[i - 1][1];
@@ -115,7 +115,7 @@ class TimeSharingLinear : public AbstractScale {
     nlohmann::json CalculateTicks() override {
         nlohmann::json rst;
         nlohmann::json &timeRange = config_["timeRange"];
-        for(int i = 0; i < timeRange.size(); ++i) {
+        for(std::size_t i = 0; i < timeRange.size(); ++i) {
             nlohmann::json &range = timeRange[i];
             rst.push_back(range[0]);
 
@@ -132,7 +132,7 @@ class TimeSharingLinear : public AbstractScale {
     std::size_t _GetValuesSize() {
         std::size_t count = 0;
         nlohmann::json &timeRange = config_["timeRange"];
-        for(int i = 0; i < timeRange.size(); ++i) {
+        for(std::size_t i = 0; i < timeRange.size(); ++i) {
             nlohmann::json &range = timeRange[i];
             long long start = range[0];
             long long end = range[1];

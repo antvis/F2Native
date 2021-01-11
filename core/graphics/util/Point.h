@@ -7,7 +7,7 @@ namespace xg {
 namespace util {
 
 class Point {
-    public:
+  public:
     double x;
     double y;
     Point() : x(0), y(0) {}
@@ -52,7 +52,7 @@ class Point {
     }
 };
 class BezierPoint {
-    public:
+  public:
     Point cp1;
     Point cp2;
     Point p;
@@ -61,7 +61,7 @@ class BezierPoint {
 };
 
 class Size {
-    public:
+  public:
     double width;
     double height;
 
@@ -76,7 +76,7 @@ class Size {
 };
 
 class Rect {
-    public:
+  public:
     double x;
     double y;
     double width;

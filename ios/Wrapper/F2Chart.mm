@@ -1,13 +1,18 @@
 #import "F2Chart.h"
+#import "F2CallbackObj.h"
 #import "F2Utils.h"
-#import <F2/XChart.h>
+#import "XChart.h"
+#if defined(TARGET_STANDALONE)
 #import <gcanvas/GCanvas.hpp>
 #import <gcanvas/GCanvas2dContext.h>
+#endif
+#import "F2CallbackObj.h"
 
 @interface F2Chart ()
 @property (nonatomic, assign) xg::XChart *chart;
 @property (nonatomic, weak) F2CanvasView *gcanvas;
 @property (nonatomic, assign) BOOL isBackground;
+@property (nonatomic, strong) NSMutableArray *callbackList;
 @end
 
 @implementation F2Chart
@@ -35,8 +40,14 @@
 - (F2Chart * (^)(F2CanvasView *gcanvas))canvas {
     return ^id(F2CanvasView *gcanvas) {
         self.gcanvas = gcanvas;
+#if defined(TARGET_ALIPAY)
+        ag::CanvasRenderingContext2D *context = (ag::CanvasRenderingContext2D *)[self.gcanvas getContext];
+#else
         GCanvasContext *context = ((gcanvas::GCanvas *)[self.gcanvas gcanvas])->GetGCanvasContext();
+
+#endif
         self.chart->SetCanvasContext(context);
+
         return self;
     };
 }
@@ -64,35 +75,38 @@
 
 - (F2Chart * (^)(NSString *filed, NSDictionary *config))scale {
     return ^id(NSString *field, NSDictionary *config) {
-        self.chart->Scale([XGSafeString(field) UTF8String], nlohmann::json::parse([XGSafeJson([F2Utils toJsonString:config]) UTF8String]));
+        self.chart->Scale([XGSafeString(field) UTF8String], [XGSafeJson([F2Utils toJsonString:config]) UTF8String]);
         return self;
     };
 }
 
 - (F2Chart * (^)(NSString *filed, NSDictionary *config))axis {
     return ^id(NSString *field, NSDictionary *config) {
-        self.chart->Axis([XGSafeString(field) UTF8String], nlohmann::json::parse([XGSafeJson([F2Utils toJsonString:config]) UTF8String]));
+        config = [self updateItemAttr:config WithName:@"label"];
+        self.chart->Axis([XGSafeString(field) UTF8String], [XGSafeJson([F2Utils toJsonString:config]) UTF8String]);
+
         return self;
     };
 }
 
 - (F2Chart * (^)(NSString *filed, NSDictionary *config))legend {
     return ^id(NSString *field, NSDictionary *config) {
-        self.chart->Legend([XGSafeString(field) UTF8String], nlohmann::json::parse([XGSafeJson([F2Utils toJsonString:config]) UTF8String]));
+        self.chart->Legend([XGSafeString(field) UTF8String], [XGSafeJson([F2Utils toJsonString:config]) UTF8String]);
         return self;
     };
 }
 
 - (F2Chart * (^)(NSDictionary *config))coord {
     return ^id(NSDictionary *config) {
-        self.chart->Coord(nlohmann::json::parse([XGSafeJson([F2Utils toJsonString:config]) UTF8String]));
+        self.chart->Coord([XGSafeJson([F2Utils toJsonString:config]) UTF8String]);
         return self;
     };
 }
 
-- (F2Chart * (^)(NSString *type))interaction {
-    return ^id(NSString *type) {
-        self.chart->Interaction([XGSafeString(type) UTF8String]);
+- (F2Chart * (^)(NSString *type, NSDictionary *config))interaction {
+    return ^id(NSString *type, NSDictionary *config) {
+        self.chart->Interaction([XGSafeString(type) UTF8String],
+                                nlohmann::json::parse([XGSafeJson([F2Utils toJsonString:config]) UTF8String]));
         return self;
     };
 }
@@ -101,7 +115,7 @@
 /// @param confg    具体字段待补充
 - (F2Chart * (^)(NSDictionary *config))tooltip {
     return ^id(NSDictionary *config) {
-        self.chart->Tooltip(nlohmann::json::parse([XGSafeJson([F2Utils toJsonString:config]) UTF8String]));
+        self.chart->Tooltip([XGSafeJson([F2Utils toJsonString:config]) UTF8String]);
         return self;
     };
 }
@@ -124,6 +138,12 @@
     };
 }
 
+- (F2Point * (^)(void))point {
+    return ^id() {
+        return [[F2Point alloc] initWithGeom:&self.chart->Point()];
+    };
+}
+
 - (F2Guide * (^)(void))guide {
     return ^id() {
         return [[F2Guide alloc] initWithGuide:&self.chart->Guide()];
@@ -132,21 +152,32 @@
 
 - (F2Chart * (^)(void))render {
     return ^id() {
-        self.chart->Render();
-        if(!self.isBackground || UIApplication.sharedApplication.applicationState != UIApplicationStateBackground) {
+        long start = [[NSDate date] timeIntervalSince1970] * 1000;
+        if(!self.isBackground) {
+            self.chart->Render();
             [self.gcanvas drawFrame];
-            [self.gcanvas display];
+            NSString *info = self.getRenderDumpInfo();
+            [self.gcanvas display:start withInfo:info];
         }
+        return self;
+    };
+}
+
+- (F2Chart * (^)(void))clear {
+    return ^id() {
+        self.chart->Clear();
         return self;
     };
 }
 
 - (F2Chart * (^)(void))repaint {
     return ^id() {
-        self.chart->Repaint();
-        if(!self.isBackground || UIApplication.sharedApplication.applicationState != UIApplicationStateBackground) {
+        long start = [[NSDate date] timeIntervalSince1970] * 1000;
+        if(!self.isBackground) {
+            self.chart->Repaint();
             [self.gcanvas drawFrame];
-            [self.gcanvas display];
+            NSString *info = self.getRenderDumpInfo();
+            [self.gcanvas display:start withInfo:info];
         }
         return self;
     };
@@ -154,9 +185,13 @@
 
 - (F2Chart * (^)(NSDictionary *config))postTouchEvent {
     return ^id(NSDictionary *config) {
-        self.chart->OnTouchEvent(nlohmann::json::parse([XGSafeJson([F2Utils toJsonString:config]) UTF8String]));
-        [self.gcanvas drawFrame];
-        [self.gcanvas display];
+        long start = [[NSDate date] timeIntervalSince1970] * 1000;
+        bool changed = self.chart->OnTouchEvent([XGSafeJson([F2Utils toJsonString:config]) UTF8String]);
+        if(changed) {
+            [self.gcanvas drawFrame];
+            NSString *info = self.getRenderDumpInfo();
+            [self.gcanvas display:start withInfo:info];
+        }
         return self;
     };
 }
@@ -166,6 +201,40 @@
         std::string info = self.chart->GetRenderInfo();
         return [NSString stringWithCString:info.c_str() encoding:[NSString defaultCStringEncoding]];
     };
+}
+
+- (NSArray<NSNumber *> * (^)(NSDictionary *itemData))getPosition {
+    return ^id(NSDictionary *itemData) {
+        const xg::util::Point point =
+            self.chart->GetPosition(nlohmann::json::parse([XGSafeJson([F2Utils toJsonString:itemData]) UTF8String]));
+        return [NSArray arrayWithObjects:@(point.x), @(point.y), nil];
+    };
+}
+
+#pragma mark private
+- (NSDictionary *)updateItemAttr:(NSDictionary *)config WithName:(NSString *)name {
+    if(name && [config objectForKey:name]) {
+
+        NSDictionary *attr = [config objectForKey:name];
+        if([attr isKindOfClass:[NSDictionary class]] && [attr objectForKey:@"item"] &&
+           [[attr objectForKey:@"item"] isKindOfClass:[F2CallbackObj class]]) {
+            NSMutableDictionary *mutableConfig = [NSMutableDictionary dictionaryWithDictionary:attr];
+            F2CallbackObj *callbackObj = (F2CallbackObj *)[attr objectForKey:@"item"];
+            [mutableConfig setObject:callbackObj.key forKey:@"item"];
+            [self.callbackList addObject:callbackObj];
+            NSDictionary *attrConf = [mutableConfig copy];
+            NSMutableDictionary *m_dic = [NSMutableDictionary dictionaryWithDictionary:config];
+            [m_dic setObject:attrConf forKey:name];
+            return [m_dic copy];
+        }
+    }
+    return config;
+}
+- (NSMutableArray *)callbackList {
+    if(!_callbackList) {
+        _callbackList = [[NSMutableArray alloc] init];
+    }
+    return _callbackList;
 }
 
 #pragma mark Notification

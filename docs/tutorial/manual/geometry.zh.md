@@ -27,6 +27,7 @@ F2Interval *interval = self.chart.interval();
 | line | 线，点按照 x 轴连接成一条线，构成线图。 |
 | area | 填充线图跟坐标系之间构成区域图，也可以指定上下范围。 |
 | interval | 使用矩形或者弧形，用面积来表示大小关系的图形，一般构成柱状图、饼图等图表。 |
+| point | 使用圆形来标记每一项数据，一般构成散点图表。 |
 
 
 ## 几何标记和图表类型
@@ -40,6 +41,7 @@ F2Interval *interval = self.chart.interval();
 | line | 折线图、曲线图 |  
 | area | 区域图（面积图）、层叠区域图、百分比层叠区域图、区间区域图 | 
 | interval | 柱状图、分组柱状图、瀑布图、层叠柱状图、百分比层叠柱状图、直方图、南丁格尔玫瑰图、饼图、条形环图（玉缺图）、漏斗图等 |
+| piont | 散点图 |
 
 
 ## 图形形状（shape）
@@ -51,3 +53,4 @@ F2Interval *interval = self.chart.interval();
 | line | 'line', 'smooth', 'dash' | dash：虚线，smooth： 平滑线 |
 | area | 'area', 'smooth' | 填充内容的区域图 |
 | interval | 'rect' |  |
+| point | 'circle' |  |

@@ -25,13 +25,15 @@ class ToolTipController {
     void OnClearInner();
 
   private:
-    void OnPressStart(event::Event &event);
-    void OnPress(event::Event &event);
-    void OnPressEnd(event::Event &event);
+    bool OnPressStart(event::Event &event);
+    bool OnPress(event::Event &event);
+    bool OnPressEnd(event::Event &event);
 
-    void ShowToolTip(const util::Point &point);
+    bool ShowToolTip(const util::Point &point);
 
-    void HideToolTip();
+    bool HideToolTip();
+
+    std::string InvertYTip(const util::Point &p);
 
   private:
     XChart *chart_;
@@ -40,6 +42,7 @@ class ToolTipController {
     nlohmann::json config_;
     long lastShowTimeStamp_ = 0;
     std::vector<ToolTipMarkerItemsCallback> actionListeners_{};
+    shape::Group *container_ = nullptr;
 };
 } // namespace tooltip
 } // namespace xg

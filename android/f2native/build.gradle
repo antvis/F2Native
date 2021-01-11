@@ -10,17 +10,6 @@ android {
         targetSdkVersion rootProject.extensions.sdks.TargetSDK
         versionCode 1
         versionName "1.0"
-        externalNativeBuild {
-            cmake {
-                cppFlags "-std=c++14 -ffunction-sections -fdata-sections"
-                cFlags "-ffunction-sections -fdata-sections"
-                arguments "-DANDROID_STL=c++_shared"
-            }
-        }
-        ndk {
-            abiFilters = []
-            abiFilters.addAll(rootProject.extensions.sdks.ABIs) /*"armeabi-v7a","arm64-v8a"*/
-        }
     }
 
     buildTypes {
@@ -36,20 +25,55 @@ android {
         }
     }
 
-//    packagingOptions {
-//        exclude '**/libc++_shared.so'
-//        exclude '**/**/libc++_shared.so'
-//    }
+    flavorDimensions "target_app"
+    productFlavors {
+        standalone {
+            dimension "target_app"
+            externalNativeBuild {
+                cmake {
+                    cppFlags "-std=c++14 -ffunction-sections -fdata-sections -fno-rtti -funwind-tables -DTARGET_STANDALONE"
+                    cFlags "-ffunction-sections -fdata-sections"
+                    arguments "-DANDROID_STL=c++_shared", '-DTARGET_STANDALONE=1'
+                }
+            }
+            ndk {
+                abiFilters = []
+                abiFilters.addAll(rootProject.extensions.sdks.ABIs)
+            }
+        }
+
+        aliPay {
+            dimension "target_app"
+            externalNativeBuild {
+                cmake {
+                    cppFlags "-std=c++14 -ffunction-sections -fdata-sections -fno-rtti -funwind-tables -DTARGET_ALIPAY"
+                    cFlags "-ffunction-sections -fdata-sections"
+                    arguments "-DANDROID_STL=c++_shared", '-DTARGET_ALIPAY=1'
+                }
+            }
+            ndk {
+                abiFilters = []
+                abiFilters.addAll(rootProject.extensions.sdks.ABIs)
+            }
+        }
+    }
+
+    packagingOptions {
+        exclude '**/libc++_shared.so'
+        exclude '**/**/libc++_shared.so'
+    }
 }
 
 repositories {
     flatDir {
-        // 先在根目录执行 `sh build_gcanvas_android.sh` 编译 Gcanvas 库
-        dirs '../../third_party/GCanvas/android/gcanvas_library/build/outputs/aar'
+        dirs '../../third_party/GCanvas/android/gcanvas_library/build/outputs/aar', '../../third_party/AntGraphic'
     }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation(name: 'gcanvas_library-1.2.0', ext: 'aar')
+    standaloneImplementation(name: 'gcanvas_library-1.2.0', ext: 'aar')
+    aliPayImplementation(name: 'antg-build-android-release', ext: 'aar')
+
+    aliPayImplementation 'com.alibaba:fastjson:1.2.73'
 }

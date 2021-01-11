@@ -1,5 +1,6 @@
 #include "Pinch.h"
 #include "graphics/XChart.h"
+#include "utils/xtime.h"
 
 using namespace xg;
 
@@ -9,9 +10,13 @@ interaction::Pinch::Pinch(XChart *chart) : InteractionBase(chart) {
     this->chart_->eventController_->AddCallback("pinchend", XG_MEMBER_CALLBACK_1(interaction::Pinch::onPinchEnd));
 }
 
-void interaction::Pinch::OnPinchStart(event::Event &event) { chart_->interactionContext_->Start(); }
+bool interaction::Pinch::OnPinchStart(event::Event &event) {
+    chart_->interactionContext_->Start();
+    return false;
+}
 
-void interaction::Pinch::OnPinch(event::Event &event) {
+bool interaction::Pinch::OnPinch(event::Event &event) {
+    long timestamp = xg::CurrentTimestampAtMM();
     util::Point xAxis = chart_->coord_->GetXAxis();
 
     double coordWidth = chart_->coord_->GetWidth();
@@ -24,7 +29,12 @@ void interaction::Pinch::OnPinch(event::Event &event) {
     double leftScale = leftLen / coordWidth;
     double rightScale = rightLen / coordWidth;
 
-    chart_->interactionContext_->DoZoom(leftScale, rightScale, event.zoom);
+    bool ret = chart_->interactionContext_->DoZoom(leftScale, rightScale, event.zoom);
+    chart_->GetLogTracer()->trace("pinch duration: %lu-ms", (xg::CurrentTimestampAtMM() - timestamp));
+    return ret;
 }
 
-void interaction::Pinch::onPinchEnd(event::Event &event) { chart_->interactionContext_->UpdateTicks(); }
+bool interaction::Pinch::onPinchEnd(event::Event &event) {
+    chart_->interactionContext_->UpdateTicks();
+    return false;
+}

@@ -34,6 +34,8 @@ public class MultiLinesChart_1 implements F2CanvasView.Adapter {
         mChart.setScale("date", new F2Chart.ScaleConfigBuilder().tickCount(5));
         mChart.setScale("value", new F2Chart.ScaleConfigBuilder().min(30).max(160));
         mChart.tooltip(new F2Chart.ToolTipConfigBuilder());
+        mChart.interaction("pan");
+        mChart.interaction("pinch");
         mChart.render();
     }
 

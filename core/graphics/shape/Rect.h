@@ -9,20 +9,22 @@ namespace shape {
 
 class Rect : public Shape {
   public:
-    Rect(const util::Point &point, const util::Size &size, const string &fillColor) : Shape(), point_(point), size_(size) {
+    Rect(const util::Point &point, const util::Size &size, const string &fillColor) : Shape(), size_(size) {
+        this->point_ = point;
         fill_ = fillColor;
         canFill_ = canStroke_ = true;
     }
 
-    Rect(const util::Point &point, const util::Size &size, const string &strokeColor, float lineWidth)
-        : Shape(), point_(point), size_(size) {
+    Rect(const util::Point &point, const util::Size &size, const string &strokeColor, float lineWidth) : Shape(), size_(size) {
+        this->point_ = point;
         stroke_ = strokeColor;
         lineWidth_ = lineWidth;
         canFill_ = canStroke_ = true;
     }
 
     Rect(const util::Point &point, const util::Size &size, const string &fillColor, const string &strokeColor, float lineWidth)
-        : Shape(), point_(point), size_(size) {
+        : Shape(), size_(size) {
+        this->point_ = point;
         fill_ = fillColor;
         stroke_ = strokeColor;
         lineWidth_ = lineWidth;
@@ -37,7 +39,8 @@ class Rect : public Shape {
          const string &fillColor,
          float lineWidth,
          const string &strokeColor)
-        : Shape(), point_(point), radius_(radius), radius0_(radius0), startAngle_(startAngle), endAngle_(endAngle) {
+        : Shape(), radius_(radius), radius0_(radius0), startAngle_(startAngle), endAngle_(endAngle) {
+        this->point_ = point;
         fill_ = fillColor;
         stroke_ = strokeColor;
         lineWidth_ = lineWidth;
@@ -50,7 +53,6 @@ class Rect : public Shape {
     void CreatePath(canvas::CanvasContext &context) const override;
 
   public:
-    util::Point point_;
     util::Size size_;
     double radius_ = 0.f;
     double startAngle_ = 0.;

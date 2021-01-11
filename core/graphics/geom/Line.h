@@ -8,7 +8,7 @@ namespace geom {
 
 class Line : public AbstractGeom {
   public:
-    Line(utils::Tracer *tracer) : AbstractGeom(tracer) {
+    Line(Group *_container, utils::Tracer *tracer) : AbstractGeom(_container, tracer) {
         type_ = "line";
         sortable_ = true;
     }

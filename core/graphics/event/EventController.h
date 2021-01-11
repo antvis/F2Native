@@ -14,7 +14,7 @@ namespace xg {
 namespace event {
 
 class Event;
-typedef std::function<void(Event &event)> EventCallbackType;
+typedef std::function<bool(Event &event)> EventCallbackType;
 
 class Event {
   public:
@@ -35,40 +35,48 @@ class EventController {
 
     ~EventController() { listeners_.clear(); }
 
-    void OnTouchEvent(Event &event) {
+    bool OnTouchEvent(Event &event) {
+        // TODO 增加安全行校验，当前是否数据 or 状态是否支持能够支持事件分发
+
         if(event.eventType == "touchstart") {
-            this->OnTouchStart(event);
+            return this->OnTouchStart(event);
         } else if(event.eventType == "touchmove") {
-            this->OnTouchMove(event);
+            return this->OnTouchMove(event);
         } else if(event.eventType == "touchend") {
-            this->OnTouchEnd(event);
+            return this->OnTouchEnd(event);
         } else if(event.eventType == "touchcancel") {
-            this->OnTouchCancel(event);
+            return this->OnTouchCancel(event);
         }
+        return false;
     }
 
-    void EmitEvent(std::string eventType, Event &event) {
+    bool EmitEvent(std::string eventType, Event &event) {
+        bool ret = false;
         auto &callbacks = listeners_[eventType];
-        std::for_each(callbacks.begin(), callbacks.end(), [&](EventCallbackType &callback) -> void { callback(event); });
+        std::for_each(callbacks.begin(), callbacks.end(),
+                      [&](EventCallbackType &callback) -> void { ret = callback(event) || ret; });
+        return ret;
     }
 
   private:
-    void OnTouchStart(Event &event) {
+    bool OnTouchStart(Event &event) {
         if(event.points.empty())
-            return;
+            return false;
         Reset();
         startEvent_ = event;
+        preEvent_ = event;
         if(event.points.size() > 1) {
             startDistance_ = CalcDistance(event.points[0], event.points[1]);
             startEvent_.center = GetCenter(event.points[0], event.points[1]);
             startEvent_.zoom = 1;
         }
+        return false;
     }
 
-    void OnTouchMove(Event &event) {
+    bool OnTouchMove(Event &event) {
         // EmitEvent("touchmove", event);
         if(startEvent_.points.empty())
-            return;
+            return false;
         if(event.points.size() > 1) {
             double currentDistance = CalcDistance(event.points[0], event.points[1]);
             event.zoom = currentDistance / startDistance_;
@@ -76,49 +84,59 @@ class EventController {
             event.eventType = "pinch";
             if(startEvent_.eventType != "pinch") {
                 startEvent_.eventType = "pinch";
-                EmitEvent("pinchstart", event);
+                return EmitEvent("pinchstart", event);
             }
-            EmitEvent("pinch", event);
+            return EmitEvent("pinch", event);
         } else {
-            auto &points = event.points;
-            double deltaX = points[0].x - startEvent_.points[0].x;
-            double deltaY = points[0].y - startEvent_.points[0].y;
-
             std::string eventType = GetEventType(startEvent_, event);
-            if(eventType.empty())
-                return;
-
-            if(startEvent_.direction.empty()) {
-                startEvent_.direction = CalcDirection(startEvent_.points[0], event.points[0]);
+            if(lockGesture) {
+                eventType = preEvent_.eventType;
             }
 
+            if(eventType.empty())
+                return false;
             if(startEvent_.eventType != eventType) {
                 EmitEvent(startEvent_.eventType + "end", event);
                 startEvent_.eventType = eventType;
                 EmitEvent(eventType + "start", event);
             }
 
-            event.direction = startEvent_.direction;
+            event.direction = CalcDirection(startEvent_.points[0], event.points[0]);
+
+            auto &points = event.points;
+            double deltaX = points[0].x - preEvent_.points[0].x;
+            double deltaY = points[0].y - preEvent_.points[0].y;
+
             event.eventType = startEvent_.eventType;
             event.deltaX = deltaX;
             event.deltaY = deltaY;
 
-            EmitEvent(eventType, event);
+            if(eventType == "press") {
+                lockGesture = true;
+            } else if(eventType == "pan" && fabs(deltaX) >= 10 * event.devicePixelRatio) {
+                lockGesture = true;
+            }
+
+            preEvent_ = event;
+            return EmitEvent(eventType, event);
         }
+        return false;
     }
 
-    void OnTouchEnd(Event &event) {
+    bool OnTouchEnd(Event &event) {
         std::string &type = startEvent_.eventType;
         event.direction = startEvent_.direction;
         event.eventType = startEvent_.eventType;
-        EmitEvent(type + "end", event);
+        bool ret = EmitEvent(type + "end", event);
         // EmitEvent("touchend", event);
         Reset();
+        return ret;
     }
 
-    void OnTouchCancel(Event &event) {
+    bool OnTouchCancel(Event &event) {
         // EmitEvent("touchcancel", event);
         Reset();
+        return false;
     }
 
     void Reset() {
@@ -128,6 +146,9 @@ class EventController {
         startEvent_.zoom = 1.;
         startEvent_.eventType = "";
         startDistance_ = 1;
+
+        preEvent_ = startEvent_;
+        lockGesture = false;
     }
 
     static std::string GetEventType(Event &startEvent, Event &event) {
@@ -173,7 +194,9 @@ class EventController {
   private:
     std::map<std::string, std::vector<EventCallbackType>> listeners_;
     Event startEvent_;
+    Event preEvent_;
     double startDistance_ = 1;
+    bool lockGesture = false;
 };
 } // namespace event
 } // namespace xg

@@ -6,6 +6,7 @@
 
 #include <GCanvas/core/src/platform/Android/GFontManagerAndroid.h>
 #include <GCanvas/core/src/support/Util.h>
+#include <graphics/util/json.h>
 
 #include "android/F2NativeJNI.h"
 
@@ -20,7 +21,13 @@ void OnGCanvasCoreException(const char *canvasId, const char *tag, const char *d
     F2_LOG_E(_tag.data(), "OnGCanvasCoreException: %s", detail);
 }
 
-F2CanvasView::F2CanvasView(const nlohmann::json &cfg) {
+F2CanvasView::F2CanvasView(const std::string &jsonConfig) {
+    nlohmann::json optionsCfg = xg::json::ParseString(jsonConfig);
+    nlohmann::json cfg = {{"devicePixelRatio", 1}, {"canvas_width", 0}, {"canvas_height", 0}, {"backgroundColor", "#fff"}};
+    if(optionsCfg.is_object()) {
+        cfg.merge_patch(optionsCfg);
+    }
+
     this->canvasId_ = cfg["canvas_id"];
     this->devicePixelRatio_ = cfg["devicePixelRatio"];
     this->canvas_width_ = cfg["canvas_width"];

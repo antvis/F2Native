@@ -8,7 +8,7 @@ namespace geom {
 
 class Path : public AbstractGeom {
   public:
-    Path(utils::Tracer *tracer) : AbstractGeom(tracer) {
+    Path(Group *_container, utils::Tracer *tracer) : AbstractGeom(_container, tracer) {
         type_ = "path";
         shapeType_ = "line";
     }

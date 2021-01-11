@@ -7,9 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3F2F1B8F2591F4FC00543775 /* json.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F2F1B8C2591F4FC00543775 /* json.cpp */; };
+		3F2F1B902591F4FC00543775 /* json.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F2F1B8E2591F4FC00543775 /* json.h */; };
 		3F56A02D25218EE5002AA2D2 /* F2.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F56A02C25218EE5002AA2D2 /* F2.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3F56A0682525D6E3002AA2D2 /* Polar.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F56A0672525D6E3002AA2D2 /* Polar.h */; };
 		3F56A06E252A116A002AA2D2 /* Stack.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F56A06C252A116A002AA2D2 /* Stack.h */; };
+		3F58178D257A3CCF002023ED /* F2-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 3F58178B257A3CCF002023ED /* F2-Prefix.pch */; };
+		3F5817E4257FB72F002023ED /* F2CallbackObj.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F5817E1257FB72F002023ED /* F2CallbackObj.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3F5817E5257FB72F002023ED /* F2CallbackObj.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3F5817E3257FB72F002023ED /* F2CallbackObj.mm */; };
 		3F5DD3EF254070D400FD60B3 /* InteractionBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F5DD3E7254070D400FD60B3 /* InteractionBase.h */; };
 		3F5DD3F0254070D400FD60B3 /* Pan.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F5DD3E8254070D400FD60B3 /* Pan.h */; };
 		3F5DD3F1254070D400FD60B3 /* Pan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F5DD3E9254070D400FD60B3 /* Pan.cpp */; };
@@ -26,6 +31,9 @@
 		3F5DD4362547F14300FD60B3 /* Marker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F5DD4342547F14300FD60B3 /* Marker.h */; };
 		3FC0056C253F0C2D00E09DD7 /* F2GestureListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FC0056A253F0C2D00E09DD7 /* F2GestureListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3FC0056D253F0C2D00E09DD7 /* F2GestureListener.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC0056B253F0C2D00E09DD7 /* F2GestureListener.m */; };
+		95A7D80F25A458B000CA8B9F /* Point.h in Headers */ = {isa = PBXBuildFile; fileRef = 95A7D80D25A458B000CA8B9F /* Point.h */; };
+		95A7D81225A458CE00CA8B9F /* Point.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95A7D81025A458CE00CA8B9F /* Point.cpp */; };
+		95A7D81325A458CE00CA8B9F /* Point.h in Headers */ = {isa = PBXBuildFile; fileRef = 95A7D81125A458CE00CA8B9F /* Point.h */; };
 		95FF25E6254ABB020000515C /* Area.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95FF25E4254ABB020000515C /* Area.cpp */; };
 		95FF25E8254BC4BC0000515C /* Dodge.h in Headers */ = {isa = PBXBuildFile; fileRef = 95FF25E7254BC4BC0000515C /* Dodge.h */; };
 		CC195216250B76CA0000FBFA /* F2CanvasView.h in Headers */ = {isa = PBXBuildFile; fileRef = CC195214250B76C90000FBFA /* F2CanvasView.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -124,9 +132,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3F2F1B8C2591F4FC00543775 /* json.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = json.cpp; sourceTree = "<group>"; };
+		3F2F1B8E2591F4FC00543775 /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json.h; sourceTree = "<group>"; };
 		3F56A02C25218EE5002AA2D2 /* F2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F2.h; sourceTree = "<group>"; };
 		3F56A0672525D6E3002AA2D2 /* Polar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Polar.h; sourceTree = "<group>"; };
 		3F56A06C252A116A002AA2D2 /* Stack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Stack.h; sourceTree = "<group>"; };
+		3F58178B257A3CCF002023ED /* F2-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "F2-Prefix.pch"; sourceTree = "<group>"; };
+		3F5817E1257FB72F002023ED /* F2CallbackObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F2CallbackObj.h; sourceTree = "<group>"; };
+		3F5817E3257FB72F002023ED /* F2CallbackObj.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = F2CallbackObj.mm; sourceTree = "<group>"; };
 		3F5DD3E7254070D400FD60B3 /* InteractionBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InteractionBase.h; sourceTree = "<group>"; };
 		3F5DD3E8254070D400FD60B3 /* Pan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pan.h; sourceTree = "<group>"; };
 		3F5DD3E9254070D400FD60B3 /* Pan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pan.cpp; sourceTree = "<group>"; };
@@ -143,8 +156,11 @@
 		3F5DD4342547F14300FD60B3 /* Marker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Marker.h; sourceTree = "<group>"; };
 		3FC0056A253F0C2D00E09DD7 /* F2GestureListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F2GestureListener.h; sourceTree = "<group>"; };
 		3FC0056B253F0C2D00E09DD7 /* F2GestureListener.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = F2GestureListener.m; sourceTree = "<group>"; };
-		95FF25E4254ABB020000515C /* Area.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Area.cpp; path = ../core/graphics/geom/Area.cpp; sourceTree = "<group>"; };
-		95FF25E7254BC4BC0000515C /* Dodge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Dodge.h; path = ../core/graphics/adjust/Dodge.h; sourceTree = "<group>"; };
+		95A7D80D25A458B000CA8B9F /* Point.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Point.h; sourceTree = "<group>"; };
+		95A7D81025A458CE00CA8B9F /* Point.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Point.cpp; sourceTree = "<group>"; };
+		95A7D81125A458CE00CA8B9F /* Point.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Point.h; sourceTree = "<group>"; };
+		95FF25E4254ABB020000515C /* Area.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Area.cpp; sourceTree = "<group>"; };
+		95FF25E7254BC4BC0000515C /* Dodge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Dodge.h; sourceTree = "<group>"; };
 		CC195214250B76C90000FBFA /* F2CanvasView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F2CanvasView.h; sourceTree = "<group>"; };
 		CC195215250B76CA0000FBFA /* F2CanvasView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = F2CanvasView.m; sourceTree = "<group>"; };
 		CC195218250B8CB30000FBFA /* F2GLESEnv.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = F2GLESEnv.mm; sourceTree = "<group>"; };
@@ -286,6 +302,7 @@
 		3FCF5AA12536A1CC00A2B630 /* adjust */ = {
 			isa = PBXGroup;
 			children = (
+				95FF25E7254BC4BC0000515C /* Dodge.h */,
 				3F56A06C252A116A002AA2D2 /* Stack.h */,
 			);
 			path = adjust;
@@ -401,6 +418,8 @@
 		CC611D47250A1D0800315124 /* util */ = {
 			isa = PBXGroup;
 			children = (
+				3F2F1B8C2591F4FC00543775 /* json.cpp */,
+				3F2F1B8E2591F4FC00543775 /* json.h */,
 				CC611D48250A1D0800315124 /* BBox.h */,
 				CC611D49250A1D0800315124 /* Point.h */,
 				CC611D4A250A1D0800315124 /* Path.h */,
@@ -427,9 +446,12 @@
 		CC611D56250A1D0800315124 /* geom */ = {
 			isa = PBXGroup;
 			children = (
+				95A7D81025A458CE00CA8B9F /* Point.cpp */,
+				95A7D81125A458CE00CA8B9F /* Point.h */,
 				CC611D57250A1D0800315124 /* shape */,
 				CC611D5F250A1D0800315124 /* Path.h */,
 				CC611D60250A1D0800315124 /* Area.h */,
+				95FF25E4254ABB020000515C /* Area.cpp */,
 				CC611D61250A1D0800315124 /* attr */,
 				CC611D63250A1D0800315124 /* Line.h */,
 				CC611D64250A1D0800315124 /* Geom.cpp */,
@@ -443,6 +465,7 @@
 		CC611D57250A1D0800315124 /* shape */ = {
 			isa = PBXGroup;
 			children = (
+				95A7D80D25A458B000CA8B9F /* Point.h */,
 				CC611D59250A1D0800315124 /* GeomShapeFactory.h */,
 				CC611D5A250A1D0800315124 /* GeomShapeFactory.cpp */,
 				CC611D5B250A1D0800315124 /* Area.h */,
@@ -533,7 +556,10 @@
 		CC612BAE250A1E5800315124 /* Wrapper */ = {
 			isa = PBXGroup;
 			children = (
+				3F5817E1257FB72F002023ED /* F2CallbackObj.h */,
+				3F5817E3257FB72F002023ED /* F2CallbackObj.mm */,
 				CC195219250B8CB30000FBFA /* F2GLESEnv.h */,
+				3F58178B257A3CCF002023ED /* F2-Prefix.pch */,
 				CC195218250B8CB30000FBFA /* F2GLESEnv.mm */,
 				CC612BEC250B2EF600315124 /* F2Chart.h */,
 				CC612BEF250B2EF700315124 /* F2Chart.mm */,
@@ -555,8 +581,6 @@
 		CC793C312509FBAA00E9D913 = {
 			isa = PBXGroup;
 			children = (
-				95FF25E7254BC4BC0000515C /* Dodge.h */,
-				95FF25E4254ABB020000515C /* Area.cpp */,
 				CC612BAE250A1E5800315124 /* Wrapper */,
 				CC611D11250A1D0800315124 /* core */,
 				CC611D6B250A1D0800315124 /* third_party */,
@@ -600,6 +624,7 @@
 				CC6124E6250A1D0C00315124 /* Flag.h in Headers */,
 				CC612508250A1D0C00315124 /* Point.h in Headers */,
 				CC6124F5250A1D0C00315124 /* Group.h in Headers */,
+				3F5817E4257FB72F002023ED /* F2CallbackObj.h in Headers */,
 				3F56A0682525D6E3002AA2D2 /* Polar.h in Headers */,
 				3F56A02D25218EE5002AA2D2 /* F2.h in Headers */,
 				3F5DD42C2542C09500FD60B3 /* LegendController.h in Headers */,
@@ -615,6 +640,7 @@
 				CC19521B250B8CB30000FBFA /* F2GLESEnv.h in Headers */,
 				CC612511250A1D0C00315124 /* Coord.h in Headers */,
 				CC61250B250A1D0C00315124 /* json_util.h in Headers */,
+				3F58178D257A3CCF002023ED /* F2-Prefix.pch in Headers */,
 				CC612518250A1D0C00315124 /* Line.h in Headers */,
 				CC612504250A1D0C00315124 /* Category.h in Headers */,
 				CC6124EF250A1D0C00315124 /* Circle.h in Headers */,
@@ -640,12 +666,15 @@
 				CC612517250A1D0C00315124 /* Area.h in Headers */,
 				CC6124DD250A1D0C00315124 /* common.h in Headers */,
 				CC6124EB250A1D0C00315124 /* XChart.h in Headers */,
+				3F2F1B902591F4FC00543775 /* json.h in Headers */,
 				CC612512250A1D0C00315124 /* Canvas.h in Headers */,
 				CC6124DC250A1D0C00315124 /* StringUtil.h in Headers */,
 				CC612507250A1D0C00315124 /* BBox.h in Headers */,
 				CC612515250A1D0C00315124 /* GeomShapeFactory.h in Headers */,
 				CC61251D250A1D0C00315124 /* AttrBase.h in Headers */,
 				CC612505250A1D0C00315124 /* Linear.h in Headers */,
+				95A7D80F25A458B000CA8B9F /* Point.h in Headers */,
+				95A7D81325A458CE00CA8B9F /* Point.h in Headers */,
 				CC61251B250A1D0C00315124 /* Path.h in Headers */,
 				3F56A06E252A116A002AA2D2 /* Stack.h in Headers */,
 				CC612509250A1D0C00315124 /* Path.h in Headers */,
@@ -748,6 +777,7 @@
 				95FF25E6254ABB020000515C /* Area.cpp in Sources */,
 				CC6124FB250A1D0C00315124 /* Area.cpp in Sources */,
 				CC6124ED250A1D0C00315124 /* Text.cpp in Sources */,
+				3F2F1B8F2591F4FC00543775 /* json.cpp in Sources */,
 				CC6124F8250A1D0C00315124 /* Circle.cpp in Sources */,
 				CC6124F7250A1D0C00315124 /* Shape.cpp in Sources */,
 				CC612BF5250B2EF700315124 /* F2Utils.m in Sources */,
@@ -756,11 +786,13 @@
 				3F5DD4352547F14300FD60B3 /* Marker.cpp in Sources */,
 				CC61250E250A1D0C00315124 /* XChart.cpp in Sources */,
 				CC195217250B76CA0000FBFA /* F2CanvasView.m in Sources */,
+				95A7D81225A458CE00CA8B9F /* Point.cpp in Sources */,
 				CC612520250A1D0C00315124 /* Interval.cpp in Sources */,
 				CC6124FC250A1D0C00315124 /* Polyline.cpp in Sources */,
 				3F5DD3F5254070D400FD60B3 /* InteractionContext.cpp in Sources */,
 				3F5DD3FA254070F600FD60B3 /* TooltipController.cpp in Sources */,
 				CC6124EC250A1D0C00315124 /* Line.cpp in Sources */,
+				3F5817E5257FB72F002023ED /* F2CallbackObj.mm in Sources */,
 				CC6124FD250A1D0C00315124 /* Group.cpp in Sources */,
 				3F5DD3F2254070D400FD60B3 /* Pinch.cpp in Sources */,
 				CC6124FA250A1D0C00315124 /* Element.cpp in Sources */,
@@ -912,6 +944,8 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Wrapper/F2-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					IOS,
@@ -958,6 +992,8 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Wrapper/F2-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					IOS,
 					GLES_SILENCE_DEPRECATION,

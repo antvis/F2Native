@@ -9,7 +9,7 @@ namespace geom {
 
 class Area : public AbstractGeom {
   public:
-    Area(utils::Tracer *tracer) : AbstractGeom(tracer) {
+    Area(Group *_container, utils::Tracer *tracer) : AbstractGeom(_container, tracer) {
         type_ = "area";
         shapeType_ = "area";
         sortable_ = true;

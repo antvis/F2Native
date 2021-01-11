@@ -31,6 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// 设置数据是否进行累加处理  适合饼图 层叠柱状图
 - (F2Geom * (^)(NSString *adjust))adjust;
 
+- (F2Geom * (^)(NSDictionary *config))style;
+
 - (void *)getGeom;
 
 @end
@@ -43,11 +45,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (F2Interval * (^)(NSDictionary *config))tag;
 
-- (F2Interval * (^)(NSDictionary *config))style;
-
 @end
 
 @interface F2Area : F2Geom
+
+@end
+
+@interface F2Point : F2Geom
 
 @end
 

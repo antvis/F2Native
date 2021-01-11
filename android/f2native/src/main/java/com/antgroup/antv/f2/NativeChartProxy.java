@@ -8,14 +8,18 @@ final class NativeChartProxy {
     private volatile long mNativeChartHandler = 0;
 
     NativeChartProxy(String name, double width, double height, double ratio) {
-        mNativeChartHandler = nCreateNativeChart(name, width, height, ratio);
+        try {
+            mNativeChartHandler = nCreateNativeChart(name, width, height, ratio);
+        } catch (Error error) {
+            mNativeChartHandler = 0;
+        }
     }
 
-    int setCanvas(NativeCanvasProxy canvasProxy) {
-        if (mNativeChartHandler == 0 || canvasProxy.mNativeViewHandle == 0) {
+    int setCanvas(long nativeCanvas) {
+        if (mNativeChartHandler == 0 || nativeCanvas == 0) {
             return F2Constants.CODE_FAIL_UNKNOWN;
         }
-        return nSetCanvasView(mNativeChartHandler, canvasProxy.mNativeViewHandle);
+        return nSetCanvasView(mNativeChartHandler, nativeCanvas);
     }
 
     int source(String json) {
@@ -58,9 +62,9 @@ final class NativeChartProxy {
         return nSetCoord(mNativeChartHandler, config);
     }
 
-    int setInteraction(String type) {
+    int setInteraction(String type, String config) {
         if (mNativeChartHandler == 0) return F2Constants.CODE_FAIL_UNKNOWN;
-        return nSetInteraction(mNativeChartHandler, type);
+        return nSetInteraction(mNativeChartHandler, type, config);
     }
 
     int setToolTip(String config) {
@@ -95,9 +99,27 @@ final class NativeChartProxy {
         return nRender(mNativeChartHandler);
     }
 
+    double[] getPosition(String itemData) {
+        if (mNativeChartHandler == 0) {
+            return new double[]{0, 0};
+        }
+        return nGetPosition(mNativeChartHandler, itemData);
+    }
+
+    int clear() {
+        if (mNativeChartHandler == 0) {
+            return F2Constants.CODE_FAIL_UNKNOWN;
+        }
+        return nClear(mNativeChartHandler);
+    }
+
     F2Geom createGeom(F2Chart chart, String type) {
-        if (mNativeChartHandler == 0) return null;
-        long handle = nCreateGeom(mNativeChartHandler, type);
+        long handle;
+        if (mNativeChartHandler == 0) {
+            handle = 0;
+        } else{
+            handle = nCreateGeom(mNativeChartHandler, type);
+        }
         switch (type) {
             case "line": {
                 return new F2Geom.Line(chart, handle, type);
@@ -108,58 +130,61 @@ final class NativeChartProxy {
             case "interval": {
                 return new F2Geom.Interval(chart, handle, type);
             }
+            case "point": {
+                return new F2Geom.Point(chart, handle, type);
+            }
         }
         return null;
     }
 
     void setGeomPosition(F2Geom geom, String field) {
-        if (mNativeChartHandler == 0) return;
+        if (mNativeChartHandler == 0 || geom.getNativeGeomHandler() == 0) return;
         nGeomPosition(geom.getNativeGeomHandler(), geom.getType(), field);
     }
 
     void setGeomColor(F2Geom geom, String field, String[] colors) {
-        if (mNativeChartHandler == 0) return;
+        if (mNativeChartHandler == 0 || geom.getNativeGeomHandler() == 0) return;
         nGeomColor(geom.getNativeGeomHandler(), geom.getType(), field, colors);
     }
 
     void setGeomColor(F2Geom geom, String color) {
-        if (mNativeChartHandler == 0) return;
+        if (mNativeChartHandler == 0 || geom.getNativeGeomHandler() == 0) return;
         nGeomColor(geom.getNativeGeomHandler(), geom.getType(), color);
     }
 
     void setGeomSize(F2Geom geom, String field, float[] sizes) {
-        if (mNativeChartHandler == 0) return;
+        if (mNativeChartHandler == 0 || geom.getNativeGeomHandler() == 0) return;
         nGeomSize(geom.getNativeGeomHandler(), geom.getType(), field, sizes);
     }
 
     void setGeomSize(F2Geom geom, float size) {
-        if (mNativeChartHandler == 0) return;
+        if (mNativeChartHandler == 0 || geom.getNativeGeomHandler() == 0) return;
         nGeomSize(geom.getNativeGeomHandler(), geom.getType(), size);
     }
 
     void setGeomShape(F2Geom geom, String field, String[] shapes) {
-        if (mNativeChartHandler == 0) return;
+        if (mNativeChartHandler == 0 || geom.getNativeGeomHandler() == 0) return;
         nGeomShape(geom.getNativeGeomHandler(), geom.getType(), field, shapes);
     }
 
     void setGeomShape(F2Geom geom, String shape) {
-        if (mNativeChartHandler == 0) return;
+        if (mNativeChartHandler == 0 || geom.getNativeGeomHandler() == 0) return;
         nGeomShape(geom.getNativeGeomHandler(), geom.getType(), shape);
     }
 
     void setGeomAdjust(F2Geom geom, String type) {
-        if (mNativeChartHandler == 0) return;
+        if (mNativeChartHandler == 0 || geom.getNativeGeomHandler() == 0) return;
         nGeomAdjust(geom.getNativeGeomHandler(), geom.getType(), type);
     }
 
-    void setGeomIntervalTag(F2Geom geom, String config) {
-        if (!"interval".equals(geom.getType()) && mNativeChartHandler == 0) return;
-        nGeomIntervalTag(geom.getNativeGeomHandler(), geom.getType(), config);
+    void setGeomStyle(F2Geom geom, String config) {
+        if (mNativeChartHandler == 0 || geom.getNativeGeomHandler() == 0) return;
+        nGeomStyle(geom.getNativeGeomHandler(), config);
     }
 
-    void setGeomIntervalStyle(F2Geom geom, String config) {
-        if (!"interval".equals(geom.getType()) && mNativeChartHandler == 0) return;
-        nGeomIntervalStyle(geom.getNativeGeomHandler(), geom.getType(), config);
+    void setGeomIntervalTag(F2Geom geom, String config) {
+        if (!"interval".equals(geom.getType()) || mNativeChartHandler == 0 || geom.getNativeGeomHandler() == 0) return;
+        nGeomIntervalTag(geom.getNativeGeomHandler(), geom.getType(), config);
     }
 
     String getRenderDumpInfo() {
@@ -174,6 +199,10 @@ final class NativeChartProxy {
         int code = nDestroy(mNativeChartHandler);
         mNativeChartHandler = 0;
         return code;
+    }
+
+    long getNativeChartHandler() {
+        return mNativeChartHandler;
     }
 
     private native static long nCreateNativeChart(String name, double width, double height, double ratio);
@@ -192,7 +221,7 @@ final class NativeChartProxy {
 
     private native static int nSetCoord(long nativeChartHandler, String json);
 
-    private native static int nSetInteraction(long nativeChartHandler, String type);
+    private native static int nSetInteraction(long nativeChartHandler, String type, String config);
 
     private native static int nSetToolTip(long nativeChartHandler, String config);
 
@@ -212,6 +241,10 @@ final class NativeChartProxy {
 
     private native static int nRender(long nativeChartHandler);
 
+    private native static double[] nGetPosition(long nativeChartHandler, String itemData);
+
+    private native static int nClear(long nativeChartHandler);
+
     private native static int nGeomPosition(long geomHandle, String type, String field);
 
     private native static int nGeomColor(long geomHandle, String type, String field, String[] colors);
@@ -230,5 +263,5 @@ final class NativeChartProxy {
 
     private native static int nGeomIntervalTag(long geomHandle, String type, String config);
 
-    private native static int nGeomIntervalStyle(long geomHandle, String type, String config);
+    private native static int nGeomStyle(long geomHandle, String config);
 }

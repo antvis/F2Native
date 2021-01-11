@@ -21,7 +21,7 @@ static nlohmann::json JsonArrayByKey(const nlohmann::json &data, const std::stri
     nlohmann::json rst;
     unordered_map<string, string> stringMap;
 
-    for(int i = 0; i < data.size(); ++i) {
+    for(std::size_t i = 0; i < data.size(); ++i) {
         auto &item = data[i];
         if(item == key || !item.is_object() || !item.contains(key)) {
             continue;
@@ -42,11 +42,29 @@ static nlohmann::json JsonArrayByKey(const nlohmann::json &data, const std::stri
             }
             stringMap.insert(pair<string, string>(_key, "tmp"));
             rst.push_back(val);
-        } else {
-            // val is array
+        } else if(val.is_array()) {
+            for(size_t i = 0; i < val.size(); i++) {
+                if(val[i].is_number()) {
+                    double _val = val[i];
+                    std::string _key = std::to_string(_val);
+                    if(stringMap.find(_key) != stringMap.end()) {
+                        continue;
+                    }
+                    stringMap.insert(pair<string, string>(_key, "tmp"));
+                    rst.push_back(val[i]);
+                }
+                if(val[i].is_string()) {
+                    std::string _val = val[i].get<std::string>();
+                    if(stringMap.find(_val) != stringMap.end()) {
+                        continue;
+                    }
+                    stringMap.insert(pair<string, string>(_val, "tmp"));
+                    rst.push_back(val[i]);
+                }
+            }
         }
     }
-    return rst;
+    return std::move(rst);
 }
 
 static std::array<double, 2> JsonArrayRange(nlohmann::json &data) {
@@ -80,7 +98,8 @@ static std::string GenerateRowUniqueKey(nlohmann::json &row, std::set<std::strin
     for(auto it = fields.begin(); it != fields.end(); ++it) {
         std::string field = *it;
         if(row.contains(field)) {
-            unique += row[field].dump();
+            // unique += row[field].dump();
+            unique += nlohmann::detail::hash(row[field]);
         }
     }
     return unique;
@@ -119,12 +138,12 @@ static nlohmann::json JsonGroupByFields(const nlohmann::json &data, std::set<std
     } else {
         rst.push_back(data);
     }
-    return rst;
+    return std::move(rst);
 }
 
-static nlohmann::json JsonArraySlice(nlohmann::json &source, int start, int end) {
+static nlohmann::json JsonArraySlice(const nlohmann::json &source, std::size_t start, std::size_t end) {
     nlohmann::json rst;
-    for(int i = start; i <= end; i++) {
+    for(std::size_t i = start; i <= end; i++) {
         if(i < 0 || i >= source.size()) {
             continue;
         }
@@ -132,7 +151,23 @@ static nlohmann::json JsonArraySlice(nlohmann::json &source, int start, int end)
         rst.push_back(source[i]);
     }
 
-    return rst;
+    return std::move(rst);
+}
+
+static bool isEqualsQuick(nlohmann::json &data1, nlohmann::json &data2) {
+    if(data1.type() != data2.type()) {
+        return false;
+    }
+
+    if(data1.size() != data2.size()) {
+        return false;
+    }
+
+    if(data1.empty() == 0)
+        return true;
+
+    std::size_t lastIndex = fmin(data1.size(), data2.size()) - 1;
+    return (data1[0] == data2[0] && data1[lastIndex] == data2[lastIndex]);
 }
 
 } // namespace util

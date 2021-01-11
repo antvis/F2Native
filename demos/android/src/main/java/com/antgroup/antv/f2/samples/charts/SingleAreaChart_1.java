@@ -28,7 +28,7 @@ public class SingleAreaChart_1 implements F2CanvasView.Adapter {
 
         mChart.setAxis("tem", new F2Chart.AxisConfigBuilder()
                 .grid(new F2Chart.AxisGridConfigBuilder().type("dash")));
-        mChart.setScale("tem", new F2Chart.ScaleConfigBuilder().min(0));
+        mChart.setScale("tem", new F2Chart.ScaleConfigBuilder().min(800).max(3000));
 
         mChart.line().position("time*tem");
         mChart.area().position("time*tem");

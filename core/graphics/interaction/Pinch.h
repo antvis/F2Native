@@ -12,11 +12,11 @@ class Pinch : public InteractionBase {
   public:
     Pinch(XChart *chart);
 
-    void OnPinchStart(event::Event &event);
+    bool OnPinchStart(event::Event &event);
 
-    void OnPinch(event::Event &event);
+    bool OnPinch(event::Event &event);
 
-    void onPinchEnd(event::Event &event);
+    bool onPinchEnd(event::Event &event);
 };
 } // namespace interaction
 } // namespace xg

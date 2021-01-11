@@ -31,6 +31,7 @@ Podfile.lock
 node_modules/
 dist/
 polyfills/lib/
+code_script/
 
 #cmake
 CMakeLists.txt.user
@@ -64,8 +65,7 @@ app/build/android-profile/
 */build/android-profile/
 captures/
 **/.externalNativeBuild/
-
-
+android/f2native/src/alipay/
 
 # Logs
 logs
@@ -141,3 +141,6 @@ build-system-*
 build.sh
 idir
 scan.sh
+
+# third
+third_party/AntGraphic/

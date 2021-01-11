@@ -17,16 +17,17 @@ class Flag : public GuideBase {
 
     void Render(XChart &chart, shape::Group *container, canvas::CanvasContext &context, const std::vector<util::Rect> &dangerRects) override;
 
-    float GetLineHeight(XChart &chart,
-                        shape::Group *container,
-                        util::Point &position,
-                        float width,
-                        float height,
-                        bool horizon,
-                        bool vertical,
-                        float ratio,
-                        util::Point &coordCenter,
-                        const std::vector<util::Rect> &dangerRects);
+  private:
+    void DrawFlagCircleAndLine(XChart &chart, shape::Group *container, canvas::CanvasContext &context, util::Point &position);
+
+    void PreDrawFlagContent(XChart &chart,
+                            shape::Group *container,
+                            canvas::CanvasContext &context,
+                            const util::Point &position,
+                            const float padding[],
+                            const std::vector<util::Rect> &dangerRects);
+
+    void DrawFragContent(XChart &chart, shape::Group *container, canvas::CanvasContext &context, util::Point &position, const float padding[]);
 
   protected:
     static nlohmann::json MergeDefaultCfg(const nlohmann::json &config) {
@@ -34,7 +35,10 @@ class Flag : public GuideBase {
             {"color", "#1890FF"}, // 子元素统一颜色(点/线/方块边框)
             {"textSize", 9.f},
             {"textColor", "#1890FF"},
+            {"textAlign", "start"},
+            {"textBaseline", "bottom"},
             {"content", ""},
+            {"radius", 1.5f}, //圆心半径
             {"padding", {0.f, 0.f, 0.f, 0.f}},
             {"lineWidth", 1.0f},              // 旗子延长线线宽
             {"backgroundColor", "#FFFFFF7D"}, // 旗子方块背景色
@@ -44,6 +48,18 @@ class Flag : public GuideBase {
         }
         return defaultCfg;
     }
+
+    static bool collide(const util::Rect &r1, const util::Rect &r2) {
+        double maxX, maxY, minX, minY;
+        maxX = fmax(r1.x + r1.width, r2.x + r2.width);
+        maxY = fmax(r1.y + r1.height, r2.y + r2.height);
+        minX = fmin(r1.x, r2.x);
+        minY = fmin(r1.y, r2.y);
+        return (maxX - minX <= r1.width + r2.width && maxY - minY <= r1.height + r2.height);
+    }
+
+  private:
+    util::Rect contentRect_;
 };
 } // namespace guide
 } // namespace xg

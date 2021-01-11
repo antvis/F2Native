@@ -17,37 +17,9 @@ void Flag::Render(XChart &chart, shape::Group *container, canvas::CanvasContext 
 
     util::Point position = this->GetPosition(chart, xField, yField);
 
-    util::Point coordCenter = chart.GetCoord().GetCenter();
-    bool horizon = true;
-    if(position.x <= coordCenter.x) {
-        // 在左边， 旗子向右飘
-        horizon = true;
-    } else {
-        // 在右边， 旗子向左飘
-        horizon = false;
-    }
-
-    bool vertical = true;
-    if(position.y <= coordCenter.y) {
-        // 在上面，旗子向下飘
-        vertical = true;
-    } else {
-        // 在下面，旗子向上飘
-        vertical = false;
-    }
-
-    float devicePixelRatio = context.GetDevicePixelRatio();
-
-    std::string color = config_["color"];
-    std::string textColor = config_["textColor"];
-    float fontSize = config_["textSize"].get<float>() * devicePixelRatio;
-    const float radius = 2 * devicePixelRatio;
-    std::string content = config_["content"];
-
+    const float devicePixelRatio = context.GetDevicePixelRatio();
     float paddingLeft = 0.f, paddingRight = 0.f, paddingTop = 0.f, paddingBottom = 0.f;
-
     const nlohmann::json &paddingCfg = config_["padding"];
-
     if(paddingCfg.is_number()) {
         paddingLeft = paddingRight = paddingTop = paddingBottom = config_["padding"].get<float>() * devicePixelRatio;
     } else if(paddingCfg.is_array() && paddingCfg.size() == 4) {
@@ -57,148 +29,122 @@ void Flag::Render(XChart &chart, shape::Group *container, canvas::CanvasContext 
         paddingBottom = paddingCfg[3].get<float>() * devicePixelRatio;
     }
 
-    float lineWidth = config_["lineWidth"].get<float>() * devicePixelRatio;
-    // lineWidth *= chart.GetRatio();
+    const float padding[] = {paddingLeft, paddingTop, paddingRight, paddingBottom};
 
-    std::string backgroundColor = config_["backgroundColor"];
+    PreDrawFlagContent(chart, container, context, position, padding, dangerRects);
+    DrawFlagCircleAndLine(chart, container, context, position);
+    DrawFragContent(chart, container, context, position, padding);
+
+    this->bbox_ = {static_cast<float>(contentRect_.x),     static_cast<float>(contentRect_.x + contentRect_.width),
+                   static_cast<float>(contentRect_.y),     static_cast<float>(contentRect_.y + contentRect_.height),
+                   static_cast<float>(contentRect_.width), static_cast<float>(contentRect_.height),
+                   static_cast<float>(contentRect_.x),     static_cast<float>(contentRect_.y)};
+}
+
+void Flag::PreDrawFlagContent(XChart &chart,
+                              shape::Group *container,
+                              canvas::CanvasContext &context,
+                              const util::Point &position,
+                              const float padding[],
+                              const std::vector<util::Rect> &dangerRects) {
+    const util::Point coordCenter = chart.GetCoord().GetCenter();
+
+    bool horizon = position.x < coordCenter.x ? true : false;  // true 点在左边，旗子向右飘
+    bool vertical = position.y < coordCenter.y ? true : false; // true 点在上面， 旗子向下
+
+    float fontSize = config_["textSize"].get<float>() * context.GetDevicePixelRatio();
+    std::string content = config_["content"];
+
+    float labelWidth = context.MeasureTextWidth(content);
+    const float labelHeight = fontSize + 1.;
+
+    util::Point coordStart{chart.GetCoord().GetXAxis().x, chart.GetCoord().GetYAxis().y};
+
+    //泳道计算
+    const std::size_t swammingLaneCount = 5;
+    double laneHeight = chart.GetCoord().GetHeight() / swammingLaneCount;
+
+    //    chart.GetLogTracer()->trace("Flag#PreDrawFlagContent coordHeight: %lf, laneHeight: %lu", chart.GetCoord().GetHeight(), laneHeight);
+
+    std::vector<util::Rect> swammingLane;
+    for(std::size_t index = 0; index < swammingLaneCount; ++index) {
+        swammingLane.push_back({coordStart.x, coordStart.y + laneHeight * index, chart.GetCoord().GetWidth(), laneHeight});
+    }
+
+    //分配泳道
+    std::size_t pointInLaneIndex = static_cast<std::size_t>(floor(position.y - coordStart.y) / laneHeight);
+    std::vector<std::size_t> laneErgodic;
+    for(std::size_t index = 1; index < swammingLaneCount; ++index) {
+        std::size_t _index =
+            static_cast<std::size_t>((pointInLaneIndex + (vertical ? 1 : -1) * index + swammingLaneCount) % swammingLaneCount);
+        laneErgodic.push_back(_index);
+        //        chart.GetLogTracer()->trace("Flag#PreDrawFlagContent ergodic: %lu", _index);
+    }
+
+    for(std::size_t index = 0; index < laneErgodic.size(); ++index) {
+        std::size_t laneIndex = laneErgodic[index];
+        util::Rect &laneRect = swammingLane[laneIndex];
+
+        double rectX = horizon ? position.x : position.x - padding[0] - padding[2] - labelWidth;
+        double rectY = laneRect.y + laneRect.height / 2 - labelHeight - padding[1] - padding[3];
+
+        this->contentRect_ = {rectX, rectY, padding[0] + padding[2] + labelWidth, padding[1] + padding[3] + labelHeight};
+
+        bool coincide = false;
+        for(std::size_t j = 0; j < dangerRects.size(); ++j) {
+            if(collide(contentRect_, dangerRects[j])) {
+                coincide = true;
+                break;
+            }
+        }
+
+        if(coincide == false) {
+            contentRect_.y = laneRect.y + laneRect.height / 2 - contentRect_.height / 2;
+            break;
+        }
+    }
+}
+
+void Flag::DrawFlagCircleAndLine(XChart &chart, shape::Group *container, canvas::CanvasContext &context, util::Point &position) {
+
+    const float radius = config_["radius"].get<float>() * context.GetDevicePixelRatio();
+    std::string color = config_["color"];
 
     auto circle = xg::make_unique<shape::Circle>(position, radius, color);
     circle->SetZIndex(-10);
     container->AddElement(std::move(circle));
 
-    auto text = xg::make_unique<shape::Text>(content, util::Point(0, 0), fontSize, "", textColor);
-
-    float textWidth = text->GetTextWidth(context);                   // context.MeasureTextWidth(content);
-    float textHeight = text->GetTextHeight() + 1 * chart.GetRatio(); // fontSize + 1 * chart.GetRatio();
-
-    float rectHeight = textHeight + paddingTop + paddingBottom;
-    float rectWidth = textWidth + paddingLeft + paddingRight;
-
-    float lineHeight = GetLineHeight(chart, container, position, rectWidth, rectHeight, horizon, vertical, devicePixelRatio,
-                                     coordCenter, dangerRects);
-
-    util::Point endPoint = util::Point(position.x, vertical ? position.y + lineHeight : position.y - lineHeight);
-
-    // 不能超出合法绘制区
-    endPoint.y = fmax(rectHeight, fmin(endPoint.y, chart.GetCoord().GetCenter().y * 2));
+    util::Point endPoint{position.x, contentRect_.y};
+    float lineWidth = config_["lineWidth"].get<float>() * context.GetDevicePixelRatio();
 
     auto line = xg::make_unique<shape::Line>(position, endPoint, lineWidth, color);
     line->SetZIndex(-10);
     container->AddElement(std::move(line));
 
-    auto rect = xg::make_unique<shape::Rect>(util::Point(horizon ? endPoint.x : endPoint.x - rectWidth, endPoint.y - rectHeight),
-                                             util::Size(rectWidth, rectHeight), backgroundColor, color, lineWidth);
-    rect->SetZIndex(-5);
-
-    text->SetPoint(util::Point(rect->point_.x + rectWidth / 2, rect->point_.y + rectHeight - paddingBottom));
-    text->SetTextAlign("center");
-    //#ifdef ANDROID
-    //    text->pt_.y += 1 * chart.GetRatio();
-    //#endif
-
-    container->AddElement(std::move(rect));
-    container->AddElement(std::move(text));
-
-    if(horizon) {
-        bbox_.minX = endPoint.x;
-        bbox_.maxX = endPoint.x + rectWidth;
-    } else {
-        bbox_.minX = endPoint.x - rectWidth;
-        bbox_.maxX = endPoint.x;
-    }
-    bbox_.minY = endPoint.y - rectHeight;
-    bbox_.maxY = endPoint.y;
-
-    bbox_.x = bbox_.minX;
-    bbox_.y = bbox_.minY;
-    bbox_.width = bbox_.maxX - bbox_.minX;
-    bbox_.height = bbox_.maxY - bbox_.minY;
-
-    //    auto circle2 = xg::make_unique<shape::Circle>(util::Point(bbox_.x, bbox_.y), radius, "#000");
-    //    container->AddElement(std::move(circle2));
-    //
-    //    auto rect2 = xg::make_unique<shape::Rect>(util::Point(bbox_.x, bbox_.y), util::Size(bbox_.width, bbox_.height),
-    //                                              std::vector<float>(), "#000", 1.0); container->AddElement(std::move(rect2));
+    //    chart.GetLogTracer()->trace("Flag#DrawFlagCircleAndLine lineHeight: %lf", endPoint.y - position.y);
 }
 
-float Flag::GetLineHeight(XChart &chart,
-                          shape::Group *container,
-                          util::Point &position,
-                          float width,
-                          float height,
-                          bool horizon,
-                          bool vertical,
-                          float ratio,
-                          util::Point &coordCenter,
-                          const std::vector<util::Rect> &dangerRects) {
-    //    util::Rect
-    int lineHeight = 30 * ratio;
+void Flag::DrawFragContent(XChart &chart, shape::Group *container, canvas::CanvasContext &context, util::Point &position, const float padding[]) {
 
-    if(dangerRects.empty()) {
-        return lineHeight; // + height - 5 * ratio;
-    }
+    std::string backgroundColor = config_["backgroundColor"];
+    std::string color = config_["color"];
+    float lineWidth = config_["lineWidth"].get<float>() * context.GetDevicePixelRatio();
 
-    util::Rect target(horizon ? position.x : position.x - width, vertical ? position.y + lineHeight : position.y - lineHeight, width, height);
-    target.y -= height;
-    //            auto rect = xg::make_unique<shape::Rect>(
-    //                    util::Point(target.x, target.y),
-    //                    util::Size(target.width, target.height),
-    //                    std::vector<float>(), "#DC143C");
+    auto rect = xg::make_unique<shape::Rect>(util::Point{contentRect_.x, contentRect_.y},
+                                             util::Size(contentRect_.width, contentRect_.height), backgroundColor, color, lineWidth);
+    rect->SetZIndex(-5);
+    container->AddElement(std::move(rect));
 
-    long index = dangerRects.size() - 1;
+    std::string content = config_["content"];
+    float fontSize = config_["textSize"].get<float>() * context.GetDevicePixelRatio();
+    std::string textAlign = config_["textAlign"];
+    std::string textBaseline = config_["textBaseline"];
+    std::string textColor = config_["textColor"];
 
-    while(index >= 0) {
-        const util::Rect &dangerRect = dangerRects.at(index);
+    auto text = xg::make_unique<shape::Text>(content, util::Point(0, 0), fontSize, "", textColor);
 
-        while(fabs(target.x - dangerRect.x) <= dangerRect.width && fabs(target.y - dangerRect.y) <= dangerRect.height) {
-            // 有碰撞
-            if(vertical) {
-                if(target.y + target.height > dangerRect.y && position.y < target.y) {
-                    double y = target.y - fabs(target.y + target.height - dangerRect.y) - 5;
-                    if(y <= position.y) {
-                        // 跑点上面去了
-                        break;
-                    }
-                    target.y = y;
-                } else {
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
-        index--;
-    }
-
-    index = dangerRects.size() - 1;
-    while(index >= 0) {
-        const util::Rect &dangerRect = dangerRects.at(index);
-
-        while(fabs(target.x - dangerRect.x) <= dangerRect.width && fabs(target.y - dangerRect.y) <= dangerRect.height) {
-            // 有碰撞
-            if(vertical) {
-                // 往下, y 增加
-                target.y += dangerRect.height;
-            } else {
-                target.y -= dangerRect.height;
-            }
-            // chart.GetLogTracer()->trace("GetLineHeight", " 碰撞：target x:%lf, y: %lf vertical:%s ", position.x, position.y,
-            //                             vertical ? "true" : "false");
-
-            // 有碰撞， index 重来
-            index = dangerRects.size();
-        }
-        index--;
-    }
-
-    //            rect->point_ = util::Point(target.x, target.y);
-    //            container->AddElement(std::move(rect));
-
-    if(vertical) {
-        // chart.GetLogTracer()->trace("GetLineHeight", " result height:  %lf", fabs(target.y - position.y) + height);
-        return fabs(target.y - position.y) + height;
-    } else {
-        // chart.GetLogTracer()->trace("GetLineHeight", " result height:  %lf", fabs(target.y - position.y) - height);
-        return fabs(target.y - position.y) - height;
-    }
+    text->SetPoint(util::Point(contentRect_.x + padding[0], contentRect_.y + contentRect_.height - padding[3] - 1));
+    text->SetTextAlign(textAlign);
+    text->SetTextBaseline(textBaseline);
+    container->AddElement(std::move(text));
 }

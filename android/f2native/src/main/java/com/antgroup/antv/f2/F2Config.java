@@ -40,58 +40,58 @@ public final class F2Config {
         }
     }
 
-    public static class Builder {
+    public static class Builder<T extends Builder> {
         protected JSONObject options = new JSONObject();
 
-        public Builder setOption(String key, String value) {
+        public T setOption(String key, String value) {
             try {
                 options.put(key, value);
             } catch (Exception e) {
             }
-            return this;
+            return (T) this;
         }
 
-        public Builder setOption(String key, boolean value) {
+        public T setOption(String key, boolean value) {
             try {
                 options.put(key, value);
             } catch (Exception e) {
             }
-            return this;
+            return (T) this;
         }
 
-        public Builder setOption(String key, float value) {
+        public T setOption(String key, float value) {
             try {
                 options.put(key, value);
             } catch (Exception e) {
             }
-            return this;
+            return (T) this;
         }
 
-        public Builder setOption(String key, int value) {
+        public T setOption(String key, int value) {
             try {
                 options.put(key, value);
             } catch (Exception e) {
             }
-            return this;
+            return (T) this;
         }
 
-        public Builder setOption(String key, double value) {
+        public T setOption(String key, double value) {
             try {
                 options.put(key, value);
             } catch (Exception e) {
             }
-            return this;
+            return (T) this;
         }
 
-        public Builder setOption(String key, Object value) {
+        public T setOption(String key, Object value) {
             try {
                 options.put(key, value);
             } catch (Exception e) {
             }
-            return this;
+            return (T) this;
         }
 
-        public Builder setOption(String key, String[] array) {
+        public T setOption(String key, String[] array) {
             try {
                 JSONArray jsonArray = new JSONArray();
                 for (int i = 0; i < array.length; i++) {
@@ -100,10 +100,10 @@ public final class F2Config {
                 options.put(key, jsonArray);
             } catch (Exception e) {
             }
-            return this;
+            return (T) this;
         }
 
-        public Builder setOption(String key, double[] array) {
+        public T setOption(String key, double[] array) {
             try {
                 JSONArray jsonArray = new JSONArray();
                 for (int i = 0; i < array.length; i++) {
@@ -112,9 +112,25 @@ public final class F2Config {
                 options.put(key, jsonArray);
             } catch (Exception e) {
             }
-            return this;
+            return (T) this;
         }
 
+        public T setOption(String key, JSONArray value) {
+            try {
+                options.put(key, value);
+            } catch (Exception e) {
+            }
+            return (T) this;
+        }
+
+        public T setOption(String key, F2Chart host, F2Function function) {
+            try {
+                function.bindChart(host);
+                options.put(key, function.functionId);
+            } catch (Exception e) {
+            }
+            return (T) this;
+        }
 
 
         public F2Config build() {

@@ -8,7 +8,7 @@ namespace xg {
 namespace shape {
 
 class Text : public Shape {
-    public:
+  public:
     virtual ~Text() override {}
 
     Text(const string &, const util::Point &, const float fontSize, const string &strokeColor, const string &fillColor);
@@ -20,8 +20,8 @@ class Text : public Shape {
     float GetTextHeight() const;
     float GetTextWidth(canvas::CanvasContext &context) const;
 
-    inline util::Point GetPoint() const { return pt_; }
-    inline void SetPoint(const util::Point &pt) { pt_ = pt; }
+    inline util::Point GetPoint() const { return point_; }
+    inline void SetPoint(const util::Point &pt) { point_ = pt; }
 
     inline void SetTextAlign(const std::string &align) { textAlign_ = align; }
     inline void SetTextBaseline(const std::string &baseline) { textBaseline_ = baseline; }
@@ -30,14 +30,13 @@ class Text : public Shape {
 
     int GetLineCount() const { return this->lineCount_; }
 
-    protected:
+  protected:
     void DrawInner(canvas::CanvasContext &context) const override;
 
-    private:
+  private:
     string GetFontStyle() const;
 
-    protected:
-    util::Point pt_;
+  protected:
     int lineCount_ = 1;
     float fontSize_ = 12.f;
     float lineHeight_ = std::nan("0");
@@ -50,7 +49,7 @@ class Text : public Shape {
     string text_ = "";
     vector<string> textArr_; //\n分割后的字符串
 
-    public:
+  public:
     nlohmann::json ext;
 };
 

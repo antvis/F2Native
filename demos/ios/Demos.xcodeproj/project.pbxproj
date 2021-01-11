@@ -16,8 +16,12 @@
 		3F56A05425236C64002AA2D2 /* StripUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F56A05325236C64002AA2D2 /* StripUIView.m */; };
 		3F56A06025248B53002AA2D2 /* MultintervalUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F56A05F25248B53002AA2D2 /* MultintervalUIView.m */; };
 		3F56A06B25272042002AA2D2 /* BasePieUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F56A06A25272042002AA2D2 /* BasePieUIView.m */; };
+		3F594C0A259B10990023A4E7 /* SetionIntervalUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F594C09259B10990023A4E7 /* SetionIntervalUIView.m */; };
 		3F5D90912535C5320091D8F7 /* CyclicPieUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D90902535C5320091D8F7 /* CyclicPieUIView.m */; };
 		3F5DD47D2553A34D00FD60B3 /* BaseInterval2UIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F5DD47C2553A34D00FD60B3 /* BaseInterval2UIView.m */; };
+		957056B92591F88F00D26E0A /* MultiIntervalUIView2.m in Sources */ = {isa = PBXBuildFile; fileRef = 957056B82591F88F00D26E0A /* MultiIntervalUIView2.m */; };
+		957056C925931B0900D26E0A /* BaseAreaUIView2.m in Sources */ = {isa = PBXBuildFile; fileRef = 957056C825931B0900D26E0A /* BaseAreaUIView2.m */; };
+		95A7D80A25A3035800CA8B9F /* BasePointUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 95A7D80925A3035800CA8B9F /* BasePointUIView.m */; };
 		CC612BBD250A28AE00315124 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CC612BBC250A28AE00315124 /* AppDelegate.m */; };
 		CC612BC3250A28AE00315124 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CC612BC2250A28AE00315124 /* ViewController.m */; };
 		CC612BC8250A28AF00315124 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC612BC7250A28AF00315124 /* Assets.xcassets */; };
@@ -33,6 +37,13 @@
 			containerPortal = 3F5DD4E1255AB42C00FD60B3 /* F2.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = CC793C3B2509FBAA00E9D913;
+			remoteInfo = F2;
+		};
+		CC1A2F3325878C1E005B2111 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3F5DD4E1255AB42C00FD60B3 /* F2.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CC793C3A2509FBAA00E9D913;
 			remoteInfo = F2;
 		};
 /* End PBXContainerItemProxy section */
@@ -56,11 +67,19 @@
 		3F56A05F25248B53002AA2D2 /* MultintervalUIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultintervalUIView.m; sourceTree = "<group>"; };
 		3F56A06925272042002AA2D2 /* BasePieUIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BasePieUIView.h; sourceTree = "<group>"; };
 		3F56A06A25272042002AA2D2 /* BasePieUIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BasePieUIView.m; sourceTree = "<group>"; };
+		3F594C08259B10990023A4E7 /* SetionIntervalUIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SetionIntervalUIView.h; sourceTree = "<group>"; };
+		3F594C09259B10990023A4E7 /* SetionIntervalUIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SetionIntervalUIView.m; sourceTree = "<group>"; };
 		3F5D908F2535C5320091D8F7 /* CyclicPieUIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CyclicPieUIView.h; sourceTree = "<group>"; };
 		3F5D90902535C5320091D8F7 /* CyclicPieUIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CyclicPieUIView.m; sourceTree = "<group>"; };
 		3F5DD47B2553A34D00FD60B3 /* BaseInterval2UIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseInterval2UIView.h; sourceTree = "<group>"; };
 		3F5DD47C2553A34D00FD60B3 /* BaseInterval2UIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseInterval2UIView.m; sourceTree = "<group>"; };
 		3F5DD4E1255AB42C00FD60B3 /* F2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = F2.xcodeproj; path = ../../../ios/F2.xcodeproj; sourceTree = "<group>"; };
+		957056B72591F88F00D26E0A /* MultiIntervalUIView2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiIntervalUIView2.h; sourceTree = "<group>"; };
+		957056B82591F88F00D26E0A /* MultiIntervalUIView2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultiIntervalUIView2.m; sourceTree = "<group>"; };
+		957056C725931B0900D26E0A /* BaseAreaUIView2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseAreaUIView2.h; sourceTree = "<group>"; };
+		957056C825931B0900D26E0A /* BaseAreaUIView2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseAreaUIView2.m; sourceTree = "<group>"; };
+		95A7D80825A3035800CA8B9F /* BasePointUIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BasePointUIView.h; sourceTree = "<group>"; };
+		95A7D80925A3035800CA8B9F /* BasePointUIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BasePointUIView.m; sourceTree = "<group>"; };
 		CC612BB8250A28AE00315124 /* F2Native.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = F2Native.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC612BBB250A28AE00315124 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		CC612BBC250A28AE00315124 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -101,6 +120,8 @@
 				3F56A04D25235F1E002AA2D2 /* MultiAreaUIView.m */,
 				3F56A04F25236ACE002AA2D2 /* BaseIntervalUIView.h */,
 				3F56A05025236ACE002AA2D2 /* BaseIntervalUIView.m */,
+				3F594C08259B10990023A4E7 /* SetionIntervalUIView.h */,
+				3F594C09259B10990023A4E7 /* SetionIntervalUIView.m */,
 				3F56A05E25248B53002AA2D2 /* MultintervalUIView.h */,
 				3F56A05F25248B53002AA2D2 /* MultintervalUIView.m */,
 				3F5D908F2535C5320091D8F7 /* CyclicPieUIView.h */,
@@ -109,6 +130,12 @@
 				3F56A06A25272042002AA2D2 /* BasePieUIView.m */,
 				3F56A05225236C64002AA2D2 /* StripUIView.h */,
 				3F56A05325236C64002AA2D2 /* StripUIView.m */,
+				957056B72591F88F00D26E0A /* MultiIntervalUIView2.h */,
+				957056B82591F88F00D26E0A /* MultiIntervalUIView2.m */,
+				957056C725931B0900D26E0A /* BaseAreaUIView2.h */,
+				957056C825931B0900D26E0A /* BaseAreaUIView2.m */,
+				95A7D80825A3035800CA8B9F /* BasePointUIView.h */,
+				95A7D80925A3035800CA8B9F /* BasePointUIView.m */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -180,6 +207,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				CC1A2F3425878C1E005B2111 /* PBXTargetDependency */,
 			);
 			name = F2Native;
 			productName = Demos;
@@ -255,21 +283,33 @@
 				3F56A06B25272042002AA2D2 /* BasePieUIView.m in Sources */,
 				3F56A05125236ACE002AA2D2 /* BaseIntervalUIView.m in Sources */,
 				3F5D90912535C5320091D8F7 /* CyclicPieUIView.m in Sources */,
+				3F594C0A259B10990023A4E7 /* SetionIntervalUIView.m in Sources */,
 				3F5DD47D2553A34D00FD60B3 /* BaseInterval2UIView.m in Sources */,
 				CC612BC3250A28AE00315124 /* ViewController.m in Sources */,
 				3F56A04E25235F1E002AA2D2 /* MultiAreaUIView.m in Sources */,
+				957056B92591F88F00D26E0A /* MultiIntervalUIView2.m in Sources */,
 				3F56A05425236C64002AA2D2 /* StripUIView.m in Sources */,
 				3F56A06025248B53002AA2D2 /* MultintervalUIView.m in Sources */,
 				3F56A0442523296F002AA2D2 /* BaseLineUIView.m in Sources */,
 				CC612BBD250A28AE00315124 /* AppDelegate.m in Sources */,
+				957056C925931B0900D26E0A /* BaseAreaUIView2.m in Sources */,
 				CC612BCE250A28AF00315124 /* main.m in Sources */,
 				3F56A0482523599D002AA2D2 /* MultiLineUIView.m in Sources */,
+				95A7D80A25A3035800CA8B9F /* BasePointUIView.m in Sources */,
 				3F56A04B25235B6E002AA2D2 /* BaseAreaUIView.m in Sources */,
 				3F56A0402523233F002AA2D2 /* DemoViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CC1A2F3425878C1E005B2111 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = F2;
+			targetProxy = CC1A2F3325878C1E005B2111 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		CC612BC9250A28AF00315124 /* LaunchScreen.storyboard */ = {

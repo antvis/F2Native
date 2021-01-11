@@ -1,7 +1,6 @@
 #import "F2CanvasView.h"
 #import "F2Geom.h"
 #import "F2Guide.h"
-#import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -29,17 +28,17 @@ NS_ASSUME_NONNULL_BEGIN
 /// 设置度量，
 /// @param field 需要设置度量的字段
 /// @param config config的具体字段待补充
-- (F2Chart * (^)(NSString *filed, NSDictionary *config))scale;
+- (F2Chart * (^)(NSString *field, NSDictionary *config))scale;
 
 /// 设置轴
 /// @param field 需要设置度量的字段
 /// @param config config的具体字段待补充
-- (F2Chart * (^)(NSString *filed, NSDictionary *config))axis;
+- (F2Chart * (^)(NSString *field, NSDictionary *config))axis;
 
 /// 设置图例
 /// @param field 需要设置度量的字段
 /// @param config config的具体字段待补充
-- (F2Chart * (^)(NSString *filed, NSDictionary *config))legend;
+- (F2Chart * (^)(NSString *field, NSDictionary *config))legend;
 
 /// 设置坐标
 /// @param config  坐标轴配置信息
@@ -47,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 指定交互类型
 /// @param type --  pinch 缩放 | pan 平移
-- (F2Chart * (^)(NSString *type))interaction;
+- (F2Chart * (^)(NSString *type, NSDictionary *config))interaction;
 
 /// 开启 ToolTIp 功能
 /// @param confg    具体字段待补充
@@ -56,11 +55,18 @@ NS_ASSUME_NONNULL_BEGIN
 /// 开始渲染
 - (F2Chart * (^)(void))render;
 
+/// 清除所有元素
+- (F2Chart * (^)(void))clear;
+
 /// 重新渲染
 - (F2Chart * (^)(void))repaint;
 /// 获取渲染的信息
 /// @return JSON格式，cmdCount表示渲染指令的个数，-1表示环境有问题，0表示指令数为0，>0表示正常的绘制指令个数
 - (NSString * (^)(void))getRenderDumpInfo;
+
+/// 计算某一项数据对应的在坐标系中的绝对坐标
+/// @return [x, y]
+- (NSArray<NSNumber *> * (^)(NSDictionary *itemData))getPosition;
 
 /// 创建直线或折线
 - (F2Line * (^)(void))line;
@@ -71,11 +77,17 @@ NS_ASSUME_NONNULL_BEGIN
 /// 创建阴影
 - (F2Area * (^)(void))area;
 
+/// 散点图
+- (F2Point * (^)(void))point;
+
 /// 创建辅助对象
 - (F2Guide * (^)(void))guide;
 
 ///  发送手势信息
 - (F2Chart * (^)(NSDictionary *config))postTouchEvent;
+
+///  清除绘制指令
+- (F2Chart * (^)(void))clear;
 
 @end
 

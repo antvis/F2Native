@@ -15,19 +15,21 @@ class InteractionContext {
 
     void Start();
 
-    void DoZoom(double leftScale, double rightScale, double zoom);
+    bool DoZoom(double leftScale, double rightScale, double zoom);
 
-    void DoMove(double ratio);
+    bool DoMove(double deltaX, double deltaY);
 
-    void UpdateRange(std::array<double, 2> newRange = {0, 1});
+    bool UpdateRange(std::array<double, 2> newRange = {0, 1});
 
-    void Repaint(nlohmann::json &newValues);
+    bool Repaint(nlohmann::json &newValues, std::size_t valueStart, std::size_t valueEnd);
 
     void UpdateScale(const std::string &field, nlohmann::json cfg);
 
-    void UpdateFollowScale(scale::AbstractScale &pinchScale, nlohmann::json &pinchValues);
+    void UpdateFollowScale(scale::AbstractScale &pinchScale, nlohmann::json &pinchValues, std::size_t valueStart, std::size_t valueEnd);
 
     void UpdateTicks();
+
+    void SetTypeConfig(std::string type, nlohmann::json config);
 
   protected:
     void OnAfterChartInit();
@@ -35,11 +37,12 @@ class InteractionContext {
   private:
     XChart *chart_ = nullptr;
     std::array<double, 2> range_ = {0, 1};
-    std::array<double, 2> startRange_ = {0, 1};
-    double minCount_ = 10; // 缩放最小点数
     int lastTickCount_ = 0;
     double minScale_ = .0;
-    nlohmann::json values_ = {};
+    nlohmann::json values_;
+    nlohmann::json config_;
+    std::size_t minCount_ = 10; // 缩放最小点数
+    std::size_t maxCount_ = 0;
 };
 } // namespace interaction
 } // namespace xg

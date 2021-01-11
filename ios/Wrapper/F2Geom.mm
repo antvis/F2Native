@@ -90,6 +90,13 @@
     };
 }
 
+- (F2Geom * (^)(NSDictionary *config))style {
+    return ^id(NSDictionary *config) {
+        self->_geom->Style([XGSafeJson([F2Utils toJsonString:config]) UTF8String]);
+        return self;
+    };
+}
+
 @end
 
 @implementation F2Line
@@ -100,15 +107,7 @@
 - (F2Interval * (^)(NSDictionary *config))tag {
     return ^id(NSDictionary *config) {
         xg::geom::Interval *interval = (xg::geom::Interval *)[super getGeom];
-        interval->Tag(nlohmann::json::parse([XGSafeJson([F2Utils toJsonString:config]) UTF8String]));
-        return self;
-    };
-}
-
-- (F2Interval * (^)(NSDictionary *config))style {
-    return ^id(NSDictionary *config) {
-        xg::geom::Interval *interval = (xg::geom::Interval *)[super getGeom];
-        interval->Style(nlohmann::json::parse([XGSafeJson([F2Utils toJsonString:config]) UTF8String]));
+        interval->Tag([XGSafeJson([F2Utils toJsonString:config]) UTF8String]);
         return self;
     };
 }
@@ -116,4 +115,7 @@
 @end
 
 @implementation F2Area
+@end
+
+@implementation F2Point
 @end

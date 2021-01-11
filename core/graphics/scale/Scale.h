@@ -1,10 +1,11 @@
-#ifndef XG_GRAPHICS_SCALE_H
-#define XG_GRAPHICS_SCALE_H
-
+#include "graphics/func/Func.h"
 #include <map>
 #include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
+
+#ifndef XG_GRAPHICS_SCALE_H
+#define XG_GRAPHICS_SCALE_H
 
 namespace xg {
 namespace scale {
@@ -52,7 +53,7 @@ class AbstractScale {
     // }
 
     // 将定义域值转换为值域值
-    virtual double Scale(const nlohmann::json &key) const = 0;
+    virtual double Scale(const nlohmann::json &key) = 0;
 
     // 将值域值转换为定义域值
     virtual nlohmann::json Invert(double key) = 0;
@@ -79,6 +80,16 @@ class AbstractScale {
     virtual inline std::size_t GetValuesSize() noexcept { return values.size(); }
 
     virtual std::string GetTickText(const nlohmann::json &item) {
+        if(!this->tickCallbackId.empty()) {
+            func::F2Function *tickCallbackFunc = func::FunctionManager::GetInstance().Find(this->tickCallbackId);
+            if(tickCallbackFunc != nullptr) {
+                nlohmann::json rst = tickCallbackFunc->Execute(item);
+                if(rst.is_object() && rst.contains("content")) {
+                    return rst["content"];
+                }
+            }
+        }
+
         if(item.is_string()) {
             return item.get<std::string>();
         } else if(item.is_number()) {
@@ -99,11 +110,15 @@ class AbstractScale {
   protected:
     virtual nlohmann::json CalculateTicks() = 0;
 
+    void SetTickCallbackFun(std::string tickCallbackId) { this->tickCallbackId = tickCallbackId; }
+
   public:
     // 刻度值, 通过 wilkinson 算法计算得出
     nlohmann::json ticks; // 数组
     nlohmann::json values;
     std::map<std::size_t, int> dataIndexTable_;
+
+    std::string tickCallbackId;
 };
 } // namespace scale
 } // namespace xg

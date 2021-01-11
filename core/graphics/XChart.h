@@ -7,6 +7,7 @@
 #include "graphics/geom/Area.h"
 #include "graphics/geom/Interval.h"
 #include "graphics/geom/Line.h"
+#include "graphics/geom/Point.h"
 #include "graphics/geom/shape/GeomShapeFactory.h"
 #include "graphics/guide/GuideController.h"
 #include "graphics/interaction/InteractionBase.h"
@@ -23,9 +24,15 @@
 #include <utils/Tracer.h>
 #include <vector>
 
+#if defined(TARGET_STANDALONE)
+
 #if defined(ANDROID)
 #include "android/F2CanvasView.h"
 #else
+#endif
+
+#elif defined(TARGET_ALIPAY)
+#include <AntGraphic/AntGraphic.h>
 #endif
 
 #ifndef XG_GRAPHICS_XCHART_H
@@ -57,18 +64,22 @@ class XChart {
     friend geom::Line;
     friend geom::Interval;
     friend geom::Area;
+    friend geom::Point;
     friend legend::LegendController;
     friend event::EventController;
     friend tooltip::ToolTipController;
     friend interaction::Pan;
     friend interaction::Pinch;
+    friend interaction::InteractionContext;
 
   public:
     XChart(const std::string &name, double width, double height, double ratio = 1.0);
     ~XChart();
 
     XChart &Source(const std::string &json);
-#ifdef ANDROID
+
+#if defined(TARGET_STANDALONE)
+#if defined(ANDROID)
     XChart &SetCanvasContext(F2CanvasView *context) {
         canvasContext_ = new canvas::CanvasContext(context, static_cast<float>(ratio_), nullptr);
         return *this;
@@ -79,32 +90,44 @@ class XChart {
         return *this;
     }
 #endif
+#endif // TARGET_STANDALONE
+
+#if defined(TARGET_ALIPAY)
+    XChart &SetCanvasContext(ag::CanvasRenderingContext2D *context) {
+        canvasContext_ = new canvas::CanvasContext(context, static_cast<float>(ratio_), nullptr);
+        return *this;
+    }
+#endif // TARGET_ALIPAY
 
     XChart &Padding(double left = 0.f, double top = 0.f, double right = 0.0, double bottom = 0.);
     XChart &Margin(double left = 0.f, double top = 0.f, double right = 0.0, double bottom = 0.);
 
-    XChart &Scale(const std::string &field, nlohmann::json config = {});
+    XChart &Scale(const std::string &field, const std::string &json);
 
-    XChart &Axis(const std::string &field, nlohmann::json config = {});
+    XChart &Axis(const std::string &field, const std::string &json = "");
 
-    XChart &Legend(const std::string &field, nlohmann::json config = {});
+    XChart &Legend(const std::string &field, const std::string &json = "");
 
     guide::GuideController &Guide() { return *this->guideController_; }
 
-    XChart &Interaction(const std::string &type);
-    XChart &Tooltip(const nlohmann::json &cfg = {});
+    XChart &Interaction(const std::string &type, nlohmann::json config = {});
 
-    XChart &Coord(nlohmann::json config = {});
+    XChart &Tooltip(const std::string &json = "");
 
-    void OnTouchEvent(nlohmann::json cfg = {});
+    XChart &Coord(const std::string &json = "");
+
+    bool OnTouchEvent(const std::string &json = "");
 
     geom::Line &Line();
     geom::Interval &Interval();
     geom::Area &Area();
+    geom::Point &Point();
 
     void Render();
 
     void Repaint();
+
+    void Clear();
 
     scale::AbstractScale &GetScale(const std::string &field);
 
@@ -117,13 +140,14 @@ class XChart {
 
     inline std::vector<std::string> getYScaleFields() {
         std::vector<std::string> fields;
-        std::for_each(geoms_.begin(), geoms_.end(),
-                      [&](geom::AbstractGeom *geom) -> void { fields.push_back(geom->GetYScaleField()); });
+        std::for_each(geoms_.begin(), geoms_.end(), [&](auto &geom) -> void { fields.push_back(geom->GetYScaleField()); });
 
         return fields;
     }
 
-    inline const std::string &GetChartName() { return this->chartName_; }
+    inline const std::string GetChartName() { return this->chartName_; }
+
+    inline const std::string GetChartId() { return chartId_; }
 
     inline utils::Tracer *GetLogTracer() const { return this->logTracer_; }
 
@@ -133,7 +157,7 @@ class XChart {
     inline const double GetHeight() const noexcept { return height_; }
 
     // 计算某一项数据对应的坐标位置
-    inline const util::Point GetPosition(const nlohmann::json &item);
+    const util::Point GetPosition(const nlohmann::json &item);
 
     std::string GetRenderInfo() const;
 
@@ -141,7 +165,7 @@ class XChart {
 
     void AddMonitor(const std::string &action, ChartActionCallback callback) { actionListeners_[action].push_back(callback); }
 
-    inline const std::array<double, 4> GetPadding() { return padding_; }
+    inline const std::array<double, 4> GetPadding() { return userPadding_; }
     inline const std::array<double, 4> GetMargin() { return margin_; }
 
   private:
@@ -160,6 +184,8 @@ class XChart {
     std::map<std::string, std::vector<legend::LegendItem>> GetLegendItems();
 
     void ClearInner();
+
+    void Redraw();
 
     void NotifyAction(const std::string &action) {
         auto &callbacks = actionListeners_[action];
@@ -183,7 +209,7 @@ class XChart {
     std::array<double, 4> margin_ = {{0, 0, 0, 0}};
 
     // 析构时要析构对应的 Geom 对象
-    std::vector<geom::AbstractGeom *> geoms_;
+    std::vector<std::unique_ptr<geom::AbstractGeom>> geoms_;
 
     std::string chartName_;
     double width_;
@@ -205,6 +231,8 @@ class XChart {
 
     std::map<std::string, std::vector<ChartActionCallback>> actionListeners_{};
     std::vector<std::unique_ptr<xg::interaction::InteractionBase>> interactions_{};
+
+    std::string chartId_;
 };
 } // namespace xg
 

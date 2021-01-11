@@ -35,6 +35,8 @@ class AbstractCoord {
     /// 返回轴的宽度
     virtual float GetWidth() const noexcept = 0;
 
+    virtual float GetHeight() noexcept { return this->GetYAxis().x - this->GetYAxis().y; }
+
     /// 返回半径
     virtual double GetRadius() const noexcept { return 0.f; };
 

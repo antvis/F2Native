@@ -19,6 +19,10 @@
     native <methods>;
 }
 
+-keep public class com.antgroup.antv.f2.F2Function {
+    protected final java.lang.String nExecute(java.lang.String);
+}
+
 # Uncomment this to preserve the line number information for
 # debugging stack traces.
 #-keepattributes SourceFile,LineNumberTable

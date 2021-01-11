@@ -9,6 +9,10 @@ import android.view.Surface;
 
 import com.taobao.gcanvas.GCanvasJNI;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author qingyuan.yl
  * @date 2020-09-17
@@ -47,6 +51,7 @@ final class NativeCanvasHolder {
     private String mCanvasId;
 
     private boolean mAsyncRender = true;
+    private List<WeakReference<Runnable>> mRenderTasks = new ArrayList<>();
 
 
     NativeCanvasHolder(Context context, F2Config options) {
@@ -78,7 +83,8 @@ final class NativeCanvasHolder {
             mRenderThread.start();
             mRenderHandler = new Handler(mRenderThread.getLooper());
         } else {
-            mRenderHandler = new Handler(Looper.getMainLooper());
+            // 同步操作为当前线程(不一定是主线程)
+            mRenderHandler = new Handler(Looper.myLooper());
         }
         mUIHandler = new Handler(Looper.getMainLooper());
         hasDestroy = false;
@@ -165,9 +171,14 @@ final class NativeCanvasHolder {
         });
     }
 
-    void destroy() {
-        if (hasDestroy) return;
+    void destroy(final Runnable callback) {
+        if (hasDestroy) {
+            if (callback != null)
+                callback.run();
+            return;
+        }
         hasDestroy = true;
+        removeAllIdleTasks();
         runOnRenderThread(new Runnable() {
             @Override
             public void run() {
@@ -184,6 +195,9 @@ final class NativeCanvasHolder {
                 dispatchCanvasDestroyed();
 
                 mListener = null;
+
+                if (callback != null)
+                    callback.run();
             }
         });
     }
@@ -227,7 +241,7 @@ final class NativeCanvasHolder {
     protected void finalize() throws Throwable {
         try {
             innerLog("finalize");
-            destroy();
+            destroy(null);
         } catch (Exception ex) {
 
         } finally {
@@ -265,6 +279,7 @@ final class NativeCanvasHolder {
             runnable.run();
         } else {
             mRenderHandler.post(runnable);
+            mRenderTasks.add(new WeakReference<Runnable>(runnable));
         }
     }
 
@@ -278,6 +293,18 @@ final class NativeCanvasHolder {
             runnable.run();
         } else {
             mUIHandler.post(runnable);
+        }
+    }
+
+    private void removeAllIdleTasks() {
+        if (mRenderHandler != null && !mRenderTasks.isEmpty()) {
+            for (WeakReference<Runnable> renderTask : mRenderTasks) {
+                Runnable task = null;
+                if ((task = renderTask.get()) != null) {
+                    mRenderHandler.removeCallbacks(task);
+                }
+            }
+            mRenderTasks.clear();
         }
     }
 

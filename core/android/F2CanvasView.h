@@ -5,7 +5,6 @@
 #include <android/native_window_jni.h>
 #include <jni.h>
 
-#include <nlohmann/json.hpp>
 #include <string>
 
 #include <GCanvas/core/src/gcanvas/GFontManager.h>
@@ -21,7 +20,7 @@ namespace xg {
 
 class F2CanvasView {
   public:
-    F2CanvasView(const nlohmann::json &cfg);
+    F2CanvasView(const std::string &jsonConfig);
 
     ~F2CanvasView();
 

@@ -1,6 +1,6 @@
 #include <string>
 
-#ifdef ANDROID
+#if defined(ANDROID)
 #include "android/F2NativeJNI.h"
 #endif
 

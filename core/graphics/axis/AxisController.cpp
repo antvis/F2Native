@@ -1,5 +1,6 @@
 #include "graphics/axis/AxisController.h"
 #include "graphics/XChart.h"
+#include "graphics/func/Func.h"
 #include "graphics/shape/Circle.h"
 #include "graphics/shape/Line.h"
 #include "graphics/shape/Polyline.h"
@@ -32,7 +33,7 @@ static std::vector<xg::scale::Tick> FormatTicks(std::vector<xg::scale::Tick> tic
     return rst;
 }
 
-void xg::axis::AxisController::DrawAxes(xg::XChart *chart, shape::Group *container, canvas::CanvasContext &context) {
+void xg::axis::AxisController::DrawAxes(xg::XChart *chart, canvas::CanvasContext &context) {
     utils::Tracer *tracer = chart->GetLogTracer();
 
     this->axes.clear();
@@ -51,19 +52,23 @@ void xg::axis::AxisController::DrawAxes(xg::XChart *chart, shape::Group *contain
         axisConfig_[yField]["grid"] = false; // y 轴默认不显示网格
     }
 
-    if(!axisConfig_[xField]["hidden"])
+    if(!axisConfig_[xField]["hidden"]) {
+        // long ts = xg::CurrentTimestampAtMM();
         InitAxis(*chart, xField, "x", yField);
-    if(!axisConfig_[yField]["hidden"])
+        // chart->GetLogTracer()->trace("#Init %s axis %lums", xField.data(), (xg::CurrentTimestampAtMM() - ts));
+    }
+    if(!axisConfig_[yField]["hidden"]) {
+        // long ts = xg::CurrentTimestampAtMM();
         InitAxis(*chart, yField, "y", xField);
+        // chart->GetLogTracer()->trace("#Init %s axis %lums", yField.data(), (xg::CurrentTimestampAtMM() - ts));
+    }
 
     // 轴创建完成之后，重新计算 padding 值，更新可绘制区域
     UpdateLayout(*chart);
 
-    tracer->trace("InitAxis xField: %s, yField: %s", yField.c_str(), xField.c_str());
     InitAxisConfig(*chart);
 
-    std::for_each(axes.begin(), axes.end(),
-                  [&](std::unique_ptr<xg::axis::Axis> &axis) { DrawAxis(*chart, axis, *container, context); });
+    std::for_each(axes.begin(), axes.end(), [&](std::unique_ptr<xg::axis::Axis> &axis) { DrawAxis(*chart, axis, context); });
 }
 
 void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field, const std::string &dimType, const std::string &verticalField) {
@@ -117,6 +122,7 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
 
     scale::AbstractScale &scale = chart.GetScale(axis->field);
     axis->ticks = scale.GetTicks();
+
     int ticksTmp = 1;
     if(axis->ticks.size() > 600) {
         ticksTmp = 200;
@@ -136,20 +142,59 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
         const std::string &textAlign = axis->labelCfg["textAlign"];
         const std::string &textBaseline = axis->labelCfg["textBaseline"];
 
-        for(int index = 0; index < axis->ticks.size(); ++index) {
+        func::F2Function *labelItemFunc = nullptr;
+        if(axis->labelCfg.contains("item")) {
+            std::string labelItemFuncId = axis->labelCfg["item"];
+            labelItemFunc = func::FunctionManager::GetInstance().Find(labelItemFuncId);
+        }
+
+        for(std::size_t index = 0; index < axis->ticks.size(); ++index) {
             if(index == 0 || index == (axis->ticks.size() - 1) || index % ticksTmp == 0) {
                 const xg::scale::Tick &tick = axis->ticks[index];
-                std::unique_ptr<xg::shape::Text> text =
-                    xg::make_unique<xg::shape::Text>(tick.text, util::Point{0, 0}, labelFontSize, "", labelColor);
-                text->ext["tickValue"] = tick.value;
-                text->SetTextAlign(textAlign);
-                text->SetTextBaseline(textBaseline);
-                xg::util::BBox bbox = text->GetBBox(chart.GetCanvasContext());
+                if(labelItemFunc != nullptr) {
+                    nlohmann::json param = {{"text", tick.text}, {"index", index}, {"count", axis->ticks.size()}};
 
-                axis->maxWidth = fmax(axis->maxWidth, static_cast<double>(bbox.width));
-                axis->maxHeight = fmax(axis->maxHeight, static_cast<double>(bbox.height));
+                    nlohmann::json itemStyle = axis->labelCfg;
+                    itemStyle["xOffset"] = 0;
+                    itemStyle["yOffset"] = 0;
 
-                axis->labels.push_back(std::move(text));
+                    nlohmann::json itemStyleRst = labelItemFunc->Execute(param);
+                    if(itemStyleRst.is_object()) {
+                        itemStyle.merge_patch(itemStyleRst);
+                    }
+
+                    float textSize = itemStyle["textSize"];
+                    textSize *= chart.GetRatio();
+
+                    float xOffset = itemStyle["xOffset"];
+                    float yOffset = itemStyle["yOffset"];
+                    xOffset *= chart.GetRatio();
+                    yOffset *= chart.GetRatio();
+
+                    std::unique_ptr<xg::shape::Text> text =
+                        xg::make_unique<xg::shape::Text>(tick.text, util::Point{xOffset, yOffset}, textSize, "", itemStyle["textColor"]);
+                    text->ext["tickValue"] = tick.value;
+                    text->SetTextAlign(itemStyle["textAlign"]);
+                    text->SetTextBaseline(itemStyle["textBaseline"]);
+                    xg::util::BBox bbox = text->GetBBox(chart.GetCanvasContext());
+
+                    axis->maxWidth = fmax(axis->maxWidth, static_cast<double>(bbox.width));
+                    axis->maxHeight = fmax(axis->maxHeight, static_cast<double>(bbox.height));
+
+                    axis->labels.push_back(std::move(text));
+                } else {
+                    std::unique_ptr<xg::shape::Text> text =
+                        xg::make_unique<xg::shape::Text>(tick.text, util::Point{0, 0}, labelFontSize, "", labelColor);
+                    text->ext["tickValue"] = tick.value;
+                    text->SetTextAlign(textAlign);
+                    text->SetTextBaseline(textBaseline);
+                    xg::util::BBox bbox = text->GetBBox(chart.GetCanvasContext());
+
+                    axis->maxWidth = fmax(axis->maxWidth, static_cast<double>(bbox.width));
+                    axis->maxHeight = fmax(axis->maxHeight, static_cast<double>(bbox.height));
+
+                    axis->labels.push_back(std::move(text));
+                }
             }
         }
     }
@@ -158,6 +203,7 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
 }
 
 void xg::axis::AxisController::InitAxisConfig(xg::XChart &chart) {
+    long ts = xg::CurrentTimestampAtMM();
     std::for_each(axes.begin(), axes.end(), [&](std::unique_ptr<xg::axis::Axis> &axis) {
         const std::vector<xg::scale::Tick> &ticks = axis->ticks;
 
@@ -165,11 +211,11 @@ void xg::axis::AxisController::InitAxisConfig(xg::XChart &chart) {
         if(axis->gridCfg.is_object() && !axis->verticalField.empty()) {
             std::vector<xg::scale::Tick> verticalTicks = FormatTicks(chart.GetScale(axis->verticalField).GetTicks());
 
-            for(int index = 0; index < ticks.size(); ++index) {
+            for(std::size_t index = 0; index < ticks.size(); ++index) {
                 auto &tick = ticks[index];
                 std::vector<util::Point> linePoints;
 
-                for(int position = 0; position < verticalTicks.size(); ++position) {
+                for(std::size_t position = 0; position < verticalTicks.size(); ++position) {
                     auto &verticalTick = verticalTicks[position];
                     double x = axis->dimType == "x" ? tick.value : verticalTick.value;
                     double y = axis->dimType == "x" ? verticalTick.value : tick.value;
@@ -182,6 +228,8 @@ void xg::axis::AxisController::InitAxisConfig(xg::XChart &chart) {
             }
         }
     });
+
+    chart.GetLogTracer()->trace("#InitAxisesConfig  %lums", (xg::CurrentTimestampAtMM() - ts));
 }
 
 void xg::axis::AxisController::UpdateLayout(xg::XChart &chart) {
@@ -219,10 +267,7 @@ void xg::axis::AxisController::UpdateLayout(xg::XChart &chart) {
     }
 }
 
-void xg::axis::AxisController::DrawAxis(xg::XChart &chart,
-                                        std::unique_ptr<xg::axis::Axis> &axis,
-                                        xg::shape::Group &container,
-                                        canvas::CanvasContext &context) {
+void xg::axis::AxisController::DrawAxis(xg::XChart &chart, std::unique_ptr<xg::axis::Axis> &axis, canvas::CanvasContext &context) {
     utils::Tracer *tracer = chart.GetLogTracer();
     tracer->trace("start draw axis: %s dimType: %s", axis->field.c_str(), axis->dimType.c_str());
 
@@ -235,13 +280,13 @@ void xg::axis::AxisController::DrawAxis(xg::XChart &chart,
             if(axis->gridCfg["type"] == "line") {
                 auto l = xg::make_unique<xg::shape::Polyline>(axis->gridCfg["lineWidth"], points, axis->gridCfg["stroke"], "", false);
                 l->SetZIndex(-1);
-                container.AddElement(std::move(l));
+                this->container_->AddElement(std::move(l));
             } else if(axis->gridCfg["type"] == "dash") {
                 auto l = xg::make_unique<xg::shape::Polyline>(axis->gridCfg["lineWidth"], points, axis->gridCfg["stroke"], "", false);
                 l->SetZIndex(-1);
                 // TODO dash 参数可自定义传入
                 l->SetDashLine(std::vector<float>{2, 2});
-                container.AddElement(std::move(l));
+                this->container_->AddElement(std::move(l));
             }
         });
     }
@@ -258,7 +303,7 @@ void xg::axis::AxisController::DrawAxis(xg::XChart &chart,
         bool drawLine = axis->lineCfg.is_object();
         if(drawLine) {
             tracer->trace("%s", "draw axis Line");
-            DrawLine(std::move(line), axis->lineCfg, container);
+            DrawLine(std::move(line), axis->lineCfg);
         }
         // TODO draw tick line
     }
@@ -267,20 +312,20 @@ void xg::axis::AxisController::DrawAxis(xg::XChart &chart,
     // std::for_each(axis.txtLabels.begin(), axis.txtLabels.end(),
     //               [&](xg::axis::LabelTXT &label) { DrawLabel(chart, axis, label, container, context); });
 
-    DrawLabel(chart, axis, container, context);
+    DrawLabel(chart, axis, context);
 
     tracer->trace("%s\n", "end draw axis;");
 }
 
-void xg::axis::AxisController::DrawLine(std::array<util::Point, 2> &&line, const nlohmann::json &lineCfg, shape::Group &container) {
+void xg::axis::AxisController::DrawLine(std::array<util::Point, 2> &&line, const nlohmann::json &lineCfg) {
     if(lineCfg["type"] == "line") {
         std::unique_ptr<xg::shape::Element> _line =
             xg::make_unique<xg::shape::Line>(line[0], line[1], lineCfg["lineWidth"], lineCfg["color"]);
-        container.AddElement(std::move(_line));
+        this->container_->AddElement(std::move(_line));
     }
 }
 
-void xg::axis::AxisController::DrawLabel(XChart &chart, std::unique_ptr<xg::axis::Axis> &axis, xg::shape::Group &container, canvas::CanvasContext &context) {
+void xg::axis::AxisController::DrawLabel(XChart &chart, std::unique_ptr<xg::axis::Axis> &axis, canvas::CanvasContext &context) {
     // xg::util::Point start = GetOffsetPoint(axis, label.value);
     // GetSidePoint(start, 5 * chart.GetRatio(), axis.dimType);
     // 修改x,y 这里计算的真实值
@@ -314,6 +359,9 @@ void xg::axis::AxisController::DrawLabel(XChart &chart, std::unique_ptr<xg::axis
             dimType = axis->dimType == "x" ? "y" : "x";
         }
         GetSidePoint(pt, 5 * chart.GetRatio(), dimType);
+        auto txtPoint = text->GetPoint();
+        pt.x += txtPoint.x;
+        pt.y += txtPoint.y;
 
         xg::util::BBox bbox = text->GetBBox(context);
 
@@ -341,6 +389,11 @@ void xg::axis::AxisController::DrawLabel(XChart &chart, std::unique_ptr<xg::axis
             }
         }
         text->SetPoint(pt);
-        container.AddElement(std::move(text));
+        this->container_->AddElement(std::move(text));
     }
+}
+
+void xg::axis::AxisController::Clear() {
+    this->axes.clear();
+    this->container_->Clear();
 }

@@ -22,13 +22,23 @@
     NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"Res/mockData_baseLine" ofType:@"json"];
     NSString *jsonData = [NSString stringWithContentsOfFile:jsonPath encoding:NSUTF8StringEncoding error:nil];
     self.chart.canvas(self.canvasView).padding(20, 10, 20, 0.f).source(jsonData);
-    self.chart.scale(@"date", @{ @"tickCount": @(5) });
-    self.chart.scale(@"value", @{ @"min": @(10), @"max": @(320) });
-    self.chart.axis(@"date", @{ @"grid": @(NO) });
+    self.chart.scale(@"date", @{@"tickCount": @(5)});
+    self.chart.scale(@"value", @{@"nice": @(YES)});
+    self.chart.axis(@"date", @{
+        @"grid": @(NO),
+        @"label": @{
+            @"item": [F2CallbackObj initWithCallback:^NSDictionary *_Nullable(NSString *_Nonnull param) {
+                NSData *data = [param dataUsingEncoding:NSUTF8StringEncoding];
+                NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+                NSNumber *index = [json objectForKey:@"index"];
+                return @{@"textColor": index.integerValue % 2 == 0 ? @"#000000" : @"#DC143C"};
+            }]
+        }
+    });
     self.chart.line().position(@"date*value").fixedSize(2);
     self.chart.tooltip(@{});
-    self.chart.interaction(@"pinch");
-    self.chart.interaction(@"pan");
+    self.chart.interaction(@"pinch", @{});
+    self.chart.interaction(@"pan", @{});
     self.chart.render();
 }
 

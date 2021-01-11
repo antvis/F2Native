@@ -13,7 +13,7 @@ public class F2Chart {
     private NativeChartProxy mChartProxy;
     private String mName;
     private F2CanvasView mCanvasView;
-    private boolean hasDestroyed = false;
+    private volatile boolean hasDestroyed = false;
 
     public static F2Chart create(Context context, String name, double widthPixel, double heightPixel) {
         double ratio = context.getResources().getDisplayMetrics().density;
@@ -22,7 +22,6 @@ public class F2Chart {
 
     private F2Chart(String name, double width, double height, double ratio) {
         mName = name;
-
         mChartProxy = new NativeChartProxy(name, width, height, ratio);
     }
 
@@ -31,7 +30,7 @@ public class F2Chart {
         mCanvasView = canvasView;
         if (hasDestroyed) return;
         assertRenderThread();
-        mChartProxy.setCanvas(mCanvasView.getCanvasHolder().getNativeCanvasProxy());
+        mChartProxy.setCanvas(mCanvasView.getNativeCanvas());
     }
 
     public F2Chart padding(final double left, final double top, final double right, final double bottom) {
@@ -63,10 +62,24 @@ public class F2Chart {
         return this;
     }
 
+    public F2Chart setScale(final String field, final String scaleJsonConfig) {
+        if (hasDestroyed) return this;
+        assertRenderThread();
+        mChartProxy.setScale(field, scaleJsonConfig);
+        return this;
+    }
+
     public F2Chart setAxis(final String field, final AxisConfigBuilder builder) {
         if (hasDestroyed) return this;
         assertRenderThread();
         mChartProxy.setAxis(field, builder.build().toJsonString());
+        return this;
+    }
+
+    public F2Chart setAxis(final String field, final String axisJsonConfig) {
+        if (hasDestroyed) return this;
+        assertRenderThread();
+        mChartProxy.setAxis(field, axisJsonConfig);
         return this;
     }
 
@@ -77,11 +90,24 @@ public class F2Chart {
         return this;
     }
 
+    public F2Chart setCoord(String coordJsonConfig) {
+        if (hasDestroyed) return this;
+        assertRenderThread();
+        mChartProxy.setCoord(coordJsonConfig);
+        return this;
+    }
+
     public F2Chart postTouchEvent(F2CanvasView.TouchEvent event) {
         if (hasDestroyed) return null;
         assertRenderThread();
-        mChartProxy.sendTouchEvent(event.getData().toJsonString());
-        mCanvasView.swapBuffer();
+        // long ts = System.currentTimeMillis();
+        int ret = mChartProxy.sendTouchEvent(event.getData().toJsonString());
+        if (ret == 1) {
+            // long swTs = System.currentTimeMillis();
+            mCanvasView.swapBuffer();
+            // long now = System.currentTimeMillis();
+            // innerLog("#postTouchEvent duration: " + (now - ts) +"ms(with swap:"+(now - swTs)+"ms)");
+        }
         return this;
     }
 
@@ -97,6 +123,12 @@ public class F2Chart {
         return (F2Geom.Area) mChartProxy.createGeom(this, "area");
     }
 
+    public F2Geom.Point point() {
+        if (hasDestroyed) return null;
+        assertRenderThread();
+        return (F2Geom.Point) mChartProxy.createGeom(this, "point");
+    }
+
     public F2Geom.Interval interval() {
         if (hasDestroyed) return null;
         assertRenderThread();
@@ -104,9 +136,21 @@ public class F2Chart {
     }
 
     public F2Chart interaction(String type) {
+        interaction(type, (String) null);
+        return this;
+    }
+
+    public F2Chart interaction(String type, F2Config config) {
         if (hasDestroyed) return null;
         assertRenderThread();
-        mChartProxy.setInteraction(type);
+        mChartProxy.setInteraction(type, config.toJsonString());
+        return this;
+    }
+
+    public F2Chart interaction(String type, String interactionConfig) {
+        if (hasDestroyed) return null;
+        assertRenderThread();
+        mChartProxy.setInteraction(type, interactionConfig);
         return this;
     }
 
@@ -117,10 +161,24 @@ public class F2Chart {
         return this;
     }
 
+    public F2Chart tooltip(String tooltipJsonConfig) {
+        if (hasDestroyed) return null;
+        assertRenderThread();
+        mChartProxy.setToolTip(tooltipJsonConfig);
+        return this;
+    }
+
     public F2Chart legend(String field, LegendConfigBuild builder) {
         if (hasDestroyed) return null;
         assertRenderThread();
         mChartProxy.setLegend(field, builder.build().toJsonString());
+        return this;
+    }
+
+    public F2Chart legend(String field, String legendJsonConfig) {
+        if (hasDestroyed) return null;
+        assertRenderThread();
+        mChartProxy.setLegend(field, legendJsonConfig);
         return this;
     }
 
@@ -137,8 +195,19 @@ public class F2Chart {
             mCanvasView.swapBuffer();
         }
         String dumpInfo = getRenderDumpInfo();
-        innerLog("#render dumpInfo: " + dumpInfo);
+        innerLog("#render ret: " + code + ", dumpInfo: " + dumpInfo);
+    }
 
+    public double[] getPosition(String itemJsonData) {
+        if (hasDestroyed) return new double[]{0, 0};
+        assertRenderThread();
+        return mChartProxy.getPosition(itemJsonData);
+    }
+
+    public void clear() {
+        if (hasDestroyed) return;
+        assertRenderThread();
+        mChartProxy.clear();
     }
 
     public String getRenderDumpInfo() {
@@ -165,6 +234,10 @@ public class F2Chart {
         }
     }
 
+    public String getName() {
+        return mName;
+    }
+
     final NativeChartProxy getChartProxy() {
         return mChartProxy;
     }
@@ -174,59 +247,55 @@ public class F2Chart {
     }
 
     final void assertRenderThread() {
-        if (hasDestroyed || mCanvasView == null || mCanvasView.getCanvasHolder() == null) {
+        if (hasDestroyed || mCanvasView == null) {
             F2Log.e("F2Chart-" + mName, "#runOnRenderThread chartView is null.");
             return;
         }
-        if (!mCanvasView.getCanvasHolder().isOnRenderThread()) {
+        if (!mCanvasView.isOnCanvasThread()) {
             throw new RuntimeException("F2Chart operations must on render thread.");
         }
     }
 
-    public static class TextConfigBuilder extends F2Config.Builder {
+    public static class TextConfigBuilder<T extends TextConfigBuilder> extends F2Config.Builder<T> {
         private static final String KEY_TEXT_COLOR = "textColor";
         private static final String KEY_TEXT_SIZE = "textSize";
         private static final String KEY_TEXT_ALIGN = "textAlign";
         private static final String KEY_BASE_LINE = "textBaseline";
 
-        public TextConfigBuilder textColor(String color) {
-            setOption(KEY_TEXT_COLOR, color);
-            return this;
+        public T textColor(String color) {
+            return setOption(KEY_TEXT_COLOR, color);
         }
 
-        public TextConfigBuilder textSize(float textSize) {
-            setOption(KEY_TEXT_SIZE, textSize);
-            return this;
+        public T textSize(float textSize) {
+            return setOption(KEY_TEXT_SIZE, textSize);
         }
 
-        public TextConfigBuilder textAlign(String textAlign) {
-            setOption(KEY_TEXT_ALIGN, textAlign);
-            return this;
+        public T textAlign(String textAlign) {
+            return setOption(KEY_TEXT_ALIGN, textAlign);
         }
 
-        public TextConfigBuilder textBaseline(String textBaseline) {
-            setOption(KEY_BASE_LINE, textBaseline);
-            return this;
+        public T textBaseline(String textBaseline) {
+            return setOption(KEY_BASE_LINE, textBaseline);
         }
     }
 
-    public static class ScaleConfigBuilder extends F2Config.Builder {
+    public static class ScaleConfigBuilder extends F2Config.Builder<ScaleConfigBuilder> {
         private static final String KEY_TYPE = "type";
         private static final String KEY_PRECISION = "precision";
         private static final String KEY_RANGE = "range";
-        private static final String KEY_SCALE_RANGE = "scaleRange";
+//        private static final String KEY_SCALE_RANGE = "scaleRange";
         private static final String KEY_TICK_COUNT = "tickCount";
         private static final String KEY_MAX = "max";
-        private static final String KEY_min = "min";
+        private static final String KEY_MIN = "min";
+        private static final String KEY_TICK = "tick";
+        private static final String KEY_NICE = "nice";
 
         public ScaleConfigBuilder type(String type) {
-            setOption(KEY_TYPE, type);
-            return this;
+            return setOption(KEY_TYPE, type);
         }
 
         public ScaleConfigBuilder precision(int precision) {
-            setOption(KEY_PRECISION, precision);
-            return this;
+            return setOption(KEY_PRECISION, precision);
         }
 
         public ScaleConfigBuilder range(double range[]) {
@@ -237,176 +306,147 @@ public class F2Chart {
                 }
             } catch (Exception e) {
             }
-            setOption(KEY_RANGE, array);
-            return this;
+            return setOption(KEY_RANGE, array);
+        }
+
+        public ScaleConfigBuilder range(JSONArray jsonArray) {
+            return setOption(KEY_RANGE, jsonArray);
         }
 
         public ScaleConfigBuilder tickCount(int tickCount) {
-            setOption(KEY_TICK_COUNT, tickCount);
-            return this;
+            return setOption(KEY_TICK_COUNT, tickCount);
         }
 
         public ScaleConfigBuilder max(double max) {
-            setOption(KEY_MAX, max);
-            return this;
+            return setOption(KEY_MAX, max);
         }
 
         public ScaleConfigBuilder min(double min) {
-            setOption(KEY_min, min);
-            return this;
+            return setOption(KEY_MIN, min);
+        }
+
+        public ScaleConfigBuilder tick(F2Chart chart, F2Function function) {
+            return setOption(KEY_TICK, chart, function);
+        }
+
+        public ScaleConfigBuilder nice(boolean nice) {
+            return setOption(KEY_NICE, nice);
         }
     }
 
-    public static class AxisGridConfigBuilder extends F2Config.Builder {
+    public static class AxisGridConfigBuilder extends F2Config.Builder<AxisGridConfigBuilder> {
         private static final String KEY_TYPE = "type";
         private static final String KEY_LINE_WIDTH = "lineWidth";
         private static final String KEY_STROKE = "stroke";
         private static final String KEY_LINE_DASH = "lineDash";
 
         public AxisGridConfigBuilder type(String type) {
-            setOption(KEY_TYPE, type);
-            return this;
+            return setOption(KEY_TYPE, type);
         }
 
         public AxisGridConfigBuilder lineWidth(float lineWidth) {
-            setOption(KEY_LINE_WIDTH, lineWidth);
-            return this;
+            return setOption(KEY_LINE_WIDTH, lineWidth);
         }
 
         public AxisGridConfigBuilder stroke(String color) {
-            setOption(KEY_STROKE, color);
-            return this;
+            return setOption(KEY_STROKE, color);
         }
 
         public AxisGridConfigBuilder lineDash(double[] dashParam) {
-            setOption(KEY_LINE_DASH, dashParam);
-            return this;
+            return setOption(KEY_LINE_DASH, dashParam);
         }
     }
 
-    public static class AxisLineConfigBuilder extends F2Config.Builder {
+    public static class AxisLineConfigBuilder extends F2Config.Builder<AxisLineConfigBuilder> {
         private static final String KEY_TYPE = "type";
         private static final String KEY_LINE_WIDTH = "lineWidth";
         private static final String KEY_COLOR = "color";
 
         public AxisLineConfigBuilder type(String type) {
-            setOption(KEY_TYPE, type);
-            return this;
+            return setOption(KEY_TYPE, type);
         }
 
         public AxisLineConfigBuilder lineWidth(float lineWidth) {
-            setOption(KEY_LINE_WIDTH, lineWidth);
-            return this;
+            return setOption(KEY_LINE_WIDTH, lineWidth);
         }
 
         public AxisLineConfigBuilder color(String color) {
-            setOption(KEY_COLOR, color);
-            return this;
+            return setOption(KEY_COLOR, color);
         }
     }
 
-    public static class AxisLabelConfigBuilder extends TextConfigBuilder {
+    public static class AxisLabelConfigBuilder extends TextConfigBuilder<AxisLabelConfigBuilder> {
 
         private static final String KEY_LABEL_MARGIN = "labelMargin";
         private static final String KEY_LABEL_OFFSET = "labelOffset";
-
-        @Override
-        public AxisLabelConfigBuilder textColor(String color) {
-            super.textColor(color);
-            return this;
-        }
-
-        @Override
-        public AxisLabelConfigBuilder textSize(float textSize) {
-            super.textSize(textSize);
-            return this;
-        }
-
-        @Override
-        public AxisLabelConfigBuilder textAlign(String textAlign) {
-            super.textAlign(textAlign);
-            return this;
-        }
-
-        @Override
-        public AxisLabelConfigBuilder textBaseline(String textBaseline) {
-            super.textBaseline(textBaseline);
-            return this;
-        }
+        private static final String KEY_LABEL_ITEM = "item";
 
         public AxisLabelConfigBuilder labelMargin(float labelMargin) {
-            setOption(KEY_LABEL_MARGIN, labelMargin);
-            return this;
+            return setOption(KEY_LABEL_MARGIN, labelMargin);
         }
 
         public AxisLabelConfigBuilder labelOffset(float labelOffset) {
-            setOption(KEY_LABEL_OFFSET, labelOffset);
-            return this;
+            return setOption(KEY_LABEL_OFFSET, labelOffset);
+        }
+
+        public AxisLabelConfigBuilder item(F2Chart chart, F2Function function) {
+            return setOption(KEY_LABEL_ITEM, chart, function);
         }
     }
 
-    public static class AxisConfigBuilder extends F2Config.Builder {
+    public static class AxisConfigBuilder extends F2Config.Builder<AxisConfigBuilder> {
         private static final String KEY_LABEL = "label";
         private static final String KEY_GRID = "grid";
         private static final String KEY_LINE = "line";
         private static final String KEY_HIDDEN = "hidden";
 
         public AxisConfigBuilder label(AxisLabelConfigBuilder builder) {
-            setOption(KEY_LABEL, builder.options);
-            return this;
+            return setOption(KEY_LABEL, builder.options);
         }
 
         public AxisConfigBuilder labelHidden() {
-            setOption(KEY_LABEL, false);
-            return this;
+            return setOption(KEY_LABEL, false);
         }
 
         public AxisConfigBuilder line(AxisLineConfigBuilder builder) {
-            setOption(KEY_LINE, builder.options);
-            return this;
+            return setOption(KEY_LINE, builder.options);
         }
 
         public AxisConfigBuilder lineHidden() {
-            setOption(KEY_LINE, false);
-            return this;
+            return setOption(KEY_LINE, false);
         }
 
         public AxisConfigBuilder grid(AxisGridConfigBuilder builder) {
-            setOption(KEY_GRID, builder.options);
-            return this;
+            return setOption(KEY_GRID, builder.options);
         }
 
         public AxisConfigBuilder gridHidden() {
-            setOption(KEY_GRID, false);
-            return this;
+            return setOption(KEY_GRID, false);
         }
 
-        public AxisConfigBuilder hidden(boolean hidden) {
-            setOption(KEY_HIDDEN, hidden);
-            return this;
+        public AxisConfigBuilder hidden() {
+            return setOption(KEY_HIDDEN, true);
         }
     }
 
-    public static class CoordConfigBuilder extends F2Config.Builder {
+    public static class CoordConfigBuilder extends F2Config.Builder<CoordConfigBuilder> {
         private static final String KEY_TRANSPOSED = "transposed";
-        private static final String KEY_TYPE= "type";
+        private static final String KEY_TYPE = "type";
 
         public CoordConfigBuilder transposed(boolean transposed) {
-            setOption(KEY_TRANSPOSED, transposed);
-            return this;
+            return setOption(KEY_TRANSPOSED, transposed);
         }
 
         public CoordConfigBuilder type(String type) {
-            setOption(KEY_TYPE, type);
-            return this;
+            return setOption(KEY_TYPE, type);
         }
     }
 
-    public static class ToolTipConfigBuilder extends F2Config.Builder {
+    public static class ToolTipConfigBuilder extends F2Config.Builder<ToolTipConfigBuilder> {
 
     }
 
-    public static class LegendConfigBuild extends F2Config.Builder {
+    public static class LegendConfigBuild extends F2Config.Builder<LegendConfigBuild> {
         private static final String KEY_SYMBOL = "symbol";
         private static final String KEY_ENABLE = "enable";
         private static final String KEY_POSITION = "position";
@@ -415,45 +455,32 @@ public class F2Chart {
         private static final String KEY_ITEM_MARGIN_BOTTOM = "itemMarginBottom";
         private static final String KEY_WORD_SPACE = "wordSpace";
 
-        @Override
-        public LegendConfigBuild setOption(String key, int value) {
-            super.setOption(key, value);
-            return this;
-        }
-
         public LegendConfigBuild symbol(String symbol) {
-            setOption(KEY_SYMBOL, symbol);
-            return this;
+            return setOption(KEY_SYMBOL, symbol);
         }
 
         public LegendConfigBuild enable(boolean enable) {
-            setOption(KEY_ENABLE, enable);
-            return this;
+            return setOption(KEY_ENABLE, enable);
         }
 
         public LegendConfigBuild position(String position) {
-            setOption(KEY_POSITION, position);
-            return this;
+            return setOption(KEY_POSITION, position);
         }
 
         public LegendConfigBuild layout(String layout) {
-            setOption(KEY_LAYOUT, layout);
-            return this;
+            return setOption(KEY_LAYOUT, layout);
         }
 
         public LegendConfigBuild lineBottom(double lineBottom) {
-            setOption(KEY_LINE_BOTTOM, lineBottom);
-            return this;
+            return setOption(KEY_LINE_BOTTOM, lineBottom);
         }
 
         public LegendConfigBuild wordSpace(double wordSpace) {
-            setOption(KEY_WORD_SPACE, wordSpace);
-            return this;
+            return setOption(KEY_WORD_SPACE, wordSpace);
         }
 
         public LegendConfigBuild itemMarginBottom(double itemMarginBottom) {
-            setOption(KEY_ITEM_MARGIN_BOTTOM, itemMarginBottom);
-            return this;
+            return setOption(KEY_ITEM_MARGIN_BOTTOM, itemMarginBottom);
         }
     }
 

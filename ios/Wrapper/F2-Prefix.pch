@@ -1,0 +1,3 @@
+
+#define TARGET_STANDALONE 1
+

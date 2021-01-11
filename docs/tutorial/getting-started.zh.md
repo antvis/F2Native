@@ -7,7 +7,7 @@ redirect_from:
 
 ## 安装
 
-### 倒入依赖
+### 导入依赖
 1. 执行 git submodule init && git submodule update 拉取关联仓库源码
 2. android 编译需配置好本地 NDK 环境
 
@@ -27,12 +27,12 @@ sh build_gcanvas_android.sh
 
 2. 构建 F2Native
 ```shell
-./gradlew :android:f2native:assemble
+./gradlew :android:f2native:assembleStandalone
 ```
 
 3. 运行 Demo 程序
 ```shell
-./gradlew :android:sample:installD
+./gradlew :android:sample:installStandaloneDebug
 ```
 
 ## 一分钟上手

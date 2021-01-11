@@ -37,10 +37,18 @@ class Group : public Element {
 
     std::size_t Size() { return children_.size(); }
 
+    void Translate(float x, float y) override;
+    void Rotate(float rad) override;
+    void Scale(float sx, float sy) override;
+    void MoveTo(float x, float y) override;
+    void Apply(Vector2D *v) override;
+
+    Group *AddGroup();
+
   protected:
     virtual void DrawInner(canvas::CanvasContext &context) const override;
 
-  protected:
+  public:
     vector<std::unique_ptr<Element>> children_;
 };
 } // namespace shape

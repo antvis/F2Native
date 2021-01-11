@@ -12,11 +12,11 @@ class Pan : public InteractionBase {
   public:
     Pan(XChart *chart);
 
-    void OnPanStart(event::Event &event);
+    bool OnPanStart(event::Event &event);
 
-    void OnPan(event::Event &event);
+    bool OnPan(event::Event &event);
 
-    // void onPanEnd(event::Event &event);
+    bool onPanEnd(event::Event &event);
 };
 } // namespace interaction
 } // namespace xg

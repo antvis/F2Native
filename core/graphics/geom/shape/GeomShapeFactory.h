@@ -19,6 +19,8 @@ class GeomShapeFactory final {
     GeomShapeFactory() {}
     ~GeomShapeFactory() { geomShapes_.clear(); }
 
+    void Clear() { geomShapes_.clear(); }
+
     // geomType: line/interval/point 等
     void RegisterGeomShape(std::string geomType, std::unique_ptr<GeomShapeBase> geomShape);
 

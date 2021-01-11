@@ -18,7 +18,7 @@ class Identity : public AbstractScale {
 
     void Change(const nlohmann::json &cfg = {}) override {}
 
-    double Scale(const nlohmann::json &key) const override {
+    double Scale(const nlohmann::json &key) override {
         if(values.size() > 0 && key.is_number() && values[0] == key) {
             return key;
         }

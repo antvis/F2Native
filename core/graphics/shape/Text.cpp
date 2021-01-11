@@ -6,7 +6,7 @@ xg::shape::Text::Text(const string &text, const Point &pt, const float fontSize,
     canStroke_ = true;
     type_ = "text";
     lineWidth_ = std::nan("0");
-    pt_ = pt;
+    point_ = pt;
     fontSize_ = fontSize;
     stroke_ = strokeColor;
     fill_ = fillColor;
@@ -20,7 +20,7 @@ xg::shape::Text::Text(const string &text, const Point &pt, const float fontSize,
 }
 
 void xg::shape::Text::DrawInner(canvas::CanvasContext &context) const {
-    if(std::isnan(pt_.x) || std::isnan(pt_.y)) {
+    if(std::isnan(point_.x) || std::isnan(point_.y)) {
         return;
     }
 
@@ -31,28 +31,28 @@ void xg::shape::Text::DrawInner(canvas::CanvasContext &context) const {
         if(textArr_.size()) {
             float spaceingY = GetSpacingY();
             float height = GetTextHeight();
-            for(int i = 0; i < textArr_.size(); ++i) {
-                float subY = pt_.y + i * (spaceingY + fontSize_) - height + fontSize_;
+            for(std::size_t i = 0; i < textArr_.size(); ++i) {
+                float subY = point_.y + i * (spaceingY + fontSize_) - height + fontSize_;
                 if(textBaseline_ == "middle") {
                     subY += height - fontSize_ - (height - fontSize_) / 2;
                 } else if(textBaseline_ == "top") {
                     subY += height - fontSize_;
                 }
-                context.FillText(textArr_[i], pt_.x, subY);
+                context.FillText(textArr_[i], point_.x, subY);
             }
         } else {
-            context.FillText(text_, pt_.x, pt_.y);
+            context.FillText(text_, point_.x, point_.y);
         }
     }
 }
 
 BBox xg::shape::Text::CalculateBox(canvas::CanvasContext &context) const {
     if(text_.empty()) {
-        return { static_cast<float>(std::nan("0")) };
+        return {static_cast<float>(std::nan("0"))};
     } else {
         const float height = GetTextHeight();
         const float width = GetTextWidth(context);
-        Point point(pt_.x, pt_.y - height);
+        Point point(point_.x, point_.y - height);
         if(textAlign_ == "end" || textAlign_ == "right") {
             point.x -= width;
         } else if(textAlign_ == "center") {
@@ -64,14 +64,14 @@ BBox xg::shape::Text::CalculateBox(canvas::CanvasContext &context) const {
         } else if(textBaseline_ == "middle") {
             point.y += height / 2;
         }
-        return { static_cast<float>(point.x),
-                 static_cast<float>(point.x + width),
-                 static_cast<float>(point.y),
-                 static_cast<float>(point.y + height),
-                 width,
-                 height,
-                 static_cast<float>(pt_.x),
-                 static_cast<float>(pt_.y) };
+        return {static_cast<float>(point.x),
+                static_cast<float>(point.x + width),
+                static_cast<float>(point.y),
+                static_cast<float>(point.y + height),
+                width,
+                height,
+                static_cast<float>(point_.x),
+                static_cast<float>(point_.y)};
     }
 }
 

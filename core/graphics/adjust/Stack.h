@@ -23,7 +23,7 @@ class Stack {
                 std::string xkey = item[xField];
                 auto y = item[yField];
                 double y_d = y.is_array() ? y[1] : y;
-                if(!isnan(y)) {
+                if(y.is_number()) {
                     if(y >= XG_EPS) {
                         item[yField] = {positive[xkey], static_cast<float>(y_d + positive[xkey])};
                         positive[xkey] = y_d + positive[xkey];

@@ -7,22 +7,22 @@ namespace xg {
 namespace shape {
 
 class Circle : public Shape {
-    public:
-    Circle(const util::Point &center, const float radius, std::string fill) : point_(center), radius_(radius) {
+  public:
+    Circle(const util::Point &center, const float radius, std::string fill) : radius_(radius) {
         type_ = "circle";
+        point_ = center;
         canFill_ = true;
         canStroke_ = true;
         fill_ = fill;
         stroke_ = fill;
     }
 
-    //    BBox CalculateBox(canvas::CanvasContext &context) const override;
+    BBox CalculateBox(canvas::CanvasContext &context) const override;
 
-    protected:
+  protected:
     void CreatePath(canvas::CanvasContext &context) const override;
 
-    public:
-    util::Point point_;
+  public:
     float radius_;
 };
 

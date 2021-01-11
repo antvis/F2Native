@@ -25,7 +25,7 @@ class Area : public GeomShapeBase {
         vector<xg::util::Point> topPoints;
         vector<xg::util::Point> bottomPoints;
 
-        for(int i = 0; i < size; i++) {
+        for(std::size_t i = 0; i < size; i++) {
             const nlohmann::json &item = data[i];
             const nlohmann::json &points = item["_points"];
             util::Point bottom{points[0]["x"], points[0]["y"]};

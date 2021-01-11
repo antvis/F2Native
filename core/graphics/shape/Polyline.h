@@ -9,17 +9,17 @@ namespace xg {
 namespace shape {
 
 class Polyline : public Shape {
-    public:
+  public:
     Polyline(const float lineWidth, const vector<util::Point> &, const string &strokeColor, const string &fillColor, const bool smooth);
 
     BBox CalculateBox(canvas::CanvasContext &context) const override;
 
     void SetDashLine(const std::vector<float> &params) { this->dash_ = params; }
 
-    protected:
+  protected:
     void CreatePath(canvas::CanvasContext &context) const override;
 
-    private:
+  private:
     vector<xg::util::Point> points_;
     bool smooth_ = false;
 

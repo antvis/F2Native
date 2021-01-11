@@ -52,7 +52,7 @@ class Line : public GeomShapeBase {
             vector<xg::util::Point> topPoints;
             vector<xg::util::Point> bottomPoints;
 
-            for(int i = 0; i < size; i++) {
+            for(std::size_t i = 0; i < size; i++) {
                 const nlohmann::json &item = data[i];
                 double x = item["_x"];
                 const nlohmann::json &yVal = item["_y"];
@@ -83,7 +83,7 @@ class Line : public GeomShapeBase {
         vector<xg::util::Point> points;
 
         // todo 这里有一个判断 如果线是循环的 会将第一个点复制成新点插入队尾 形成循环 目前没有这个判断 后续添加
-        for(int i = 0; i < size; i++) {
+        for(std::size_t i = 0; i < size; i++) {
             const nlohmann::json &item = data[i];
             points.push_back(util::Point(item["_x"], item["_y"]));
         }

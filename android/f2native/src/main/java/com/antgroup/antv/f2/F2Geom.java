@@ -77,6 +77,18 @@ public class F2Geom {
         return this;
     }
 
+    public F2Geom style(final F2Config config) {
+        mF2Chart.assertRenderThread();
+        mF2Chart.getChartProxy().setGeomStyle(this, config.toJsonString());
+        return this;
+    }
+
+    public F2Geom style(final String jsonConfig) {
+        mF2Chart.assertRenderThread();
+        mF2Chart.getChartProxy().setGeomStyle(this, jsonConfig);
+        return this;
+    }
+
     public static class Line extends F2Geom {
 
         Line(F2Chart chart, long nativeGeomHandler, String type) {
@@ -86,6 +98,12 @@ public class F2Geom {
 
     public static class Area extends F2Geom {
         Area(F2Chart chart, long nativeGeomHandler, String type) {
+            super(chart, nativeGeomHandler, type);
+        }
+    }
+
+    public static class Point extends F2Geom {
+        Point(F2Chart chart, long nativeGeomHandler, String type) {
             super(chart, nativeGeomHandler, type);
         }
     }
@@ -136,9 +154,9 @@ public class F2Geom {
             return this;
         }
 
-        public Interval style(final F2Config config) {
+        public Interval tag(final String jsonConfig) {
             mF2Chart.assertRenderThread();
-            mF2Chart.getChartProxy().setGeomIntervalStyle(Interval.this, config.toJsonString());
+            mF2Chart.getChartProxy().setGeomIntervalTag(Interval.this, jsonConfig);
             return this;
         }
     }

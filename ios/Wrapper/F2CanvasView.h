@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)drawFrame;
 
 /// render canvas
-- (void)display;
+- (void)display:(long)startTime  withInfo:(NSString *)info;
 
 /// get c++ canvas obj
 - (void *)gcanvas;

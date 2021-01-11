@@ -46,15 +46,15 @@ class Axis final {
 
 class AxisController {
   public:
-    AxisController() {}
+    AxisController(shape::Group *_container) : container_(_container) {}
 
-    ~AxisController() {}
+    ~AxisController() { container_ = nullptr; }
 
-    void DrawAxes(XChart *chart, shape::Group *container, canvas::CanvasContext &context);
+    void DrawAxes(XChart *chart, canvas::CanvasContext &context);
 
     void SetFieldConfig(std::string field, nlohmann::json config = {}) { axisConfig_[field] = MergeDefaultConfig(config); }
 
-    void Clear() { axes.clear(); }
+    void Clear();
 
   protected:
     static nlohmann::json MergeDefaultConfig(const nlohmann::json &config) {
@@ -94,11 +94,11 @@ class AxisController {
     void InitAxis(XChart &chart, const std::string &field, const std::string &dimType, const std::string &verticalField);
     void InitAxisConfig(XChart &chart);
 
-    void DrawAxis(XChart &chart, std::unique_ptr<Axis> &axis, shape::Group &container, canvas::CanvasContext &context);
+    void DrawAxis(XChart &chart, std::unique_ptr<Axis> &axis, canvas::CanvasContext &context);
 
-    void DrawLabel(XChart &chart, std::unique_ptr<Axis> &axis, shape::Group &group, canvas::CanvasContext &context);
+    void DrawLabel(XChart &chart, std::unique_ptr<Axis> &axis, canvas::CanvasContext &context);
 
-    void DrawLine(std::array<util::Point, 2> &&line, const nlohmann::json &lineCfg, shape::Group &container);
+    void DrawLine(std::array<util::Point, 2> &&line, const nlohmann::json &lineCfg);
 
     util::Point GetOffsetPoint(std::unique_ptr<Axis> &axis, double value) {
         util::Point point;
@@ -180,6 +180,7 @@ class AxisController {
   private:
     std::vector<std::unique_ptr<Axis>> axes;
     nlohmann::json axisConfig_;
+    shape::Group *container_ = nullptr;
 };
 } // namespace axis
 } // namespace xg

@@ -75,8 +75,24 @@
     self.canvas->drawFrame();
 }
 
-- (void)display {
+- (void)display:(long)startTime  withInfo:(NSString *)info {
+    long duration = [[NSDate date] timeIntervalSince1970]*1000 - startTime;
     [self.env swapBuffers];
+    
+    @try {
+        NSData *jsonData = [info dataUsingEncoding:NSUTF8StringEncoding];
+        NSError *err;
+        NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:jsonData
+                                                            options:NSJSONReadingMutableContainers
+                                                              error:&err];
+        NSString *color = @"noraml";
+        if ([dic[@"cmdCount"] intValue] <= 0) {
+            color = @"white";
+        }
+        [self logPerformance:[NSString stringWithFormat:@"%ld", duration] color:color cmdCount:[[dic objectForKey:@"cmdCount"] intValue]];
+    } @catch (NSException *exception) {
+        
+    }
 }
 
 + (Class)layerClass {
@@ -88,5 +104,10 @@
         [self.delegate handleGestureInfo:info];
     }
 }
+
+-(void)logPerformance:(NSString *)duration color:(NSString *)color cmdCount:(int)cmdCount{
+    NSLog(@"logPerformance: duration:%@,color:%@, cmdCoun%d",duration,color,cmdCount);
+}
+
 
 @end

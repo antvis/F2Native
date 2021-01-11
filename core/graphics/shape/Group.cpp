@@ -13,7 +13,7 @@ const BBox &xg::shape::Group::GetBBox(canvas::CanvasContext &context) {
     float maxX = FLT_MIN;
     float minY = FLT_MAX;
     float maxY = FLT_MIN;
-    for(int i = 0; i < children_.size(); ++i) {
+    for(std::size_t i = 0; i < children_.size(); ++i) {
         const std::unique_ptr<Element> &child = children_[i];
         if(!child->IsVisible()) {
             continue;
@@ -57,4 +57,42 @@ const BBox &xg::shape::Group::GetBBox(canvas::CanvasContext &context) {
 void xg::shape::Group::Destroy() {
     Element::Destroy();
     children_.clear();
+}
+
+void xg::shape::Group::Translate(float x, float y) {
+    if(!this->IsVisible())
+        return;
+    std::for_each(children_.begin(), children_.end(),
+                  [&](std::unique_ptr<Element> &element) -> void { element->Translate(x, y); });
+}
+
+void xg::shape::Group::Rotate(float rad) {
+    if(!this->IsVisible())
+        return;
+    std::for_each(children_.begin(), children_.end(), [&](std::unique_ptr<Element> &element) -> void { element->Rotate(rad); });
+}
+
+void xg::shape::Group::Scale(float sx, float sy) {
+    if(!this->IsVisible())
+        return;
+    std::for_each(children_.begin(), children_.end(), [&](std::unique_ptr<Element> &element) -> void { element->Scale(sx, sy); });
+}
+
+void xg::shape::Group::MoveTo(float x, float y) {
+    if(!this->IsVisible())
+        return;
+    std::for_each(children_.begin(), children_.end(), [&](std::unique_ptr<Element> &element) -> void { element->MoveTo(x, y); });
+}
+
+void xg::shape::Group::Apply(Vector2D *v) {
+    if(!this->IsVisible())
+        return;
+    std::for_each(children_.begin(), children_.end(), [&](std::unique_ptr<Element> &element) -> void { element->Apply(v); });
+}
+
+xg::shape::Group *xg::shape::Group::AddGroup() {
+    auto g = std::make_unique<xg::shape::Group>();
+    xg::shape::Group *gp = g.get();
+    this->AddElement(std::move(g));
+    return gp;
 }

@@ -171,16 +171,16 @@ void legend::LegendController::AddLegend(XChart &chart, const std::string &field
 }
 
 void legend::LegendController::SetFieldConfig(std::string field, nlohmann::json cfg) {
-    if(cfg["position"].is_string()) {
+    if(cfg.contains("position") && cfg["position"].is_string()) {
         position_ = cfg["position"];
     }
-    if(cfg["enable"].is_boolean()) {
+    if(cfg.contains("enable") && cfg["enable"].is_boolean()) {
         enable_ = cfg["enable"];
     }
     legendCfg_[field] = cfg;
 }
 
-void legend::LegendController::Render(XChart &chart, shape::Group *container) {
+void legend::LegendController::Render(XChart &chart) {
     if(!this->enable_)
         return;
 
@@ -220,7 +220,7 @@ void legend::LegendController::Render(XChart &chart, shape::Group *container) {
     for(size_t i = 0; i < legends.size(); i++) {
         Legend &legend = legends[i];
         Point originPoint = legend.AlignLegend(chart, position_, legendHeight_, legendWidth_);
-        legend.CreateShape(chart, container, originPoint);
+        legend.CreateShape(chart, container_, originPoint);
     }
 
     // calculate legend range
@@ -250,6 +250,41 @@ void legend::LegendController::OnToolTipMarkerItemsChanged(nlohmann::json &items
         return;
 
     markerItems_ = items;
+
+    std::vector<Legend> &legends = legends_[position_];
+
+    for(size_t i = 0; i < legends.size(); i++) {
+        Legend &legend = legends[i];
+        if(markerItems_.empty() || markerItems_.size() != legend.legendItems_.size()) {
+            for(std::size_t index = 0; index < legend.legendItems_.size(); ++index) {
+                legend.legendItems_[index].value = "";
+            }
+            continue;
+        }
+
+        for(std::size_t index = 0; index < legend.legendItems_.size(); ++index) {
+            nlohmann::json &item = markerItems_[index];
+            LegendItem &lengedItem = legend.legendItems_[index];
+            if(item.contains("name") && item.contains("value") && lengedItem.name == item["name"]) {
+                lengedItem.value = item["value"];
+            }
+        }
+    }
 }
 
-void legend::LegendController::ClearInner() { legends_.clear(); }
+void legend::LegendController::Redraw(XChart &chart) {
+    container_->Clear();
+
+    // draw
+    std::vector<Legend> &legends = legends_[position_];
+    for(size_t i = 0; i < legends.size(); i++) {
+        Legend &legend = legends[i];
+        Point originPoint = legend.AlignLegend(chart, position_, legendHeight_, legendWidth_);
+        legend.CreateShape(chart, container_, originPoint);
+    }
+}
+
+void legend::LegendController::ClearInner() {
+    container_->Clear();
+    legends_.clear();
+}

@@ -27,7 +27,7 @@ class Interval : public GeomShapeBase {
         const nlohmann::json &_points = data["_points"];
 
         std::vector<util::Point> points;
-        for(int i = 0; i < _points.size(); ++i) {
+        for(std::size_t i = 0; i < _points.size(); ++i) {
             const nlohmann::json &item = _points[i];
             util::Point p = this->ParsePoint(coord, util::Point(item["x"], item["y"]));
             points.push_back(std::move(p));
@@ -39,7 +39,7 @@ class Interval : public GeomShapeBase {
         }
         // 扇形
         if(shapeType == "sector") {
-            std::vector<Point> newPoints = points;
+            std::vector<util::Point> newPoints = points;
             if(coord.IsTransposed()) {
                 newPoints = {points[0], points[3], points[2], points[1]};
             }

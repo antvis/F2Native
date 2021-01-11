@@ -31,8 +31,8 @@ public class SingleIntervalChart_3 implements F2CanvasView.Adapter {
                 .label(new F2Chart.AxisLabelConfigBuilder().labelOffset(5))
                 .grid(new F2Chart.AxisGridConfigBuilder().type("dash"))
                 .line(new F2Chart.AxisLineConfigBuilder().lineWidth(1).color("#E6E6E6").type("dash")));
-        mChart.setAxis("", new F2Chart.AxisConfigBuilder().hidden(true));
         mChart.setScale("year", new F2Chart.ScaleConfigBuilder().range(new double[]{0.1, 0.9}));
+        mChart.setScale("sales", new F2Chart.ScaleConfigBuilder().nice(true));
 
         mChart.render();
     }

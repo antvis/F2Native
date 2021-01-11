@@ -40,6 +40,8 @@ public class F2CanvasView extends TextureView implements TextureView.SurfaceText
     private NativeCanvasHolder mCanvasHolder;
     private Surface surface;
 
+    private F2CanvasHandle mCanvasHandle = null;
+
     // 反射系统字段
     private static Field fieldUpdateLayer;
     private static Field fieldUpdateListener;
@@ -69,6 +71,7 @@ public class F2CanvasView extends TextureView implements TextureView.SurfaceText
 
     private Adapter mAdapter;
     private OnCanvasTouchListener mOnCanvasTouchListener;
+    private boolean isTouchProcessing = false;
 
     private CanvasListener mCanvasListener;
 
@@ -146,12 +149,20 @@ public class F2CanvasView extends TextureView implements TextureView.SurfaceText
     }
 
     @Override
-    public boolean onTouchEvent(final MotionEvent event) {
+    public boolean onTouchEvent(MotionEvent event) {
         if (mOnCanvasTouchListener != null) {
+            final MotionEvent copyEvent = MotionEvent.obtain(event);
+            if (event.getActionMasked() == MotionEvent.ACTION_DOWN && isTouchProcessing) {
+                return true;
+            }
             mCanvasHolder.runOnRenderThread(new Runnable() {
                 @Override
                 public void run() {
-                    mOnCanvasTouchListener.onTouch(F2CanvasView.this, new TouchEvent(F2CanvasView.this, event));
+                    isTouchProcessing = true;
+                    if (mOnCanvasTouchListener != null) {
+                        mOnCanvasTouchListener.onTouch(F2CanvasView.this, new TouchEvent(F2CanvasView.this, copyEvent));
+                    }
+                    isTouchProcessing = false;
                 }
             });
 
@@ -163,7 +174,8 @@ public class F2CanvasView extends TextureView implements TextureView.SurfaceText
     }
 
     public void postCanvasDraw() {
-        if (!hasCallInitCanvas || mCanvasHolder == null || mAdapter == null || surface == null) return;
+        if (!hasCallInitCanvas || mCanvasHolder == null || mAdapter == null || surface == null)
+            return;
         mCanvasHolder.runOnRenderThread(new Runnable() {
             @Override
             public void run() {
@@ -185,7 +197,7 @@ public class F2CanvasView extends TextureView implements TextureView.SurfaceText
     }
 
     private void callInitCanvas(Context context, F2Config config) {
-        if (hasCallInitCanvas)  {
+        if (hasCallInitCanvas) {
             return;
         }
 
@@ -204,6 +216,10 @@ public class F2CanvasView extends TextureView implements TextureView.SurfaceText
         if (mCanvasHolder != null) {
             innerLog("#onSurfaceReady call holder.initCanvasContext");
             mCanvasHolder.initCanvasContext();
+        }
+
+        if (mCanvasHandle == null) {
+            mCanvasHandle = new F2CanvasHandle(mCanvasHolder);
         }
 
         if (mAdapter != null) {
@@ -225,6 +241,10 @@ public class F2CanvasView extends TextureView implements TextureView.SurfaceText
 
     final void onCanvasDestroyed() {
         setSurfaceTextureListener(null);
+    }
+
+    final boolean isOnCanvasThread() {
+        return mCanvasHolder != null && mCanvasHolder.isOnRenderThread();
     }
 
     @Override
@@ -284,16 +304,25 @@ public class F2CanvasView extends TextureView implements TextureView.SurfaceText
 
     public void destroy() {
         innerLog("#destroy");
+        if (mCanvasHolder != null) {
+            mCanvasHolder.destroy(new Runnable() {
+                @Override
+                public void run() {
+                    innerDestroy();
+                }
+            });
+        } else {
+            innerDestroy();
+        }
+
+        mOnCanvasTouchListener = null;
+    }
+
+    private void innerDestroy() {
         if (mAdapter != null) {
             mAdapter.onDestroy();
         }
-
-        if (mCanvasHolder != null) {
-            mCanvasHolder.destroy();
-        }
-
         mAdapter = null;
-        mOnCanvasTouchListener = null;
     }
 
     public void swapBuffer() {
@@ -301,6 +330,10 @@ public class F2CanvasView extends TextureView implements TextureView.SurfaceText
         if (mCanvasHolder != null) {
             mCanvasHolder.swapBuffer();
         }
+    }
+
+    public F2CanvasHandle getCanvasHandle() {
+        return mCanvasHandle;
     }
 
     protected void setCanvasFrameWaitToDraw(boolean v) {
@@ -332,15 +365,16 @@ public class F2CanvasView extends TextureView implements TextureView.SurfaceText
         canvasFrameUpdateFinishRunnable.run();
     }
 
-    final NativeCanvasHolder getCanvasHolder() {
-        return mCanvasHolder;
+
+    final long getNativeCanvas() {
+        return mCanvasHolder == null ? 0 : mCanvasHolder.getNativeCanvasProxy().mNativeViewHandle;
     }
 
     private void innerLog(String content) {
         if (mCanvasHolder == null) {
-            F2Log.i("F2NativeView|uninited", content);
+            F2Log.i("F2CanvasView|uninited", content);
         } else {
-            F2Log.i("F2NativeView|" + mCanvasHolder.getCanvasOptions().getStringField(F2Constants.CANVAS_ID), content);
+            F2Log.i("F2CanvasView|" + mCanvasHolder.getCanvasOptions().getStringField(F2Constants.CANVAS_ID), content);
         }
     }
 
@@ -437,6 +471,372 @@ public class F2CanvasView extends TextureView implements TextureView.SurfaceText
         }
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            innerDestroy();
+        } catch (Exception e) {
+        } finally {
+            super.finalize();
+        }
+    }
+
+    public final static class F2CanvasHandle {
+        private NativeCanvasHolder mHolder = null;
+
+        private F2CanvasHandle(NativeCanvasHolder holder) {
+            mHolder = holder;
+        }
+
+        public void setFillStyle(String style) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nSetFillStyle(getNativeHandle(), style);
+            }
+        }
+
+        public void setStrokeStyle(String style) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nSetStrokeStyle(getNativeHandle(), style);
+            }
+        }
+
+        public void rect(int x, int y, int width, int height) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nRect(getNativeHandle(), x, y, width, height);
+            }
+        }
+
+        public void fillRect(int x, int y, int width, int height) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nFillRect(getNativeHandle(), x, y, width, height);
+            }
+        }
+
+        public void strokeRect(int x, int y, int width, int height) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nStrokeRect(getNativeHandle(), x, y, width, height);
+            }
+        }
+
+        public void clearRect(int x, int y, int width, int height) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nClearRect(getNativeHandle(), x, y, width, height);
+            }
+        }
+
+        public void fill() {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nFill(getNativeHandle());
+            }
+        }
+
+        public void stroke() {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nStroke(getNativeHandle());
+            }
+        }
+
+        public void beginPath() {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nBeginPath(getNativeHandle());
+            }
+        }
+
+        public void moveTo(float x, float y) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nMoveTo(getNativeHandle(), x, y);
+            }
+        }
+
+        public void closePath() {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nClosePath(getNativeHandle());
+            }
+        }
+
+        public void lineTo(float x, float y) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nLineTo(getNativeHandle(), x, y);
+            }
+        }
+
+        public void clip() {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nClip(getNativeHandle());
+            }
+        }
+
+        public void quadraticCurveTo(float cpx, float cpy, float x, float y) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nQuadraticCurveTo(getNativeHandle(), cpx, cpy, x, y);
+            }
+        }
+
+        public void bezierCurveTo(float cp1x, float cp1y, float cp2x, float cp2y, float x, float y) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nBezierCurveTo(getNativeHandle(), cp1x, cp1y, cp2x, cp2y, x, y);
+            }
+        }
+
+        public void arc(float x, float y, float r, float sAngle, float eAngle, boolean antiClockwise) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nArc(getNativeHandle(), x, y, r, sAngle, eAngle, antiClockwise);
+            }
+        }
+
+        public void arcTo(float x1, float y1, float x2, float y2, float r) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nArcTo(getNativeHandle(), x1, y1, x2, y2, r);
+            }
+        }
+
+        public void scale(float sw, float sh) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nScale(getNativeHandle(), sw, sh);
+            }
+        }
+
+        public void rotate(float angle) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nRotate(getNativeHandle(), angle);
+            }
+        }
+
+        public void translate(float x,float y) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nTranslate(getNativeHandle(), x, y);
+            }
+        }
+
+        public void transform(float a, float b, float c, float d, float e, float f) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nTransform(getNativeHandle(), a, b, c, d, e, f);
+            }
+        }
+
+        public void setTransform(float a, float b, float c, float d, float e, float f) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nSetTransform(getNativeHandle(), a, b, c, d, e, f);
+            }
+        }
+
+        public void setLineCap(String lineCap) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nSetLineCap(getNativeHandle(), lineCap);
+            }
+        }
+
+        public void setLineJoin(String lineJoin) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nSetLineJoin(getNativeHandle(), lineJoin);
+            }
+        }
+
+        public void setLineWidth(float lineWidth) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nSetLineWidth(getNativeHandle(), lineWidth);
+            }
+        }
+
+        public void setLineDashOffset(float lineDashOffset) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nSetLineDashOffset(getNativeHandle(), lineDashOffset);
+            }
+        }
+
+        public float[] getLineDashOffset() {
+            assertRenderThread();
+            if (checkHolder()) {
+                return NativeCanvasProxy.nGetLineDash(getNativeHandle());
+            }
+            return new float[0];
+        }
+
+        public void setMiterLimit(float miterLimit) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nSetMiterLimit(getNativeHandle(), miterLimit);
+            }
+        }
+
+        public void setFont(String font) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nSetFont(getNativeHandle(), font);
+            }
+        }
+
+        public void setTextAlign(String textAlign) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nSetTextAlign(getNativeHandle(), textAlign);
+            }
+        }
+
+        public String getTextAlign() {
+            assertRenderThread();
+            if (checkHolder()) {
+                return NativeCanvasProxy.nGetTextAlign(getNativeHandle());
+            }
+            return null;
+        }
+
+        public void setTextBaseline(String textBaseline) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nSetTextBaseline(getNativeHandle(), textBaseline);
+            }
+        }
+
+        public String getTextBaseline() {
+            assertRenderThread();
+            if (checkHolder()) {
+                return NativeCanvasProxy.nGetTextBaseline(getNativeHandle());
+            }
+            return null;
+        }
+
+        public void fillText(String text, float x, float y) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nFillText(getNativeHandle(), text, x, y);
+            }
+        }
+
+        public void fillText(String text, float x, float y, float maxWidth) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nFillText(getNativeHandle(), text, x, y, maxWidth);
+            }
+        }
+
+        public void strokeText(String text, float x, float y) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nStrokeText(getNativeHandle(), text, x, y);
+            }
+        }
+
+        public void strokeText(String text, float x, float y, float maxWidth) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nStrokeText(getNativeHandle(), text, x, y, maxWidth);
+            }
+        }
+
+        public float measureText(String text) {
+            assertRenderThread();
+            if (checkHolder()) {
+                return NativeCanvasProxy.nMeasureText(getNativeHandle(), text);
+            }
+            return 0.f;
+        }
+
+        public void setGlobalAlpha(float alpha) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nSetGlobalAlpha(getNativeHandle(), alpha);
+            }
+        }
+
+        public float getGlobalAlpha() {
+            assertRenderThread();
+            if (checkHolder()) {
+                return NativeCanvasProxy.nGetGlobalAlpha(getNativeHandle());
+            }
+            return 1.0f;
+        }
+
+        public void setGlobalCompositeOperation(String op) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nSetGlobalCompositeOperation(getNativeHandle(), op);
+            }
+        }
+
+        public void save() {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nSave(getNativeHandle());
+            }
+        }
+
+        public void restore() {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nRestore(getNativeHandle());
+            }
+        }
+
+        public void setShadowColor(String color) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nSetShadowColor(getNativeHandle(), color);
+            }
+        }
+
+        public void setShadowBlur(int v) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nSetShadowBlur(getNativeHandle(), v);
+            }
+        }
+
+        public void setShadowOffsetX(float v) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nSetShadowOffsetX(getNativeHandle(), v);
+            }
+        }
+
+        public void setShadowOffsetY(float v) {
+            assertRenderThread();
+            if (checkHolder()) {
+                NativeCanvasProxy.nSetShadowOffsetY(getNativeHandle(), v);
+            }
+        }
+
+        private boolean checkHolder() {
+            return (mHolder != null && getNativeHandle() != 0);
+        }
+
+        private long getNativeHandle() {
+            return mHolder.getNativeCanvasProxy().mNativeViewHandle;
+        }
+
+        private final void assertRenderThread() {
+            if (mHolder != null && !mHolder.isOnRenderThread()) {
+                throw new RuntimeException("F2CanvasHandle operations must on render thread.");
+            }
+        }
+    }
+
     private static class CanvasListener implements NativeCanvasHolder.ICanvasListener {
         WeakReference<F2CanvasView> mChartView;
 
@@ -471,13 +871,13 @@ public class F2CanvasView extends TextureView implements TextureView.SurfaceText
 
     public static class TouchEvent {
         private F2Config mData;
+
         private TouchEvent(F2CanvasView view, MotionEvent event) {
 
             F2Config.Builder builder = new F2Config.Builder();
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
-                case MotionEvent.ACTION_POINTER_DOWN:
-                    {
+                case MotionEvent.ACTION_POINTER_DOWN: {
                     builder.setOption("eventType", "touchstart");
                     break;
                 }
@@ -486,8 +886,7 @@ public class F2CanvasView extends TextureView implements TextureView.SurfaceText
                     break;
                 }
                 case MotionEvent.ACTION_UP:
-                case MotionEvent.ACTION_POINTER_UP:
-                    {
+                case MotionEvent.ACTION_POINTER_UP: {
                     builder.setOption("eventType", "touchend");
                     break;
                 }
@@ -497,22 +896,19 @@ public class F2CanvasView extends TextureView implements TextureView.SurfaceText
                 }
             }
 
-
-            int[] location = new int[2];
-            view.getLocationOnScreen(location);
             JSONArray points = new JSONArray();
             try {
                 if (event.getPointerCount() > 1) {
                     for (int i = 0; i < event.getPointerCount(); i++) {
                         JSONObject point = new JSONObject();
-                        point.put("x", event.getX(i) - location[0]);
-                        point.put("y", event.getY(i) - location[1]);
+                        point.put("x", event.getX(i));
+                        point.put("y", event.getY(i));
                         points.put(point);
                     }
                 } else {
                     JSONObject point = new JSONObject();
-                    point.put("x", event.getX() - location[0]);
-                    point.put("y", event.getY() - location[1]);
+                    point.put("x", event.getX());
+                    point.put("y", event.getY());
                     points.put(point);
                 }
             } catch (Exception e) {
@@ -528,23 +924,20 @@ public class F2CanvasView extends TextureView implements TextureView.SurfaceText
         }
     }
 
-    public static class ConfigBuilder extends F2Config.Builder {
-        protected static final String KEY_ASYNC_RENDER  = "asyncRender";
+    public static class ConfigBuilder extends F2Config.Builder<ConfigBuilder> {
+        protected static final String KEY_ASYNC_RENDER = "asyncRender";
         protected static final String KEY_BACKGROUND_COLOR = "backgroundColor";
 
         public ConfigBuilder canvasId(String canvasId) {
-            setOption(F2Constants.CANVAS_ID, canvasId);
-            return this;
+            return setOption(F2Constants.CANVAS_ID, canvasId);
         }
 
         public ConfigBuilder asyncRender(boolean async) {
-            setOption(KEY_ASYNC_RENDER, async);
-            return this;
+            return setOption(KEY_ASYNC_RENDER, async);
         }
 
         public ConfigBuilder backgroundColor(String color) {
-            setOption(KEY_BACKGROUND_COLOR, color);
-            return this;
+            return setOption(KEY_BACKGROUND_COLOR, color);
         }
 
 

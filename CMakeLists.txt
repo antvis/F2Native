@@ -7,14 +7,21 @@ include_directories(core)
 
 ## third_party
 include_directories(third_party)
-include_directories(third_party/GCanvas/core/src)
-include_directories(third_party/GCanvas/core/src/gcanvas)
-include_directories(third_party/GCanvas/core/src/gcanvas/GL)
-include_directories(third_party/GCanvas/core/src/platform)
-include_directories(third_party/GCanvas/core/src/platform/Android)
-include_directories(third_party/GCanvas/core/src/support)
-include_directories(third_party/GCanvas/core/android)
-include_directories(third_party/GCanvas/node/third_party/font/freetype2)
+
+if (TARGET_STANDALONE)
+    include_directories(third_party/GCanvas/core/src)
+    include_directories(third_party/GCanvas/core/src/gcanvas)
+    include_directories(third_party/GCanvas/core/src/gcanvas/GL)
+    include_directories(third_party/GCanvas/core/src/platform)
+    include_directories(third_party/GCanvas/core/src/platform/Android)
+    include_directories(third_party/GCanvas/core/src/support)
+    include_directories(third_party/GCanvas/core/android)
+    include_directories(third_party/GCanvas/node/third_party/font/freetype2)
+elseif (TARGET_ALIPAY)
+    include_directories(third_party/)
+    include_directories(third_party/AntGraphic)
+endif ()
+
 include_directories(third_party/json/single_include)
 
 # g++
@@ -41,6 +48,7 @@ aux_source_directory(core/graphics/event DIR_SRC_GRAPHICS_EVENT)
 aux_source_directory(core/graphics/tooltip DIR_SRC_GRAPHICS_TOOLTIP)
 aux_source_directory(core/graphics/interaction DIR_SRC_GRAPHICS_INTERACTION)
 aux_source_directory(core/graphics/legend DIR_SRC_GRAPHICS_LEGEND)
+aux_source_directory(core/graphics/func DIR_SRC_GRAPHICS_FUNC)
 
 
 list(APPEND DIR_SRC_GRAPHICS ${DIR_SRC_GRAPHICS_AXIS})
@@ -58,6 +66,7 @@ list(APPEND DIR_SRC_GRAPHICS ${DIR_SRC_GRAPHICS_EVENT})
 list(APPEND DIR_SRC_GRAPHICS ${DIR_SRC_GRAPHICS_TOOLTIP})
 list(APPEND DIR_SRC_GRAPHICS ${DIR_SRC_GRAPHICS_INTERACTION})
 list(APPEND DIR_SRC_GRAPHICS ${DIR_SRC_GRAPHICS_LEGEND})
+list(APPEND DIR_SRC_GRAPHICS ${DIR_SRC_GRAPHICS_FUNC})
 
 
 list(APPEND DIR_SRC ${DIR_SRC_UTILS})
@@ -65,23 +74,34 @@ list(APPEND DIR_SRC ${DIR_SRC_GRAPHICS})
 
 #list(APPEND CMAKE_MODULE_PATH "../../cmake")
 
-if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
     add_definitions(-D DEBUG)
-endif()
+endif ()
 
 aux_source_directory(core/android DIR_SRC_ANDROID)
+
+if (TARGET_ALIPAY)
+    list(REMOVE_ITEM DIR_SRC_ANDROID "core/android/F2CanvasView.cpp")
+endif ()
+
+
 aux_source_directory(third_party/WilkinsonExtended WilkinsonExtended)
 
 add_library(f2
         SHARED
         ${DIR_SRC} ${DIR_SRC_ANDROID} ${WilkinsonExtended})
 
-find_library( log-lib log )
+find_library(log-lib log)
 
 target_link_libraries(f2 ${log-lib})
 target_link_libraries(f2 android -Wl,--gc-sections)
 target_link_libraries(f2 GLESv2 -Wl,--gc-sections)
 target_link_libraries(f2 EGL -Wl,--gc-sections)
 
-target_link_libraries(f2 ${CMAKE_SOURCE_DIR}/third_party/GCanvas/core/android/freetype-prebuilt/libs/${ANDROID_ABI}/libfreetype.so)
-target_link_libraries(f2 ${CMAKE_SOURCE_DIR}/third_party/GCanvas/android/gcanvas_library/build/intermediates/cmake/standalone/release/obj/${ANDROID_ABI}/libgcanvas.so)
+if (TARGET_STANDALONE)
+    target_link_libraries(f2 ${CMAKE_SOURCE_DIR}/third_party/GCanvas/core/android/freetype-prebuilt/libs/${ANDROID_ABI}/libfreetype.so)
+    target_link_libraries(f2 ${CMAKE_SOURCE_DIR}/third_party/GCanvas/android/gcanvas_library/build/intermediates/cmake/standalone/release/obj/${ANDROID_ABI}/libgcanvas.so)
+elseif (TARGET_ALIPAY)
+    target_link_libraries(f2 ${CMAKE_SOURCE_DIR}/third_party/AntGraphic/jniLibs/${ANDROID_ABI}/libfreetype.so)
+    target_link_libraries(f2 ${CMAKE_SOURCE_DIR}/third_party/AntGraphic/jniLibs/${ANDROID_ABI}/libantgraphic.so)
+endif ()

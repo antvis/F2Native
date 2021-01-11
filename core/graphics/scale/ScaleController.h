@@ -68,7 +68,7 @@ static std::unique_ptr<AbstractScale> MakeScale(const std::string &field_,
             config.merge_patch(a_config);
         }
         return xg::make_unique<Category>(field_, fieldColumn, config);
-    } else if(firstVal.is_number()) {
+    } else if(firstVal.is_number() || firstVal.is_array()) {
         if(!config.contains("max") || !config.contains("min")) {
             std::array<double, 2> range = util::JsonArrayRange(fieldColumn);
             if(!config.contains("max")) {
@@ -99,10 +99,8 @@ class ScaleController {
                 std::find_if(scales_.begin(), scales_.end(),
                              [&](const std::unique_ptr<AbstractScale> &item) { return (item->field == field_); });
 
-            // find_if 如果没找到返回的是 last，再做一次 check
             if(it != scales_.end()) {
                 // TODO 更新 scale config, 暂时没有什么 config
-                //                tracer->trace("scale :%s 命中缓存", field_.c_str());
                 return (*it);
             }
         }
@@ -112,6 +110,8 @@ class ScaleController {
     }
 
     void UpdateColConfig(const std::string &field, nlohmann::json cfg) { colConfigs[field] = cfg; }
+
+    bool empty() { return scales_.empty(); }
 
   private:
     std::vector<std::unique_ptr<AbstractScale>> scales_{};

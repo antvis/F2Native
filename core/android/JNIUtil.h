@@ -1,4 +1,3 @@
-#include <export.h>
 #include <jni.h>
 #include <string>
 
@@ -15,7 +14,7 @@ JavaVM *GetJVM();
 
 JNIEnv *GetJniEnv();
 
-API_EXPORT JNIEnv *GetJniEnvSafe();
+JNIEnv *GetJniEnvSafe();
 
 JNIEnv *AttachCurrentThread();
 
@@ -27,11 +26,11 @@ bool HasException(JNIEnv *env);
 
 bool ClearException(JNIEnv *env);
 
-API_EXPORT std::string JavaStringToString(JNIEnv *env, jstring string);
+std::string JavaStringToString(JNIEnv *env, jstring string);
 
-API_EXPORT jstring StringToJString(JNIEnv *env, const std::string &u8_string);
+jstring StringToJString(JNIEnv *env, const std::string &u8_string);
 
-API_EXPORT void native_clog(int level, const char *tag, const char *msg);
+void native_clog(int level, const char *tag, const char *msg);
 
 // std::string GetJavaExceptionInfo(JNIEnv *env, jthrowable java_throwable);
 } // namespace jni

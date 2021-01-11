@@ -200,7 +200,8 @@ canvasView.setOnCanvasTouchListener(new F2CanvasView.OnCanvasTouchListener() {
 ### - interaction 
 指定图形实例需要处理的手势类型
 ```
-chart.interaction("pinch");
+chart.interaction("pinch"); // 开启缩放手势
+chart.interaction("pan"); // 开启平移手势
 ```
 
 - 参数
@@ -208,6 +209,18 @@ chart.interaction("pinch");
 | **属性名** |  **类型** | **解释** |
 | --- | --- | --- |
 | `type`| String | 手势类型: pinch(缩放), pan(平移) |
+
+
+### - tooltip
+指定长按交互属性
+```
+chart.tooltip(@{...});
+```
+- 属性
+```json
+  {"alwaysShow": false}, // 是否一直显示
+  {"crosshairsStyle": {"stroke": "#1890FF", "lineWidth": 1, "type": "dash", "dash": [4, 4]}}, // 十字线样式
+```
 
 
 ### - legend

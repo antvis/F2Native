@@ -1,5 +1,7 @@
 package com.antgroup.antv.f2;
 
+import org.json.JSONArray;
+
 /**
  * @author qingyuan.yl
  * @date 2020-09-23
@@ -22,38 +24,27 @@ public class F2Guide {
         mChart.getChartProxy().setGuideText(config.build().toJsonString());
     }
 
-    public static class GuideFlagConfigBuilder extends F2Chart.TextConfigBuilder {
+    public static class GuideFlagConfigBuilder extends F2Chart.TextConfigBuilder<GuideFlagConfigBuilder> {
         private static final String KEY_CONTENT = "content";
         private static final String KEY_PADDING = "padding";
         private static final String KEY_LINE_WIDTH = "lineWidth";
         private static final String KEY_BACK_COLOR = "backgroundColor";
-        @Override
-        public GuideFlagConfigBuilder textAlign(String textAlign) {
-            super.textAlign(textAlign);
-            return this;
-        }
-
-        @Override
-        public GuideFlagConfigBuilder textSize(float textSize) {
-            super.textSize(textSize);
-            return this;
-        }
-
-        @Override
-        public GuideFlagConfigBuilder textColor(String color) {
-            super.textColor(color);
-            return this;
-        }
-
-        @Override
-        public GuideFlagConfigBuilder textBaseline(String textBaseline) {
-            super.textBaseline(textBaseline);
-            return this;
-        }
+        private static final String KEY_POSITION = "position";
 
         public GuideFlagConfigBuilder content(String content) {
-            setOption(KEY_CONTENT, content);
-            return this;
+            return setOption(KEY_CONTENT, content);
+        }
+
+        /**
+         * @param position ["min", "max"]
+         * @return
+         */
+        public GuideFlagConfigBuilder position(String[] position ) {
+            return setOption(KEY_POSITION, position);
+        }
+
+        public GuideFlagConfigBuilder position(JSONArray position ) {
+            return setOption(KEY_POSITION, position);
         }
 
         /**
@@ -61,53 +52,25 @@ public class F2Guide {
          * @return
          */
         public GuideFlagConfigBuilder padding(double[] padding) {
-            setOption(KEY_PADDING, padding);
-            return this;
+            return setOption(KEY_PADDING, padding);
         }
 
         public GuideFlagConfigBuilder lineWidth(double lineWidth) {
-            setOption(KEY_LINE_WIDTH, lineWidth);
-            return this;
+            return setOption(KEY_LINE_WIDTH, lineWidth);
         }
 
         public GuideFlagConfigBuilder backgroudColor(String backgroundColor) {
-            setOption(KEY_BACK_COLOR, backgroundColor);
-            return this;
+            return setOption(KEY_BACK_COLOR, backgroundColor);
         }
     }
 
-    public static class GuideTextConfigBuilder extends F2Chart.TextConfigBuilder {
+    public static class GuideTextConfigBuilder extends F2Chart.TextConfigBuilder<GuideTextConfigBuilder> {
         private static final String KEY_CONTENT = "content";
         private static final String KEY_MARGIN = "margin";
         private static final String KEY_POSITION = "position";
 
-        @Override
-        public GuideTextConfigBuilder textAlign(String textAlign) {
-            super.textAlign(textAlign);
-            return this;
-        }
-
-        @Override
-        public GuideTextConfigBuilder textSize(float textSize) {
-            super.textSize(textSize);
-            return this;
-        }
-
-        @Override
-        public GuideTextConfigBuilder textColor(String color) {
-            super.textColor(color);
-            return this;
-        }
-
-        @Override
-        public GuideTextConfigBuilder textBaseline(String textBaseline) {
-            super.textBaseline(textBaseline);
-            return this;
-        }
-
         public GuideTextConfigBuilder content(String content) {
-            setOption(KEY_CONTENT, content);
-            return this;
+            return setOption(KEY_CONTENT, content);
         }
 
         /**
@@ -115,8 +78,11 @@ public class F2Guide {
          * @return
          */
         public GuideTextConfigBuilder position(String[] position ) {
-            setOption(KEY_POSITION, position);
-            return this;
+            return setOption(KEY_POSITION, position);
+        }
+
+        public GuideTextConfigBuilder position(JSONArray position ) {
+            return setOption(KEY_POSITION, position);
         }
 
         /**
@@ -124,8 +90,7 @@ public class F2Guide {
          * @return
          */
         public GuideTextConfigBuilder margin(double[] margin) {
-            setOption(KEY_MARGIN, margin);
-            return this;
+            return setOption(KEY_MARGIN, margin);
         }
     }
 }

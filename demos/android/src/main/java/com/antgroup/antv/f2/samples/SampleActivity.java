@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar;
 public class SampleActivity extends AppCompatActivity {
 
     private F2CanvasView mCanvasView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,7 +22,13 @@ public class SampleActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
 
         mCanvasView = findViewById(R.id.canvasView);
-        mCanvasView.initCanvasContext(new F2CanvasView.ConfigBuilder().asyncRender(true).build());
+        mCanvasView.initCanvasContext(new F2CanvasView.ConfigBuilder()
+                .canvasId("F2AntCanvas")
+//                .backgroundColor("#000000")
+                .asyncRender(false)
+                .setOption("canvasBizId", "F2NativeDemo")
+                .setOption("appId", "1000")
+                .build());
 
         ChartModel chartModel = (ChartModel) getIntent().getSerializableExtra("ChartModel");
         setTitle(chartModel.title);

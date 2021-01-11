@@ -27,12 +27,12 @@ sh build_gcanvas_android.sh
 
 2. 构建 F2Native
 ```shell
-./gradlew :android:f2native:assemble
+./gradlew :android:f2native:assembleStandalone
 ```
 
 3. 运行 Demo 程序
 ```shell
-./gradlew :android:sample:installD
+./gradlew :android:sample:installStandaloneDebug
 ```
 
 ## 一分钟上手

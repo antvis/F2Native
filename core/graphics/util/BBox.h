@@ -16,15 +16,15 @@ typedef struct BBox_ {
 } BBox;
 
 class BBoxUtil {
-    public:
+  public:
     static BBox GetBBoxFromLine(float x0, float y0, float x1, float y1, float lineWidth) {
         const float hafWidth = lineWidth / 2;
-        return { fmin(x0, x1) - hafWidth, fmax(x0, x1) + hafWidth, fmin(y0, y1) - hafWidth, fmax(y0, y1) + hafWidth, .0f, .0f };
+        return {fmin(x0, x1) - hafWidth, fmax(x0, x1) + hafWidth, fmin(y0, y1) - hafWidth, fmax(y0, y1) + hafWidth, .0f, .0f};
     }
 
     static BBox GetBBoxFromPoints(const std::vector<Point> &points, float lineWidth) {
         if(points.empty()) {
-            return { 0 };
+            return {0};
         }
         auto &p = points[0];
         auto left = p.x;
@@ -32,7 +32,7 @@ class BBoxUtil {
         auto top = p.y;
         auto bottom = p.y;
 
-        for(int i = 1; i < points.size(); ++i) {
+        for(std::size_t i = 1; i < points.size(); ++i) {
             auto &p1 = points[i];
             left = min(left, p1.x);
             right = max(right, p1.x);
@@ -41,12 +41,12 @@ class BBoxUtil {
         }
 
         const float hafWidth = lineWidth / 2;
-        return { static_cast<float>(left - hafWidth),
-                 static_cast<float>(right + hafWidth),
-                 static_cast<float>(top - hafWidth),
-                 static_cast<float>(bottom + hafWidth),
-                 .0f,
-                 .0f };
+        return {static_cast<float>(left - hafWidth),
+                static_cast<float>(right + hafWidth),
+                static_cast<float>(top - hafWidth),
+                static_cast<float>(bottom + hafWidth),
+                .0f,
+                .0f};
     }
 };
 

@@ -1,10 +1,13 @@
 #include "graphics/XChart.h"
 #include "graphics/canvas/Cartesian.h"
 #include "graphics/canvas/Polar.h"
+#include "graphics/func/Func.h"
 #include "graphics/geom/shape/Area.h"
 #include "graphics/geom/shape/Interval.h"
 #include "graphics/geom/shape/Line.h"
+#include "graphics/geom/shape/Point.h"
 #include "graphics/util/Point.h"
+#include "graphics/util/json.h"
 #include <cstring>
 #include <utils/common.h>
 #include <utils/xtime.h>
@@ -13,6 +16,7 @@ using namespace xg;
 using namespace std;
 
 XChart::XChart(const std::string &name, double width, double height, double ratio) : chartName_(name) {
+    this->chartId_ = chartName_ + "_" + std::to_string(CurrentTimestampAtMM());
     width_ = width * ratio;
     height_ = height * ratio;
     ratio_ = ratio;
@@ -30,11 +34,11 @@ XChart::XChart(const std::string &name, double width, double height, double rati
     // 布局层级
     this->InitLayout();
 
-    axisController_ = new axis::AxisController();
+    axisController_ = new axis::AxisController(backLayout_->AddGroup());
     this->logTracer_->trace("%s", "new axisController instance.");
-    guideController_ = new guide::GuideController();
-    this->logTracer_->trace("%s", "new guideControlelr instance.");
-    legendController_ = new legend::LegendController();
+    guideController_ = new guide::GuideController(frontLayout_->AddGroup());
+    this->logTracer_->trace("%s", "new guideController instance.");
+    legendController_ = new legend::LegendController(backLayout_->AddGroup());
     this->logTracer_->trace("%s", "new legendController instance");
 
     eventController_ = new event::EventController();
@@ -43,15 +47,19 @@ XChart::XChart(const std::string &name, double width, double height, double rati
 }
 
 XChart::~XChart() {
+    func::FunctionManager::GetInstance().Clear(this->GetChartId());
+
     actionListeners_.clear();
     interactions_.clear();
 
+    backLayout_ = nullptr;
+    midLayout_ = nullptr;
+    frontLayout_ = nullptr;
     XG_RELEASE_POINTER(canvas_);
     XG_RELEASE_POINTER(scaleController_);
     XG_RELEASE_POINTER(axisController_);
     XG_RELEASE_POINTER(guideController_);
 
-    std::for_each(geoms_.begin(), geoms_.end(), [&](geom::AbstractGeom *geom) { delete geom; });
     geoms_.clear();
 
     XG_RELEASE_POINTER(tooltipController_);
@@ -62,11 +70,11 @@ XChart::~XChart() {
 }
 
 XChart &XChart::Source(const std::string &json) {
-#if defined(DEBUG)
-    nlohmann::json _data = nlohmann::json::parse(json);
-#else
-    nlohmann::json _data = nlohmann::json::parse(json, nullptr, false);
-#endif
+    //#if defined(DEBUG)
+    nlohmann::json _data = xg::json::ParseString(json);
+    //#else
+    //    nlohmann::json _data = nlohmann::json::parse(json, nullptr, false);
+    //#endif
     this->logTracer_->trace("#Source dataSize: %lu", json.size());
     if(!_data.is_array()) {
         // 有问题先抛出来
@@ -76,6 +84,7 @@ XChart &XChart::Source(const std::string &json) {
     }
 
     this->data_ = _data;
+
     return *this;
 }
 
@@ -103,13 +112,14 @@ void XChart::UpdateLayout(std::array<double, 4> newPadding) {
     this->padding_ = newPadding;
 }
 
-XChart &XChart::Axis(const std::string &field, nlohmann::json config) {
+XChart &XChart::Axis(const std::string &field, const std::string &json) {
+    nlohmann::json config = xg::json::ParseString(json);
     this->logTracer_->trace("#Axis field: %s config: %s", field.c_str(), config.dump().c_str());
     this->axisController_->SetFieldConfig(field, config);
     return *this;
 }
 
-XChart &XChart::Interaction(const std::string &type) {
+XChart &XChart::Interaction(const std::string &type, nlohmann::json config) {
     if(type == "pinch") {
         std::unique_ptr<interaction::InteractionBase> pinch = std::make_unique<interaction::Pinch>(this);
         interactions_.push_back(std::move(pinch));
@@ -117,12 +127,16 @@ XChart &XChart::Interaction(const std::string &type) {
         std::unique_ptr<interaction::InteractionBase> pan = std::make_unique<interaction::Pan>(this);
         interactions_.push_back(std::move(pan));
     }
+    this->interactionContext_->SetTypeConfig(type, config);
     return *this;
 }
 
-XChart &XChart::Coord(nlohmann::json config) {
+XChart &XChart::Coord(const std::string &json) {
+    nlohmann::json config = xg::json::ParseString(json);
     this->logTracer_->trace("#coord ");
-    this->coordCfg_.merge_patch(config);
+    if(config.is_object()) {
+        this->coordCfg_.merge_patch(config);
+    }
     bool _transposed = this->coordCfg_["transposed"];
     if(this->coord_ != nullptr) {
         this->coord_->SetTransposed(_transposed);
@@ -130,29 +144,33 @@ XChart &XChart::Coord(nlohmann::json config) {
     }
     return *this;
 }
-XChart &XChart::Legend(const std::string &field, nlohmann::json config) {
+
+XChart &XChart::Legend(const std::string &field, const std::string &json) {
+    nlohmann::json config = xg::json::ParseString(json);
     this->logTracer_->trace("#Legend field: %s config: %s", field.c_str(), config.dump().c_str());
     this->legendController_->SetFieldConfig(field, config);
     return *this;
 }
 
-void XChart::OnTouchEvent(nlohmann::json cfg) {
+bool XChart::OnTouchEvent(const std::string &json) {
+    nlohmann::json cfg = xg::json::ParseString(json);
     if(!cfg.is_object() || !cfg.contains("eventType") || !cfg.contains("points"))
-        return;
+        return false;
     event::Event event;
     event.eventType = cfg["eventType"];
     nlohmann::json &_points = cfg["points"];
-    for(int i = 0; i < _points.size(); ++i) {
+    for(std::size_t i = 0; i < _points.size(); ++i) {
         nlohmann::json &_point = _points[i];
         util::Point point{_point["x"], _point["y"]};
         event.points.push_back(std::move(point));
     }
     event.devicePixelRatio = ratio_;
     event.timeStamp = xg::CurrentTimestampAtMM();
-    this->eventController_->OnTouchEvent(event);
+    return this->eventController_->OnTouchEvent(event);
 }
 
-XChart &XChart::Scale(const std::string &field, nlohmann::json config) {
+XChart &XChart::Scale(const std::string &field, const std::string &json) {
+    nlohmann::json config = xg::json::ParseString(json);
     this->logTracer_->trace("#Scale field: %s config: %s", field.c_str(), config.dump().c_str());
     this->scaleController_->UpdateColConfig(field, config);
     return *this;
@@ -164,26 +182,38 @@ scale::AbstractScale &XChart::GetScale(const std::string &field) {
 
 geom::Line &XChart::Line() {
     this->logTracer_->trace("#Line %s", "create Geom@Line");
-    geom::Line *line = new geom::Line(this->logTracer_);
+    auto line = std::make_unique<geom::Line>(midLayout_->AddGroup(), logTracer_);
+    geom::Line *p = line.get();
     this->geomShapeFactory_->RegisterGeomShape(line->GetType(), xg::make_unique<xg::geom::shape::Line>());
-    this->geoms_.push_back(line);
-    return *line;
+    this->geoms_.push_back(std::move(line));
+    return *p;
 }
 
 geom::Interval &XChart::Interval() {
     this->logTracer_->trace("#Interval %s", "create Geom@Interval");
-    geom::Interval *interval = new geom::Interval(this->logTracer_);
+    auto interval = std::make_unique<geom::Interval>(midLayout_->AddGroup(), logTracer_);
+    geom::Interval *p = interval.get();
     this->geomShapeFactory_->RegisterGeomShape(interval->GetType(), xg::make_unique<xg::geom::shape::Interval>());
-    this->geoms_.push_back(interval);
-    return *interval;
+    this->geoms_.push_back(std::move(interval));
+    return *p;
 }
 
 geom::Area &XChart::Area() {
     this->logTracer_->trace("#Area %s", "create Geom@Area");
-    geom::Area *area = new geom::Area(this->logTracer_);
+    auto area = std::make_unique<geom::Area>(midLayout_->AddGroup(), logTracer_);
+    geom::Area *p = area.get();
     this->geomShapeFactory_->RegisterGeomShape(area->GetType(), xg::make_unique<xg::geom::shape::Area>());
-    this->geoms_.push_back(area);
-    return *area;
+    this->geoms_.push_back(std::move(area));
+    return *p;
+}
+
+geom::Point &XChart::Point() {
+    this->logTracer_->trace("#Point %s", "create Geom@Point");
+    auto point = std::make_unique<geom::Point>(midLayout_->AddGroup(), logTracer_);
+    geom::Point *p = point.get();
+    this->geomShapeFactory_->RegisterGeomShape(point->GetType(), xg::make_unique<xg::geom::shape::Point>());
+    this->geoms_.push_back(std::move(point));
+    return *p;
 }
 
 void XChart::Render() {
@@ -213,28 +243,29 @@ void XChart::Render() {
         // 2. init Geoms
 
         this->logTracer_->trace("%s", "foreach geom init");
-        std::for_each(geoms_.begin(), geoms_.end(), [this](geom::AbstractGeom *geom) -> void { geom->Init(this); });
+        std::for_each(geoms_.begin(), geoms_.end(), [this](auto &geom) -> void { geom->Init(this); });
         rendered_ = true;
 
         this->NotifyAction(ACTION_CHART_AFTER_INIT);
     }
     // 3. legend render
     this->logTracer_->trace("%s", "legendController render");
-    legendController_->Render(*this, backLayout_);
+    legendController_->Render(*this);
 
     // 4. render Axis
     this->logTracer_->trace("%s", "draw axies");
-    axisController_->DrawAxes(this, backLayout_, *canvasContext_);
+    axisController_->DrawAxes(this, *canvasContext_);
 
     // 5. geom paint
     this->logTracer_->trace("%s", "foreach geom paint");
-    std::for_each(geoms_.begin(), geoms_.end(), [this](geom::AbstractGeom *geom) { geom->Paint(this, this->midLayout_); });
+
+    std::for_each(geoms_.begin(), geoms_.end(), [this](auto &geom) { geom->Paint(this); });
     // 6. guide render
     this->NotifyAction(ACTION_CHART_AFTER_GEOM_DRAW);
 
     // 6.1 guide render
     this->logTracer_->trace("%s", "guideController render");
-    guideController_->Render(*this, this->frontLayout_, *canvasContext_);
+    guideController_->Render(*this, *canvasContext_);
 
     // 7. children sort
     this->logTracer_->trace("%s", "canvas#sort");
@@ -253,16 +284,27 @@ void XChart::Render() {
     renderDurationMM_ = xg::CurrentTimestampAtMM() - startTimeStamp;
 
     long count = this->canvasContext_->GetRenderCount();
-    this->logTracer_->trace("%s renderCount: %ld, duration: %lu", "canvas#endDraw", count, renderDurationMM_);
+    this->logTracer_->trace("%s renderCount: %ld, duration: %lums", "canvas#endDraw", count, renderDurationMM_);
 }
 
 void XChart::Repaint() {
+    this->logTracer_->trace("%s", "chart repaint");
     if(!rendered_)
         return;
 
     // TODO legend clear
     ClearInner();
     Render();
+}
+
+void XChart::Clear() {
+    guideController_->Clear();
+    ClearInner();
+    this->geoms_.clear();
+    this->geomShapeFactory_->Clear();
+    actionListeners_.clear();
+    interactions_.clear();
+    this->rendered_ = false;
 }
 
 std::string XChart::GetRenderInfo() const {
@@ -283,7 +325,8 @@ std::string XChart::GetRenderInfo() const {
     return info.dump();
 }
 
-XChart &XChart::Tooltip(const nlohmann::json &cfg) {
+XChart &XChart::Tooltip(const std::string &json) {
+    nlohmann::json cfg = xg::json::ParseString(json);
     if(this->tooltipController_ == nullptr) {
         this->tooltipController_ = new tooltip::ToolTipController(this);
 
@@ -296,20 +339,14 @@ XChart &XChart::Tooltip(const nlohmann::json &cfg) {
 }
 
 void XChart::InitLayout() {
-    std::unique_ptr<shape::Group> layout_back = xg::make_unique<shape::Group>();
-    backLayout_ = layout_back.get();
-    layout_back->SetZIndex(0);
-    this->canvas_->AddElement(std::move(layout_back));
+    backLayout_ = canvas_->AddGroup();
+    backLayout_->SetZIndex(0);
 
-    std::unique_ptr<shape::Group> layout_mid = xg::make_unique<shape::Group>();
-    midLayout_ = layout_mid.get();
-    layout_mid->SetZIndex(10);
-    this->canvas_->AddElement(std::move(layout_mid));
+    midLayout_ = canvas_->AddGroup();
+    midLayout_->SetZIndex(10);
 
-    std::unique_ptr<shape::Group> layout_front = xg::make_unique<shape::Group>();
-    frontLayout_ = layout_front.get();
-    layout_front->SetZIndex(20);
-    this->canvas_->AddElement(std::move(layout_front));
+    frontLayout_ = canvas_->AddGroup();
+    frontLayout_->SetZIndex(20);
 }
 
 void XChart::InitCoord() {
@@ -325,7 +362,7 @@ void XChart::InitCoord() {
 }
 
 const util::Point XChart::GetPosition(const nlohmann::json &item) {
-    if(!item.is_object() || item.size() < 2) {
+    if(scaleController_->empty() || !item.is_object() || item.size() < 2) {
         return util::Point{0, 0};
     }
 
@@ -336,17 +373,15 @@ const util::Point XChart::GetPosition(const nlohmann::json &item) {
         return util::Point{0, 0};
     }
 
-    double x = this->GetScale(xField).Scale(xField);
-    double y = this->GetScale(yField).Scale(yField);
+    double x = this->GetScale(xField).Scale(item[xField]);
+    double y = this->GetScale(yField).Scale(item[yField]);
     util::Point ret = this->GetCoord().ConvertPoint(util::Point{x, y});
-
     return ret;
 }
 
 void XChart::ClearInner() {
-    backLayout_->Clear();
-    midLayout_->Clear();
-    frontLayout_->Clear();
+
+    std::for_each(geoms_.begin(), geoms_.end(), [this](auto &geom) { geom->Clear(); });
 
     this->legendController_->ClearInner();
 
@@ -364,11 +399,31 @@ void XChart::ClearInner() {
     axisController_->Clear();
 }
 
+void XChart::Redraw() {
+    long startTimeStamp = xg::CurrentTimestampAtMM();
+
+    // 7.-1 beforeDraw
+    this->logTracer_->trace("%s", "before Redraw and call canvas clearRect");
+    canvasContext_->ClearRect(margin_[0], margin_[1], width_, height_);
+
+    this->legendController_->Redraw(*this);
+
+    // 6. canvas draw
+    this->logTracer_->trace("%s", "canvas#start Redraw");
+    this->canvasContext_->Reset();
+    this->canvas_->Draw(*canvasContext_);
+
+    renderDurationMM_ = xg::CurrentTimestampAtMM() - startTimeStamp;
+
+    long count = this->canvasContext_->GetRenderCount();
+    this->logTracer_->trace("%s renderCount: %ld, duration: %lums", "canvas#endRedraw", count, renderDurationMM_);
+}
+
 std::map<std::string, std::vector<legend::LegendItem>> XChart::GetLegendItems() {
 
     std::map<std::string, std::vector<legend::LegendItem>> legendItems;
 
-    std::for_each(geoms_.begin(), geoms_.end(), [&](geom::AbstractGeom *geom) -> void {
+    std::for_each(geoms_.begin(), geoms_.end(), [&](auto &geom) -> void {
         if(geom->ContainsAttr(attr::AttrType::Color)) {
             const unique_ptr<attr::AttrBase> &_attr = geom->GetColor();
             if(!_attr->GetFields().empty()) {

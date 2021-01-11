@@ -1,8 +1,10 @@
 
 #include "graphics/canvas/CanvasContext.h"
 #include "graphics/canvas/Coord.h"
+#include "graphics/global.h"
 #include "graphics/shape/Group.h"
 #include "graphics/shape/Line.h"
+#include "graphics/shape/Polyline.h"
 #include "graphics/shape/Rect.h"
 #include "graphics/shape/Text.h"
 #include "graphics/util/Point.h"
@@ -15,19 +17,23 @@ namespace xg {
 namespace tooltip {
 class ToolTip {
   public:
-    ToolTip(nlohmann::json cfg) : config_(cfg) {}
-    ~ToolTip() { this->Clear(); }
+    ToolTip(shape::Group *container, nlohmann::json cfg) : container_(container), config_(cfg) {}
+    ~ToolTip() { container_ = nullptr; }
 
-    void SetPosition(canvas::coord::AbstractCoord &coord, canvas::CanvasContext &canvasContext, util::Point point, nlohmann::json &tooltipItems) {
+    void SetPosition(canvas::coord::AbstractCoord &coord,
+                     canvas::CanvasContext &canvasContext,
+                     util::Point point,
+                     nlohmann::json &tooltipItems,
+                     const std::string &yTip) {
         if(tooltipItems.size() == 1) {
             this->_ShowCrosshairs(coord, canvasContext, point, true);
-            this->SetYTipContent(coord, canvasContext, tooltipItems[0]["value"], point);
+            this->SetYTipContent(coord, canvasContext, yTip, point);
         } else if(tooltipItems.size() > 1) {
             this->_ShowCrosshairs(coord, canvasContext, point, false);
         }
     }
 
-    void SetXTipContent(canvas::CanvasContext &canvasContext, std::string content, util::Point point) {
+    void SetXTipContent(canvas::CanvasContext &canvasContext, const std::string &content, util::Point point) {
         nlohmann::json &backCfg = config_["background"];
         std::string backColor = backCfg["fill"];
         nlohmann::json &padding = backCfg["padding"];
@@ -59,6 +65,9 @@ class ToolTip {
     }
 
     void SetYTipContent(canvas::coord::AbstractCoord &coord, canvas::CanvasContext &canvasContext, std::string content, util::Point point) {
+        if(!config_["yTip"].is_object()) {
+            return;
+        }
         nlohmann::json &backCfg = config_["background"];
         std::string backColor = backCfg["fill"];
         nlohmann::json &padding = backCfg["padding"];
@@ -86,9 +95,8 @@ class ToolTip {
         container_->AddElement(std::move(yTip));
     }
 
-    void Clear() { container_->Clear(); }
-
     void Show(canvas::CanvasContext &canvasContext) {
+
         container_->Show();
         container_->Draw(canvasContext);
     }
@@ -101,26 +109,41 @@ class ToolTip {
             return;
         }
 
-        std::string lineColor = config_["crosshairsStyle"]["stroke"];
-        double lineWidth = config_["crosshairsStyle"]["lineWidth"];
+        nlohmann::json &crosshairsStyle = config_["crosshairsStyle"];
+        std::string lineColor = crosshairsStyle["stroke"];
+        double lineWidth = crosshairsStyle["lineWidth"];
+        std::string type = crosshairsStyle["type"];
 
         lineWidth *= canvasContext.GetDevicePixelRatio();
 
-        std::unique_ptr<shape::Line> xLine = std::make_unique<shape::Line>(util::Point{point.x, coord.GetYAxis().x},
-                                                                           util::Point{point.x, coord.GetYAxis().y}, lineWidth, lineColor);
+        vector<xg::util::Point> xPoints;
+        xPoints.push_back(util::Point{point.x, coord.GetYAxis().x});
+        xPoints.push_back(util::Point{point.x, coord.GetYAxis().y});
+
+        auto xLine = xg::make_unique<shape::Polyline>(lineWidth, xPoints, lineColor, "", false);
+        if(type == "dash") {
+            xLine->SetDashLine(xg::GLOBAL_LINE_DASH);
+        }
+
         container_->AddElement(std::move(xLine));
 
-        if(showY) {
-            std::unique_ptr<shape::Line> yLine =
-                std::make_unique<shape::Line>(util::Point{coord.GetXAxis().x, point.y},
-                                              util::Point{coord.GetXAxis().y, point.y}, lineWidth, lineColor);
+        if(showY && config_["yTip"].is_object()) {
+            vector<xg::util::Point> yPoints;
+            yPoints.push_back(util::Point{coord.GetXAxis().x, point.y});
+            yPoints.push_back(util::Point{coord.GetXAxis().y, point.y});
+
+            auto yLine = xg::make_unique<shape::Polyline>(lineWidth, yPoints, lineColor, "", false);
+
+            if(type == "dash") {
+                yLine->SetDashLine(xg::GLOBAL_LINE_DASH);
+            }
             container_->AddElement(std::move(yLine));
         }
     }
 
   private:
-    std::unique_ptr<shape::Group> container_ = std::make_unique<shape::Group>();
     nlohmann::json config_;
+    shape::Group *container_ = nullptr;
 };
 } // namespace tooltip
 } // namespace xg

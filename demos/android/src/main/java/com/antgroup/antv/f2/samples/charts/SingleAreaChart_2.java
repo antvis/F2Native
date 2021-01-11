@@ -33,6 +33,7 @@ public class SingleAreaChart_2 implements F2CanvasView.Adapter {
         mChart.setAxis("value", new F2Chart.AxisConfigBuilder()
                 .label(new F2Chart.AxisLabelConfigBuilder().labelMargin(10))
                 .grid(new F2Chart.AxisGridConfigBuilder().type("dash")));
+        mChart.setScale("value", new F2Chart.ScaleConfigBuilder().nice(true));
 
         mChart.render();
     }

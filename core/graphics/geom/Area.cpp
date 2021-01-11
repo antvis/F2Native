@@ -21,7 +21,7 @@ nlohmann::json geom::Area::CreateShapePointsCfg(XChart &chart, nlohmann::json &d
     } else {
         rst["y"] = yScale.Scale(yVal);
     }
-    rst["y0"] = yScale.min; // TODO startOnZero
+    rst["y0"] = yScale.Scale(this->GetYMinValue(chart));
     return rst;
 }
 

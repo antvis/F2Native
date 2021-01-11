@@ -17,20 +17,22 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    flavorDimensions "target_app"
+    productFlavors {
+        standalone{}
+        aliPay {}
+    }
 }
 
 repositories {
     flatDir {
-        // TODO: 先去编译 gcanvas, 生成 gcanvas 包, 增加个 task
-        dirs '../../third_party/GCanvas/android/gcanvas_library/build/outputs/aar'
+        dirs '../../third_party/GCanvas/android/gcanvas_library/build/outputs/aar', '../../third_party/AntGraphic'
     }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-
-    implementation project(':android:f2native')
-
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
@@ -41,5 +43,10 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:1.1.0"
 
 
-    implementation(name: 'gcanvas_library-1.2.0', ext: 'aar')
+    standaloneImplementation project(':android:f2native')
+    standaloneImplementation 'com.alibaba:fastjson:1.2.73'
+
+    aliPayImplementation project(':android:f2native')
+    aliPayImplementation(name: 'antg-build-android-release', ext: 'aar')
+    aliPayImplementation 'com.alibaba:fastjson:1.2.73'
 }

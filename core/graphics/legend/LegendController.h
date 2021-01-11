@@ -16,43 +16,46 @@ class XChart;
 namespace legend {
 
 static nlohmann::json DefaultLegendConfig() {
-    nlohmann::json defaultCfg = {
-        {"horizontalItems", 3},
-        {"itemMarginBottom", 12},
-        {"lineBottom", 5},
-        {"itemGap", 10},
-        {"showTitle", false},
-        {"titleStyle", {{"textSize", 12}, {"fill", "#808080"}, {"textAlign", "start"}, {"textBaseline", "top"}}},
-        {"nameStyle", {{"textSize", 12}, {"fill", "#808080"}, {"textAlign", "start"}, {"textBaseline", "top"}}},
-        {"valueStyle", {{"textSize", 12}, {"fill", "#808080"}, {"textAlign", "start"}, {"textBaseline", "top"}}},
-        {"itemWidth", "auto"},
-        {"wordSpace", 6},
-        {"radius", 3},
-        {"symbol", "circle"}};
+    nlohmann::json defaultCfg = {{"horizontalItems", 3},
+                                 {"itemMarginBottom", 12},
+                                 {"lineBottom", 5},
+                                 {"itemGap", 10},
+                                 {"showTitle", false},
+                                 {"titleStyle", {{"textSize", 12}, {"fill", "#808080"}, {"textAlign", "start"}, {"textBaseline", "top"}}},
+                                 {"nameStyle", {{"textSize", 12}, {"fill", "#808080"}, {"textAlign", "start"}, {"textBaseline", "top"}}},
+                                 {"valueStyle", {{"textSize", 12}, {"fill", "#808080"}, {"textAlign", "start"}, {"textBaseline", "top"}}},
+                                 {"itemWidth", "auto"},
+                                 {"wordSpace", 6},
+                                 {"radius", 3},
+                                 {"symbol", "circle"}};
 
     nlohmann::json top = {{
-                              "position", "right",
+                              "position",
+                              "right",
                           },
                           {"layout", "horizontal"},
                           {"align", "left"}};
     top.merge_patch(defaultCfg);
 
     nlohmann::json left = {{
-                               "position", "left",
+                               "position",
+                               "left",
                            },
                            {"layout", "vertical"},
                            {"verticalAlign", "middle"}};
     left.merge_patch(defaultCfg);
 
     nlohmann::json right = {{
-                                "position", "right",
+                                "position",
+                                "right",
                             },
                             {"layout", "vertical"},
                             {"verticalAlign", "middle"}};
     right.merge_patch(defaultCfg);
 
     nlohmann::json bottom = {{
-                                 "position", "bottom",
+                                 "position",
+                                 "bottom",
                              },
                              {"layout", "horizontal"},
                              {"align", "left"}};
@@ -84,7 +87,10 @@ struct LegendItem {
     std::string value;
 };
 
+class LegendController;
 class Legend {
+    friend LegendController;
+
   public:
     Legend(const std::string &field, const nlohmann::json &cfg, const std::vector<legend::LegendItem> &legendItems)
         : field_(field), cfg_(cfg), legendItems_(legendItems) {}
@@ -106,17 +112,19 @@ class Legend {
 
 class LegendController {
   public:
-    LegendController() {}
+    LegendController(shape::Group *_container) : container_(_container) {}
 
-    ~LegendController() {}
+    ~LegendController() { container_ = nullptr; }
 
     void SetFieldConfig(std::string field, nlohmann::json cfg = {});
 
-    void Render(XChart &chart, shape::Group *container);
+    void Render(XChart &chart);
 
     inline LegendRange GetRange() const noexcept { return legendRange_; }
 
     void OnToolTipMarkerItemsChanged(nlohmann::json &items);
+
+    void Redraw(XChart &chart);
 
     void ClearInner();
 
@@ -132,6 +140,7 @@ class LegendController {
     float legendWidth_ = 0.f;
     float legendHeight_ = 0.f;
     nlohmann::json markerItems_;
+    shape::Group *container_ = nullptr;
 };
 } // namespace legend
 } // namespace xg

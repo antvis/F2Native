@@ -35,11 +35,11 @@ class Element {
     /// 矩阵操作
     inline Matrix &GetMatrix() { return matrix_; }
     inline void SetMatrix(Matrix &matrix) { matrix_ = matrix; }
-    void Translate(float x, float y){};
-    void Rotate(float rad){};
-    void Scale(float sx, float sy){};
-    void MoveTo(float x, float y){};
-    void Apply(Matrix &matrix){};
+    virtual void Translate(float x, float y);
+    virtual void Rotate(float rad);
+    virtual void Scale(float sx, float sy);
+    virtual void MoveTo(float x, float y);
+    virtual void Apply(Vector2D *v);
 
     /// 子类处理内部绘制逻辑
     /// @param context canvas的context
@@ -76,6 +76,9 @@ class Element {
     virtual void Remove();
 
     virtual void Sort() {}
+
+  public:
+    util::Point point_;
 
   private:
     void InitElementId();

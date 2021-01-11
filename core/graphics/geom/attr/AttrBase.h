@@ -30,8 +30,7 @@ class AttrBase {
 
     virtual AttrType GetType() const = 0;
 
-    virtual void
-    Mapping(nlohmann::json &groupData, const AbstractScale &xScale, const AbstractScale &yScale, const AbstractCoord &coord) const {};
+    virtual void Mapping(nlohmann::json &groupData, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord){};
 
   protected:
     vector<string> fields_;
@@ -48,8 +47,14 @@ class Position : public AttrBase {
 
     AttrType GetType() const override { return AttrType::Position; }
 
-    void Mapping(nlohmann::json &groupData, const AbstractScale &xScale, const AbstractScale &yScale, const AbstractCoord &coord) const override {
-        for(size_t i = 0; i < groupData.size(); i++) {
+    void Mapping(nlohmann::json &groupData, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
+        std::size_t start = 0, end = groupData.size() - 1;
+        if(scale::IsCategory(xScale.GetType())) {
+            start = fmax(start, xScale.min);
+            end = fmin(end, xScale.max);
+        }
+
+        for(size_t i = start; i <= end; i++) {
             auto &item = groupData[i];
             nlohmann::json &xVal = item[fields_[0]];
             nlohmann::json &yVal = item[fields_[1]];
@@ -98,7 +103,7 @@ class Color : public AttrBase {
 
     inline const string &GetColor(int index) const { return index < colors_.size() ? colors_[index] : colors_[0]; }
 
-    void Mapping(nlohmann::json &groupData, const AbstractScale &xScale, const AbstractScale &yScale, const AbstractCoord &coord) const override {
+    void Mapping(nlohmann::json &groupData, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
         if(fields_.empty()) {
             //只赋值第一个对象
             if(groupData.size()) {
@@ -130,11 +135,28 @@ class Size : public AttrBase {
 
     AttrType GetType() const override { return AttrType::Size; }
 
-    void Mapping(nlohmann::json &groupData, const AbstractScale &xScale, const AbstractScale &yScale, const AbstractCoord &coord) const override {
-        //只赋值第一个对象
-        if(fields_.empty()) {
-            groupData[0]["_size"] = sizes_[0];
+    void Mapping(nlohmann::json &groupData, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
+        for(std::size_t index = 0; index < groupData.size(); ++index) {
+            nlohmann::json &item = groupData[index];
+            if(scale::IsCategory(xScale.GetType())) {
+                std::size_t val = static_cast<scale::Category &>(xScale).Transform(item[xScale.field]);
+                item["_size"] = sizes_[val % sizes_.size()];
+            } else {
+                double percent = xScale.Scale(item[xScale.field]);
+                item["_size"] = sizes_[GetLinear(percent) % sizes_.size()];
+            }
         }
+    }
+
+  private:
+    std::size_t GetLinear(double percent) {
+        std::size_t steps = sizes_.size() - 1;
+        std::size_t step = static_cast<std::size_t>(floor(steps * percent));
+        double leftPercent = steps * percent - step;
+        std::size_t start = sizes_[step];
+        std::size_t end = step == steps ? start : sizes_[step + 1];
+        std::size_t rst = static_cast<std::size_t>(start + (end - start) * leftPercent);
+        return rst;
     }
 
   private:
@@ -151,10 +173,10 @@ class Shape : public AttrBase {
 
     inline const string &GetShape(int index) const { return index < shapes_.size() ? shapes_[index] : shapes_[0]; }
 
-    void Mapping(nlohmann::json &groupData, const AbstractScale &xScale, const AbstractScale &yScale, const AbstractCoord &coord) const override {
-        //只赋值第一个对象
-        if(fields_.empty()) {
-            groupData[0]["_shape"] = shapes_[0];
+    void Mapping(nlohmann::json &groupData, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
+
+        for(std::size_t index = 0; index < groupData.size(); ++index) {
+            groupData[index]["_shape"] = shapes_[0];
         }
     }
 
@@ -170,10 +192,9 @@ class Adjust : public AttrBase {
 
     inline const string &GetAdjust() const { return adjust_; }
 
-    void Mapping(nlohmann::json &groupData, const AbstractScale &xScale, const AbstractScale &yScale, const AbstractCoord &coord) const override {
-        //只赋值第一个对象
-        if(fields_.empty()) {
-            groupData[0]["_adjust"] = adjust_;
+    void Mapping(nlohmann::json &groupData, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
+        for(std::size_t index = 0; index < groupData.size(); ++index) {
+            groupData[index]["_adjust"] = adjust_;
         }
     }
 

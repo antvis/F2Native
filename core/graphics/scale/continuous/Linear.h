@@ -1,84 +1,77 @@
 #ifndef XG_GRAPHICS_SCALE_LINEAR_H
 #define XG_GRAPHICS_SCALE_LINEAR_H
 
+#include "graphics/global.h"
 #include "graphics/scale/Scale.h"
+#include "utils/StringUtil.h"
 #include "utils/common.h"
 #include <WilkinsonExtended/WilkinsonExtended.h>
 #include <iomanip>
 #include <math.h>
 #include <sstream>
+#include <unordered_map>
 
 namespace xg {
 namespace scale {
 
-static double fixedBase(double v, int interval, std::string type) {
-    double div;
-    if(type == "ceil") {
-        div = ceil(v / interval);
-    } else if(type == "floor") {
-        div = floor(v / interval);
-    } else {
-        div = round(v / interval);
-    }
-
-    return div * interval;
-}
-
 class Linear : public AbstractScale {
   public:
     // 线性度量
-    // @param field 字段名称
-    // @param values 原始值数组
-    // @param min 度量最小值
-    // @param max 度量最大值
     Linear(const std::string &_field, nlohmann::json _values, nlohmann::json _config = {}) : AbstractScale(_field, _values) {
         InitConfig(_config);
-        // TODO min 和 max 的校正逻辑还需要再优化
-        int _index = static_cast<int>((max - min) / 5);
 
-        int SNAP_ARRAY[5] = {1, 2, 4, 5, 10};
-        int interval = (_index >= 5) ? 10 : SNAP_ARRAY[_index];
-
-        min = fixedBase(min, interval, "floor");
-        max = fixedBase(max, interval, "ceil");
-
-        this->minLimit = min;
-        this->maxLimit = max;
         this->ticks = this->CalculateTicks();
+
+        if(_config.contains("tick")) {
+            SetTickCallbackFun(_config["tick"]);
+        }
     }
 
     ScaleType GetType() const noexcept override { return ScaleType::Linear; }
 
     void Change(const nlohmann::json &cfg = {}) override {
-        InitConfig(cfg);
-        if(cfg.contains("values")) {
-            values = cfg["values"];
+        bool valueChanged = false;
+        // InitConfig(cfg);
+        // if(cfg.contains("values")) {
+        //     values = cfg["values"];
+        //     valueChanged = true;
+        // }
+
+        bool reCalcTicks = true;
+        if(cfg.contains("ticks")) {
+            if(cfg["ticks"].is_boolean()) {
+                reCalcTicks = cfg["ticks"];
+            } else if(cfg["ticks"].is_array()) {
+                this->ticks = cfg["ticks"];
+                reCalcTicks = false;
+            }
         }
 
-        this->minLimit = min;
-        this->maxLimit = max;
-        if(!cfg.contains("ticks")) {
+        InitConfig(cfg);
+
+        if(reCalcTicks) {
             this->ticks = this->CalculateTicks();
         }
+        scaledCache_.clear();
     }
 
-    double Scale(const nlohmann::json &key) const override {
+    double Scale(const nlohmann::json &key) override {
         if(!key.is_number()) {
             return std::nan("0.0");
         }
         if(xg::IsEqual(this->max, this->min)) {
             return this->rangeMin;
         }
+        std::size_t keyHash = nlohmann::detail::hash(key);
 
-        // std::size_t cacheKey = key.HashCode();
-        // if(scaleCache_.find(cacheKey) != scaleCache_.end()) {
-        //     return scaleCache_.at(cacheKey);
-        // }
+        if(scaledCache_.find(keyHash) != scaledCache_.end()) {
+            return scaledCache_.at(keyHash);
+        }
 
         double percent = GetScalePercent(key);
         double value = rangeMin + percent * (rangeMax - rangeMin);
 
-        // scaleCache_[cacheKey] = value;
+        scaledCache_[keyHash] = value;
         return value;
     }
 
@@ -110,38 +103,155 @@ class Linear : public AbstractScale {
 
   protected:
     nlohmann::json CalculateTicks() override {
-        nlohmann::json rst;
-        double outlmin, outlmax, outlstep;
-        easy_wilk_ext(min, max, this->tickCount, -1, &outlmin, &outlmax, &outlstep);
-
-        if(tickInterval > 0) {
-            // TODO  Demo 可以先不处理
-        }
-
-        double tickMin = minLimit;
-        double tickMax = maxLimit;
-        if(tickMin > tickMax) {
-            double temp = tickMin;
-            tickMin = tickMax;
-            tickMax = temp;
-        }
-        if(tickCount <= 2) {
-            rst.push_back(tickMin);
-            rst.push_back(tickMax);
+        if(config_["nice"] == true) {
+            nlohmann::json _ticks = NiceCalculateTicks();
+            //修改最值
+            this->min = _ticks[0];
+            this->max = _ticks[_ticks.size() - 1];
+            return _ticks;
+        } else {
+            double interval = (this->max - this->min) / this->tickCount;
+            nlohmann::json rst;
+            for(double index = this->min; index <= this->max; index += interval) {
+                rst.push_back(index);
+            }
             return rst;
         }
+    }
 
-        for(double index = tickMin; index <= tickMax; index += outlstep) {
-            rst.push_back(index);
+    nlohmann::json NiceCalculateTicks() {
+        nlohmann::json rst;
+
+        int count = (tickCount != -1 && tickCount >= 2) ? tickCount : DEFAULT_COUNT;
+        tickCount = count;
+
+        // 计算interval， 优先取tickInterval
+        const double interval = GetBestInterval(count, max, min);
+        tickInterval = interval;
+
+        // 通过interval计算最小tick
+        const double minTick = floor(min / interval) * interval;
+
+        // 如果指定了tickInterval, count 需要根据指定的tickInterval来算计
+        if(tickInterval != -1) {
+            const int intervalCount = abs(ceil((max - minTick) / tickInterval)) + 1;
+            // tickCount 作为最小 count 处理
+            count = std::max(count, intervalCount);
         }
 
-        // TODO filter
+        int tickLength = 0;
+        const int fixedLength = GetFixedLength(interval);
+        while(tickLength < count) {
+            rst.push_back(ToFixed(minTick + tickLength * interval, fixedLength));
+            tickLength++;
+        }
         return rst;
     }
 
     double GetScalePercent(double value) const { return (value - this->min) / (this->max - this->min); }
 
     double GetInvertPercent(double value) const { return (value - this->rangeMin) / (this->rangeMax - this->rangeMin); }
+
+    double GetBestInterval(const int tickCount, const double max, const double min) {
+        // 如果最大最小相等，则直接按1处理
+        if(IsEqual(max, min)) {
+            return 1 * GetFactor(max);
+        }
+        // 1.计算平均刻度间隔
+        const double avgInterval = (max - min) / (tickCount - 1);
+        // 2.数据标准归一化 映射到[1-10]区间
+        const double factor = GetFactor(avgInterval);
+        const double calInterval = avgInterval / factor;
+        const double calMax = max / factor;
+        const double calMin = min / factor;
+        // 根据平均值推算最逼近刻度值
+        int similarityIndex = 0;
+        for(int index = 0; index < SNAP_COUNT_ARRAY.size(); index++) {
+            const double item = SNAP_COUNT_ARRAY[index];
+            if(calInterval <= item) {
+                similarityIndex = index;
+                break;
+            }
+        }
+        const double similarityInterval = GetInterval(similarityIndex, tickCount, calMin, calMax);
+
+        // 小数点位数还原到数据的位数, 因为similarityIndex有可能是小数，所以需要保留similarityIndex自己的小数位数
+        const int fixedLength = GetFixedLength(similarityInterval) + GetFixedLength(factor);
+        return ToFixed(similarityInterval * factor, fixedLength);
+    }
+
+    double GetFactor(double number) {
+        // 取正数
+        number = fabs(number);
+        double factor = 1.f;
+
+        if(IsZero(number)) {
+            return factor;
+        }
+
+        // 小于1,逐渐放大
+        if(number < 1) {
+            int count = 0;
+            while(number < 1) {
+                factor = factor / 10;
+                number = number * 10;
+                count++;
+            }
+            // 浮点数计算出现问题
+            if(std::to_string(factor).size() > 12) {
+                factor = ToFixed(factor, count);
+            }
+            return factor;
+        }
+        // 大于10逐渐缩小
+        while(number > 10) {
+            factor = factor * 10;
+            number = number / 10;
+        }
+
+        return factor;
+    }
+
+    double GetInterval(const int startIndex, const int tickCount, const double min, const double max) const {
+        bool verify = false;
+        double interval = SNAP_COUNT_ARRAY[startIndex];
+        // 刻度值校验，如果不满足，循环下去
+        for(int i = startIndex; i < SNAP_COUNT_ARRAY.size(); i++) {
+            if(IntervalIsVerify(SNAP_COUNT_ARRAY[i], tickCount, max, min)) {
+                // 有符合条件的interval
+                interval = SNAP_COUNT_ARRAY[i];
+                verify = true;
+                break;
+            }
+        }
+        // 如果不满足, 依次缩小10倍，再计算
+        if(!verify) {
+            return 10 * GetInterval(0, tickCount, min / 10, max / 10);
+        }
+        return interval;
+    }
+
+    // 刻度是否满足展示需求
+    bool IntervalIsVerify(const double interval, const int tickCount, const double max, const double min) const {
+        const double minTick = floor(min / interval) * interval;
+        if(minTick + (tickCount - 1) * interval >= max) {
+            return true;
+        }
+        return false;
+    }
+
+    // 计算小数点应该保留的位数
+    int GetFixedLength(const double num) const {
+        string str = std::to_string(num);
+        vector<string> sv;
+        StringUtil::Split(std::to_string(num), sv, '.');
+        if(sv.size() >= 2) {
+            return std::min((int)(sv.size()), 20);
+        }
+        return 0;
+    }
+
+    double ToFixed(const double val, const int decimal) const { return val; }
 
   private:
     void InitConfig(const nlohmann::json &cfg) {
@@ -159,15 +269,16 @@ class Linear : public AbstractScale {
     }
 
   public:
-    double minLimit = 0; // 暂时没用到，后续再补充
-    double maxLimit = 0; // 暂时没用到，后续再补充
+    //    double minLimit = 0;
+    //    double maxLimit = 0;
     int tickInterval = -1;
+    int tickCount = -1;
     int precision = 0; // tickText 小数点精度
 
-    nlohmann::json config_ = {{"tickCount", 6}, {"precision", 0}, {"range", {0.0, 1.0}}};
+    nlohmann::json config_ = {{"tickCount", DEFAULT_COUNT}, {"precision", 0}, {"range", {0.0, 1.0}}, {"nice", false}};
 
   private:
-    std::map<std::size_t, double> scaleCache_;
+    std::unordered_map<std::size_t, double> scaledCache_;
 };
 } // namespace scale
 } // namespace xg

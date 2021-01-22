@@ -33,12 +33,12 @@ sh build_gcanvas_android.sh
 
 2. Build F2Native
 ```shell
-./gradlew :android:f2native:assemble
+./gradlew :android:f2native:assembleStandalone
 ```
 
 3. run Demo 
 ```shell
-./gradlew :android:sample:installD
+./gradlew :android:sample:installStandaloneD
 ```
 
 

@@ -379,6 +379,22 @@ void F2CanvasView::SetLinearGradientFillStyle(float x0, float y0, float x1, floa
     }
 }
 
+void F2CanvasView::SetRadialGradientFillStyle(float x0,
+                                              float y0,
+                                              float r0,
+                                              float x1,
+                                              float y1,
+                                              float r1,
+                                              std::vector<float> &positions,
+                                              std::vector<std::string> &colors,
+                                              bool is_stroke) {
+    if(canvas_context_valid_ && !positions.empty() && !colors.empty()) {
+        float start[3] = {x0, y0, r0};
+        float end[3] = {x1, y1, r1};
+        canvas_2d_context_->SetFillStyleRadialGradient(start, end, colors.size(), &positions[0], &colors[0], is_stroke);
+    }
+}
+
 void F2CanvasView::SetPatternFillStyle(int textureId, int width, int height, std::string &&mode, bool is_stroke) {
     if(canvas_context_valid_) {
         if(textureId < 0) {

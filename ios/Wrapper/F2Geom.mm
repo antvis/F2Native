@@ -1,4 +1,6 @@
 #import "F2Geom.h"
+#import "F2CallbackObj.h"
+#import "F2Chart.h"
 #import "F2Utils.h"
 #import <graphics/geom/Area.h>
 #import <graphics/geom/Interval.h>
@@ -7,13 +9,15 @@
 @interface F2Geom () {
     xg::geom::AbstractGeom *_geom;
 }
+@property (nonatomic, weak) F2Chart *chart;
 @end
 
 @implementation F2Geom
 
-- (instancetype)initWithGeom:(void *)geom {
+- (instancetype)initWithGeom:(void *)geom withOwner:(id)chart {
     if(self = [super init]) {
         _geom = (xg::geom::AbstractGeom *)geom;
+        _chart = chart;
     }
     return self;
 }
@@ -92,7 +96,7 @@
 
 - (F2Geom * (^)(NSDictionary *config))style {
     return ^id(NSDictionary *config) {
-        self->_geom->Style([XGSafeJson([F2Utils toJsonString:config]) UTF8String]);
+        self->_geom->Style([XGSafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self.chart]]) UTF8String]);
         return self;
     };
 }
@@ -107,7 +111,7 @@
 - (F2Interval * (^)(NSDictionary *config))tag {
     return ^id(NSDictionary *config) {
         xg::geom::Interval *interval = (xg::geom::Interval *)[super getGeom];
-        interval->Tag([XGSafeJson([F2Utils toJsonString:config]) UTF8String]);
+        interval->Tag([XGSafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self.chart]]) UTF8String]);
         return self;
     };
 }
@@ -118,4 +122,7 @@
 @end
 
 @implementation F2Point
+@end
+
+@implementation F2Candle
 @end

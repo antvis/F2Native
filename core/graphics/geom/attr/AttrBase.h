@@ -30,7 +30,8 @@ class AttrBase {
 
     virtual AttrType GetType() const = 0;
 
-    virtual void Mapping(nlohmann::json &groupData, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord){};
+    virtual void
+    Mapping(nlohmann::json &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord){};
 
   protected:
     vector<string> fields_;
@@ -40,20 +41,14 @@ class AttrBase {
 class Position : public AttrBase {
   public:
     Position(const vector<string> &fields) : AttrBase(fields, {"x", "y"}) {
-        if(this->fields_.size() <= 0 || this->fields_.size() > 2) {
-            throw runtime_error("fields is invalid.");
-        }
+        // if(this->fields_.size() <= 0 || this->fields_.size() > 2) {
+        // throw runtime_error("fields is invalid.");
+        // }
     }
 
     AttrType GetType() const override { return AttrType::Position; }
 
-    void Mapping(nlohmann::json &groupData, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
-        std::size_t start = 0, end = groupData.size() - 1;
-        if(scale::IsCategory(xScale.GetType())) {
-            start = fmax(start, xScale.min);
-            end = fmin(end, xScale.max);
-        }
-
+    void Mapping(nlohmann::json &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
         for(size_t i = start; i <= end; i++) {
             auto &item = groupData[i];
             nlohmann::json &xVal = item[fields_[0]];
@@ -91,11 +86,12 @@ class Position : public AttrBase {
 
 class Color : public AttrBase {
   public:
-    Color(const vector<string> &fields, const vector<string> &colors) : AttrBase(fields, {"color"}), colors_(colors) {
-        if(fields_.size() != 1) {
-            throw runtime_error("fields must be one element.");
-        }
-    };
+    Color(const vector<string> &fields, const vector<string> &colors)
+        : AttrBase(fields, {"color"}), colors_(colors){
+                                           // if(fields_.size() != 1) {
+                                           // throw runtime_error("fields must be one element.");
+                                           // }
+                                       };
 
     Color(const string &color) : AttrBase({}, {"color"}) { colors_.push_back(color); }
 
@@ -103,20 +99,15 @@ class Color : public AttrBase {
 
     inline const string &GetColor(int index) const { return index < colors_.size() ? colors_[index] : colors_[0]; }
 
-    void Mapping(nlohmann::json &groupData, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
-        if(fields_.empty()) {
-            //只赋值第一个对象
-            if(groupData.size()) {
-                groupData[0]["_color"] = colors_[0];
-            }
-        } else {
-            if(xScale.GetType() == ScaleType::Cat || xScale.GetType() == ScaleType::TimeCat) {
+    void Mapping(nlohmann::json &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
+        for(size_t i = start; i <= end; i++) {
+            auto &item = groupData[i];
+            if(!fields_.empty() && scale::IsCategory(xScale.GetType())) {
                 const Category &cat = (Category &)xScale;
-                for(size_t i = 0; i < groupData.size(); i++) {
-                    auto &item = groupData[i];
-                    int index = cat.Transform(item[fields_[0]]);
-                    item["_color"] = colors_[index];
-                }
+                std::size_t index = cat.Transform(item[fields_[0]]);
+                item["_color"] = colors_[index];
+            } else {
+                item["_color"] = colors_[0];
             }
         }
     }
@@ -135,8 +126,8 @@ class Size : public AttrBase {
 
     AttrType GetType() const override { return AttrType::Size; }
 
-    void Mapping(nlohmann::json &groupData, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
-        for(std::size_t index = 0; index < groupData.size(); ++index) {
+    void Mapping(nlohmann::json &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
+        for(std::size_t index = start; index <= end; ++index) {
             nlohmann::json &item = groupData[index];
             if(scale::IsCategory(xScale.GetType())) {
                 std::size_t val = static_cast<scale::Category &>(xScale).Transform(item[xScale.field]);
@@ -173,9 +164,8 @@ class Shape : public AttrBase {
 
     inline const string &GetShape(int index) const { return index < shapes_.size() ? shapes_[index] : shapes_[0]; }
 
-    void Mapping(nlohmann::json &groupData, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
-
-        for(std::size_t index = 0; index < groupData.size(); ++index) {
+    void Mapping(nlohmann::json &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
+        for(std::size_t index = start; index <= end; ++index) {
             groupData[index]["_shape"] = shapes_[0];
         }
     }
@@ -192,8 +182,8 @@ class Adjust : public AttrBase {
 
     inline const string &GetAdjust() const { return adjust_; }
 
-    void Mapping(nlohmann::json &groupData, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
-        for(std::size_t index = 0; index < groupData.size(); ++index) {
+    void Mapping(nlohmann::json &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
+        for(std::size_t index = start; index <= end; ++index) {
             groupData[index]["_adjust"] = adjust_;
         }
     }

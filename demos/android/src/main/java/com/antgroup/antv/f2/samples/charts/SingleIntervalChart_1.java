@@ -28,18 +28,16 @@ public class SingleIntervalChart_1 implements F2CanvasView.Adapter {
         mChart.setCanvas(canvasView);
         mChart.padding(10, 0, 0, 0);
         mChart.source(Utils.loadAssetFile(canvasView.getContext(), "mockData_singleIntervalChart.json"));
-        mChart.interval().position("year*sales");
-        mChart.line().position("year*sales").fixedShape("smooth");
+        mChart.interval().position("year*sales").style(new F2Config.Builder()
+                .setOption("radius", new float[]{3, 3, 0, 0 }) // [tl, tr, bl, br]
+                .build());
         mChart.setAxis("year", new F2Chart.AxisConfigBuilder()
                 .label(new F2Chart.AxisLabelConfigBuilder().labelOffset(5.f))
-                .grid(new F2Chart.AxisGridConfigBuilder().stroke("#000").lineWidth(1))
                 );
-//        mChart.setAxis("sales", new F2Chart.AxisConfigBuilder().hidden());
-//        mChart.setAxis("year", new F2Chart.AxisConfigBuilder().labelHidden());
 
         mChart.setAxis("sales", new F2Chart.AxisConfigBuilder()
                 .grid(new F2Chart.AxisGridConfigBuilder().type("dash")));
-        mChart.setScale("year", new F2Chart.ScaleConfigBuilder().tickCount(5));
+        mChart.setScale("year", new F2Chart.ScaleConfigBuilder().tickCount(5).range(new double[]{0.05, 0.95}));
         mChart.setScale("sales", new F2Chart.ScaleConfigBuilder().min(15).max(50).tickCount(5));
         mChart.interaction("pinch", new F2Config.Builder().setOption("maxCount", 80).setOption("minCount", 10).build()).interaction("pan");
 

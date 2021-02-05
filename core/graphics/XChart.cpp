@@ -3,6 +3,7 @@
 #include "graphics/canvas/Polar.h"
 #include "graphics/func/Func.h"
 #include "graphics/geom/shape/Area.h"
+#include "graphics/geom/shape/Candle.h"
 #include "graphics/geom/shape/Interval.h"
 #include "graphics/geom/shape/Line.h"
 #include "graphics/geom/shape/Point.h"
@@ -52,10 +53,6 @@ XChart::~XChart() {
     actionListeners_.clear();
     interactions_.clear();
 
-    backLayout_ = nullptr;
-    midLayout_ = nullptr;
-    frontLayout_ = nullptr;
-    XG_RELEASE_POINTER(canvas_);
     XG_RELEASE_POINTER(scaleController_);
     XG_RELEASE_POINTER(axisController_);
     XG_RELEASE_POINTER(guideController_);
@@ -67,6 +64,11 @@ XChart::~XChart() {
     XG_RELEASE_POINTER(interactionContext_);
     XG_RELEASE_POINTER(eventController_);
     XG_RELEASE_POINTER(logTracer_);
+
+    backLayout_ = nullptr;
+    midLayout_ = nullptr;
+    frontLayout_ = nullptr;
+    XG_RELEASE_POINTER(canvas_);
 }
 
 XChart &XChart::Source(const std::string &json) {
@@ -216,6 +218,29 @@ geom::Point &XChart::Point() {
     return *p;
 }
 
+geom::Candle &XChart::Candle() {
+    this->logTracer_->trace("#Candle %s", "create Geom@Candle");
+    auto candle = std::make_unique<geom::Candle>(midLayout_->AddGroup(), logTracer_);
+    geom::Candle *p = candle.get();
+    this->geomShapeFactory_->RegisterGeomShape(candle->GetType(), xg::make_unique<xg::geom::shape::Candle>());
+    this->geoms_.push_back(std::move(candle));
+    return *p;
+}
+
+std::vector<std::string> XChart::getYScaleFields() {
+    std::vector<std::string> _fields;
+
+    std::for_each(geoms_.begin(), geoms_.end(), [&](auto &geom) -> void {
+        std::string yField = geom->GetYScaleField();
+
+        auto it = std::find(_fields.begin(), _fields.end(), yField);
+        if(it == _fields.end()) {
+            _fields.push_back(yField);
+        }
+    });
+    return _fields;
+}
+
 void XChart::Render() {
     this->logTracer_->trace("#Render %s", "start render");
     if(canvasContext_ == nullptr) {
@@ -299,11 +324,13 @@ void XChart::Repaint() {
 
 void XChart::Clear() {
     guideController_->Clear();
+    scaleController_->Clear();
     ClearInner();
     this->geoms_.clear();
     this->geomShapeFactory_->Clear();
     actionListeners_.clear();
     interactions_.clear();
+    this->data_ = {};
     this->rendered_ = false;
 }
 

@@ -21,38 +21,43 @@ class Line : public GeomShapeBase {
               canvas::coord::AbstractCoord &coord,
               canvas::CanvasContext &context,
               const nlohmann::json &data,
+              std::size_t start,
+              std::size_t end,
               xg::shape::Group &container) override {
-        this->drawLines(data, context, container);
+        this->drawLines(coord, data, start, end, context, container);
     }
 
   private:
     // 还缺一个style
-    void drawLines(const nlohmann::json &data, canvas::CanvasContext &canvasContext, xg::shape::Group &container) {
-        size_t size = data.size();
+    void drawLines(canvas::coord::AbstractCoord &coord,
+                   const nlohmann::json &data,
+                   std::size_t start,
+                   std::size_t end,
+                   canvas::CanvasContext &canvasContext,
+                   xg::shape::Group &container) {
+        size_t size = end - start + 1;
         if(size <= 0)
             return;
 
-        std::string color = GLOBAL_COLORS[0];
-        if(size > 0 && data[0].contains("_color")) {
-            color = data[0]["_color"];
-        }
+        util::CanvasFillStrokeStyle colorStyle = util::ColorParser(data[start], "_color");
+
         float lineWidth = 1.0;
-        if(size > 0 && data[0].contains("_size")) {
-            lineWidth = data[0]["_size"];
+        if(data[start].contains("_size")) {
+            lineWidth = data[start]["_size"];
         }
 
-        string shapeType = "line";
-        if(size > 0 && data[0].contains("_shape")) {
-            shapeType = data[0]["_shape"];
+        string shapeType = "line"; // [line, smooth]
+        if(data[start].contains("_shape")) {
+            shapeType = data[start]["_shape"];
         }
         bool smooth = shapeType == "smooth";
 
-        if(data[0]["_y"].is_array()) {
+        if(data[start]["_y"].is_array()) {
             // stack 下的多组线
             vector<xg::util::Point> topPoints;
             vector<xg::util::Point> bottomPoints;
 
-            for(std::size_t i = 0; i < size; i++) {
+            for(std::size_t i = start; i <= end; i++) {
                 const nlohmann::json &item = data[i];
                 double x = item["_x"];
                 const nlohmann::json &yVal = item["_y"];
@@ -63,11 +68,12 @@ class Line : public GeomShapeBase {
                 topPoints.push_back(util::Point{x, yVal[1]});
             }
 
-            auto topLine =
-                xg::make_unique<xg::shape::Polyline>(lineWidth * canvasContext.GetDevicePixelRatio(), topPoints, color, "", smooth);
-            if(shapeType == "dash") {
-                topLine->SetDashLine(xg::GLOBAL_LINE_DASH);
+            auto topLine = xg::make_unique<xg::shape::Polyline>(lineWidth * canvasContext.GetDevicePixelRatio(), topPoints, smooth);
+            if(data[start].contains("_style") && data[start]["_style"].contains("dash")) {
+                topLine->SetDashLine(json::ParseDashArray(data[start]["_style"]["dash"], canvasContext.GetDevicePixelRatio()));
             }
+
+            topLine->strokeStyle_ = colorStyle;
             container.AddElement(std::move(topLine));
 
             // auto bottomLine =
@@ -83,15 +89,16 @@ class Line : public GeomShapeBase {
         vector<xg::util::Point> points;
 
         // todo 这里有一个判断 如果线是循环的 会将第一个点复制成新点插入队尾 形成循环 目前没有这个判断 后续添加
-        for(std::size_t i = 0; i < size; i++) {
+        for(std::size_t i = start; i <= end; i++) {
             const nlohmann::json &item = data[i];
             points.push_back(util::Point(item["_x"], item["_y"]));
         }
 
-        auto l = xg::make_unique<xg::shape::Polyline>(lineWidth * canvasContext.GetDevicePixelRatio(), points, color, "", smooth);
-        if(shapeType == "dash") {
-            l->SetDashLine(xg::GLOBAL_LINE_DASH);
+        auto l = xg::make_unique<xg::shape::Polyline>(lineWidth * canvasContext.GetDevicePixelRatio(), points, smooth);
+        if(data[start].contains("_style") && data[start]["_style"].contains("dash")) {
+            l->SetDashLine(json::ParseDashArray(data[start]["_style"]["dash"], canvasContext.GetDevicePixelRatio()));
         }
+        l->strokeStyle_ = colorStyle;
         container.AddElement(std::move(l));
     }
 };

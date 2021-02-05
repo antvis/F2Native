@@ -6,7 +6,6 @@ import android.view.MenuItem;
 import com.antgroup.antv.f2.F2CanvasView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 public class SampleActivity extends AppCompatActivity {
 
@@ -15,11 +14,8 @@ public class SampleActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sample);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+        setContentView(R.layout.activity_sample);
 
         mCanvasView = findViewById(R.id.canvasView);
         mCanvasView.initCanvasContext(new F2CanvasView.ConfigBuilder()

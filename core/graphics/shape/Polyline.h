@@ -1,7 +1,6 @@
+#include "graphics/shape/Shape.h"
 #ifndef XG_GRAPHICS_SHAPE_POLYLINE_H
 #define XG_GRAPHICS_SHAPE_POLYLINE_H
-
-#include "graphics/shape/Shape.h"
 
 using namespace xg::util;
 
@@ -10,7 +9,9 @@ namespace shape {
 
 class Polyline : public Shape {
   public:
-    Polyline(const float lineWidth, const vector<util::Point> &, const string &strokeColor, const string &fillColor, const bool smooth);
+    Polyline(const float lineWidth, const vector<util::Point> &, const bool smooth);
+
+    Polyline(const float lineWidth, const vector<util::Point> &, const std::string &strokeColor, const std::string &fillColor, const bool smooth);
 
     BBox CalculateBox(canvas::CanvasContext &context) const override;
 

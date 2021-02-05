@@ -1,7 +1,7 @@
+#include "graphics/shape/Shape.h"
 
 #ifndef XG_GRAPHICS_SHAPE_MARKER_H
 #define XG_GRAPHICS_SHAPE_MARKER_H
-#include "graphics/shape/Shape.h"
 
 namespace xg {
 namespace shape {
@@ -12,10 +12,7 @@ class Marker : public Shape {
         : radius_(radius), symbol_(symbol) {
         type_ = "marker";
         point_ = center;
-        canFill_ = true;
-        canStroke_ = true;
-        fill_ = fill;
-        stroke_ = fill;
+        fillStyle_ = util::CanvasFillStrokeStyle(fill);
     }
 
     BBox CalculateBox(canvas::CanvasContext &context) const override;
@@ -25,7 +22,7 @@ class Marker : public Shape {
 
   public:
     float radius_;
-    string symbol_ = "circle";
+    std::string symbol_ = "circle";
 };
 
 } // namespace shape

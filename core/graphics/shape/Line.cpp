@@ -1,12 +1,17 @@
 #include "graphics/shape/Line.h"
 
+xg::shape::Line::Line(const Point &pt1, const Point &pt2) {
+    p1_ = pt1;
+    p2_ = pt2;
+    type_ = "line";
+}
+
 xg::shape::Line::Line(const Point &pt1, const Point &pt2, const float lineWidth, const string &strokeColor) : Shape() {
     p1_ = pt1;
     p2_ = pt2;
     lineWidth_ = lineWidth;
-    stroke_ = strokeColor;
+    strokeStyle_ = util::CanvasFillStrokeStyle(strokeColor);
     type_ = "line";
-    canStroke_ = true;
 }
 
 void xg::shape::Line::CreatePath(canvas::CanvasContext &context) const {

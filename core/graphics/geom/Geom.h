@@ -59,6 +59,8 @@ class AbstractGeom {
 
     virtual void Clear();
 
+    const nlohmann::json &GetDataArray() { return dataArray_; }
+
   protected:
     AbstractGeom(Group *_container, utils::Tracer *tracer) : container_(_container), tracker_(tracer){};
     // 数据分组
@@ -67,11 +69,11 @@ class AbstractGeom {
     const set<string> GetGroupFieldNames(XChart &chart);
     // void GetAttrValues(XChart &chart, const AttrBase &attr, AttrCfg &acfg, DrawCfg &dcfg);
 
-    virtual void Mapping(XChart &chart, nlohmann::json &data);
+    virtual void Mapping(XChart &chart, nlohmann::json &data, std::size_t start, std::size_t end);
 
     virtual void BeforeMapping(XChart &chart, nlohmann::json &dataArray) {}
 
-    virtual void Draw(XChart &chart, const nlohmann::json &groupData) const;
+    virtual void Draw(XChart &chart, const nlohmann::json &groupData, std::size_t start, std::size_t end) const;
 
     void updateStackRange(XChart &chart);
 

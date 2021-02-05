@@ -6,7 +6,6 @@
 #import <gcanvas/GCanvas.hpp>
 #import <gcanvas/GCanvas2dContext.h>
 #endif
-#import "F2CallbackObj.h"
 
 @interface F2Chart ()
 @property (nonatomic, assign) xg::XChart *chart;
@@ -73,32 +72,34 @@
     };
 }
 
-- (F2Chart * (^)(NSString *filed, NSDictionary *config))scale {
+- (F2Chart * (^)(NSString *field, NSDictionary *config))scale {
     return ^id(NSString *field, NSDictionary *config) {
-        self.chart->Scale([XGSafeString(field) UTF8String], [XGSafeJson([F2Utils toJsonString:config]) UTF8String]);
+        self.chart->Scale([XGSafeString(field) UTF8String],
+                          [XGSafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self]]) UTF8String]);
         return self;
     };
 }
 
-- (F2Chart * (^)(NSString *filed, NSDictionary *config))axis {
+- (F2Chart * (^)(NSString *field, NSDictionary *config))axis {
     return ^id(NSString *field, NSDictionary *config) {
-        config = [self updateItemAttr:config WithName:@"label"];
-        self.chart->Axis([XGSafeString(field) UTF8String], [XGSafeJson([F2Utils toJsonString:config]) UTF8String]);
+        self.chart->Axis([XGSafeString(field) UTF8String],
+                         [XGSafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self]]) UTF8String]);
 
         return self;
     };
 }
 
-- (F2Chart * (^)(NSString *filed, NSDictionary *config))legend {
+- (F2Chart * (^)(NSString *field, NSDictionary *config))legend {
     return ^id(NSString *field, NSDictionary *config) {
-        self.chart->Legend([XGSafeString(field) UTF8String], [XGSafeJson([F2Utils toJsonString:config]) UTF8String]);
+        self.chart->Legend([XGSafeString(field) UTF8String],
+                           [XGSafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self]]) UTF8String]);
         return self;
     };
 }
 
 - (F2Chart * (^)(NSDictionary *config))coord {
     return ^id(NSDictionary *config) {
-        self.chart->Coord([XGSafeJson([F2Utils toJsonString:config]) UTF8String]);
+        self.chart->Coord([XGSafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self]]) UTF8String]);
         return self;
     };
 }
@@ -106,41 +107,46 @@
 - (F2Chart * (^)(NSString *type, NSDictionary *config))interaction {
     return ^id(NSString *type, NSDictionary *config) {
         self.chart->Interaction([XGSafeString(type) UTF8String],
-                                nlohmann::json::parse([XGSafeJson([F2Utils toJsonString:config]) UTF8String]));
+                                nlohmann::json::parse([XGSafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config
+                                                                                                                  host:self]]) UTF8String]));
         return self;
     };
 }
 
-/// 开启 ToolTIp 功能
-/// @param confg    具体字段待补充
 - (F2Chart * (^)(NSDictionary *config))tooltip {
     return ^id(NSDictionary *config) {
-        self.chart->Tooltip([XGSafeJson([F2Utils toJsonString:config]) UTF8String]);
+        self.chart->Tooltip([XGSafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self]]) UTF8String]);
         return self;
     };
 }
 
 - (F2Line * (^)(void))line {
     return ^id() {
-        return [[F2Line alloc] initWithGeom:&self.chart->Line()];
+        return [[F2Line alloc] initWithGeom:&self.chart->Line() withOwner:self];
     };
 }
 
 - (F2Interval * (^)(void))interval {
     return ^id() {
-        return [[F2Interval alloc] initWithGeom:&self.chart->Interval()];
+        return [[F2Interval alloc] initWithGeom:&self.chart->Interval() withOwner:self];
     };
 }
 
 - (F2Area * (^)(void))area {
     return ^id() {
-        return [[F2Area alloc] initWithGeom:&self.chart->Area()];
+        return [[F2Area alloc] initWithGeom:&self.chart->Area() withOwner:self];
     };
 }
 
 - (F2Point * (^)(void))point {
     return ^id() {
-        return [[F2Point alloc] initWithGeom:&self.chart->Point()];
+        return [[F2Point alloc] initWithGeom:&self.chart->Point() withOwner:self];
+    };
+}
+
+- (F2Candle * (^)(void))candle {
+    return ^id() {
+        return [[F2Candle alloc] initWithGeom:&self.chart->Candle() withOwner:self];
     };
 }
 
@@ -211,25 +217,6 @@
     };
 }
 
-#pragma mark private
-- (NSDictionary *)updateItemAttr:(NSDictionary *)config WithName:(NSString *)name {
-    if(name && [config objectForKey:name]) {
-
-        NSDictionary *attr = [config objectForKey:name];
-        if([attr isKindOfClass:[NSDictionary class]] && [attr objectForKey:@"item"] &&
-           [[attr objectForKey:@"item"] isKindOfClass:[F2CallbackObj class]]) {
-            NSMutableDictionary *mutableConfig = [NSMutableDictionary dictionaryWithDictionary:attr];
-            F2CallbackObj *callbackObj = (F2CallbackObj *)[attr objectForKey:@"item"];
-            [mutableConfig setObject:callbackObj.key forKey:@"item"];
-            [self.callbackList addObject:callbackObj];
-            NSDictionary *attrConf = [mutableConfig copy];
-            NSMutableDictionary *m_dic = [NSMutableDictionary dictionaryWithDictionary:config];
-            [m_dic setObject:attrConf forKey:name];
-            return [m_dic copy];
-        }
-    }
-    return config;
-}
 - (NSMutableArray *)callbackList {
     if(!_callbackList) {
         _callbackList = [[NSMutableArray alloc] init];
@@ -264,4 +251,7 @@
     [self render];
 }
 
+- (void)bindF2CallbackObj:(F2CallbackObj *)callback {
+    [self.callbackList addObject:callback];
+}
 @end

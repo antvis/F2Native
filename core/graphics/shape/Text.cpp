@@ -1,15 +1,19 @@
 #include "graphics/shape/Text.h"
 #include <utils/StringUtil.h>
 
-xg::shape::Text::Text(const string &text, const Point &pt, const float fontSize, const string &strokeColor, const string &fillColor) {
-    canFill_ = true;
-    canStroke_ = true;
+xg::shape::Text::Text(const std::string &text, const Point &pt, const float fontSize, const std::string &strokeColor, const std::string &fillColor) {
     type_ = "text";
     lineWidth_ = std::nan("0");
     point_ = pt;
     fontSize_ = fontSize;
-    stroke_ = strokeColor;
-    fill_ = fillColor;
+
+    if(!fillColor.empty()) {
+        fillStyle_ = util::CanvasFillStrokeStyle(fillColor);
+    }
+    if(!strokeColor.empty()) {
+        strokeStyle_ = util::CanvasFillStrokeStyle(strokeColor);
+    }
+
     font_ = GetFontStyle();
     text_ = text;
     lineCount_ = 1;
@@ -75,7 +79,7 @@ BBox xg::shape::Text::CalculateBox(canvas::CanvasContext &context) const {
     }
 }
 
-string xg::shape::Text::GetFontStyle() const {
+std::string xg::shape::Text::GetFontStyle() const {
     return fontStyle_ + " " + fontVariant_ + " " + fontWeight_ + " " + std::to_string(fontSize_) + "px " + fontFamily_;
 }
 

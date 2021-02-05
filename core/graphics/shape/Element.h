@@ -3,6 +3,7 @@
 
 #include "graphics/canvas/CanvasContext.h"
 #include "graphics/util/BBox.h"
+#include "graphics/util/Color.h"
 #include "graphics/util/Matrix.h"
 #include "graphics/util/Point.h"
 
@@ -46,8 +47,8 @@ class Element {
     virtual void DrawInner(canvas::CanvasContext &context) const {};
 
     /// get属性
-    inline bool HasStroke() const { return canStroke_ && !stroke_.empty(); }
-    inline bool HasFill() const { return canFill_ && !fill_.empty(); }
+    inline bool HasStroke() const { return strokeStyle_.type != util::CanvasFillStrokeStyleType::kNone; }
+    inline bool HasFill() const { return fillStyle_.type != util::CanvasFillStrokeStyleType::kNone; }
     inline bool IsVisible() const { return visible_; }
     inline bool IsDestroyed() const { return destroyed_; }
     inline bool IsGroup() const { return isGroup_; }
@@ -79,6 +80,9 @@ class Element {
 
   public:
     util::Point point_;
+    CanvasFillStrokeStyle fillStyle_;
+    CanvasFillStrokeStyle strokeStyle_;
+    float lineWidth_ = std::nan("0");
 
   private:
     void InitElementId();
@@ -94,18 +98,14 @@ class Element {
     int zIndex_ = 0;
     bool visible_ = true;
     bool destroyed_ = false;
-    bool canFill_ = false;
-    bool canStroke_ = false;
     bool isShape_ = false;
     bool isGroup_ = false;
     Matrix matrix_;
     BBox bbox_{static_cast<float>((std::nan("0")))};
     string type_ = "element";
-    string fill_ = "";
-    string stroke_ = "";
+
     float strokeOpacity_ = std::nan("0");
     float fillOpacity_ = std::nan("0");
-    float lineWidth_ = std::nan("0");
     std::string font_ = "";
     array<float, 2> lineDash_ = {{0, 0}};
     string textAlign_ = "start";

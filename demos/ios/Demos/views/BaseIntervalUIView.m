@@ -13,11 +13,13 @@
     self.chart.axis(@"sales", @{@"grid": @{@"type": @"dash", @"lineWidth": @(2), @"lineDash": @[@(6), @(2)]}});
     self.chart.scale(@"year", @{@"range": @[@(0.1), @(0.9)]});
     self.chart.scale(@"sales", @{@"nice": @(YES)});
-    self.chart.interval().position(@"year*sales");
+    self.chart.interval().position(@"year*sales").style(@{
+        @"radius": @[@(5), @(5), @(0), @(0)] // [tl, tr, bl, br]
+    });
     self.chart.render();
 
     // get item position.
-    NSArray<NSNumber *> *position = self.chart.getPosition(@{@"year": @"1958 年", @"sales": @(48)});
+    //    NSArray<NSNumber *> *position = self.chart.getPosition(@{@"year": @"1958 年", @"sales": @(48)});
 }
 
 @end

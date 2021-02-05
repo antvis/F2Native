@@ -4,7 +4,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface F2Geom : NSObject
 
-- (instancetype)initWithGeom:(void *)geom;
+- (instancetype)initWithGeom:(void *)geom withOwner:(id)chart;
 
 /// 设置几何对象的x轴*y轴
 - (F2Geom * (^)(NSString *field))position;
@@ -52,6 +52,10 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface F2Point : F2Geom
+
+@end
+
+@interface F2Candle : F2Geom
 
 @end
 

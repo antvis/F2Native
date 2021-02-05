@@ -5,9 +5,8 @@ import com.antgroup.antv.f2.F2Chart;
 import com.antgroup.antv.f2.samples.Utils;
 
 /**
- * 基础折线图-2
+ * 基础折线图(双Y轴)
  * @author qingyuan.yl
- * @date 2020-09-27
  */
 public class SingleLineChart_2 implements F2CanvasView.Adapter {
     private F2Chart mChart;
@@ -19,17 +18,24 @@ public class SingleLineChart_2 implements F2CanvasView.Adapter {
         }
 
         mChart.setCanvas(canvasView);
-        mChart.padding(10, 0, 0, 0);
-        mChart.source(Utils.loadAssetFile(canvasView.getContext(), "mockData_singleLineChart.json"));
-        mChart.line().position("date*value").fixedShape("smooth");
+        mChart.padding(10, 10, 10, 0);
+        mChart.source(Utils.loadAssetFile(canvasView.getContext(), "mockData_multiAxiesLine.json"));
+        mChart.line().position("date*value").fixedColor("#1890FF");
+        mChart.line().position("date*offset").fixedColor("#2FC25B");
         mChart.setAxis("date", new F2Chart.AxisConfigBuilder()
                 .label(new F2Chart.AxisLabelConfigBuilder().labelOffset(5.f))
                 .gridHidden());
 
         mChart.setAxis("value", new F2Chart.AxisConfigBuilder()
-                .grid(new F2Chart.AxisGridConfigBuilder().type("dash")));
+                .label(new F2Chart.AxisLabelConfigBuilder().labelOffset(5))
+                );
+        mChart.setAxis("offset", new F2Chart.AxisConfigBuilder()
+                .label(new F2Chart.AxisLabelConfigBuilder().labelOffset(5))
+        );
 
         mChart.setScale("date", new F2Chart.ScaleConfigBuilder().tickCount(3));
+        mChart.setScale("value", new F2Chart.ScaleConfigBuilder().nice(true));
+        mChart.setScale("offset", new F2Chart.ScaleConfigBuilder().nice(true));
         mChart.render();
     }
 

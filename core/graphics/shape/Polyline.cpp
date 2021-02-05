@@ -1,14 +1,32 @@
 #include "graphics/shape/Polyline.h"
 #include "graphics/util/Path.h"
 
-xg::shape::Polyline::Polyline(const float lineWidth, const vector<Point> &points, const string &strokeColor, const string &fillColor, const bool smooth) {
-    canFill_ = true;
-    canStroke_ = true;
+using namespace xg;
+using namespace std;
+
+shape::Polyline::Polyline(const float lineWidth, const vector<util::Point> &points, const bool smooth) {
     type_ = "polyline";
     lineWidth_ = lineWidth;
     points_ = points;
-    stroke_ = strokeColor;
-    fill_ = fillColor;
+    smooth_ = smooth;
+}
+
+shape::Polyline::Polyline(const float lineWidth,
+                          const vector<util::Point> &points,
+                          const std::string &strokeColor,
+                          const std::string &fillColor,
+                          const bool smooth) {
+    type_ = "polyline";
+    lineWidth_ = lineWidth;
+    points_ = points;
+
+    if(!strokeColor.empty()) {
+        strokeStyle_ = util::CanvasFillStrokeStyle(strokeColor);
+    }
+
+    if(!fillColor.empty()) {
+        fillStyle_ = util::CanvasFillStrokeStyle(fillColor);
+    }
     smooth_ = smooth;
 }
 
@@ -21,7 +39,6 @@ void xg::shape::Polyline::CreatePath(canvas::CanvasContext &context) const {
         if(smooth_ && len > 2) {
             array<Point, 2> constraint = {Point(0, 0), Point(1, 1)};
             BezierPath b_path = util::PathUtil::getSplinePath(points_, false, constraint);
-            // TODO 增加计算曲线的 point 偏移量
             auto lineTo = [&](const BezierPoint &point) {
                 context.BezierCurveTo(point.cp1.x, point.cp1.y, point.cp2.x, point.cp2.y, point.p.x, point.p.y);
             };

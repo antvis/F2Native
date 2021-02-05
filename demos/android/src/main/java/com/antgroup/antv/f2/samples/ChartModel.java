@@ -14,8 +14,16 @@ public class ChartModel implements Serializable {
 
     public Class<? extends F2CanvasView.Adapter> adapterClass;
 
+    public boolean horizontal = false;
+
     public ChartModel(String title, Class<? extends F2CanvasView.Adapter> adapterClass) {
         this.title = title;
         this.adapterClass = adapterClass;
+    }
+
+    public ChartModel(String title, Class<? extends F2CanvasView.Adapter> adapterClass, boolean horizontal) {
+        this.title = title;
+        this.adapterClass = adapterClass;
+        this.horizontal = horizontal;
     }
 }

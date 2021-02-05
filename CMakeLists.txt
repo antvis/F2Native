@@ -25,11 +25,11 @@ endif ()
 include_directories(third_party/json/single_include)
 
 # g++
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++14 -Wall")
 add_definitions(-ffunction-sections)
 add_definitions(-fdata-sections)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fno-rtti -fno-exceptions -funwind-tables")
 
-# 添加 src 下所有源文件
+# 添加 core 下所有源文件
 aux_source_directory(core/graphics DIR_SRC_GRAPHICS)
 aux_source_directory(core/utils DIR_SRC_UTILS)
 

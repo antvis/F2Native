@@ -7,15 +7,16 @@ namespace xg {
 namespace shape {
 
 class Line : public Shape {
-    public:
+  public:
+    Line(const util::Point &, const util::Point &);
     Line(const util::Point &, const util::Point &, const float lineWidth, const string &strokeColor);
 
     BBox CalculateBox(canvas::CanvasContext &context) const override;
 
-    protected:
+  protected:
     void CreatePath(canvas::CanvasContext &context) const override;
 
-    public:
+  public:
     util::Point p1_, p2_;
 };
 

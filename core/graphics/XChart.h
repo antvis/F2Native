@@ -5,6 +5,7 @@
 #include "graphics/canvas/Coord.h"
 #include "graphics/event/EventController.h"
 #include "graphics/geom/Area.h"
+#include "graphics/geom/Candle.h"
 #include "graphics/geom/Interval.h"
 #include "graphics/geom/Line.h"
 #include "graphics/geom/Point.h"
@@ -17,6 +18,7 @@
 #include "graphics/legend/LegendController.h"
 #include "graphics/scale/ScaleController.h"
 #include "graphics/tooltip/TooltipController.h"
+#include <algorithm>
 #include <map>
 #include <nlohmann/json.hpp>
 #include <string>
@@ -25,13 +27,14 @@
 #include <vector>
 
 #if defined(TARGET_STANDALONE)
-
+#include "graphics/canvas/StandaloneCanvasContext.h"
 #if defined(ANDROID)
 #include "android/F2CanvasView.h"
 #else
 #endif
 
 #elif defined(TARGET_ALIPAY)
+#include "graphics/canvas/AlipayCanvasContext.h"
 #include <AntGraphic/AntGraphic.h>
 #endif
 
@@ -65,6 +68,7 @@ class XChart {
     friend geom::Interval;
     friend geom::Area;
     friend geom::Point;
+    friend geom::Candle;
     friend legend::LegendController;
     friend event::EventController;
     friend tooltip::ToolTipController;
@@ -81,12 +85,12 @@ class XChart {
 #if defined(TARGET_STANDALONE)
 #if defined(ANDROID)
     XChart &SetCanvasContext(F2CanvasView *context) {
-        canvasContext_ = new canvas::CanvasContext(context, static_cast<float>(ratio_), nullptr);
+        canvasContext_ = new canvas::StandaloneCanvasContext(context, static_cast<float>(ratio_), nullptr);
         return *this;
     }
 #else
     XChart &SetCanvasContext(GCanvasContext *context) {
-        canvasContext_ = new canvas::CanvasContext(context, static_cast<float>(ratio_), nullptr);
+        canvasContext_ = new canvas::StandaloneCanvasContext(context, static_cast<float>(ratio_), nullptr);
         return *this;
     }
 #endif
@@ -94,7 +98,7 @@ class XChart {
 
 #if defined(TARGET_ALIPAY)
     XChart &SetCanvasContext(ag::CanvasRenderingContext2D *context) {
-        canvasContext_ = new canvas::CanvasContext(context, static_cast<float>(ratio_), nullptr);
+        canvasContext_ = new canvas::AliPayCanvasContext(context, static_cast<float>(ratio_), nullptr);
         return *this;
     }
 #endif // TARGET_ALIPAY
@@ -122,6 +126,7 @@ class XChart {
     geom::Interval &Interval();
     geom::Area &Area();
     geom::Point &Point();
+    geom::Candle &Candle();
 
     void Render();
 
@@ -138,12 +143,7 @@ class XChart {
 
     inline std::string GetXScaleField() { return geoms_[0]->GetXScaleField(); }
 
-    inline std::vector<std::string> getYScaleFields() {
-        std::vector<std::string> fields;
-        std::for_each(geoms_.begin(), geoms_.end(), [&](auto &geom) -> void { fields.push_back(geom->GetYScaleField()); });
-
-        return fields;
-    }
+    std::vector<std::string> getYScaleFields();
 
     inline const std::string GetChartName() { return this->chartName_; }
 

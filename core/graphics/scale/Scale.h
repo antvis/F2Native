@@ -14,11 +14,14 @@ enum class ScaleType {
     Identity = 1,
     Cat,
     TimeCat,
+    Kline,
     Linear,
     TimeSharingLinear,
 };
 
-static bool IsCategory(ScaleType type) { return type == ScaleType::Cat || type == ScaleType::TimeCat; }
+static bool IsCategory(ScaleType type) {
+    return type == ScaleType::Cat || type == ScaleType::TimeCat || type == ScaleType::Kline;
+}
 static bool IsLinear(ScaleType type) { return type == ScaleType::Linear || type == ScaleType::TimeSharingLinear; }
 
 class Tick {
@@ -81,12 +84,9 @@ class AbstractScale {
 
     virtual std::string GetTickText(const nlohmann::json &item) {
         if(!this->tickCallbackId.empty()) {
-            func::F2Function *tickCallbackFunc = func::FunctionManager::GetInstance().Find(this->tickCallbackId);
-            if(tickCallbackFunc != nullptr) {
-                nlohmann::json rst = tickCallbackFunc->Execute(item);
-                if(rst.is_object() && rst.contains("content")) {
-                    return rst["content"];
-                }
+            nlohmann::json rst = func::InvokeFunction(this->tickCallbackId, item);
+            if(rst.is_object() && rst.contains("content")) {
+                return rst["content"];
             }
         }
 

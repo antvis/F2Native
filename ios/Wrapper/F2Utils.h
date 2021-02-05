@@ -1,3 +1,4 @@
+#import "F2Chart.h"
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -8,6 +9,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface F2Utils : NSObject
 
 + (NSString *)toJsonString:(NSDictionary *)jsonDict;
+
++ (NSDictionary *)resetCallbacksFromOld:(NSDictionary *)config host:(F2Chart *)chart;
 
 @end
 

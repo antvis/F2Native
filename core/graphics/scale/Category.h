@@ -121,10 +121,10 @@ class Category : public AbstractScale {
         return index;
     }
 
-    inline std::size_t GetValuesSize() noexcept override { return this->max - this->min + 1; }
+    virtual inline std::size_t GetValuesSize() noexcept override { return this->max - this->min + 1; }
 
   protected:
-    nlohmann::json CalculateTicks() override {
+    virtual nlohmann::json CalculateTicks() override {
         std::size_t valueSize = values.size();
         if(valueSize == 0) {
             return {};
@@ -157,8 +157,7 @@ class Category : public AbstractScale {
 
     static inline double CalculateValue(double percent, double min, double max) { return min + percent * (max - min); }
 
-  private:
-    void InitConfig() {
+    virtual void InitConfig() {
         nlohmann::json &range = config_["range"];
         rangeMin = range[0];
         rangeMax = range[1];

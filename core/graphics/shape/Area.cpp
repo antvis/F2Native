@@ -1,10 +1,7 @@
 #include "graphics/shape/Area.h"
 #include "graphics/util/Path.h"
 
-xg::shape::Area::Area(const vector<util::Point> &topPoints, const vector<util::Point> &bottomPoints, const string &fillColor, const bool smooth) {
-    canStroke_ = false;
-    canFill_ = true;
-    fill_ = fillColor;
+xg::shape::Area::Area(const vector<util::Point> &topPoints, const vector<util::Point> &bottomPoints, const bool smooth) {
     type_ = "area";
     fillOpacity_ = 0.1;
     smooth_ = smooth;

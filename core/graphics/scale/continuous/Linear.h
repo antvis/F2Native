@@ -30,7 +30,7 @@ class Linear : public AbstractScale {
     ScaleType GetType() const noexcept override { return ScaleType::Linear; }
 
     void Change(const nlohmann::json &cfg = {}) override {
-        bool valueChanged = false;
+        //        bool valueChanged = false;
         // InitConfig(cfg);
         // if(cfg.contains("values")) {
         //     values = cfg["values"];
@@ -83,6 +83,13 @@ class Linear : public AbstractScale {
     }
 
     std::string GetTickText(const nlohmann::json &item) override {
+        if(!this->tickCallbackId.empty()) {
+            nlohmann::json rst = func::InvokeFunction(this->tickCallbackId, item);
+            if(rst.is_object() && rst.contains("content")) {
+                return rst["content"];
+            }
+        }
+
         // 处理 TickText 数值精度
         if(item.is_string()) {
             return item.get<std::string>();
@@ -103,14 +110,19 @@ class Linear : public AbstractScale {
 
   protected:
     nlohmann::json CalculateTicks() override {
-        if(config_["nice"] == true) {
+        if(config_["nice"] == true || IsEqual(this->min, this->max)) {
             nlohmann::json _ticks = NiceCalculateTicks();
             //修改最值
             this->min = _ticks[0];
             this->max = _ticks[_ticks.size() - 1];
             return _ticks;
         } else {
-            double interval = (this->max - this->min) / this->tickCount;
+            if(tickCount <= 2) {
+                nlohmann::json rst = {min, max};
+                return rst;
+            }
+
+            double interval = (this->max - this->min) / (this->tickCount - 1);
             nlohmann::json rst;
             for(double index = this->min; index <= this->max; index += interval) {
                 rst.push_back(index);
@@ -122,8 +134,7 @@ class Linear : public AbstractScale {
     nlohmann::json NiceCalculateTicks() {
         nlohmann::json rst;
 
-        int count = (tickCount != -1 && tickCount >= 2) ? tickCount : DEFAULT_COUNT;
-        tickCount = count;
+        std::size_t count = tickCount;
 
         // 计算interval， 优先取tickInterval
         const double interval = GetBestInterval(count, max, min);
@@ -134,7 +145,7 @@ class Linear : public AbstractScale {
 
         // 如果指定了tickInterval, count 需要根据指定的tickInterval来算计
         if(tickInterval != -1) {
-            const int intervalCount = abs(ceil((max - minTick) / tickInterval)) + 1;
+            const std::size_t intervalCount = abs(ceil((max - minTick) / tickInterval)) + 1;
             // tickCount 作为最小 count 处理
             count = std::max(count, intervalCount);
         }
@@ -152,7 +163,7 @@ class Linear : public AbstractScale {
 
     double GetInvertPercent(double value) const { return (value - this->rangeMin) / (this->rangeMax - this->rangeMin); }
 
-    double GetBestInterval(const int tickCount, const double max, const double min) {
+    double GetBestInterval(const std::size_t tickCount, const double max, const double min) {
         // 如果最大最小相等，则直接按1处理
         if(IsEqual(max, min)) {
             return 1 * GetFactor(max);
@@ -212,11 +223,11 @@ class Linear : public AbstractScale {
         return factor;
     }
 
-    double GetInterval(const int startIndex, const int tickCount, const double min, const double max) const {
+    double GetInterval(const std::size_t startIndex, const std::size_t tickCount, const double min, const double max) const {
         bool verify = false;
         double interval = SNAP_COUNT_ARRAY[startIndex];
         // 刻度值校验，如果不满足，循环下去
-        for(int i = startIndex; i < SNAP_COUNT_ARRAY.size(); i++) {
+        for(std::size_t i = startIndex; i < SNAP_COUNT_ARRAY.size(); i++) {
             if(IntervalIsVerify(SNAP_COUNT_ARRAY[i], tickCount, max, min)) {
                 // 有符合条件的interval
                 interval = SNAP_COUNT_ARRAY[i];
@@ -232,7 +243,7 @@ class Linear : public AbstractScale {
     }
 
     // 刻度是否满足展示需求
-    bool IntervalIsVerify(const double interval, const int tickCount, const double max, const double min) const {
+    bool IntervalIsVerify(const double interval, const std::size_t tickCount, const double max, const double min) const {
         const double minTick = floor(min / interval) * interval;
         if(minTick + (tickCount - 1) * interval >= max) {
             return true;
@@ -259,6 +270,8 @@ class Linear : public AbstractScale {
             config_.merge_patch(cfg);
         }
         tickCount = config_["tickCount"];
+        tickCount = fmax(2, tickCount);
+
         precision = config_["precision"];
 
         min = config_["min"];
@@ -271,8 +284,8 @@ class Linear : public AbstractScale {
   public:
     //    double minLimit = 0;
     //    double maxLimit = 0;
-    int tickInterval = -1;
-    int tickCount = -1;
+    std::size_t tickInterval = -1;
+    std::size_t tickCount = 2;
     int precision = 0; // tickText 小数点精度
 
     nlohmann::json config_ = {{"tickCount", DEFAULT_COUNT}, {"precision", 0}, {"range", {0.0, 1.0}}, {"nice", false}};

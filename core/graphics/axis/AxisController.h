@@ -58,18 +58,16 @@ class AxisController {
 
   protected:
     static nlohmann::json MergeDefaultConfig(const nlohmann::json &config) {
-        nlohmann::json gridCfg = {
-            {"type", "line"},      // 网格线类型
-            {"lineWidth", 1.0f},   // 网格线线宽
-            {"stroke", "#E8E8E8"}, // 网格线颜色
-        };
+        nlohmann::json gridCfg = {{"type", "line"},      // 网格线类型
+                                  {"lineWidth", .6f},    // 网格线线宽
+                                  {"stroke", "#E8E8E8"}, // 网格线颜色
+                                  {"dash", {10, 10}}};
 
-        nlohmann::json line = {
-            // 轴线配置
-            {"color", "#999"},
-            {"lineWidth", 1.0f},
-            {"type", "line"}, // 线类型
-        };
+        nlohmann::json line = {// 轴线配置
+                               {"color", "#999"},
+                               {"lineWidth", .6f},
+                               {"type", "line"}, // 线类型
+                               {"dash", {10, 10}}};
 
         nlohmann::json label = {
             // 轴标签配置
@@ -91,14 +89,14 @@ class AxisController {
     }
 
   private:
-    void InitAxis(XChart &chart, const std::string &field, const std::string &dimType, const std::string &verticalField);
+    void InitAxis(XChart &chart, const std::string &field, std::size_t index, const std::string &dimType, const std::string &verticalField);
     void InitAxisConfig(XChart &chart);
 
     void DrawAxis(XChart &chart, std::unique_ptr<Axis> &axis, canvas::CanvasContext &context);
 
     void DrawLabel(XChart &chart, std::unique_ptr<Axis> &axis, canvas::CanvasContext &context);
 
-    void DrawLine(std::array<util::Point, 2> &&line, const nlohmann::json &lineCfg);
+    void DrawLine(XChart &chart, std::array<util::Point, 2> &&line, const nlohmann::json &lineCfg);
 
     util::Point GetOffsetPoint(std::unique_ptr<Axis> &axis, double value) {
         util::Point point;

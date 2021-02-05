@@ -8,13 +8,16 @@ namespace shape {
 
 class Circle : public Shape {
   public:
-    Circle(const util::Point &center, const float radius, std::string fill) : radius_(radius) {
+    Circle(const util::Point &center, const float radius) : radius_(radius) {
         type_ = "circle";
         point_ = center;
-        canFill_ = true;
-        canStroke_ = true;
-        fill_ = fill;
-        stroke_ = fill;
+    }
+
+    Circle(const util::Point &center, const float radius, const std::string &fill) : radius_(radius) {
+        type_ = "circle";
+        point_ = center;
+
+        fillStyle_ = util::CanvasFillStrokeStyle(fill);
     }
 
     BBox CalculateBox(canvas::CanvasContext &context) const override;

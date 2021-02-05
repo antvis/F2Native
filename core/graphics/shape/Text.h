@@ -11,7 +11,7 @@ class Text : public Shape {
   public:
     virtual ~Text() override {}
 
-    Text(const string &, const util::Point &, const float fontSize, const string &strokeColor, const string &fillColor);
+    Text(const std::string &, const util::Point &, const float fontSize, const std::string &strokeColor, const std::string &fillColor);
 
     /// 获取包围盒，每一次都会计算，建议使用GetBox
     /// @param context
@@ -34,7 +34,7 @@ class Text : public Shape {
     void DrawInner(canvas::CanvasContext &context) const override;
 
   private:
-    string GetFontStyle() const;
+    std::string GetFontStyle() const;
 
   protected:
     int lineCount_ = 1;
@@ -42,12 +42,12 @@ class Text : public Shape {
     float lineHeight_ = std::nan("0");
     float height_ = std::nan("0");
     float width_ = std::nan("0");
-    string fontFamily_ = "sans-serif";
-    string fontStyle_ = "normal";
-    string fontWeight_ = "normal";
-    string fontVariant_ = "normal";
-    string text_ = "";
-    vector<string> textArr_; //\n分割后的字符串
+    std::string fontFamily_ = "sans-serif";
+    std::string fontStyle_ = "normal";
+    std::string fontWeight_ = "normal";
+    std::string fontVariant_ = "normal";
+    std::string text_ = "";
+    vector<std::string> textArr_; //\n分割后的字符串
 
   public:
     nlohmann::json ext;

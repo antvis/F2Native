@@ -35,6 +35,7 @@
             }]
         }
     });
+    self.chart.axis(@"value", @{@"grid": @{@"type": @"dash", @"dash": @[@(15), @(15), @(5), @(5)]}});
     self.chart.line().position(@"date*value").fixedSize(2);
     self.chart.tooltip(@{});
     self.chart.interaction(@"pinch", @{});

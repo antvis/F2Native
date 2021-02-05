@@ -12,6 +12,8 @@ class Line : public AbstractGeom {
         type_ = "line";
         sortable_ = true;
     }
+
+    void BeforeMapping(XChart &chart, nlohmann::json &dataArray) override;
 };
 } // namespace geom
 } // namespace xg

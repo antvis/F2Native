@@ -5,7 +5,6 @@ import org.json.JSONObject;
 
 /**
  * @author qingyuan.yl
- * @date 2020-09-18
  */
 public final class F2Config {
 
@@ -83,6 +82,18 @@ public final class F2Config {
             return (T) this;
         }
 
+        public T setOption(String key, F2Util.ColorGradient g) {
+            return setOption(key, g.gradient.build().mConfig);
+        }
+
+        public T setOption(String key, F2Util.ColorGradient[] colors) {
+            JSONArray array = new JSONArray();
+            for (int i = 0; i < colors.length; i++) {
+                array.put(colors[i].gradient.build().mConfig);
+            }
+            return setOption(key, array);
+        }
+
         public T setOption(String key, Object value) {
             try {
                 options.put(key, value);
@@ -94,8 +105,20 @@ public final class F2Config {
         public T setOption(String key, String[] array) {
             try {
                 JSONArray jsonArray = new JSONArray();
-                for (int i = 0; i < array.length; i++) {
-                    jsonArray.put(array[i]);
+                for (String s : array) {
+                    jsonArray.put(s);
+                }
+                options.put(key, jsonArray);
+            } catch (Exception e) {
+            }
+            return (T) this;
+        }
+
+        public T setOption(String key, float[] array) {
+            try {
+                JSONArray jsonArray = new JSONArray();
+                for (double v : array) {
+                    jsonArray.put(v);
                 }
                 options.put(key, jsonArray);
             } catch (Exception e) {
@@ -106,8 +129,8 @@ public final class F2Config {
         public T setOption(String key, double[] array) {
             try {
                 JSONArray jsonArray = new JSONArray();
-                for (int i = 0; i < array.length; i++) {
-                    jsonArray.put(array[i]);
+                for (double v : array) {
+                    jsonArray.put(v);
                 }
                 options.put(key, jsonArray);
             } catch (Exception e) {

@@ -23,9 +23,9 @@ void geom::Point::BeforeMapping(XChart &chart, nlohmann::json &dataArray) {
     }
 }
 
-void geom::Point::Draw(XChart &chart, const nlohmann::json &groupData) const {
-    for(std::size_t i = 0; i < groupData.size(); ++i) {
+void geom::Point::Draw(XChart &chart, const nlohmann::json &groupData, std::size_t start, std::size_t end) const {
+    for(std::size_t i = start; i <= end; ++i) {
         const nlohmann::json &item = groupData[i];
-        chart.geomShapeFactory_->DrawGeomShape(chart, type_, shapeType_, item, *this->container_);
+        chart.geomShapeFactory_->DrawGeomShape(chart, type_, shapeType_, item, i, i + 1, *this->container_);
     }
 }

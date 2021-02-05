@@ -1,12 +1,10 @@
-
-
-#ifndef StringUtil_h
-#define StringUtil_h
-
 #include <regex>
 #include <sstream>
 #include <string.h>
 #include <vector>
+
+#ifndef XG_UTILS_STRING_H
+#define XG_UTILS_STRING_H
 
 class StringUtil final {
   public:
@@ -22,4 +20,4 @@ class StringUtil final {
     }
 };
 
-#endif /* StringUtil_h */
+#endif /* XG_UTILS_STRING_H */

@@ -12,7 +12,8 @@ class TimeSharingLinear : public AbstractScale {
     TimeSharingLinear(const std::string &_field, nlohmann::json _values, nlohmann::json _config = {})
         : AbstractScale(_field, _values), config_(_config) {
         if(!config_.contains("timeRange") || !config_["timeRange"].is_array()) {
-            throw std::runtime_error("not found time range.");
+            // throw std::runtime_error("not found time range.");
+            return;
         }
         nlohmann::json &timeRange = config_["timeRange"];
         if(timeRange.is_array() && timeRange.size() > 0) {

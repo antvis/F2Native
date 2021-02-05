@@ -1,3 +1,4 @@
 
 #define TARGET_STANDALONE 1
 
+#define JSON_NOEXCEPTION 1

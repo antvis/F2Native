@@ -27,7 +27,13 @@ class GeomShapeFactory final {
     void UnregterShapeShape(std::string gemoType);
 
     // shapeType 为 geomType 的子类型, 例如 line 分为 line/dash/smooth
-    void DrawGeomShape(XChart &chart, std::string geomType, std::string shapeType, const nlohmann::json &data, xg::shape::Group &container);
+    void DrawGeomShape(XChart &chart,
+                       std::string geomType,
+                       std::string shapeType,
+                       const nlohmann::json &data,
+                       std::size_t start,
+                       std::size_t end,
+                       xg::shape::Group &container);
 
   private:
     std::unordered_map<std::string, std::unique_ptr<GeomShapeBase>> geomShapes_;

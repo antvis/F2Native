@@ -6,8 +6,8 @@
 //  Copyright © 2020 com.alipay.xgraph. All rights reserved.
 //
 #import "F2CallbackObj.h"
-#import <graphics/func/Func.h>
 #import "F2Utils.h"
+#import <graphics/func/Func.h>
 namespace xg {
 namespace func {
 class IOSF2Function : public func::F2Function {
@@ -44,11 +44,13 @@ void *cexecute(void *caller, const char *parameter) { return [(__bridge id)calle
 @property interface call;
 @end
 @implementation F2CallbackObj
+
 - (void)dealloc {
     xg::func::FunctionManager::GetInstance().Remove(_func->functionId);
     delete _func;
     _func = nil;
 }
+
 + (instancetype)initWithCallback:(ItemCallback)block {
     if(!block) {
         return nil;
@@ -60,12 +62,13 @@ void *cexecute(void *caller, const char *parameter) { return [(__bridge id)calle
         void *pointObj = (__bridge void *)callbackObj;
         callbackObj->_func = new xg::func::IOSF2Function(pointObj, callbackObj.call);
         xg::func::FunctionManager::GetInstance().Add(callbackObj->_func);
-        NSString *key =
-            [NSString stringWithCString:callbackObj->_func->functionId.c_str() encoding:[NSString defaultCStringEncoding]];
+        NSString *key = [NSString stringWithCString:callbackObj->_func->functionId.c_str()
+                                           encoding:[NSString defaultCStringEncoding]];
         callbackObj.key = key;
     }
     return callbackObj;
 }
+
 - (void *)execute:(const char *)param {
     NSString *paramStr = [NSString stringWithUTF8String:param];
     if(paramStr && self.callback) {

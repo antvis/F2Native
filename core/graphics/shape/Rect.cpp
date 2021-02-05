@@ -10,7 +10,23 @@ BBox xg::shape::Rect::CalculateBox(canvas::CanvasContext &context) const {
 void xg::shape::Rect::CreatePath(canvas::CanvasContext &context) const {
     context.BeginPath();
     if(radius_ <= XG_EPS) {
-        context.Rect(point_.x, point_.y, size_.width, size_.height);
+        if(this->HasRounding()) {
+            float x = static_cast<float>(point_.x);
+            float y = static_cast<float>(point_.y);
+            float width = static_cast<float>(size_.width);
+            float height = static_cast<float>(size_.height);
+            context.MoveTo(x + roundings[2], y);
+            context.LineTo(x + width - roundings[3], y);
+            context.QuadraticCurveTo(x + width, y, x + width, y - roundings[3]);
+            context.LineTo(x + width, y + height + roundings[1]);
+            context.QuadraticCurveTo(x + width, y + height, x + width - roundings[1], y + height);
+            context.LineTo(x + roundings[0], y + height);
+            context.QuadraticCurveTo(x, y + height, x, y + height + roundings[0]);
+            context.LineTo(x, y - roundings[2]);
+            context.QuadraticCurveTo(x, y, x + roundings[2], y);
+        } else {
+            context.Rect(point_.x, point_.y, size_.width, size_.height);
+        }
         context.ClosePath();
     } else {
         double unitX = std::cos(startAngle_);

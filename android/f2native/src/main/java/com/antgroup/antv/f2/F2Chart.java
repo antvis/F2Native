@@ -135,6 +135,12 @@ public class F2Chart {
         return (F2Geom.Interval) mChartProxy.createGeom(this, "interval");
     }
 
+    public F2Geom.Candle candle() {
+        if (hasDestroyed) return null;
+        assertRenderThread();
+        return (F2Geom.Candle) mChartProxy.createGeom(this, "candle");
+    }
+
     public F2Chart interaction(String type) {
         interaction(type, (String) null);
         return this;
@@ -338,7 +344,7 @@ public class F2Chart {
         private static final String KEY_TYPE = "type";
         private static final String KEY_LINE_WIDTH = "lineWidth";
         private static final String KEY_STROKE = "stroke";
-        private static final String KEY_LINE_DASH = "lineDash";
+        private static final String KEY_LINE_DASH = "dash";
 
         public AxisGridConfigBuilder type(String type) {
             return setOption(KEY_TYPE, type);
@@ -361,6 +367,7 @@ public class F2Chart {
         private static final String KEY_TYPE = "type";
         private static final String KEY_LINE_WIDTH = "lineWidth";
         private static final String KEY_COLOR = "color";
+        private static final String KEY_DASH = "dash";
 
         public AxisLineConfigBuilder type(String type) {
             return setOption(KEY_TYPE, type);
@@ -372,6 +379,10 @@ public class F2Chart {
 
         public AxisLineConfigBuilder color(String color) {
             return setOption(KEY_COLOR, color);
+        }
+
+        public AxisLineConfigBuilder lineDash(double[] dashParam) {
+            return setOption(KEY_DASH, dashParam);
         }
     }
 

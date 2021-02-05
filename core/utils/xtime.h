@@ -1,6 +1,7 @@
 #ifndef XG_CHART_UTILS_TIME_H
 #define XG_CHART_UTILS_TIME_H
 
+#include <chrono>
 #include <ctime>
 #include <string>
 #include <time.h>
@@ -9,6 +10,8 @@
 #include <sys/time.h>
 #elif defined(__ANDROID__) || defined(ANDROID)
 #endif
+
+using namespace std;
 
 namespace xg {
 
@@ -19,7 +22,7 @@ static long CurrentTimestampAtMM() {
     return now;
 }
 
-static std::string TimeStampToHHmm(long long tsMM) {
+static string TimeStampToHHmm(long long tsMM) {
     struct tm *p;
     time_t t;
     t = tsMM / 1000;
@@ -28,5 +31,33 @@ static std::string TimeStampToHHmm(long long tsMM) {
     strftime(s, 100, "%H:%M", p);
     return std::string(s);
 }
+
+/// 字符串格式转化为秒级时间戳
+/// 2020-01-01 14:00:00 --> 1577858400
+static time_t DateParserAtSecond(std::string date, std::string format = "%Y-%m-%d %H:%M:%S") {
+    tm tm_;
+    time_t t_;
+    char buf[128] = {0};
+
+    strcpy(buf, date.data());
+    strptime(buf, format.data(), &tm_); //将字符串转换为tm时间
+    tm_.tm_isdst = -1;
+    t_ = mktime(&tm_); //将tm时间转换为秒时间
+    return t_;
+}
+
+/// 字符串格式转化为 tm 结构
+/// 2020-01-01 14:00:00 --> std::tm
+static tm DateParserAtTM(std::string date, std::string format = "%Y-%m-%d %H:%M:%S") {
+    tm tm_;
+    time_t t_;
+    char buf[128] = {0};
+
+    strcpy(buf, date.data());
+    strptime(buf, format.data(), &tm_); //将字符串转换为tm时间
+    tm_.tm_isdst = -1;
+    return std::move(tm_);
+}
+
 } // namespace xg
 #endif // XG_CHART_UTILS_TIME_H

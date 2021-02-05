@@ -30,6 +30,7 @@
 - (NSArray *)demoInfo {
     return @[
         @{@"type": @"baseLine", @"name": @"基础折线图", @"view": @"BaseLineUIView"},
+        @{@"type": @"multiAxiesLine", @"name": @"基础折线图(双Y轴)", @"view": @"MultiAxiesLineUIView"},
         @{@"type": @"multiLine", @"name": @"对比折线图", @"view": @"MultiLineUIView"},
         @{@"type": @"baseArea", @"name": @"基础面积图", @"view": @"BaseAreaUIView"},
         @{@"type": @"baseArea2", @"name": @"基础面积图2(带负值)", @"view": @"BaseAreaUIView2"},
@@ -42,7 +43,8 @@
         @{@"type": @"Point", @"name": @"散点图", @"view": @"BasePointUIView"},
         @{@"type": @"basestrip", @"name": @"条状图", @"view": @"StripUIView"},
         @{@"type": @"basePie", @"name": @"饼图", @"view": @"BasePieUIView"},
-        @{@"type": @"basePie", @"name": @"环形饼图", @"view": @"CyclicPieUIView"}
+        @{@"type": @"basePie", @"name": @"环形饼图", @"view": @"CyclicPieUIView"},
+        @{@"type": @"klineDay", @"name": @"蜡烛图(日K)", @"view": @"KLineUIView"}
     ];
 }
 

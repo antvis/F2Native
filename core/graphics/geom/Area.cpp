@@ -37,10 +37,18 @@ nlohmann::json geom::Area::GetAreaPoints(XChart &chart, nlohmann::json &data, nl
 }
 
 void geom::Area::BeforeMapping(XChart &chart, nlohmann::json &dataArray) {
+    auto &xScale = chart.GetScale(GetXScaleField());
+
     for(std::size_t i = 0; i < dataArray.size(); ++i) {
         nlohmann::json &groupData = dataArray[i];
 
-        for(std::size_t index = 0; index < groupData.size(); ++index) {
+        std::size_t start = 0, end = groupData.size() - 1;
+        if(scale::IsCategory(xScale.GetType())) {
+            start = fmax(start, xScale.min);
+            end = fmin(end, xScale.max);
+        }
+
+        for(std::size_t index = start; index <= end; ++index) {
             nlohmann::json &data = groupData[index];
             nlohmann::json cfg = CreateShapePointsCfg(chart, data);
             nlohmann::json points = GetAreaPoints(chart, data, cfg);

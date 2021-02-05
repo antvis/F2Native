@@ -12,7 +12,7 @@ namespace tooltip {
 
 static scale::AbstractScale &_GetToolTipValueScale(XChart *chart, std::unique_ptr<geom::AbstractGeom> &geom) {
     auto &attr = geom->GetAttr(attr::AttrType::Color);
-    if(attr.get() != nullptr) {
+    if(attr.get() != nullptr && !attr->GetFields().empty()) {
         auto &scale = chart->GetScale(attr->GetFields()[0]);
         if(scale::IsLinear(scale.GetType())) {
             return scale;
@@ -24,12 +24,21 @@ static scale::AbstractScale &_GetToolTipValueScale(XChart *chart, std::unique_pt
 
 static scale::AbstractScale &_GetToolTipGroupScale(XChart *chart, std::unique_ptr<geom::AbstractGeom> &geom) {
     auto &attr = geom->GetAttr(attr::AttrType::Color);
-    if(attr.get() != nullptr) {
+    if(attr.get() != nullptr && !attr->GetFields().empty()) {
         auto &scale = chart->GetScale(attr->GetFields()[0]);
         return scale;
     }
 
     return _GetToolTipValueScale(chart, geom);
+}
+
+static std::string _GetToolTipGroupNameField(XChart *chart, std::unique_ptr<geom::AbstractGeom> &geom) {
+    auto &attr = geom->GetAttr(attr::AttrType::Color);
+    if(attr.get() != nullptr && !attr->GetFields().empty()) {
+        auto &scale = chart->GetScale(attr->GetFields()[0]);
+        return scale.field;
+    }
+    return geom->GetYScaleField();
 }
 } // namespace tooltip
 } // namespace xg
@@ -51,25 +60,6 @@ tooltip::ToolTipController::~ToolTipController() {
 }
 
 void tooltip::ToolTipController::Init(const nlohmann::json &cfg) {
-    nlohmann::json defaultConfig = {
-        {"alwaysShow", false},
-        {"showTitle", false},
-        {"showCrosshairs", false},
-        {"crosshairsStyle", {{"stroke", "#1890FF"}, {"lineWidth", 1}, {"type", "dash"}, {"dash", {4, 4}}}},
-        {"showTooltipMarker", true},
-        {"background", {{"radius", 1}, {"fill", "#1890FF"}, {"padding", {3, 3}}}},
-        {"xTip", {{"fontSize", 10}, {"fill", "#ffffff"}, {"textAlign", "center"}, {"textBaseline", "bottom"}}},
-        {"yTip", {{"fontSize", 10}, {"fill", "#ffffff"}, {"textAlign", "center"}, {"textBaseline", "bottom"}}},
-        {"titleStyle", {{"fontSize", 12}, {"fill", "#ffffff"}, {"textAlign", "start"}, {"textBaseline", "top"}}},
-        {"nameStyle", {{"fontSize", 12}, {"fill", "#ffffffa6"}, {"textAlign", "start"}, {"textBaseline", "top"}}},
-        {"valueStyle", {{"fontSize", 12}, {"fill", "#ffffff"}, {"textAlign", "start"}, {"textBaseline", "middle"}}},
-        {"showItemMarker", true},
-        {"itemMarkerStyle", {{"radius", 3}, {"symbol", "circle"}, {"lineWidth", 1}, {"stroke", "#ffffff"}}},
-        {"layout", "horizontal"},
-        {"onPress", false},
-        {"snap", false}};
-
-    this->config_.merge_patch(defaultConfig);
     if(cfg.is_object()) {
         this->config_.merge_patch(cfg);
     }
@@ -131,10 +121,6 @@ bool tooltip::ToolTipController::ShowToolTip(const util::Point &point) {
     nlohmann::json tooltipMarkerItems;
     std::for_each(chart_->geoms_.begin(), chart_->geoms_.end(), [&](auto &geom) -> void {
         // TODO geom is visible
-        std::string geomType = geom->GetType();
-        if(geomType == "interval") {
-            return;
-        }
 
         nlohmann::json records = geom->GetSnapRecords(chart_, point);
         for(std::size_t index = 0; index < records.size(); ++index) {
@@ -145,14 +131,20 @@ bool tooltip::ToolTipController::ShowToolTip(const util::Point &point) {
                 tooltipItem["y"] = record["_y"];
                 tooltipItem["color"] = record.contains("_color") ? record["_color"].get<std::string>() : GLOBAL_COLORS[0];
 
-                auto &nameScale = tooltip::_GetToolTipGroupScale(chart_, geom);
-                tooltipItem["name"] = nameScale.GetTickText(record[nameScale.field]);
+                auto nameField = tooltip::_GetToolTipGroupNameField(chart_, geom);
+                auto &nameScale = chart_->GetScale(nameField);
+                tooltipItem["name"] = nameScale.GetTickText(nameField);
+
                 auto &scale = tooltip::_GetToolTipValueScale(chart_, geom);
-                tooltipItem["value"] = scale.GetTickText(record[scale.field]);
+                std::string nameVal = scale.GetTickText(record[nameField]);
+                if(nameVal.empty() && record.contains(nameField)) {
+                    nameVal = record[nameField].dump();
+                }
+                tooltipItem["value"] = nameVal;
+
                 tooltipItem["title"] = chart_->GetScale(geom->GetXScaleField()).GetTickText(record[geom->GetXScaleField()]);
 
                 tooltipMarkerItems.push_back(tooltipItem);
-
                 _point.x = record["_x"];
             }
         }
@@ -164,29 +156,28 @@ bool tooltip::ToolTipController::ShowToolTip(const util::Point &point) {
 
     this->container_->Clear();
 
-    nlohmann::json &first = tooltipMarkerItems[0];
-    if(chart_->GetCoord().IsTransposed()) {
+    if(config_["hidden"] == false) {
+        nlohmann::json &first = tooltipMarkerItems[0];
+        if(chart_->GetCoord().IsTransposed()) {
+            // TODO
+        } else {
+            util::Point xTipPoint = _point;
+            xTipPoint.y = chart_->GetCoord().GetYAxis().x;
+            toolTip_->SetXTipContent(*chart_->canvasContext_, first["title"], xTipPoint);
+        }
 
-    } else {
-        util::Point xTipPoint = _point;
-        xTipPoint.y = chart_->GetCoord().GetYAxis().x;
-        toolTip_->SetXTipContent(*chart_->canvasContext_, first["title"], xTipPoint);
+        this->toolTip_->SetPosition(chart_->GetCoord(), *chart_->canvasContext_, _point, tooltipMarkerItems, InvertYTip(_point));
+
+        this->toolTip_->Show(*chart_->canvasContext_);
+
+        std::for_each(actionListeners_.begin(), actionListeners_.end(),
+                      [&](ToolTipMarkerItemsCallback callback) -> void { callback(tooltipMarkerItems); });
+
+        chart_->Redraw();
     }
 
-    this->toolTip_->SetPosition(chart_->GetCoord(), *chart_->canvasContext_, _point, tooltipMarkerItems, InvertYTip(_point));
-
-    this->toolTip_->Show(*chart_->canvasContext_);
-
-    std::for_each(actionListeners_.begin(), actionListeners_.end(),
-                  [&](ToolTipMarkerItemsCallback callback) -> void { callback(tooltipMarkerItems); });
-
-    chart_->Redraw();
-
     if(config_.contains("onPress") && config_["onPress"].is_string()) {
-        auto onPressCallback = func::FunctionManager::GetInstance().Find(config_["onPress"]);
-        if(onPressCallback != nullptr) {
-            onPressCallback->Execute(tooltipMarkerItems);
-        }
+        func::InvokeFunction(config_["onPress"], tooltipMarkerItems);
     }
 
     chart_->GetLogTracer()->trace("ShowToolTip duration: %lums", (xg::CurrentTimestampAtMM() - timestampStart));

@@ -1,3 +1,4 @@
+#import "F2CallbackObj.h"
 #import "F2CanvasView.h"
 #import "F2Geom.h"
 #import "F2Guide.h"
@@ -80,14 +81,16 @@ NS_ASSUME_NONNULL_BEGIN
 /// 散点图
 - (F2Point * (^)(void))point;
 
+/// 蜡烛图
+- (F2Candle * (^)(void))candle;
+
 /// 创建辅助对象
 - (F2Guide * (^)(void))guide;
 
 ///  发送手势信息
 - (F2Chart * (^)(NSDictionary *config))postTouchEvent;
 
-///  清除绘制指令
-- (F2Chart * (^)(void))clear;
+- (void)bindF2CallbackObj:(F2CallbackObj *)callback;
 
 @end
 

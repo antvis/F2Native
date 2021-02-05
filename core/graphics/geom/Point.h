@@ -13,12 +13,12 @@ class Point : public AbstractGeom {
     Point(Group *_container, utils::Tracer *tracer) : AbstractGeom(_container, tracer) {
         type_ = "point";
         sortable_ = true;
-        this->styleConfig_ = {{"radius", 3}, {"color", "#1890FF"}};
+        this->styleConfig_ = {};
     }
 
     void BeforeMapping(XChart &chart, nlohmann::json &dataArray) override;
 
-    void Draw(XChart &chart, const nlohmann::json &groupData) const override;
+    void Draw(XChart &chart, const nlohmann::json &groupData, std::size_t start, std::size_t end) const override;
 };
 } // namespace geom
 } // namespace xg

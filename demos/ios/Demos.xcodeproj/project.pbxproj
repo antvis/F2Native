@@ -19,8 +19,10 @@
 		3F594C0A259B10990023A4E7 /* SetionIntervalUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F594C09259B10990023A4E7 /* SetionIntervalUIView.m */; };
 		3F5D90912535C5320091D8F7 /* CyclicPieUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D90902535C5320091D8F7 /* CyclicPieUIView.m */; };
 		3F5DD47D2553A34D00FD60B3 /* BaseInterval2UIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F5DD47C2553A34D00FD60B3 /* BaseInterval2UIView.m */; };
+		3FD08FB025B0764A002F14AC /* KLineUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD08FAF25B0764A002F14AC /* KLineUIView.m */; };
 		957056B92591F88F00D26E0A /* MultiIntervalUIView2.m in Sources */ = {isa = PBXBuildFile; fileRef = 957056B82591F88F00D26E0A /* MultiIntervalUIView2.m */; };
 		957056C925931B0900D26E0A /* BaseAreaUIView2.m in Sources */ = {isa = PBXBuildFile; fileRef = 957056C825931B0900D26E0A /* BaseAreaUIView2.m */; };
+		95982AF825CA8D3D0066F875 /* MultiAxiesLineUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 95982AF725CA8D3D0066F875 /* MultiAxiesLineUIView.m */; };
 		95A7D80A25A3035800CA8B9F /* BasePointUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 95A7D80925A3035800CA8B9F /* BasePointUIView.m */; };
 		CC612BBD250A28AE00315124 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CC612BBC250A28AE00315124 /* AppDelegate.m */; };
 		CC612BC3250A28AE00315124 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CC612BC2250A28AE00315124 /* ViewController.m */; };
@@ -74,10 +76,14 @@
 		3F5DD47B2553A34D00FD60B3 /* BaseInterval2UIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseInterval2UIView.h; sourceTree = "<group>"; };
 		3F5DD47C2553A34D00FD60B3 /* BaseInterval2UIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseInterval2UIView.m; sourceTree = "<group>"; };
 		3F5DD4E1255AB42C00FD60B3 /* F2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = F2.xcodeproj; path = ../../../ios/F2.xcodeproj; sourceTree = "<group>"; };
+		3FD08FAE25B0764A002F14AC /* KLineUIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KLineUIView.h; sourceTree = "<group>"; };
+		3FD08FAF25B0764A002F14AC /* KLineUIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KLineUIView.m; sourceTree = "<group>"; };
 		957056B72591F88F00D26E0A /* MultiIntervalUIView2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiIntervalUIView2.h; sourceTree = "<group>"; };
 		957056B82591F88F00D26E0A /* MultiIntervalUIView2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultiIntervalUIView2.m; sourceTree = "<group>"; };
 		957056C725931B0900D26E0A /* BaseAreaUIView2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseAreaUIView2.h; sourceTree = "<group>"; };
 		957056C825931B0900D26E0A /* BaseAreaUIView2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseAreaUIView2.m; sourceTree = "<group>"; };
+		95982AF625CA8D3D0066F875 /* MultiAxiesLineUIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiAxiesLineUIView.h; sourceTree = "<group>"; };
+		95982AF725CA8D3D0066F875 /* MultiAxiesLineUIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultiAxiesLineUIView.m; sourceTree = "<group>"; };
 		95A7D80825A3035800CA8B9F /* BasePointUIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BasePointUIView.h; sourceTree = "<group>"; };
 		95A7D80925A3035800CA8B9F /* BasePointUIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BasePointUIView.m; sourceTree = "<group>"; };
 		CC612BB8250A28AE00315124 /* F2Native.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = F2Native.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -108,6 +114,8 @@
 		3F56A04125232939002AA2D2 /* views */ = {
 			isa = PBXGroup;
 			children = (
+				3FD08FAE25B0764A002F14AC /* KLineUIView.h */,
+				3FD08FAF25B0764A002F14AC /* KLineUIView.m */,
 				3F56A0422523296F002AA2D2 /* BaseLineUIView.h */,
 				3F56A0432523296F002AA2D2 /* BaseLineUIView.m */,
 				3F5DD47B2553A34D00FD60B3 /* BaseInterval2UIView.h */,
@@ -136,6 +144,8 @@
 				957056C825931B0900D26E0A /* BaseAreaUIView2.m */,
 				95A7D80825A3035800CA8B9F /* BasePointUIView.h */,
 				95A7D80925A3035800CA8B9F /* BasePointUIView.m */,
+				95982AF625CA8D3D0066F875 /* MultiAxiesLineUIView.h */,
+				95982AF725CA8D3D0066F875 /* MultiAxiesLineUIView.m */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -291,8 +301,10 @@
 				3F56A05425236C64002AA2D2 /* StripUIView.m in Sources */,
 				3F56A06025248B53002AA2D2 /* MultintervalUIView.m in Sources */,
 				3F56A0442523296F002AA2D2 /* BaseLineUIView.m in Sources */,
+				95982AF825CA8D3D0066F875 /* MultiAxiesLineUIView.m in Sources */,
 				CC612BBD250A28AE00315124 /* AppDelegate.m in Sources */,
 				957056C925931B0900D26E0A /* BaseAreaUIView2.m in Sources */,
+				3FD08FB025B0764A002F14AC /* KLineUIView.m in Sources */,
 				CC612BCE250A28AF00315124 /* main.m in Sources */,
 				3F56A0482523599D002AA2D2 /* MultiLineUIView.m in Sources */,
 				95A7D80A25A3035800CA8B9F /* BasePointUIView.m in Sources */,
@@ -439,14 +451,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.0;
-				DEVELOPMENT_TEAM = 6TRFR323M3;
+				DEVELOPMENT_TEAM = 57ZEL2VPN6;
 				INFOPLIST_FILE = Demos/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.alipay.xgraph.demos7;
+				PRODUCT_BUNDLE_IDENTIFIER = com.alipay.xgraph.demos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -458,14 +470,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.0;
-				DEVELOPMENT_TEAM = 6TRFR323M3;
+				DEVELOPMENT_TEAM = 57ZEL2VPN6;
 				INFOPLIST_FILE = Demos/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.alipay.xgraph.demos7;
+				PRODUCT_BUNDLE_IDENTIFIER = com.alipay.xgraph.demos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

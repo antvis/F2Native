@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 
+
 android {
 
     compileSdkVersion rootProject.extensions.sdks.CompileSDK
@@ -31,7 +32,7 @@ android {
             dimension "target_app"
             externalNativeBuild {
                 cmake {
-                    cppFlags "-std=c++14 -ffunction-sections -fdata-sections -fno-rtti -funwind-tables -DTARGET_STANDALONE"
+                    cppFlags "-DTARGET_STANDALONE"
                     cFlags "-ffunction-sections -fdata-sections"
                     arguments "-DANDROID_STL=c++_shared", '-DTARGET_STANDALONE=1'
                 }
@@ -46,7 +47,7 @@ android {
             dimension "target_app"
             externalNativeBuild {
                 cmake {
-                    cppFlags "-std=c++14 -ffunction-sections -fdata-sections -fno-rtti -funwind-tables -DTARGET_ALIPAY"
+                    cppFlags "-DTARGET_ALIPAY"
                     cFlags "-ffunction-sections -fdata-sections"
                     arguments "-DANDROID_STL=c++_shared", '-DTARGET_ALIPAY=1'
                 }
@@ -66,14 +67,14 @@ android {
 
 repositories {
     flatDir {
-        dirs '../../third_party/GCanvas/android/gcanvas_library/build/outputs/aar', '../../third_party/AntGraphic'
+        dirs '../../third_party/GCanvas/android/gcanvas_library/build/outputs/aar'
     }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     standaloneImplementation(name: 'gcanvas_library-1.2.0', ext: 'aar')
-    aliPayImplementation(name: 'antg-build-android-release', ext: 'aar')
 
     aliPayImplementation 'com.alibaba:fastjson:1.2.73'
+    aliPayImplementation 'com.alipay.android.phone.wallet:antgraphic-standalone:0.1.1-SNAPSHOT'
 }

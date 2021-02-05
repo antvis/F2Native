@@ -20,12 +20,13 @@ class Area : public GeomShapeBase {
               canvas::coord::AbstractCoord &coord,
               canvas::CanvasContext &context,
               const nlohmann::json &data,
+              std::size_t start,
+              std::size_t end,
               xg::shape::Group &container) override {
-        size_t size = data.size();
         vector<xg::util::Point> topPoints;
         vector<xg::util::Point> bottomPoints;
 
-        for(std::size_t i = 0; i < size; i++) {
+        for(std::size_t i = start; i <= end; i++) {
             const nlohmann::json &item = data[i];
             const nlohmann::json &points = item["_points"];
             util::Point bottom{points[0]["x"], points[0]["y"]};
@@ -38,15 +39,18 @@ class Area : public GeomShapeBase {
         }
         std::reverse(bottomPoints.begin(), bottomPoints.end());
 
-        std::string color = GLOBAL_COLORS[0];
-        if(size > 0 && data[0].contains("_color")) {
-            color = data[0]["_color"];
-        }
-        if(size > 0 && data[0].contains("_shape")) {
-            shapeType = data[0]["_shape"];
+        std::size_t size = end - start + 1;
+        if(size > 0 && data[start].contains("_shape")) {
+            shapeType = data[start]["_shape"];
         }
         bool smooth = shapeType == "smooth";
-        auto l = xg::make_unique<xg::shape::Area>(topPoints, bottomPoints, color, smooth);
+        auto l = xg::make_unique<xg::shape::Area>(topPoints, bottomPoints, smooth);
+
+        if(size <= 0) {
+            l->fillStyle_ = util::CanvasFillStrokeStyle(GLOBAL_COLORS[0]);
+        } else {
+            l->fillStyle_ = util::ColorParser(data[start], "_color");
+        }
         container.AddElement(std::move(l));
     }
 };

@@ -7,15 +7,15 @@ namespace xg {
 namespace shape {
 
 class Area : public Shape {
-    public:
-    Area(const vector<util::Point> &topPoints, const vector<util::Point> &bottomPoints, const string &fillColor, const bool smooth);
+  public:
+    Area(const vector<util::Point> &topPoints, const vector<util::Point> &bottomPoints, const bool smooth);
 
     BBox CalculateBox(canvas::CanvasContext &context) const override;
 
-    protected:
+  protected:
     void CreatePath(canvas::CanvasContext &context) const override;
 
-    public:
+  public:
     vector<xg::util::Point> topPoints_;
     vector<xg::util::Point> bottomPoints_;
     vector<xg::util::Point> mergePoints_;

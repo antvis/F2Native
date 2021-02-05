@@ -7,7 +7,7 @@ namespace xg {
 namespace shape {
 
 class Shape : public Element {
-    public:
+  public:
     Shape();
 
     virtual ~Shape() override {}
@@ -17,9 +17,9 @@ class Shape : public Element {
     const BBox &GetBBox(canvas::CanvasContext &context) override;
 
     /// 包围盒计算，每次都会计算
-    virtual BBox CalculateBox(canvas::CanvasContext &context) const override { return { 0, 0, 0, 0, 0, 0 }; }
+    virtual BBox CalculateBox(canvas::CanvasContext &context) const override { return {0, 0, 0, 0, 0, 0}; }
 
-    protected:
+  protected:
     virtual void DrawInner(canvas::CanvasContext &context) const override;
 
     /// 调用canvas生成绘制指令

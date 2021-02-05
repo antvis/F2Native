@@ -739,6 +739,8 @@ static jlong CreateChartGeom(JNIEnv *env, jclass clazz, jlong chart, jstring typ
         geom = &_chart->Interval();
     } else if(_type == "point") {
         geom = &_chart->Point();
+    } else if(_type == "candle") {
+        geom = &_chart->Candle();
     }
 
     F2_LOG_I(_chart->GetChartName(), "createGeom: %s", _type.data());

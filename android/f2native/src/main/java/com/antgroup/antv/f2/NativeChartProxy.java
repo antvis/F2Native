@@ -133,6 +133,9 @@ final class NativeChartProxy {
             case "point": {
                 return new F2Geom.Point(chart, handle, type);
             }
+            case "candle": {
+                return new F2Geom.Candle(chart, handle, type);
+            }
         }
         return null;
     }

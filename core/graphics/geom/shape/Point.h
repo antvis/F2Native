@@ -1,4 +1,5 @@
 #include "GeomShapeBase.h"
+#include "graphics/func/Func.h"
 #include "graphics/shape/Circle.h"
 
 #ifndef XG_GRAPHICS_GEOM_SHAPE_POINT_H
@@ -14,6 +15,8 @@ class Point : public GeomShapeBase {
               canvas::coord::AbstractCoord &coord,
               canvas::CanvasContext &context,
               const nlohmann::json &data,
+              std::size_t start,
+              std::size_t end,
               xg::shape::Group &container) override {
         std::string shape = "circle";
         if(data.contains("_shape")) {
@@ -21,16 +24,36 @@ class Point : public GeomShapeBase {
         }
 
         util::Point center = {data["_x"], data["_y"]};
-        const nlohmann::json &style = data["_style"];
-        if(shape == "circle") {
-            float radius = 1;
-            if(data.contains("_size")) {
-                radius = data["_size"].get<float>() * context.GetDevicePixelRatio();
-            } else {
-                radius = style["radius"].get<float>() * context.GetDevicePixelRatio();
+        nlohmann::json style = data["_style"];
+        if(style.contains("custom") && style["custom"].is_string()) {
+            std::string customCallbackId = style["custom"];
+            nlohmann::json param = data;
+            param["_index"] = start;
+            nlohmann::json customStyle = func::InvokeFunction(customCallbackId, param);
+            if(customStyle.is_object()) {
+                style.merge_patch(customStyle);
             }
-            std::string color = style["color"];
-            auto circle = std::make_unique<xg::shape::Circle>(center, radius, color);
+        }
+
+        util::CanvasFillStrokeStyle colorStyle = util::CanvasFillStrokeStyle(GLOBAL_COLORS[0]);
+        if(style.contains("color")) {
+            colorStyle = util::ColorParser(style["color"]);
+        } else if(data.contains("_color")) {
+            colorStyle = util::ColorParser(data["_color"]);
+        }
+
+        if(shape == "circle") {
+            float radius = 3;
+            if(style.contains("size")) {
+                radius = style["size"].get<float>();
+            } else if(data.contains("_size")) {
+                radius = data["_size"].get<float>();
+            }
+            radius *= context.GetDevicePixelRatio();
+
+            auto circle = std::make_unique<xg::shape::Circle>(center, radius);
+            // TODO 兼容 stroke 模式 & linear or radial 模式
+            circle->fillStyle_ = colorStyle;
             container.AddElement(std::move(circle));
         }
     }

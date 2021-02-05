@@ -10,6 +10,7 @@ import com.antgroup.antv.f2.samples.Utils;
 
 /**
  * 基础折线图-1
+ *
  * @author qingyuan.yl
  * @date 2020-09-27
  */
@@ -43,27 +44,32 @@ public class SingleLineChart_1 implements F2CanvasView.Adapter, F2CanvasView.OnC
                     public F2Config execute(String param) {
                         JSONObject params = JSON.parseObject(param);
                         int index = params.getIntValue("index");
-                        return new F2Config.Builder().setOption("textColor", (index % 2 == 0 ? "#000000" : "#DC143C")).setOption("xOffset", (index % 2 == 0)? 0 : -30).build();
+                        return new F2Config.Builder().setOption("textColor", (index % 2 == 0 ? "#000000" : "#DC143C")).setOption("xOffset", (index % 2 == 0) ? 0 : -30).build();
                     }
                 }))
                 .gridHidden());
 
         mChart.setAxis("value", new F2Chart.AxisConfigBuilder()
-                .grid(new F2Chart.AxisGridConfigBuilder().type("dash")));
+                .grid(new F2Chart.AxisGridConfigBuilder()
+                        .type("dash")
+                        .lineDash(new double[]{8, 3, 3, 8})
+                )
+        );
         mChart.setScale("date", new F2Chart.ScaleConfigBuilder().tick(mChart, new F2Function() {
             @Override
             public F2Config execute(String param) {
                 String[] arr = param.split("-");
                 String rst;
                 if (arr.length == 3) {
-                    rst = arr[1] +"-"+arr[2];
+                    rst = arr[1] + "-" + arr[2];
                 } else {
                     rst = param;
                 }
                 return new F2Config.Builder().setOption("content", rst).build();
             }
         }).tickCount(5));
-        mChart.setScale("value", new F2Chart.ScaleConfigBuilder().setOption("nice", true).min(10).max(340));
+        mChart.setScale("value", new F2Chart.ScaleConfigBuilder().setOption("nice", true));
+
         mChart.render();
 
         drawTag(canvasView);
@@ -104,14 +110,14 @@ public class SingleLineChart_1 implements F2CanvasView.Adapter, F2CanvasView.OnC
         String color = itemData.getString("color");
         canvasView.getCanvasHandle().save();
         canvasView.getCanvasHandle().setFillStyle(color);
-        canvasView.getCanvasHandle().fillRect((int)x, (int)y, 100, 50);
+        canvasView.getCanvasHandle().fillRect((int) x, (int) y, 100, 50);
         canvasView.getCanvasHandle().restore();
 
         canvasView.getCanvasHandle().save();
         canvasView.getCanvasHandle().setFillStyle("#ffffff");
         String text = itemData.getString("value");
         float textWidth = canvasView.getCanvasHandle().measureText(text);
-        canvasView.getCanvasHandle().fillText(text, x + (100 - textWidth)/2, y + 40);
+        canvasView.getCanvasHandle().fillText(text, x + (100 - textWidth) / 2, y + 40);
         canvasView.getCanvasHandle().restore();
     }
 }

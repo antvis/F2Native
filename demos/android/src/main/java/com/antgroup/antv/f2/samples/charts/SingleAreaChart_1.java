@@ -1,7 +1,12 @@
 package com.antgroup.antv.f2.samples.charts;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.antgroup.antv.f2.F2CanvasView;
 import com.antgroup.antv.f2.F2Chart;
+import com.antgroup.antv.f2.F2Config;
+import com.antgroup.antv.f2.F2Function;
+import com.antgroup.antv.f2.F2Util;
 import com.antgroup.antv.f2.samples.Utils;
 
 /**
@@ -31,7 +36,24 @@ public class SingleAreaChart_1 implements F2CanvasView.Adapter {
         mChart.setScale("tem", new F2Chart.ScaleConfigBuilder().min(800).max(3000));
 
         mChart.line().position("time*tem");
-        mChart.area().position("time*tem");
+        mChart.area().position("time*tem").fixedColor(
+                new F2Util.ColorLinearGradient()
+                        .addColorStop(0.f, "red")
+                        .addColorStop(1.f, "white")
+                        .setPosition(0, 0, 0, canvasView.getHeight())
+        );
+        mChart.point().position("time*tem").fixedColor("#FFB6C1").style(new F2Config.Builder()
+                .setOption("custom", mChart, new F2Function() {
+                    @Override
+                    public F2Config execute(String param) {
+                        JSONObject jsonObject = JSON.parseObject(param);
+                        if (jsonObject.getIntValue("_index") % 2 == 0) {
+                            return new F2Config.Builder().setOption("size", 0).build();
+                        }
+                        return null;
+                    }
+                })
+                .build());
 
         mChart.render();
     }

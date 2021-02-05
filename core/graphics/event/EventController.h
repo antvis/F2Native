@@ -79,9 +79,12 @@ class EventController {
             return false;
         if(event.points.size() > 1) {
             double currentDistance = CalcDistance(event.points[0], event.points[1]);
-            event.zoom = currentDistance / startDistance_;
+            double preDistance = CalcDistance(preEvent_.points[0], preEvent_.points[1]);
+            event.zoom = currentDistance / preDistance;
             event.center = startEvent_.center;
             event.eventType = "pinch";
+
+            preEvent_ = event;
             if(startEvent_.eventType != "pinch") {
                 startEvent_.eventType = "pinch";
                 return EmitEvent("pinchstart", event);

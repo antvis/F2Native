@@ -8,6 +8,8 @@
 #include "utils/StringUtil.h"
 #include <nlohmann/json.hpp>
 
+using namespace std;
+
 namespace xg {
 namespace geom {
 
@@ -17,7 +19,7 @@ static string FIELD_ORIGIN_Y = "_originY";
 
 static vector<string> ParseFields(const string &field) {
     if(field.find('*') != field.npos) {
-        vector<string> v(2);
+        vector<string> v;
         StringUtil::Split(field, v, '*');
         return v;
     } else {
@@ -157,7 +159,8 @@ void xg::geom::AbstractGeom::ProcessData(XChart &chart) {
 nlohmann::json xg::geom::AbstractGeom::GroupData(XChart &chart) {
     const nlohmann::json &data = chart.GetData();
     if(!data.is_array()) {
-        throw std::runtime_error("chart's data is not array.");
+        // throw std::runtime_error("chart's data is not array.");
+        return nlohmann::json();
     }
 
     const set<string> fields(GetGroupFieldNames(chart));
@@ -174,7 +177,7 @@ const set<string> xg::geom::AbstractGeom::GetGroupFieldNames(XChart &chart) {
                 auto &attr = it.second;
                 auto &_fields = attr->GetFields();
                 std::for_each(_fields.begin(), _fields.end(), [&](const string &field) {
-                    if(chart.GetScale(field).GetType() == ScaleType::Cat || chart.GetScale(field).GetType() == ScaleType::TimeCat) {
+                    if(scale::IsCategory(chart.GetScale(field).GetType())) {
                         fieldNames.insert(field);
                     }
                 });
@@ -197,21 +200,22 @@ void xg::geom::AbstractGeom::Paint(XChart *chart) {
 
     for(std::size_t i = 0; i < dataArray_.size(); ++i) {
         nlohmann::json &groupData = dataArray_[i];
-        Mapping(*chart, groupData);
 
         std::size_t start = 0, end = groupData.size() - 1;
         if(scale::IsCategory(xScale.GetType())) {
             start = fmax(start, xScale.min);
             end = fmin(end, xScale.max);
         }
-        nlohmann::json filterGroup = util::JsonArraySlice(groupData, start, end);
-        Draw(*chart, filterGroup);
+
+        Mapping(*chart, groupData, start, end);
+
+        Draw(*chart, groupData, start, end);
     }
 
     this->tracker_->trace("geom#%s Paint finished. duration: %lums ", type_.c_str(), (CurrentTimestampAtMM() - timestamp));
 }
 
-void xg::geom::AbstractGeom::Mapping(XChart &chart, nlohmann::json &groupData) {
+void xg::geom::AbstractGeom::Mapping(XChart &chart, nlohmann::json &groupData, std::size_t start, std::size_t end) {
     this->tracker_->trace("geom#%s start mapping, size: %lu", type_.c_str(), groupData.size());
 
     for(auto &it : attrs_) {
@@ -222,12 +226,12 @@ void xg::geom::AbstractGeom::Mapping(XChart &chart, nlohmann::json &groupData) {
         const vector<string> &fields = attr.GetFields();
         AbstractScale &xScale = chart.GetScale(fields.size() >= 1 ? fields[0] : "");
         AbstractScale &yScale = chart.GetScale(fields.size() >= 2 ? fields[1] : "");
-        attr.Mapping(groupData, xScale, yScale, chart.GetCoord());
+        attr.Mapping(groupData, start, end, xScale, yScale, chart.GetCoord());
     }
 }
 
-void xg::geom::AbstractGeom::Draw(XChart &chart, const nlohmann::json &groupData) const {
-    chart.geomShapeFactory_->DrawGeomShape(chart, this->type_, /*subShapeType*/ "", groupData, *container_);
+void xg::geom::AbstractGeom::Draw(XChart &chart, const nlohmann::json &groupData, std::size_t start, std::size_t end) const {
+    chart.geomShapeFactory_->DrawGeomShape(chart, this->type_, /*subShapeType*/ "", groupData, start, end, *container_);
 }
 
 bool xg::geom::AbstractGeom::ContainsAttr(attr::AttrType type) {

@@ -19,12 +19,24 @@ class Interval : public GeomShapeBase {
               canvas::coord::AbstractCoord &coord,
               canvas::CanvasContext &context,
               const nlohmann::json &data,
+              std::size_t start,
+              std::size_t end,
               xg::shape::Group &container) override {
         if(!data.contains("_points")) {
             return;
         }
 
         const nlohmann::json &_points = data["_points"];
+        nlohmann::json _style = data["_style"];
+        if(_style.contains("custom") && _style["custom"].is_string()) {
+            std::string customCallbackId = _style["custom"];
+            nlohmann::json param = data;
+            param["_index"] = start;
+            nlohmann::json customStyle = func::InvokeFunction(customCallbackId, param);
+            if(customStyle.is_object()) {
+                _style.merge_patch(customStyle);
+            }
+        };
 
         std::vector<util::Point> points;
         for(std::size_t i = 0; i < _points.size(); ++i) {
@@ -33,10 +45,16 @@ class Interval : public GeomShapeBase {
             points.push_back(std::move(p));
         }
 
-        std::string color = GLOBAL_COLORS[0];
-        if(data.contains("_color")) {
-            color = data["_color"];
+        util::CanvasFillStrokeStyle colorStyle = util::ColorParser(data, "_color");
+
+        bool isFill = true;
+        if(data.contains("_shape") && data["_shape"].is_string()) {
+            if(data["_shape"] == "stroke") {
+                isFill = false;
+            }
         }
+
+        const float lineWidth = _style["lineWidth"].get<float>() * context.GetDevicePixelRatio();
         // 扇形
         if(shapeType == "sector") {
             std::vector<util::Point> newPoints = points;
@@ -58,18 +76,28 @@ class Interval : public GeomShapeBase {
                 endAngle = endAngle - 2 * M_PI;
             }
 
-            const nlohmann::json &styleCfg = data["_style"];
-
-            const float lineWidth = styleCfg["lineWidth"];
-            const std::string &stroke = styleCfg["stroke"];
-            auto rect = xg::make_unique<xg::shape::Rect>(coord.GetCenter(), r, r0, startAngle, endAngle, color,
-                                                         lineWidth * context.GetDevicePixelRatio(), stroke);
+            auto rect = xg::make_unique<xg::shape::Rect>(coord.GetCenter(), r, r0, startAngle, endAngle, lineWidth);
+            if(isFill) {
+                rect->fillStyle_ = colorStyle;
+            } else {
+                rect->strokeStyle_ = colorStyle;
+            }
             container.AddElement(std::move(rect));
-
         } else {
             util::Size size(points[2].x - points[0].x, points[2].y - points[0].y);
 
-            auto rect = xg::make_unique<xg::shape::Rect>(points[0], size, color);
+            auto rect = xg::make_unique<xg::shape::Rect>(points[0], size);
+            if(isFill) {
+                rect->fillStyle_ = colorStyle;
+            } else {
+                rect->strokeStyle_ = colorStyle;
+                rect->lineWidth_ = lineWidth;
+            }
+            if(_style.contains("radius")) {
+                float roundings[4] = {0, 0, 0, 0};
+                json::ParseRoundings(_style["radius"], &roundings[0], context.GetDevicePixelRatio());
+                memcpy(rect->roundings, roundings, sizeof(float) * 4);
+            }
 
             container.AddElement(std::move(rect));
 

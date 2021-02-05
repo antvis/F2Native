@@ -25,15 +25,14 @@ class ToolTip {
                      util::Point point,
                      nlohmann::json &tooltipItems,
                      const std::string &yTip) {
-        if(tooltipItems.size() == 1) {
-            this->_ShowCrosshairs(coord, canvasContext, point, true);
-            this->SetYTipContent(coord, canvasContext, yTip, point);
-        } else if(tooltipItems.size() > 1) {
-            this->_ShowCrosshairs(coord, canvasContext, point, false);
-        }
+        this->_ShowCrosshairs(coord, canvasContext, point, true);
+        this->SetYTipContent(coord, canvasContext, yTip, point);
     }
 
     void SetXTipContent(canvas::CanvasContext &canvasContext, const std::string &content, util::Point point) {
+        if(!config_["xTip"].is_object()) {
+            return;
+        }
         nlohmann::json &backCfg = config_["background"];
         std::string backColor = backCfg["fill"];
         nlohmann::json &padding = backCfg["padding"];

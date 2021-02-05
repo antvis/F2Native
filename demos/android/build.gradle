@@ -27,26 +27,25 @@ android {
 
 repositories {
     flatDir {
-        dirs '../../third_party/GCanvas/android/gcanvas_library/build/outputs/aar', '../../third_party/AntGraphic'
+        dirs '../../third_party/GCanvas/android/gcanvas_library/build/outputs/aar'
     }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
-    implementation 'com.google.android.material:material:1.2.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.3.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation "androidx.recyclerview:recyclerview:1.1.0"
+    implementation "androidx.appcompat:appcompat:1.2.0"
 
 
     standaloneImplementation project(':android:f2native')
     standaloneImplementation 'com.alibaba:fastjson:1.2.73'
 
     aliPayImplementation project(':android:f2native')
-    aliPayImplementation(name: 'antg-build-android-release', ext: 'aar')
+//    aliPayImplementation(name: 'antg-build-android-release', ext: 'aar')
+    aliPayImplementation 'com.alipay.android.phone.wallet:antgraphic-standalone:0.1.1-SNAPSHOT'
     aliPayImplementation 'com.alibaba:fastjson:1.2.73'
 }

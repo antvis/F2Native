@@ -1,5 +1,6 @@
 #include "utils/xtime.h"
 #include <nlohmann/json.hpp>
+#include <random>
 #include <string>
 #include <unordered_map>
 
@@ -10,9 +11,15 @@ namespace xg {
 
 namespace func {
 
-static std::string MakeFunctionId() { return std::to_string(xg::CurrentTimestampAtMM()); }
+static std::string MakeFunctionId() {
+    std::random_device rd;  // Will be used to obtain a seed for the random number engine
+    std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+    std::uniform_int_distribution<> distrib(1, 100000);
 
-// Java|OC <--> C+ 的 Function 都必须保持在同线程同步调用
+    return std::to_string(xg::CurrentTimestampAtMM()) + "-" + std::to_string(distrib(gen));
+}
+
+//// Java|OC <--> C+ 的 Function 都必须保持在同线程同步调用
 struct F2Function {
 
     F2Function() { functionId = MakeFunctionId(); }
@@ -57,6 +64,14 @@ class FunctionManager {
   private:
     std::unordered_map<std::string, F2Function *> functions_;
 };
+
+static nlohmann::json InvokeFunction(const std::string &functionId, const nlohmann::json &param) {
+    F2Function *func = FunctionManager::GetInstance().Find(functionId);
+    if(func == nullptr) {
+        return nlohmann::json();
+    }
+    return func->Execute(param);
+}
 
 } // namespace func
 } // namespace xg

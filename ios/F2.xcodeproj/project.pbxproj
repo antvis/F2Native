@@ -31,6 +31,13 @@
 		3F5DD4362547F14300FD60B3 /* Marker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F5DD4342547F14300FD60B3 /* Marker.h */; };
 		3FC0056C253F0C2D00E09DD7 /* F2GestureListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FC0056A253F0C2D00E09DD7 /* F2GestureListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3FC0056D253F0C2D00E09DD7 /* F2GestureListener.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC0056B253F0C2D00E09DD7 /* F2GestureListener.m */; };
+		3FD08FA225B02417002F14AC /* Candle.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FD08FA025B02417002F14AC /* Candle.h */; };
+		3FD08FA325B02417002F14AC /* Candle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3FD08FA125B02417002F14AC /* Candle.cpp */; };
+		3FD08FA825B03FCA002F14AC /* Candle.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FD08FA725B03FCA002F14AC /* Candle.h */; };
+		95982AF025C922CD0066F875 /* AlipayCanvasContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 95982AED25C922CD0066F875 /* AlipayCanvasContext.h */; };
+		95982AF125C922CD0066F875 /* StandaloneCanvasContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 95982AEF25C922CD0066F875 /* StandaloneCanvasContext.h */; };
+		95982AF325C922DA0066F875 /* Color.h in Headers */ = {isa = PBXBuildFile; fileRef = 95982AF225C922DA0066F875 /* Color.h */; };
+		95982B0925CCF5470066F875 /* Line.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95982B0725CCF5470066F875 /* Line.cpp */; };
 		95A7D80F25A458B000CA8B9F /* Point.h in Headers */ = {isa = PBXBuildFile; fileRef = 95A7D80D25A458B000CA8B9F /* Point.h */; };
 		95A7D81225A458CE00CA8B9F /* Point.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95A7D81025A458CE00CA8B9F /* Point.cpp */; };
 		95A7D81325A458CE00CA8B9F /* Point.h in Headers */ = {isa = PBXBuildFile; fileRef = 95A7D81125A458CE00CA8B9F /* Point.h */; };
@@ -156,6 +163,13 @@
 		3F5DD4342547F14300FD60B3 /* Marker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Marker.h; sourceTree = "<group>"; };
 		3FC0056A253F0C2D00E09DD7 /* F2GestureListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F2GestureListener.h; sourceTree = "<group>"; };
 		3FC0056B253F0C2D00E09DD7 /* F2GestureListener.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = F2GestureListener.m; sourceTree = "<group>"; };
+		3FD08FA025B02417002F14AC /* Candle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Candle.h; sourceTree = "<group>"; };
+		3FD08FA125B02417002F14AC /* Candle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Candle.cpp; sourceTree = "<group>"; };
+		3FD08FA725B03FCA002F14AC /* Candle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Candle.h; sourceTree = "<group>"; };
+		95982AED25C922CD0066F875 /* AlipayCanvasContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlipayCanvasContext.h; sourceTree = "<group>"; };
+		95982AEF25C922CD0066F875 /* StandaloneCanvasContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StandaloneCanvasContext.h; sourceTree = "<group>"; };
+		95982AF225C922DA0066F875 /* Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Color.h; sourceTree = "<group>"; };
+		95982B0725CCF5470066F875 /* Line.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Line.cpp; sourceTree = "<group>"; };
 		95A7D80D25A458B000CA8B9F /* Point.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Point.h; sourceTree = "<group>"; };
 		95A7D81025A458CE00CA8B9F /* Point.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Point.cpp; sourceTree = "<group>"; };
 		95A7D81125A458CE00CA8B9F /* Point.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Point.h; sourceTree = "<group>"; };
@@ -418,6 +432,7 @@
 		CC611D47250A1D0800315124 /* util */ = {
 			isa = PBXGroup;
 			children = (
+				95982AF225C922DA0066F875 /* Color.h */,
 				3F2F1B8C2591F4FC00543775 /* json.cpp */,
 				3F2F1B8E2591F4FC00543775 /* json.h */,
 				CC611D48250A1D0800315124 /* BBox.h */,
@@ -433,6 +448,8 @@
 		CC611D50250A1D0800315124 /* canvas */ = {
 			isa = PBXGroup;
 			children = (
+				95982AED25C922CD0066F875 /* AlipayCanvasContext.h */,
+				95982AEF25C922CD0066F875 /* StandaloneCanvasContext.h */,
 				CC611D51250A1D0800315124 /* Cartesian.h */,
 				3F56A0672525D6E3002AA2D2 /* Polar.h */,
 				CC611D52250A1D0800315124 /* Container.h */,
@@ -446,18 +463,21 @@
 		CC611D56250A1D0800315124 /* geom */ = {
 			isa = PBXGroup;
 			children = (
-				95A7D81025A458CE00CA8B9F /* Point.cpp */,
-				95A7D81125A458CE00CA8B9F /* Point.h */,
-				CC611D57250A1D0800315124 /* shape */,
+				95982B0725CCF5470066F875 /* Line.cpp */,
+				CC611D66250A1D0800315124 /* Geom.h */,
+				CC611D64250A1D0800315124 /* Geom.cpp */,
+				3FD08FA025B02417002F14AC /* Candle.h */,
+				3FD08FA125B02417002F14AC /* Candle.cpp */,
 				CC611D5F250A1D0800315124 /* Path.h */,
+				95A7D81125A458CE00CA8B9F /* Point.h */,
+				95A7D81025A458CE00CA8B9F /* Point.cpp */,
+				CC611D63250A1D0800315124 /* Line.h */,
+				CC611D67250A1D0800315124 /* Interval.h */,
+				CC611D65250A1D0800315124 /* Interval.cpp */,
 				CC611D60250A1D0800315124 /* Area.h */,
 				95FF25E4254ABB020000515C /* Area.cpp */,
+				CC611D57250A1D0800315124 /* shape */,
 				CC611D61250A1D0800315124 /* attr */,
-				CC611D63250A1D0800315124 /* Line.h */,
-				CC611D64250A1D0800315124 /* Geom.cpp */,
-				CC611D65250A1D0800315124 /* Interval.cpp */,
-				CC611D66250A1D0800315124 /* Geom.h */,
-				CC611D67250A1D0800315124 /* Interval.h */,
 			);
 			path = geom;
 			sourceTree = "<group>";
@@ -465,13 +485,14 @@
 		CC611D57250A1D0800315124 /* shape */ = {
 			isa = PBXGroup;
 			children = (
+				CC611D5D250A1D0800315124 /* GeomShapeBase.h */,
 				95A7D80D25A458B000CA8B9F /* Point.h */,
-				CC611D59250A1D0800315124 /* GeomShapeFactory.h */,
-				CC611D5A250A1D0800315124 /* GeomShapeFactory.cpp */,
 				CC611D5B250A1D0800315124 /* Area.h */,
 				CC611D5C250A1D0800315124 /* Line.h */,
-				CC611D5D250A1D0800315124 /* GeomShapeBase.h */,
 				CC611D5E250A1D0800315124 /* Interval.h */,
+				3FD08FA725B03FCA002F14AC /* Candle.h */,
+				CC611D59250A1D0800315124 /* GeomShapeFactory.h */,
+				CC611D5A250A1D0800315124 /* GeomShapeFactory.cpp */,
 			);
 			path = shape;
 			sourceTree = "<group>";
@@ -614,6 +635,7 @@
 				3F5DD3F0254070D400FD60B3 /* Pan.h in Headers */,
 				CC612BF4250B2EF700315124 /* F2Chart.h in Headers */,
 				CC612BF8250B2EF700315124 /* F2Geom.h in Headers */,
+				3FD08FA225B02417002F14AC /* Candle.h in Headers */,
 				CC612BF6250B2EF700315124 /* F2Guide.h in Headers */,
 				CC195216250B76CA0000FBFA /* F2CanvasView.h in Headers */,
 				CC612BF3250B2EF700315124 /* F2Utils.h in Headers */,
@@ -621,14 +643,18 @@
 				95FF25E8254BC4BC0000515C /* Dodge.h in Headers */,
 				3FC0056C253F0C2D00E09DD7 /* F2GestureListener.h in Headers */,
 				CC612501250A1D0C00315124 /* TimeCategory.h in Headers */,
+				3FD08FA825B03FCA002F14AC /* Candle.h in Headers */,
+				95982AF325C922DA0066F875 /* Color.h in Headers */,
 				CC6124E6250A1D0C00315124 /* Flag.h in Headers */,
 				CC612508250A1D0C00315124 /* Point.h in Headers */,
 				CC6124F5250A1D0C00315124 /* Group.h in Headers */,
 				3F5817E4257FB72F002023ED /* F2CallbackObj.h in Headers */,
 				3F56A0682525D6E3002AA2D2 /* Polar.h in Headers */,
 				3F56A02D25218EE5002AA2D2 /* F2.h in Headers */,
+				95982AF125C922CD0066F875 /* StandaloneCanvasContext.h in Headers */,
 				3F5DD42C2542C09500FD60B3 /* LegendController.h in Headers */,
 				CC61251C250A1D0C00315124 /* Area.h in Headers */,
+				95982AF025C922CD0066F875 /* AlipayCanvasContext.h in Headers */,
 				CC6124E0250A1D0C00315124 /* xtime.h in Headers */,
 				CC6124F3250A1D0C00315124 /* Element.h in Headers */,
 				3F5DD4362547F14300FD60B3 /* Marker.h in Headers */,
@@ -785,6 +811,7 @@
 				CC19521A250B8CB30000FBFA /* F2GLESEnv.mm in Sources */,
 				3F5DD4352547F14300FD60B3 /* Marker.cpp in Sources */,
 				CC61250E250A1D0C00315124 /* XChart.cpp in Sources */,
+				95982B0925CCF5470066F875 /* Line.cpp in Sources */,
 				CC195217250B76CA0000FBFA /* F2CanvasView.m in Sources */,
 				95A7D81225A458CE00CA8B9F /* Point.cpp in Sources */,
 				CC612520250A1D0C00315124 /* Interval.cpp in Sources */,
@@ -799,6 +826,7 @@
 				3FC0056D253F0C2D00E09DD7 /* F2GestureListener.m in Sources */,
 				CC61251F250A1D0C00315124 /* Geom.cpp in Sources */,
 				CC612BF7250B2EF700315124 /* F2Chart.mm in Sources */,
+				3FD08FA325B02417002F14AC /* Candle.cpp in Sources */,
 				CC612524250A1D0C00315124 /* AxisController.cpp in Sources */,
 				CC6124E8250A1D0C00315124 /* GuideController.cpp in Sources */,
 				CC612BFA250B2EF700315124 /* F2Guide.mm in Sources */,
@@ -939,10 +967,12 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 6TRFR323M3;
+				DEVELOPMENT_TEAM = 57ZEL2VPN6;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Wrapper/F2-Prefix.pch";
@@ -987,10 +1017,12 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 6TRFR323M3;
+				DEVELOPMENT_TEAM = 57ZEL2VPN6;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Wrapper/F2-Prefix.pch";

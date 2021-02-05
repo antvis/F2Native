@@ -14,4 +14,25 @@
     return jsonString;
 }
 
++ (NSDictionary *)resetCallbacksFromOld:(NSDictionary *)config host:(F2Chart *)chart {
+    NSDictionary *dic = [self resetCallbacksFromOld:config new:[NSMutableDictionary dictionary] host:chart];
+    return dic;
+}
+
++ (NSDictionary *)resetCallbacksFromOld:(NSDictionary *)old new:(NSMutableDictionary *)newDic host:(F2Chart *)chart {
+    [old enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull obj, BOOL *_Nonnull stop) {
+        if([obj isKindOfClass:[F2CallbackObj class]]) {
+            F2CallbackObj *callbackObj = obj;
+            newDic[key] = callbackObj.key;
+            [chart bindF2CallbackObj:callbackObj];
+        } else if([obj isKindOfClass:[NSDictionary class]]) {
+            NSMutableDictionary *sub = [NSMutableDictionary dictionary];
+            [self resetCallbacksFromOld:obj new:sub host:chart];
+            newDic[key] = sub;
+        } else {
+            newDic[key] = obj;
+        }
+    }];
+    return newDic;
+}
 @end

@@ -6,8 +6,11 @@
 #include <limits>
 #include <math.h>
 #include <nlohmann/json.hpp>
+#include <set>
 #include <string>
 #include <unordered_map>
+
+using namespace std;
 
 namespace xg {
 namespace util {
@@ -19,7 +22,7 @@ static nlohmann::json JsonArrayByKey(const nlohmann::json &data, const std::stri
     }
 
     nlohmann::json rst;
-    unordered_map<string, string> stringMap;
+    std::set<std::size_t> _keysFilters;
 
     for(std::size_t i = 0; i < data.size(); ++i) {
         auto &item = data[i];
@@ -27,44 +30,29 @@ static nlohmann::json JsonArrayByKey(const nlohmann::json &data, const std::stri
             continue;
         }
         const nlohmann::json &val = item[key];
-        if(val.is_string()) {
-            std::string _val = val.get<std::string>();
-            if(stringMap.find(_val) != stringMap.end()) {
+        if(val.is_string() || val.is_number()) {
+            std::size_t valHash = nlohmann::detail::hash(val);
+            if(_keysFilters.find(valHash) != _keysFilters.end()) {
                 continue;
             }
-            stringMap.insert(pair<string, string>(_val, "tmp"));
-            rst.push_back(val);
-        } else if(val.is_number()) {
-            double _val = val;
-            std::string _key = std::to_string(_val);
-            if(stringMap.find(_key) != stringMap.end()) {
-                continue;
-            }
-            stringMap.insert(pair<string, string>(_key, "tmp"));
+            _keysFilters.emplace(valHash);
             rst.push_back(val);
         } else if(val.is_array()) {
             for(size_t i = 0; i < val.size(); i++) {
-                if(val[i].is_number()) {
-                    double _val = val[i];
-                    std::string _key = std::to_string(_val);
-                    if(stringMap.find(_key) != stringMap.end()) {
-                        continue;
-                    }
-                    stringMap.insert(pair<string, string>(_key, "tmp"));
-                    rst.push_back(val[i]);
+                const nlohmann::json &item = val[i];
+                std::size_t itemHash = nlohmann::detail::hash(item);
+                if(_keysFilters.find(itemHash) != _keysFilters.end()) {
+                    continue;
                 }
-                if(val[i].is_string()) {
-                    std::string _val = val[i].get<std::string>();
-                    if(stringMap.find(_val) != stringMap.end()) {
-                        continue;
-                    }
-                    stringMap.insert(pair<string, string>(_val, "tmp"));
-                    rst.push_back(val[i]);
+                _keysFilters.emplace(itemHash);
+
+                if(item.is_number() || item.is_string()) {
+                    rst.push_back(item);
                 }
             }
         }
     }
-    return std::move(rst);
+    return rst;
 }
 
 static std::array<double, 2> JsonArrayRange(nlohmann::json &data) {
@@ -82,8 +70,19 @@ static std::array<double, 2> JsonArrayRange(nlohmann::json &data) {
             _min = fmin(_min, t);
             _max = fmax(_max, t);
             checked = true;
+        } else if(item.is_array()) {
+            for(std::size_t index = 0; index < item.size(); ++index) {
+                auto &subItem = item[index];
+                if(subItem.is_number()) {
+                    double t = subItem;
+                    _min = fmin(_min, t);
+                    _max = fmax(_max, t);
+                    checked = true;
+                }
+            }
         }
     }
+
     if(!checked) {
         _min = 0;
         _max = 0;
@@ -138,20 +137,20 @@ static nlohmann::json JsonGroupByFields(const nlohmann::json &data, std::set<std
     } else {
         rst.push_back(data);
     }
-    return std::move(rst);
+    return rst;
 }
 
 static nlohmann::json JsonArraySlice(const nlohmann::json &source, std::size_t start, std::size_t end) {
     nlohmann::json rst;
-    for(std::size_t i = start; i <= end; i++) {
-        if(i < 0 || i >= source.size()) {
-            continue;
-        }
+    if(start > end || end >= source.size()) {
+        return rst;
+    }
 
+    for(std::size_t i = start; i <= end; i++) {
         rst.push_back(source[i]);
     }
 
-    return std::move(rst);
+    return rst;
 }
 
 static bool isEqualsQuick(nlohmann::json &data1, nlohmann::json &data2) {
@@ -168,6 +167,42 @@ static bool isEqualsQuick(nlohmann::json &data1, nlohmann::json &data2) {
 
     std::size_t lastIndex = fmin(data1.size(), data2.size()) - 1;
     return (data1[0] == data2[0] && data1[lastIndex] == data2[lastIndex]);
+}
+
+static void JsonRangeInGeomDataArray(const nlohmann::json &geomDataArray,
+                                     const std::string &field,
+                                     std::size_t start,
+                                     std::size_t end,
+                                     double *rangeMin,
+                                     double *rangeMax) {
+    if(geomDataArray.is_array() && geomDataArray.size() > 0) {
+        for(std::size_t index = 0; index < geomDataArray.size(); ++index) {
+            const nlohmann::json &groupData = geomDataArray[index];
+
+            std::size_t _end = fmin(end, groupData.size() - 1);
+            if(groupData.is_array() && _end > start) {
+                for(std::size_t column = start; column <= _end; ++column) {
+                    const nlohmann::json item = groupData[column];
+                    if(item.contains(field)) {
+                        if(item[field].is_number()) {
+                            double val = item[field];
+                            (*rangeMin) = fmin(val, (*rangeMin));
+                            (*rangeMax) = fmax(val, (*rangeMax));
+                        } else if(item[field].is_array()) {
+                            const nlohmann::json &arr = item[field];
+                            for(std::size_t i = 0; i < arr.size(); ++i) {
+                                if(arr[i].is_number()) {
+                                    double val = arr[i];
+                                    (*rangeMin) = fmin(val, (*rangeMin));
+                                    (*rangeMax) = fmax(val, (*rangeMax));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 } // namespace util

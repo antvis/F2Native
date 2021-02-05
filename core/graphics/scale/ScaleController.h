@@ -4,6 +4,7 @@
 #include "graphics/canvas/Coord.h"
 #include "graphics/scale/Category.h"
 #include "graphics/scale/Identity.h"
+#include "graphics/scale/KLineCat.h"
 #include "graphics/scale/TimeCategory.h"
 #include "graphics/scale/continuous/Linear.h"
 #include "graphics/scale/continuous/TimeSharingLinear.h"
@@ -37,7 +38,7 @@ static nlohmann::json AdjustRange(const nlohmann::json &fieldColumn, std::unique
 
 static std::unique_ptr<AbstractScale> MakeScale(const std::string &field_,
                                                 const nlohmann::json &data,
-                                                nlohmann::json config,
+                                                nlohmann::json &config,
                                                 utils::Tracer *tracer,
                                                 std::unique_ptr<canvas::coord::AbstractCoord> &coord) {
 
@@ -58,6 +59,10 @@ static std::unique_ptr<AbstractScale> MakeScale(const std::string &field_,
         } else if(type == "timeSharing") {
             tracer->trace("MakeScale: %s, return TimeSharingLinear. ", field_.c_str());
             return xg::make_unique<TimeSharingLinear>(field_, fieldColumn, config);
+        } else if(type.substr(0, 6) == "kline-") {
+            tracer->trace("MakeScale: %s, return KlineCat. ", field_.c_str());
+            config["klineType"] = type;
+            return xg::make_unique<KLineCat>(field_, fieldColumn, config);
         }
     }
 
@@ -94,10 +99,16 @@ class ScaleController {
                                                       const nlohmann::json &data,
                                                       utils::Tracer *tracer,
                                                       std::unique_ptr<canvas::coord::AbstractCoord> &coord) {
+        nlohmann::json &fieldConfig = colConfigs[field_];
         if(!scales_.empty()) {
+            std::string _key = field_;
+            if(fieldConfig.contains("assign")) {
+                _key = fieldConfig["assign"];
+            }
+
             std::vector<std::unique_ptr<AbstractScale>>::iterator it =
                 std::find_if(scales_.begin(), scales_.end(),
-                             [&](const std::unique_ptr<AbstractScale> &item) { return (item->field == field_); });
+                             [&](const std::unique_ptr<AbstractScale> &item) { return (item->field == _key); });
 
             if(it != scales_.end()) {
                 // TODO 更新 scale config, 暂时没有什么 config
@@ -112,6 +123,11 @@ class ScaleController {
     void UpdateColConfig(const std::string &field, nlohmann::json cfg) { colConfigs[field] = cfg; }
 
     bool empty() { return scales_.empty(); }
+
+    void Clear() {
+        scales_.clear();
+        colConfigs = {};
+    };
 
   private:
     std::vector<std::unique_ptr<AbstractScale>> scales_{};

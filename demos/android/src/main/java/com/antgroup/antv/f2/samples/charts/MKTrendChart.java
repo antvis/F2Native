@@ -7,6 +7,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.antgroup.antv.f2.F2CanvasView;
 import com.antgroup.antv.f2.F2Chart;
+import com.antgroup.antv.f2.F2Config;
+import com.antgroup.antv.f2.F2Function;
 import com.antgroup.antv.f2.F2Guide;
 import com.antgroup.antv.f2.samples.Utils;
 
@@ -37,7 +39,7 @@ public class MKTrendChart implements F2CanvasView.Adapter {
             public void run() {
                 startLoop();
             }
-        }, 2000);
+        }, 1000);
     }
 
 
@@ -52,7 +54,7 @@ public class MKTrendChart implements F2CanvasView.Adapter {
                 public void run() {
                     startLoop();
                 }
-            }, 2000);
+            }, 1000);
         }
 
         mChart.clear();
@@ -80,7 +82,22 @@ public class MKTrendChart implements F2CanvasView.Adapter {
         mChart.setScale("price", priceScaleCfg);
 
         mChart.setAxis("date", new F2Chart.AxisConfigBuilder()
-                .label(new F2Chart.AxisLabelConfigBuilder().labelMargin(20).labelOffset(4).textColor("#999999"))
+                .label(new F2Chart.AxisLabelConfigBuilder().labelMargin(20).labelOffset(4).textColor("#999999").item(mChart, new F2Function() {
+                    @Override
+                    public F2Config execute(String param) {
+                        JSONObject json = JSON.parseObject(param);
+                        int index = json.getIntValue("index");
+                        if (index == 0) {
+                            return new F2Config.Builder().setOption("content", "09:30").build();
+                        } else if (index == 1) {
+                            return new F2Config.Builder().setOption("content", "11:30/13:00").build();
+                        } else if (index == 2){
+                            return new F2Config.Builder().setOption("content", "15:00").build();
+                        } else {
+                            return new F2Config.Builder().setOption("content", "").build();
+                        }
+                    }
+                }))
                 .line(new F2Chart.AxisLineConfigBuilder().color("#DDDDDD"))
         );
         mChart.setAxis("price", new F2Chart.AxisConfigBuilder().hidden());

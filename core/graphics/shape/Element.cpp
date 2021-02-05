@@ -70,11 +70,11 @@ void xg::shape::Element::RestoreContext(canvas::CanvasContext &context) const { 
 
 void xg::shape::Element::ResetContext(canvas::CanvasContext &context) const {
     if(!IsGroup()) {
-        if(!stroke_.empty()) {
-            context.SetStrokeStyle(stroke_);
+        if(HasStroke()) {
+            context.SetStrokeStyle(strokeStyle_);
         }
-        if(!fill_.empty()) {
-            context.SetFillStyle(fill_);
+        if(HasFill()) {
+            context.SetFillStyle(fillStyle_);
         }
 
         if(!font_.empty()) {
@@ -82,34 +82,10 @@ void xg::shape::Element::ResetContext(canvas::CanvasContext &context) const {
         }
 
         if(!textAlign_.empty()) {
-            //            GTextAlign align = context.TextAlign();
-            //            if(textAlign_ == "start")
-            //                align = TEXT_ALIGN_START;
-            //            else if(textAlign_ == "end")
-            //                align = TEXT_ALIGN_END;
-            //            else if(textAlign_ == "left")
-            //                align = TEXT_ALIGN_LEFT;
-            //            else if(textAlign_ == "center")
-            //                align = TEXT_ALIGN_CENTER;
-            //            else if(textAlign_ == "right")
-            //                align = TEXT_ALIGN_RIGHT;
             context.SetTextAlign(textAlign_);
         }
 
         if(!textBaseline_.empty()) {
-            //            GTextBaseline baseline = context.TextBaseline();
-            //            if(textBaseline_ == "alphabetic")
-            //                baseline = TEXT_BASELINE_ALPHABETIC;
-            //            else if(textBaseline_ == "middle")
-            //                baseline = TEXT_BASELINE_MIDDLE;
-            //            else if(textBaseline_ == "top")
-            //                baseline = TEXT_BASELINE_TOP;
-            //            else if(textBaseline_ == "hanging")
-            //                baseline = TEXT_BASELINE_HANGING;
-            //            else if(textBaseline_ == "bottom")
-            //                baseline = TEXT_BASELINE_BOTTOM;
-            //            else if(textBaseline_ == "ideographic")
-            //                baseline = TEXT_BASELINE_IDEOGRAPHIC;
             context.SetTextBaseline(textBaseline_);
         }
 

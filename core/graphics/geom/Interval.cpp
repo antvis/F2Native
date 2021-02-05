@@ -12,7 +12,8 @@ float geom::Interval::GetDefaultWidthRatio(XChart &chart) {
         size_t count = xScale.GetValuesSize();
         return (chart.coord_->IsTransposed() && count > 1) ? 0.75f : 1.0f;
     }
-    return 0.5f;
+    return this->styleConfig_["widthRatio"];
+    // return 0.5f;
 }
 
 geom::Interval &geom::Interval::Tag(const std::string &json) {
@@ -159,9 +160,9 @@ void geom::Interval::BeforeMapping(XChart &chart, nlohmann::json &dataArray) {
     chart.GetLogTracer()->trace("Geom#%s Beforemapping duration: %lums", type_.data(), (CurrentTimestampAtMM() - timestamp));
 }
 
-void geom::Interval::Draw(XChart &chart, const nlohmann::json &groupData) const {
-    for(std::size_t i = 0; i < groupData.size(); ++i) {
+void geom::Interval::Draw(XChart &chart, const nlohmann::json &groupData, std::size_t start, std::size_t end) const {
+    for(std::size_t i = start; i <= end; ++i) {
         const nlohmann::json &item = groupData[i];
-        chart.geomShapeFactory_->DrawGeomShape(chart, type_, shapeType_, item, *this->container_);
+        chart.geomShapeFactory_->DrawGeomShape(chart, type_, shapeType_, item, i, i + 1, *this->container_);
     }
 }

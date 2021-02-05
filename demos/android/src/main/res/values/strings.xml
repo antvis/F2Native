@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">F2Native</string>
     <string name="title_activity_sample">SampleActivity</string>
+    <string name="title_activity_chart_list">ChartListActivity</string>
 </resources>

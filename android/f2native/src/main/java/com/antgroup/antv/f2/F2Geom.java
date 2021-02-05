@@ -40,6 +40,10 @@ public class F2Geom {
         return this;
     }
 
+    public F2Geom fixedColor(final F2Util.ColorGradient color) {
+        return fixedColor(color.gradient.build().toJsonString());
+    }
+
     public F2Geom fixedColor(final String color) {
         mF2Chart.assertRenderThread();
         mF2Chart.getChartProxy().setGeomColor(F2Geom.this, color);
@@ -104,6 +108,12 @@ public class F2Geom {
 
     public static class Point extends F2Geom {
         Point(F2Chart chart, long nativeGeomHandler, String type) {
+            super(chart, nativeGeomHandler, type);
+        }
+    }
+
+    public static class Candle extends F2Geom {
+        Candle(F2Chart chart, long nativeGeomHandler, String type) {
             super(chart, nativeGeomHandler, type);
         }
     }

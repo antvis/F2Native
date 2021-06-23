@@ -14,6 +14,7 @@ import com.antgroup.antv.f2.samples.charts.CirclePieChart;
 import com.antgroup.antv.f2.samples.charts.MKTrendChart;
 import com.antgroup.antv.f2.samples.charts.MultiAreasChart;
 import com.antgroup.antv.f2.samples.charts.MultiIntervalChart;
+import com.antgroup.antv.f2.samples.charts.MultiIntervalChart_under_zero;
 import com.antgroup.antv.f2.samples.charts.MultiLinesChart_1;
 import com.antgroup.antv.f2.samples.charts.PieChart;
 import com.antgroup.antv.f2.samples.charts.SectionIntervalChart;
@@ -22,9 +23,11 @@ import com.antgroup.antv.f2.samples.charts.SingleAreaChart_2;
 import com.antgroup.antv.f2.samples.charts.SingleIntervalChart_1;
 import com.antgroup.antv.f2.samples.charts.SingleIntervalChart_2;
 import com.antgroup.antv.f2.samples.charts.SingleIntervalChart_3;
-import com.antgroup.antv.f2.samples.charts.MultiIntervalChart_under_zero;
 import com.antgroup.antv.f2.samples.charts.SingleLineChart_1;
+import com.antgroup.antv.f2.samples.charts.SingleLineChart_1688;
 import com.antgroup.antv.f2.samples.charts.SingleLineChart_2;
+import com.antgroup.antv.f2.samples.charts.SingleLineChart_KLine;
+import com.antgroup.antv.f2.samples.charts.SingleLineChart_TimeSharing_ToolTip;
 import com.antgroup.antv.f2.samples.charts.SinglePointChart_1;
 
 import java.util.Arrays;
@@ -118,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static List<ChartModel> getChartModels() {
         return Arrays.asList(
+                new ChartModel("1688", SingleLineChart_1688.class),
                 new ChartModel("基础折线图", SingleLineChart_1.class),
                 new ChartModel("基础折线图(双Y轴)", SingleLineChart_2.class),
                 new ChartModel("对比折线图", MultiLinesChart_1.class),
@@ -137,7 +141,9 @@ public class MainActivity extends AppCompatActivity {
 
                 new ChartModel("饼图", PieChart.class),
                 new ChartModel("环形图", CirclePieChart.class),
+                new ChartModel("折线图(分时度量&手势)", SingleLineChart_TimeSharing_ToolTip.class),
                 new ChartModel("上证指数异动分时图", MKTrendChart.class),
+                new ChartModel("股票日K趋势图", SingleLineChart_KLine.class),
                 new ChartModel("蜡烛图(日K)", CandleChart_klineDay.class, true)
         );
     }

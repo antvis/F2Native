@@ -34,13 +34,21 @@ class Element {
     void Draw(canvas::CanvasContext &context) const;
 
     /// 矩阵操作
-    inline Matrix &GetMatrix() { return matrix_; }
-    inline void SetMatrix(Matrix &matrix) { matrix_ = matrix; }
+    inline Matrix GetMatrix() { return matrix_; }
+    inline void SetMatrix(Matrix &matrix) {
+        matrix_[0] = matrix[0];
+        matrix_[1] = matrix[1];
+        matrix_[2] = matrix[2];
+        matrix_[3] = matrix[3];
+        matrix_[4] = matrix[4];
+        matrix_[5] = matrix[5];
+    }
     virtual void Translate(float x, float y);
     virtual void Rotate(float rad);
     virtual void Scale(float sx, float sy);
     virtual void MoveTo(float x, float y);
     virtual void Apply(Vector2D *v);
+    virtual void Transform(const std::vector<TransformAction> &actions);
 
     /// 子类处理内部绘制逻辑
     /// @param context canvas的context
@@ -78,15 +86,21 @@ class Element {
 
     virtual void Sort() {}
 
+    virtual void DoClip(canvas::CanvasContext &) const {}
+
   public:
     util::Point point_;
     CanvasFillStrokeStyle fillStyle_;
     CanvasFillStrokeStyle strokeStyle_;
+    float strokeOpacity_ = DEFAULT_OPACITY;
+    float fillOpacity_ = DEFAULT_OPACITY;
     float lineWidth_ = std::nan("0");
 
   private:
     void InitElementId();
     void InitTransform();
+
+  protected:
     void ResetTransform(canvas::CanvasContext &context) const;
     void SetContext(canvas::CanvasContext &context) const;
     void RestoreContext(canvas::CanvasContext &context) const;
@@ -104,8 +118,6 @@ class Element {
     BBox bbox_{static_cast<float>((std::nan("0")))};
     string type_ = "element";
 
-    float strokeOpacity_ = std::nan("0");
-    float fillOpacity_ = std::nan("0");
     std::string font_ = "";
     array<float, 2> lineDash_ = {{0, 0}};
     string textAlign_ = "start";

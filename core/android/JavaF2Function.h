@@ -43,7 +43,7 @@ class JavaF2Function : public func::F2Function {
     }
 
     ~JavaF2Function() override {
-        handle_->Release();
+        handle_->Reset();
         delete handle_;
     }
 

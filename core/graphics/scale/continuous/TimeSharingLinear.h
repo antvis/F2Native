@@ -99,6 +99,13 @@ class TimeSharingLinear : public AbstractScale {
 
     std::string GetTickText(const nlohmann::json &item) override {
         nlohmann::json &timeRange = config_["timeRange"];
+        long long timeZoneOffset = 0;
+        bool forceTimeZone = false;
+        if(config_.contains("timeZoneOffset")) {
+            timeZoneOffset = config_["timeZoneOffset"];
+            forceTimeZone = true;
+        }
+        timeZoneOffset *= 1000;
         for(std::size_t i = 0; i < timeRange.size(); ++i) {
             nlohmann::json &range = timeRange[i];
             if(item == range[0] && i > 0) {
@@ -106,10 +113,11 @@ class TimeSharingLinear : public AbstractScale {
                 if(lastEnd == item) {
                     return "";
                 }
-                return xg::TimeStampToHHmm(lastEnd) + "/" + xg::TimeStampToHHmm(item);
+                return xg::TimeStampToHHmm(lastEnd + timeZoneOffset, forceTimeZone) + "/" +
+                       xg::TimeStampToHHmm(item.get<long long>() + timeZoneOffset, forceTimeZone);
             }
         }
-        return xg::TimeStampToHHmm(item);
+        return xg::TimeStampToHHmm(item.get<long long>() + timeZoneOffset, forceTimeZone);
     }
 
   protected:
@@ -127,7 +135,22 @@ class TimeSharingLinear : public AbstractScale {
         return rst;
     }
 
-    nlohmann::json Invert(double val) override { return 0; }
+    nlohmann::json Invert(double val) override {
+        std::size_t index = val * _GetValuesSize();
+        nlohmann::json &timeRange = config_["timeRange"];
+        for(std::size_t i = 0; i < timeRange.size(); ++i) {
+            nlohmann::json &range = timeRange[i];
+            long long start = range[0];
+            long long end = range[1];
+            std::size_t count = (end - start) / (60 * 1000);
+            if(index >= count) {
+                index -= count;
+            } else {
+                return start + index * 60 * 1000;
+            }
+        }
+        return 0;
+    }
 
   private:
     std::size_t _GetValuesSize() {

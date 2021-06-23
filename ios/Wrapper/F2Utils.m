@@ -14,6 +14,17 @@
     return jsonString;
 }
 
++ (id)toJsonObject:(NSString *)jsonString {
+    id jsonObj = nil;
+    @try {
+        NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+        jsonObj = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    }@catch (NSException *exception) {
+        NSLog(@"Not Valid Json, Error %@", [exception description]);
+    }
+    return jsonObj;
+}
+
 + (NSDictionary *)resetCallbacksFromOld:(NSDictionary *)config host:(F2Chart *)chart {
     NSDictionary *dic = [self resetCallbacksFromOld:config new:[NSMutableDictionary dictionary] host:chart];
     return dic;

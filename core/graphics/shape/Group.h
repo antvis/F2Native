@@ -1,7 +1,8 @@
+#include "graphics/shape/Element.h"
+#include "graphics/shape/Shape.h"
+
 #ifndef XG_GRAPHICS_SHAPE_GROUP_H
 #define XG_GRAPHICS_SHAPE_GROUP_H
-
-#include "graphics/shape/Element.h"
 
 using namespace std;
 
@@ -45,11 +46,15 @@ class Group : public Element {
 
     Group *AddGroup();
 
+    void DoClip(canvas::CanvasContext &) const override;
+
   protected:
     virtual void DrawInner(canvas::CanvasContext &context) const override;
 
   public:
     vector<std::unique_ptr<Element>> children_;
+
+    std::unique_ptr<Shape> clip_ = nullptr;
 };
 } // namespace shape
 } // namespace xg

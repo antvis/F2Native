@@ -17,13 +17,12 @@
 
 - (void)chartRender {
     // step1
-    [self addSubview:self.canvasView];
     // step3
     self.chart.canvas(self.canvasView).padding(10, 20, 10, 0.f).source([self jsonData]);
     // step4
     self.chart.interval().position(@"genre*sold").color(@"genre", @[]);
-    self.chart.scale(@"sold", @{ @"min": @(0) });
-    self.chart.scale(@"genre", @{ @"range": @[@(0.1), @(0.9)] });
+    self.chart.scale(@"sold", @{@"min": @(0)});
+    self.chart.scale(@"genre", @{@"range": @[@(0.1), @(0.9)]});
     // step5
     self.chart.render();
 }

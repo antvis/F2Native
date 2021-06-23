@@ -15,6 +15,8 @@ public class F2Chart {
     private F2CanvasView mCanvasView;
     private volatile boolean hasDestroyed = false;
 
+    private RequestAnimationFrameHandle mRequestFrameHandle = null;
+
     public static F2Chart create(Context context, String name, double widthPixel, double heightPixel) {
         double ratio = context.getResources().getDisplayMetrics().density;
         return new F2Chart(name, widthPixel / ratio, heightPixel / ratio, ratio);
@@ -25,19 +27,26 @@ public class F2Chart {
         mChartProxy = new NativeChartProxy(name, width, height, ratio);
     }
 
+    public F2CanvasView getCanvasView() {
+        return mCanvasView;
+    }
+
     public void setCanvas(F2CanvasView canvasView) {
         innerLog("#bind canvas: " + canvasView);
         mCanvasView = canvasView;
         if (hasDestroyed) return;
         assertRenderThread();
-        mChartProxy.setCanvas(mCanvasView.getNativeCanvas());
+        if (mRequestFrameHandle != null) {
+            mRequestFrameHandle.clear();
+        }
+        mRequestFrameHandle = new RequestAnimationFrameHandle(this, canvasView);
+        mChartProxy.setCanvas(mCanvasView.getNativeCanvas(), mRequestFrameHandle.functionId);
     }
 
     public F2Chart padding(final double left, final double top, final double right, final double bottom) {
         if (hasDestroyed) return this;
         assertRenderThread();
         mChartProxy.setPadding(left, top, right, bottom);
-        innerLog("#padding");
         return this;
     }
 
@@ -97,8 +106,8 @@ public class F2Chart {
         return this;
     }
 
-    public F2Chart postTouchEvent(F2CanvasView.TouchEvent event) {
-        if (hasDestroyed) return null;
+    public boolean postTouchEvent(F2CanvasView.TouchEvent event) {
+        if (hasDestroyed) return false;
         assertRenderThread();
         // long ts = System.currentTimeMillis();
         int ret = mChartProxy.sendTouchEvent(event.getData().toJsonString());
@@ -108,7 +117,7 @@ public class F2Chart {
             // long now = System.currentTimeMillis();
             // innerLog("#postTouchEvent duration: " + (now - ts) +"ms(with swap:"+(now - swTs)+"ms)");
         }
-        return this;
+        return ret == 1;
     }
 
     public F2Geom.Line line() {
@@ -188,13 +197,34 @@ public class F2Chart {
         return this;
     }
 
+    public F2Chart animate(boolean enable) {
+        if (hasDestroyed) return null;
+        assertRenderThread();
+        mChartProxy.setAnimate("" + enable);
+        return this;
+    }
+
+    public F2Chart animate(ChartAnimateConfigBuild animateConfigBuild) {
+        if (hasDestroyed) return null;
+        assertRenderThread();
+        mChartProxy.setAnimate(animateConfigBuild.build().toJsonString());
+        return this;
+    }
+
+    public F2Chart animate(String animateJsonConfig) {
+        if (hasDestroyed) return null;
+        assertRenderThread();
+        mChartProxy.setAnimate(animateJsonConfig);
+        return this;
+    }
+
     public F2Guide guide() {
         assertRenderThread();
         return new F2Guide(this);
     }
 
-    public void render() {
-        if (hasDestroyed) return;
+    public boolean render() {
+        if (hasDestroyed) return false;
         assertRenderThread();
         int code = mChartProxy.render();
         if (F2Constants.isSuccessCode(code)) {
@@ -202,6 +232,7 @@ public class F2Chart {
         }
         String dumpInfo = getRenderDumpInfo();
         innerLog("#render ret: " + code + ", dumpInfo: " + dumpInfo);
+        return F2Constants.isSuccessCode(code);
     }
 
     public double[] getPosition(String itemJsonData) {
@@ -222,11 +253,24 @@ public class F2Chart {
         return mChartProxy.getRenderDumpInfo();
     }
 
+    public String getScaleTicks(String field) {
+        if (hasDestroyed) return null;
+        assertRenderThread();
+        return mChartProxy.getScaleTicks(field);
+    }
+
     public void destroy() {
         if (hasDestroyed) return;
         innerLog("#destroy");
+        if (mRequestFrameHandle != null) {
+            mRequestFrameHandle.clear();
+        }
         mChartProxy.destroy();
         hasDestroyed = true;
+    }
+
+    public boolean isDestroyed() {
+        return hasDestroyed;
     }
 
     @Override
@@ -495,4 +539,34 @@ public class F2Chart {
         }
     }
 
-}
+    public static class GeomAnimateConfigBuild extends F2Config.Builder<GeomAnimateConfigBuild> {
+        private static final String KEY_ANIMATE_TYPE = "animate";
+        private static final String KEY_ERASING = "erasing";
+        private static final String KEY_DELAY = "delay";
+        private static final String KEY_DURATION = "duration";
+
+        public GeomAnimateConfigBuild animateType(String type) {
+            return setOption(KEY_ANIMATE_TYPE, type);
+        }
+
+        public GeomAnimateConfigBuild erasing(String erasing) {
+            return setOption(KEY_ERASING, erasing);
+        }
+
+        public GeomAnimateConfigBuild delay(int delay) {
+            return setOption(KEY_DELAY, delay);
+        }
+
+        public GeomAnimateConfigBuild duration(int duration) {
+            return setOption(KEY_DURATION, duration);
+        }
+    }
+
+    public static class ChartAnimateConfigBuild extends F2Config.Builder<ChartAnimateConfigBuild> {
+        public ChartAnimateConfigBuild geom(String type, GeomAnimateConfigBuild build) {
+            return setOption(type, build.build().mConfig);
+        }
+    }
+
+
+    }

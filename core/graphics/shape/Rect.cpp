@@ -40,6 +40,16 @@ void xg::shape::Rect::CreatePath(canvas::CanvasContext &context) const {
                 context.Arc(point_.x, point_.y, radius0_, endAngle_, startAngle_, true);
             }
         }
-        context.ClosePath();
+    }
+}
+
+void xg::shape::Rect::UpdateAttribute(std::string attrName, double val) {
+    xg::shape::Shape::UpdateAttribute(attrName, val);
+    if(attrName == "width") {
+        size_.width = val;
+    } else if(attrName == "height") {
+        size_.height = val;
+    } else if(attrName == "endAngle") {
+        this->endAngle_ = val;
     }
 }

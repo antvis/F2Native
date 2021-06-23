@@ -98,7 +98,7 @@ static std::string GenerateRowUniqueKey(nlohmann::json &row, std::set<std::strin
         std::string field = *it;
         if(row.contains(field)) {
             // unique += row[field].dump();
-            unique += nlohmann::detail::hash(row[field]);
+            unique += std::to_string(nlohmann::detail::hash(row[field]));
         }
     }
     return unique;
@@ -113,6 +113,7 @@ static nlohmann::json JsonGroupByFields(const nlohmann::json &data, std::set<std
 
     nlohmann::json group;
     std::set<std::string> rowKeys;
+    std::vector<std::string> rowKeysOrder;
 
     size_t size = data.size();
     for(size_t index = 0; index < size; ++index) {
@@ -126,12 +127,16 @@ static nlohmann::json JsonGroupByFields(const nlohmann::json &data, std::set<std
             array.push_back(row);
             group[key] = array;
         }
+
+        if(std::find(rowKeys.begin(), rowKeys.end(), key) == rowKeys.end()) {
+            rowKeysOrder.emplace_back(key);
+        }
         rowKeys.insert(key);
     }
 
     nlohmann::json rst;
     if(group.is_object() && group.size() > 0) {
-        for(auto it = rowKeys.begin(); it != rowKeys.end(); ++it) {
+        for(auto it = rowKeysOrder.begin(); it != rowKeysOrder.end(); ++it) {
             rst.push_back(group[*it]);
         }
     } else {

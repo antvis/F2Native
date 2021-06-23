@@ -1,4 +1,5 @@
 #include "graphics/XChart.h"
+#include "graphics/animate/TimeLine.h"
 #include "graphics/canvas/Cartesian.h"
 #include "graphics/canvas/Polar.h"
 #include "graphics/func/Func.h"
@@ -22,7 +23,7 @@ XChart::XChart(const std::string &name, double width, double height, double rati
     height_ = height * ratio;
     ratio_ = ratio;
     this->logTracer_ = new utils::Tracer(name + "@Chart");
-    this->logTracer_->trace("create xchart: %s %lf %lf %lf ", chartName_.c_str(), width_, height_, ratio_);
+    this->logTracer_->trace("create xchart: %s %lf %lf %lf ", chartId_.c_str(), width_, height_, ratio_);
 
     geomShapeFactory_ = xg::make_unique<geom::shape::GeomShapeFactory>();
 
@@ -30,7 +31,7 @@ XChart::XChart(const std::string &name, double width, double height, double rati
     scaleController_ = new scale::ScaleController();
     this->logTracer_->trace("%s", "new ScaleController instance.");
     // 画布
-    this->canvas_ = new canvas::Canvas();
+    this->canvas_ = new canvas::Canvas(this);
     this->logTracer_->trace("%s", "new canvas instance.");
     // 布局层级
     this->InitLayout();
@@ -45,17 +46,22 @@ XChart::XChart(const std::string &name, double width, double height, double rati
     eventController_ = new event::EventController();
     interactionContext_ = new interaction::InteractionContext(this);
     this->logTracer_->trace("%s", "new eventController instance.");
+
+    geomAnimate_ = new animate::GeomAnimate(this);
+    this->logTracer_->trace("%s", "new GeomAnimate instance.");
 }
 
 XChart::~XChart() {
     func::FunctionManager::GetInstance().Clear(this->GetChartId());
 
-    actionListeners_.clear();
+    chartActionListeners_.clear();
+    renderActionListeners_.clear();
     interactions_.clear();
 
     XG_RELEASE_POINTER(scaleController_);
     XG_RELEASE_POINTER(axisController_);
     XG_RELEASE_POINTER(guideController_);
+    XG_RELEASE_POINTER(geomAnimate_);
 
     geoms_.clear();
 
@@ -72,11 +78,7 @@ XChart::~XChart() {
 }
 
 XChart &XChart::Source(const std::string &json) {
-    //#if defined(DEBUG)
     nlohmann::json _data = xg::json::ParseString(json);
-    //#else
-    //    nlohmann::json _data = nlohmann::json::parse(json, nullptr, false);
-    //#endif
     this->logTracer_->trace("#Source dataSize: %lu", json.size());
     if(!_data.is_array()) {
         // 有问题先抛出来
@@ -147,6 +149,11 @@ XChart &XChart::Coord(const std::string &json) {
     return *this;
 }
 
+XChart &XChart::Animate(const std::string &json) {
+    this->animateCfg_ = xg::json::ParseString(json);
+    return *this;
+}
+
 XChart &XChart::Legend(const std::string &field, const std::string &json) {
     nlohmann::json config = xg::json::ParseString(json);
     this->logTracer_->trace("#Legend field: %s config: %s", field.c_str(), config.dump().c_str());
@@ -168,6 +175,7 @@ bool XChart::OnTouchEvent(const std::string &json) {
     }
     event.devicePixelRatio = ratio_;
     event.timeStamp = xg::CurrentTimestampAtMM();
+    this->logTracer_->trace("#onTouchEvent: %s", json.data());
     return this->eventController_->OnTouchEvent(event);
 }
 
@@ -241,6 +249,19 @@ std::vector<std::string> XChart::getYScaleFields() {
     return _fields;
 }
 
+std::string XChart::GetScaleTicks(const std::string &field) noexcept {
+    nlohmann::json rst = {};
+    scale::AbstractScale &scale = this->GetScale(field);
+    std::vector<scale::Tick> ticks = scale.GetTicks();
+
+    for(std::size_t i = 0; i < ticks.size(); ++i) {
+        scale::Tick &tick = ticks[i];
+        nlohmann::json item = {{"text", tick.text}, {"tickValue", tick.tickValue}, {"value", tick.value}};
+        rst.push_back(item);
+    }
+    return rst.dump();
+}
+
 void XChart::Render() {
     this->logTracer_->trace("#Render %s", "start render");
     if(canvasContext_ == nullptr) {
@@ -259,7 +280,7 @@ void XChart::Render() {
         return;
     }
 
-    long startTimeStamp = xg::CurrentTimestampAtMM();
+    auto startTimeStamp = xg::CurrentTimestampAtMM();
 
     if(!rendered_) {
         // 1. init Coord
@@ -296,14 +317,19 @@ void XChart::Render() {
     this->logTracer_->trace("%s", "canvas#sort");
     this->canvas_->Sort();
 
-    // 7.-1 beforeDraw
-    this->logTracer_->trace("%s", "beforeDraw and call canvas clearRect");
-    canvasContext_->ClearRect(margin_[0], margin_[1], width_, height_);
+    // 图元元素限定在屏幕区域内绘制。当绘制元素很多时(K线)，这个操作耗时太大，先不执行这个操作。
+    //     midLayout_->clip_ = std::make_unique<shape::Rect>(util::Point{coord_->GetXAxis().x, coord_->GetYAxis().y},
+    //                                                       util::Size{coord_->GetWidth(), coord_->GetHeight()});
+    //     util::Matrix  matrix = {0.029800, 0.000000, 0.000000, 1.000000, 104.251022, 0.000000};
+    //     midLayout_->clip_->SetMatrix(matrix);
+
+    this->canvas_->ChangeSize(margin_[0], margin_[1], width_, height_);
 
     // 6. canvas draw
     this->logTracer_->trace("%s", "canvas#startDraw");
     this->canvasContext_->Reset();
-    this->canvas_->Draw(*canvasContext_);
+    this->NotifyAction(ACTION_CHART_BEFORE_CANVAS_DRAW);
+    this->canvas_->Draw();
     this->NotifyAction(ACTION_CHART_AFTER_RENDER);
 
     renderDurationMM_ = xg::CurrentTimestampAtMM() - startTimeStamp;
@@ -328,10 +354,29 @@ void XChart::Clear() {
     ClearInner();
     this->geoms_.clear();
     this->geomShapeFactory_->Clear();
-    actionListeners_.clear();
+    renderActionListeners_.clear();
     interactions_.clear();
     this->data_ = {};
     this->rendered_ = false;
+    requestFrameHandleId_ = "";
+}
+
+std::size_t XChart::RequestAnimationFrame(func::Command *c, long delay) {
+    GetLogTracer()->trace("#RequestAnimationFrame handleID: %s", requestFrameHandleId_.data());
+    if(this->requestFrameHandleId_.empty()) {
+        delete c;
+        return 0;
+    }
+    func::F2Function *method = func::FunctionManager::GetInstance().Find(requestFrameHandleId_);
+    GetLogTracer()->trace("#RequestAnimationFrame method: %p", method);
+    if(method != nullptr) {
+        long p = reinterpret_cast<long>(c);
+        method->Execute({{"command", p}, {"delay", delay}});
+        return p;
+    } else {
+        delete c;
+        return 0;
+    }
 }
 
 std::string XChart::GetRenderInfo() const {
@@ -424,21 +469,24 @@ void XChart::ClearInner() {
     NotifyAction(ACTION_CHART_CLEAR_INNER);
 
     axisController_->Clear();
+    if(canvasContext_ != nullptr) {
+        canvasContext_->Reset();
+    }
 }
 
 void XChart::Redraw() {
-    long startTimeStamp = xg::CurrentTimestampAtMM();
+    auto startTimeStamp = xg::CurrentTimestampAtMM();
 
     // 7.-1 beforeDraw
-    this->logTracer_->trace("%s", "before Redraw and call canvas clearRect");
-    canvasContext_->ClearRect(margin_[0], margin_[1], width_, height_);
+    //    this->logTracer_->trace("%s", "before Redraw and call canvas clearRect");
+    //    canvasContext_->ClearRect(margin_[0], margin_[1], width_, height_);
 
     this->legendController_->Redraw(*this);
 
     // 6. canvas draw
     this->logTracer_->trace("%s", "canvas#start Redraw");
     this->canvasContext_->Reset();
-    this->canvas_->Draw(*canvasContext_);
+    this->canvas_->Draw();
 
     renderDurationMM_ = xg::CurrentTimestampAtMM() - startTimeStamp;
 
@@ -459,7 +507,7 @@ std::map<std::string, std::vector<legend::LegendItem>> XChart::GetLegendItems() 
                 scale::AbstractScale &scale = GetScale(colorAttr.GetFields()[0]);
 
                 if(scale::IsCategory(scale.GetType())) {
-                    const Category &cat = static_cast<Category &>(scale);
+                    const scale::Category &cat = static_cast<Category &>(scale);
                     std::vector<scale::Tick> ticks = scale.GetTicks();
 
                     std::vector<legend::LegendItem> fieldItems;

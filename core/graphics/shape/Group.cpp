@@ -59,6 +59,14 @@ void xg::shape::Group::Destroy() {
     children_.clear();
 }
 
+void xg::shape::Group::DoClip(canvas::CanvasContext &context) const {
+    if(clip_ != nullptr && clip_.get() != nullptr) {
+        clip_->ResetTransform(context);
+        clip_->CreatePath(context);
+        context.Clip();
+    }
+}
+
 void xg::shape::Group::Translate(float x, float y) {
     if(!this->IsVisible())
         return;

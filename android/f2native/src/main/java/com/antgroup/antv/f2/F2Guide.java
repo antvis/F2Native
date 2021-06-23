@@ -16,12 +16,17 @@ public class F2Guide {
 
     public void flag(GuideFlagConfigBuilder config) {
         mChart.assertRenderThread();
-        mChart.getChartProxy().setGuideFlag(config.build().toJsonString());
+        mChart.getChartProxy().setGuideType("flag", config.build().toJsonString());
     }
 
     public void text(GuideTextConfigBuilder config) {
         mChart.assertRenderThread();
-        mChart.getChartProxy().setGuideText(config.build().toJsonString());
+        mChart.getChartProxy().setGuideType("text", config.build().toJsonString());
+    }
+
+    public void line(GuideLineConfigBuilder config) {
+        mChart.assertRenderThread();
+        mChart.getChartProxy().setGuideType("line", config.build().toJsonString());
     }
 
     public static class GuideFlagConfigBuilder extends F2Chart.TextConfigBuilder<GuideFlagConfigBuilder> {
@@ -59,7 +64,7 @@ public class F2Guide {
             return setOption(KEY_LINE_WIDTH, lineWidth);
         }
 
-        public GuideFlagConfigBuilder backgroudColor(String backgroundColor) {
+        public GuideFlagConfigBuilder backgroundColor(String backgroundColor) {
             return setOption(KEY_BACK_COLOR, backgroundColor);
         }
     }
@@ -91,6 +96,42 @@ public class F2Guide {
          */
         public GuideTextConfigBuilder margin(double[] margin) {
             return setOption(KEY_MARGIN, margin);
+        }
+    }
+
+    public static class GuideLineConfigBuilder extends F2Config.Builder<GuideLineConfigBuilder> {
+        private static final String KEY_POSITION = "position";
+        private static final String KEY_LINE_WIDTH = "lineWith";
+        private static final String KEY_COLOR = "color";
+        private static final String KEY_ORIENTATION = "orientation";
+        private static final String KEY_DASH = "dash";
+
+        public GuideLineConfigBuilder position(String[] position ) {
+            return setOption(KEY_POSITION, position);
+        }
+
+        public GuideLineConfigBuilder position(JSONArray position ) {
+            return setOption(KEY_POSITION, position);
+        }
+
+        public GuideLineConfigBuilder color(String color) {
+            return setOption(KEY_COLOR, color);
+        }
+
+        public GuideLineConfigBuilder color(F2Util.ColorGradient color) {
+            return setOption(KEY_COLOR, color);
+        }
+
+        public GuideLineConfigBuilder lineWidth(float lineWidth) {
+            return setOption(KEY_LINE_WIDTH, lineWidth);
+        }
+
+        public GuideLineConfigBuilder orientation(String orientation) {
+            return setOption(KEY_ORIENTATION, orientation);
+        }
+
+        public GuideLineConfigBuilder dash(double[] dash) {
+            return setOption(KEY_DASH, dash);
         }
     }
 }

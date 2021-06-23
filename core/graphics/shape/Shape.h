@@ -5,8 +5,10 @@
 
 namespace xg {
 namespace shape {
-
+class Group;
 class Shape : public Element {
+    friend Group;
+
   public:
     Shape();
 
@@ -18,6 +20,10 @@ class Shape : public Element {
 
     /// 包围盒计算，每次都会计算
     virtual BBox CalculateBox(canvas::CanvasContext &context) const override { return {0, 0, 0, 0, 0, 0}; }
+
+    // 各元素独立实现，用于更新属性值
+    virtual void UpdateAttribute(std::string attrName, double val) {}
+    virtual void UpdateAttribute(std::string attrName, const std::string &val) {}
 
   protected:
     virtual void DrawInner(canvas::CanvasContext &context) const override;

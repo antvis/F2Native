@@ -14,6 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// @{ @"position": @[@"min", @"max"], @"content": @"内容", @"color": @"#808080", @"margin": @[@(-5), @(-13)]
 - (F2Guide * (^)(NSDictionary *config))text;
 
+/// 创建线，config格式如下
+/// @{ @"position": @[@"min", @"max"], @"orientation": @"horizontal", @"color": @"#808080",  @"lineWdith": @(1), @"dash": @[...]
+- (F2Guide * (^)(NSDictionary *config))line;
+
 @end
 
 NS_ASSUME_NONNULL_END

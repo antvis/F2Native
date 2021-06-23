@@ -53,6 +53,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param confg    具体字段待补充
 - (F2Chart * (^)(NSDictionary *config))tooltip;
 
+/// 配置动画功能
+/// @param confg    具体字段待补充
+- (F2Chart * (^)(id config))animate;
+
 /// 开始渲染
 - (F2Chart * (^)(void))render;
 
@@ -64,6 +68,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// 获取渲染的信息
 /// @return JSON格式，cmdCount表示渲染指令的个数，-1表示环境有问题，0表示指令数为0，>0表示正常的绘制指令个数
 - (NSString * (^)(void))getRenderDumpInfo;
+
+/// 获取对应度量的 ticks 信息
+/// @return [{@"text":"-3.00";@"tickValue": "-3";@"value": 0}]
+- (NSArray<NSDictionary *> *(^)(NSString *field))getScaleTicks;
 
 /// 计算某一项数据对应的在坐标系中的绝对坐标
 /// @return [x, y]

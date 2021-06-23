@@ -6,7 +6,6 @@
 @implementation BaseAreaUIView
 
 - (void)chartRender {
-    [self addSubview:self.canvasView];
     NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"Res/mockData_baseArea" ofType:@"json"];
     NSString *jsonData = [NSString stringWithContentsOfFile:jsonPath encoding:NSUTF8StringEncoding error:nil];
     self.chart.clear();
@@ -16,7 +15,7 @@
     self.chart.line().position(@"time*tem").fixedSize(2).fixedShape(@"smooth");
     self.chart.area().position(@"time*tem").fixedShape(@"smooth").fixedColor([F2Utils toJsonString:@{
         @"colorStops": @[@{@"offset": @(0.f), @"color": @"red"}, @{@"offset": @(1.f), @"color": @"white"}],
-        @"position": @[@(0), @(0), @(0), @(self.canvasView.bounds.size.height * [UIScreen mainScreen].scale)]
+        @"position": @[@(0), @(0), @(0), @(self.chartSize.height * [UIScreen mainScreen].scale)]
     }]);
     self.chart.point().position(@"time*tem").fixedColor(@"#000000").style(@{
         @"custom": [F2CallbackObj initWithCallback:^NSDictionary *_Nullable(NSString *_Nonnull param) {

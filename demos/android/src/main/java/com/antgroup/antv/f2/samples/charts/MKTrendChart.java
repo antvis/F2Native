@@ -26,10 +26,12 @@ public class MKTrendChart implements F2CanvasView.Adapter {
     JSONObject mJsonData = null;
     JSONArray mFlagsData = null;
     volatile int rangeIndex = 1;
+    boolean stopLoop = false;
 
     private F2CanvasView mCanvasView = null;
 
     private void startLoop() {
+        if (stopLoop) return;
         rangeIndex ++;
         if (mCanvasView != null) {
             mCanvasView.postCanvasDraw();
@@ -120,22 +122,22 @@ public class MKTrendChart implements F2CanvasView.Adapter {
 
                 if (i == flagsData.size() - 1) {
                     cfg.textColor("#ffffff");
-                    cfg.backgroudColor("#108EE9");
+                    cfg.backgroundColor("#108EE9");
                 } else {
                     cfg.textColor("#108EE9");
-                    cfg.backgroudColor("#C7E7FF");
+                    cfg.backgroundColor("#C7E7FF");
                 }
                 mChart.guide().flag(cfg);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-
         mChart.render();
     }
 
     @Override
     public void onDestroy() {
+        stopLoop = true;
         if (mChart != null) {
             mChart.destroy();
         }

@@ -20,7 +20,7 @@ public class SampleActivityHorizontal extends AppCompatActivity {
 
         mCanvasView = findViewById(R.id.canvasView);
         mCanvasView.initCanvasContext(new F2CanvasView.ConfigBuilder()
-                .canvasId("F2AntCanvas")
+                .canvasId("F2AntCanvasHorizontal")
 //                .backgroundColor("#000000")
                 .asyncRender(false)
                 .setOption("canvasBizId", "F2NativeDemo")

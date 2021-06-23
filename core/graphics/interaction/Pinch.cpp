@@ -16,7 +16,7 @@ bool interaction::Pinch::OnPinchStart(event::Event &event) {
 }
 
 bool interaction::Pinch::OnPinch(event::Event &event) {
-    long timestamp = xg::CurrentTimestampAtMM();
+    auto timestamp = xg::CurrentTimestampAtMM();
     util::Point xAxis = chart_->coord_->GetXAxis();
 
     double coordWidth = chart_->coord_->GetWidth();

@@ -79,8 +79,8 @@ class Category : public AbstractScale {
         }
 
         double percent = 0;
-        if(key.is_string() || values.contains(key)) {
-            std::size_t index = this->Transform(key);
+        std::size_t index = this->Transform(key);
+        if(index + 1 > 0) {
             percent = CalculatePercent(static_cast<double>(index), this->min, this->max);
         } else {
             double kVal = 0.;
@@ -181,7 +181,11 @@ class Category : public AbstractScale {
             this->tickCount = GetValuesSize();
         }
 
-        this->ticks = this->CalculateTicks();
+        if(config_.contains("ticks") && config_["ticks"].is_array()) {
+            this->ticks  = config_["ticks"];
+        }else {
+            this->ticks = this->CalculateTicks();
+        }
     }
 
   protected:

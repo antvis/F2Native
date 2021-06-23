@@ -2,6 +2,7 @@
 
 #include "graphics/guide/GuideController.h"
 #include "graphics/guide/Flag.h"
+#include "graphics/guide/Line.h"
 #include "graphics/guide/Text.h"
 #include "graphics/util/BBox.h"
 #include "graphics/util/json.h"
@@ -31,4 +32,12 @@ void xg::guide::GuideController::Text(const std::string &json) {
         return;
     auto text = xg::make_unique<xg::guide::Text>(config);
     this->guides.push_back(std::move(text));
+}
+
+void xg::guide::GuideController::Line(const std::string &json) {
+    nlohmann::json config = xg::json::ParseString(json);
+    if(!config.is_object())
+        return;
+    auto line = xg::make_unique<xg::guide::Line>(config);
+    this->guides.push_back(std::move(line));
 }

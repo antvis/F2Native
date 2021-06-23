@@ -137,10 +137,22 @@ class KLineCat : public Category {
 
     std::tm ConvertDataToTS(nlohmann::json &data) {
         if(data.is_string()) {
+            // date str
             if(this->config_.contains("dateFormate")) {
                 return DateParserAtTM(data.get<string>(), config_["dateFormate"]);
             }
             return DateParserAtTM(data.get<string>());
+        } else if(data.is_number()) {
+            // timestamp
+            long long t = data.get<long long>();
+            long timeZoneOffset = 0;
+            bool forceTimeZone = false;
+            if(config_.contains("timeZoneOffset")) {
+                timeZoneOffset = config_["timeZoneOffset"];
+                forceTimeZone = true;
+            }
+            timeZoneOffset *= 1000;
+            return xg::DateParserTimeStamp(t + timeZoneOffset, forceTimeZone);
         } else {
             return std::tm{};
         }

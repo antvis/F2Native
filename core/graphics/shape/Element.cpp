@@ -51,17 +51,20 @@ void xg::shape::Element::Rotate(float rad) { util::MatrixUtil::Rotate(&this->mat
 
 void xg::shape::Element::Apply(Vector2D *v) { util::Vector2DUtil::TransformMat2D(v, *v, matrix_); }
 
+void xg::shape::Element::Transform(const std::vector<TransformAction> &actions) { MatrixUtil::Transform(&matrix_, actions); }
+
 #pragma mark private
 void xg::shape::Element::InitTransform() { matrix_ = {1, 0, 0, 1, 0, 0}; }
 
 void xg::shape::Element::ResetTransform(canvas::CanvasContext &context) const {
-    if(!IsUnchanged(matrix_)) {
+    if(!MatrixUtil::IsUnchanged(matrix_)) {
         context.SetTransform(matrix_[0], matrix_[1], matrix_[2], matrix_[3], matrix_[4], matrix_[5]);
     }
 }
 
 void xg::shape::Element::SetContext(canvas::CanvasContext &context) const {
     context.Save();
+    DoClip(context);
     ResetContext(context);
     ResetTransform(context);
 }

@@ -6,24 +6,21 @@
 #define XG_GRAPHICS_CANVAS_H
 
 namespace xg {
+class XChart;
 namespace canvas {
 
 class Canvas : public shape::Group {
     friend class XChart;
 
   public:
-    Canvas() : Group() {}
+    Canvas(XChart *chart) : Group(), chart_(chart) {}
 
-    void ChangeSize(double width, double height) {
-        // TODO
+    void ChangeSize(double x, double y, double width, double height) {
+        origin = {x, y};
+        size = {width, height};
     }
 
-    void Draw(canvas::CanvasContext &context) {
-        if(this->IsDestroyed()) {
-            return;
-        }
-        this->DrawInner(context);
-    }
+    void Draw();
 
     void Destroy() override { Group::Destroy(); }
 
@@ -32,6 +29,20 @@ class Canvas : public shape::Group {
     // void BeforeDraw();
 
     // void EndDraw();
+
+  private:
+    void _beginDraw() { toDraw_ = true; }
+
+    void _endDraw() { toDraw_ = false; }
+
+    void innerDrawInner();
+
+  private:
+    bool animateHandler_ = false;
+    bool toDraw_ = false;
+    XChart *chart_ = nullptr;
+    util::Point origin{0, 0};
+    util::Size size{0, 0};
 };
 } // namespace canvas
 } // namespace xg

@@ -1,6 +1,4 @@
-#ifndef GRAPHICS_GEOM_GEOM_H
-#define GRAPHICS_GEOM_GEOM_H
-
+#include "graphics/animate/GeomAnimate.h"
 #include "graphics/canvas/Container.h"
 #include "graphics/canvas/Coord.h"
 #include "graphics/geom/attr/AttrBase.h"
@@ -8,6 +6,16 @@
 #include <map>
 #include <set>
 #include <utils/Tracer.h>
+
+#ifndef GRAPHICS_GEOM_GEOM_H
+#define GRAPHICS_GEOM_GEOM_H
+
+#define GROUP_ATTRS                                                                                                            \
+    vector<xg::attr::AttrType> { xg::attr::AttrType::Color, xg::attr::AttrType::Size, xg::attr::AttrType::Shape }
+#define COLORS                                                                                                                 \
+    std::vector<string> { "#1890FF", "#2FC25B", "#FACC14", "#223273", "#8543E0", "#13C2C2", "#3436C7", "#F04864" }
+#define FIELD_ORIGIN "_origin"
+#define FIELD_ORIGIN_Y "_originY"
 
 using namespace xg::scale;
 using namespace xg::attr;
@@ -23,6 +31,8 @@ class XChart;
 namespace geom {
 
 class AbstractGeom {
+    friend animate::GeomAnimate;
+
   public:
     virtual ~AbstractGeom();
     AbstractGeom(const AbstractGeom &) = delete;
@@ -83,13 +93,12 @@ class AbstractGeom {
     /*各种属性*/
     bool generatePoints_ = false;
     bool sortable_ = false;
-    bool startOnZero_ = true;
     bool visiable_ = true;
     bool connectNulls_ = false;
     bool ignoreEmptyGroup_ = false;
     string type_ = "";
     string shapeType_ = "";
-    nlohmann::json styleConfig_;
+    nlohmann::json styleConfig_ = {{"startOnZero", true}};
 
     nlohmann::json dataArray_;
     map<AttrType, unique_ptr<AttrBase>> attrs_{};

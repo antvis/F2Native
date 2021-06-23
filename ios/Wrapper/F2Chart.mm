@@ -10,6 +10,7 @@
 @interface F2Chart ()
 @property (nonatomic, assign) xg::XChart *chart;
 @property (nonatomic, weak) F2CanvasView *gcanvas;
+@property (nonatomic, strong) RequestAnimationFrameHandle *requestAnimationFrameHandle;
 @property (nonatomic, assign) BOOL isBackground;
 @property (nonatomic, strong) NSMutableArray *callbackList;
 @end
@@ -39,6 +40,7 @@
 - (F2Chart * (^)(F2CanvasView *gcanvas))canvas {
     return ^id(F2CanvasView *gcanvas) {
         self.gcanvas = gcanvas;
+
 #if defined(TARGET_ALIPAY)
         ag::CanvasRenderingContext2D *context = (ag::CanvasRenderingContext2D *)[self.gcanvas getContext];
 #else
@@ -46,6 +48,9 @@
 
 #endif
         self.chart->SetCanvasContext(context);
+
+        self.requestAnimationFrameHandle = [RequestAnimationFrameHandle initWithF2Chart:self canvas:gcanvas];
+        self.chart->SetRequestFrameFuncId([self.requestAnimationFrameHandle.key UTF8String]);
 
         return self;
     };
@@ -107,7 +112,7 @@
 - (F2Chart * (^)(NSString *type, NSDictionary *config))interaction {
     return ^id(NSString *type, NSDictionary *config) {
         self.chart->Interaction([XGSafeString(type) UTF8String],
-                                nlohmann::json::parse([XGSafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config
+                                xg::json::ParseString([XGSafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config
                                                                                                                   host:self]]) UTF8String]));
         return self;
     };
@@ -116,6 +121,19 @@
 - (F2Chart * (^)(NSDictionary *config))tooltip {
     return ^id(NSDictionary *config) {
         self.chart->Tooltip([XGSafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self]]) UTF8String]);
+        return self;
+    };
+}
+
+/// 配置动画功能
+/// @param confg    具体字段待补充
+- (F2Chart * (^)(id config))animate {
+    return ^id(id config) {
+        if([config isKindOfClass:[NSNumber class]]) {
+            self.chart->Animate([config boolValue] ? "true" : "false");
+        } else if([config isKindOfClass:[NSDictionary class]]) {
+            self.chart->Animate([XGSafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self]]) UTF8String]);
+        }
         return self;
     };
 }
@@ -158,12 +176,13 @@
 
 - (F2Chart * (^)(void))render {
     return ^id() {
-        long start = [[NSDate date] timeIntervalSince1970] * 1000;
         if(!self.isBackground) {
+            NSTimeInterval start = [[NSDate date] timeIntervalSince1970] * 1000;
             self.chart->Render();
             [self.gcanvas drawFrame];
             NSString *info = self.getRenderDumpInfo();
-            [self.gcanvas display:start withInfo:info];
+            NSTimeInterval end = [[NSDate date] timeIntervalSince1970] * 1000;
+            [self.gcanvas logPerformance:end - start withInfo:info];
         }
         return self;
     };
@@ -178,12 +197,13 @@
 
 - (F2Chart * (^)(void))repaint {
     return ^id() {
-        long start = [[NSDate date] timeIntervalSince1970] * 1000;
         if(!self.isBackground) {
+            NSTimeInterval start = [[NSDate date] timeIntervalSince1970] * 1000;
             self.chart->Repaint();
             [self.gcanvas drawFrame];
             NSString *info = self.getRenderDumpInfo();
-            [self.gcanvas display:start withInfo:info];
+            NSTimeInterval end = [[NSDate date] timeIntervalSince1970] * 1000;
+            [self.gcanvas logPerformance:end - start withInfo:info];
         }
         return self;
     };
@@ -196,7 +216,8 @@
         if(changed) {
             [self.gcanvas drawFrame];
             NSString *info = self.getRenderDumpInfo();
-            [self.gcanvas display:start withInfo:info];
+            NSTimeInterval end = [[NSDate date] timeIntervalSince1970] * 1000;
+            [self.gcanvas logPerformance:end - start withInfo:info];
         }
         return self;
     };
@@ -212,8 +233,17 @@
 - (NSArray<NSNumber *> * (^)(NSDictionary *itemData))getPosition {
     return ^id(NSDictionary *itemData) {
         const xg::util::Point point =
-            self.chart->GetPosition(nlohmann::json::parse([XGSafeJson([F2Utils toJsonString:itemData]) UTF8String]));
+            self.chart->GetPosition(xg::json::ParseString([XGSafeJson([F2Utils toJsonString:itemData]) UTF8String]));
+
         return [NSArray arrayWithObjects:@(point.x), @(point.y), nil];
+    };
+}
+
+- (NSArray<NSDictionary *> *(^)(NSString *field))getScaleTicks {
+    return ^id(NSString *field) {
+        std::string info = self.chart->GetScaleTicks([XGSafeString(field) UTF8String]);
+        NSString *jsonStr = [NSString stringWithCString:info.c_str() encoding:[NSString defaultCStringEncoding]];
+        return [F2Utils toJsonObject:jsonStr];
     };
 }
 
@@ -252,6 +282,8 @@
 }
 
 - (void)bindF2CallbackObj:(F2CallbackObj *)callback {
-    [self.callbackList addObject:callback];
+    if(callback) {
+        [self.callbackList addObject:callback];
+    }
 }
 @end

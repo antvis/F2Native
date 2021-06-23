@@ -63,10 +63,14 @@ void tooltip::ToolTipController::Init(const nlohmann::json &cfg) {
     if(cfg.is_object()) {
         this->config_.merge_patch(cfg);
     }
+    chart_->GetLogTracer()->trace("ToolTip Config: %s", config_.dump().data());
 }
 
 bool tooltip::ToolTipController::OnPressStart(event::Event &event) {
     chart_->GetLogTracer()->trace("%s", "#ToolTipController onPressStart");
+    if(config_.contains("onPressStart") && config_["onPressStart"].is_string()) {
+        func::InvokeFunction(config_["onPressStart"], {});
+    }
     return false;
 }
 
@@ -78,22 +82,31 @@ bool tooltip::ToolTipController::OnPress(event::Event &event) {
     util::Point point = event.points[0];
     bool alwaysShow = config_["alwaysShow"];
     if(!chart_->coord_->IsContains(point.x, point.y)) {
+        chart_->GetLogTracer()->trace("%s", "#ToolTipController onPress interrupted.");
         if(!alwaysShow) {
             return this->HideToolTip();
         }
         return false;
     }
 
-    long currentTime = xg::CurrentTimestampAtMM();
-    if(currentTime - lastShowTimeStamp_ > 16) {
+    auto currentTime = xg::CurrentTimestampAtMM();
+    auto deltaTime = currentTime - lastShowTimeStamp_;
+    if(deltaTime > 32) {
+        chart_->GetLogTracer()->trace("%s delta: %lu", "#ToolTipController onPress startShowTooltip", deltaTime);
         bool ret = this->ShowToolTip(point);
         this->lastShowTimeStamp_ = currentTime;
         return ret;
     }
     return false;
 }
+
 bool tooltip::ToolTipController::OnPressEnd(event::Event &event) {
     chart_->GetLogTracer()->trace("%s", "#ToolTipController onPressend");
+
+    if(config_.contains("onPressEnd") && config_["onPressEnd"].is_string()) {
+        func::InvokeFunction(config_["onPressEnd"], {});
+    }
+
     if(this->toolTip_.get() == nullptr) {
         return false;
     }
@@ -121,7 +134,6 @@ bool tooltip::ToolTipController::ShowToolTip(const util::Point &point) {
     nlohmann::json tooltipMarkerItems;
     std::for_each(chart_->geoms_.begin(), chart_->geoms_.end(), [&](auto &geom) -> void {
         // TODO geom is visible
-
         nlohmann::json records = geom->GetSnapRecords(chart_, point);
         for(std::size_t index = 0; index < records.size(); ++index) {
             nlohmann::json &record = records[index];
@@ -130,6 +142,8 @@ bool tooltip::ToolTipController::ShowToolTip(const util::Point &point) {
                 tooltipItem["x"] = record["_x"];
                 tooltipItem["y"] = record["_y"];
                 tooltipItem["color"] = record.contains("_color") ? record["_color"].get<std::string>() : GLOBAL_COLORS[0];
+                tooltipItem["xTip"] = config_["xTip"];
+                tooltipItem["yTip"] = config_["yTip"];
 
                 auto nameField = tooltip::_GetToolTipGroupNameField(chart_, geom);
                 auto &nameScale = chart_->GetScale(nameField);
@@ -140,44 +154,49 @@ bool tooltip::ToolTipController::ShowToolTip(const util::Point &point) {
                 if(nameVal.empty() && record.contains(nameField)) {
                     nameVal = record[nameField].dump();
                 }
-                tooltipItem["value"] = nameVal;
+                _point.x = record["_x"];
+                tooltipItem["value"] = InvertYTip(_point);
 
                 tooltipItem["title"] = chart_->GetScale(geom->GetXScaleField()).GetTickText(record[geom->GetXScaleField()]);
 
                 tooltipMarkerItems.push_back(tooltipItem);
-                _point.x = record["_x"];
             }
         }
     });
 
     if(tooltipMarkerItems.size() == 0) {
+        chart_->GetLogTracer()->trace("%s", "#ToolTipController ShowToolTip interrupted with tooltipMarkerItems is empty.");
         return false;
     }
 
     this->container_->Clear();
 
+    if(config_.contains("onPress") && config_["onPress"].is_string()) {
+        auto rst = func::InvokeFunction(config_["onPress"], tooltipMarkerItems);
+        if(rst.is_array() && rst.size() > 0) {
+            tooltipMarkerItems = rst;
+        }
+    }
+
     if(config_["hidden"] == false) {
-        nlohmann::json &first = tooltipMarkerItems[0];
+        const nlohmann::json &first = tooltipMarkerItems[0];
         if(chart_->GetCoord().IsTransposed()) {
             // TODO
         } else {
             util::Point xTipPoint = _point;
             xTipPoint.y = chart_->GetCoord().GetYAxis().x;
-            toolTip_->SetXTipContent(*chart_->canvasContext_, first["title"], xTipPoint);
+            toolTip_->SetXTipContent(*chart_->canvasContext_, first, xTipPoint);
         }
 
-        this->toolTip_->SetPosition(chart_->GetCoord(), *chart_->canvasContext_, _point, tooltipMarkerItems, InvertYTip(_point));
+        this->toolTip_->SetPosition(chart_->GetCoord(), *chart_->canvasContext_, _point, first);
 
-        this->toolTip_->Show(*chart_->canvasContext_);
+        chart_->GetLogTracer()->trace("%s", "#ToolTipController ShowToolTip show tooltip.");
+        this->toolTip_->Show(*chart_->canvasContext_, chart_->GetLogTracer());
 
         std::for_each(actionListeners_.begin(), actionListeners_.end(),
                       [&](ToolTipMarkerItemsCallback callback) -> void { callback(tooltipMarkerItems); });
 
         chart_->Redraw();
-    }
-
-    if(config_.contains("onPress") && config_["onPress"].is_string()) {
-        func::InvokeFunction(config_["onPress"], tooltipMarkerItems);
     }
 
     chart_->GetLogTracer()->trace("ShowToolTip duration: %lums", (xg::CurrentTimestampAtMM() - timestampStart));

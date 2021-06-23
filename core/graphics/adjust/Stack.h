@@ -20,11 +20,11 @@ class Stack {
             nlohmann::json &data = dataArray[i];
             for(size_t j = 0; j < data.size(); j++) {
                 auto &item = data[j];
-                std::string xkey = item[xField];
                 auto y = item[yField];
-                double y_d = y.is_array() ? y[1] : y;
-                if(y.is_number()) {
+                if(y.is_number() && item[xField].is_string()) {
                     if(y >= XG_EPS) {
+                        const std::string &xkey = item[xField];
+                        double y_d = y.is_array() ? y[1] : y;
                         item[yField] = {positive[xkey], static_cast<float>(y_d + positive[xkey])};
                         positive[xkey] = y_d + positive[xkey];
                     }

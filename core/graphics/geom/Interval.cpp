@@ -113,7 +113,7 @@ nlohmann::json geom::Interval::getRectPoints(nlohmann::json &cfg) {
 }
 
 void geom::Interval::BeforeMapping(XChart &chart, nlohmann::json &dataArray) {
-    long timestamp = xg::CurrentTimestampAtMM();
+    auto timestamp = xg::CurrentTimestampAtMM();
     const std::string &yField = this->GetYScaleField();
     auto &xScale = chart.GetScale(GetXScaleField());
 

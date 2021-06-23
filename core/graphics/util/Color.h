@@ -112,6 +112,8 @@ static CanvasFillStrokeStyle ColorParser(const nlohmann::json &color) {
     if(color.is_string()) {
         std::string c = color.get<std::string>();
         if(c.length() > 1 && c.substr(0, 1) == "#") {
+            //截取超长的color 如#ff0000ff
+            c = c.length() > 7 ? c.substr(0, 7) : c;
             return CanvasFillStrokeStyle(c);
         }
         nlohmann::json _color = nlohmann::json::parse(c, nullptr, false);
@@ -162,6 +164,26 @@ static CanvasFillStrokeStyle ColorParser(const nlohmann::json &data, const std::
         return ColorParser(data[key]);
     }
     return CanvasFillStrokeStyle(GLOBAL_COLORS[0]);
+}
+
+static float OpacityParser(const nlohmann::json &color) {
+    if(color.is_string()) {
+        std::string c = color.get<std::string>();
+        if(c.length() > 7 && c.substr(0, 1) == "#") {
+            //截取超长的color 如#ff0000ff
+            c =  c.substr(7,  c.length());
+            long n = strtol(c.c_str(), NULL, 16);
+            return n / 255.0f;
+        }
+    }
+    return DEFAULT_OPACITY;
+}
+
+static float OpacityParser(const nlohmann::json &data, const std::string &key) {
+    if(data.is_object() && data.contains(key)) {
+        return OpacityParser(data[key]);
+    }
+    return DEFAULT_OPACITY;
 }
 
 } // namespace util

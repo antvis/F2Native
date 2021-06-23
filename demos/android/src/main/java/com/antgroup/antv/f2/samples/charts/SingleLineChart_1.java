@@ -1,12 +1,24 @@
 package com.antgroup.antv.f2.samples.charts;
 
+import android.content.Context;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.antgroup.antv.f2.F2CanvasView;
 import com.antgroup.antv.f2.F2Chart;
 import com.antgroup.antv.f2.F2Config;
 import com.antgroup.antv.f2.F2Function;
+import com.antgroup.antv.f2.F2Log;
 import com.antgroup.antv.f2.samples.Utils;
+
+import java.io.InputStream;
+
+//import com.alipay.antgraphic.misc.CanvasImageResource;
+//import com.alipay.antgraphic.misc.CanvasIsolateHelper;
 
 /**
  * 基础折线图-1
@@ -29,13 +41,30 @@ public class SingleLineChart_1 implements F2CanvasView.Adapter, F2CanvasView.OnC
         mChart.source(Utils.loadAssetFile(canvasView.getContext(), "mockData_singleLineChart.json"));
         mChart.interaction("pinch");
         mChart.interaction("pan");
-        mChart.tooltip(new F2Chart.ToolTipConfigBuilder().setOption("onPress", mChart, new F2Function() {
-            @Override
-            public F2Config execute(String param) {
-                drawToolTipRect(canvasView, param);
-                return new F2Config.Builder().build();
-            }
-        }));
+        mChart.tooltip(new F2Chart.ToolTipConfigBuilder()
+                .setOption("onPressStart", mChart, new F2Function() {
+                    @Override
+                    public F2Config execute(String param) {
+                        F2Log.i("tooltip", "onPressStart: " + param);
+                        return new F2Config.Builder().build();
+                    }
+                })
+                .setOption("onPressEnd", mChart, new F2Function() {
+                    @Override
+                    public F2Config execute(String param) {
+                        F2Log.i("tooltip", "onPressEnd: " + param);
+                        return new F2Config.Builder().build();
+                    }
+                })
+                .setOption("onPress", mChart, new F2Function() {
+                    @Override
+                    public F2Config execute(String param) {
+                        drawToolTipRect(canvasView, param);
+                        return new F2Config.Builder().build();
+                    }
+                }));
+
+        mChart.animate(true);
 
         mChart.line().position("date*value");
         mChart.setAxis("date", new F2Chart.AxisConfigBuilder()
@@ -77,10 +106,9 @@ public class SingleLineChart_1 implements F2CanvasView.Adapter, F2CanvasView.OnC
 
     @Override
     public void onTouch(F2CanvasView canvasView, F2CanvasView.TouchEvent event) {
-        if (mChart != null) {
-            mChart.postTouchEvent(event);
+        if (mChart != null && mChart.postTouchEvent(event)) {
+            drawTag(canvasView);
         }
-        drawTag(canvasView);
     }
 
     @Override
@@ -100,6 +128,14 @@ public class SingleLineChart_1 implements F2CanvasView.Adapter, F2CanvasView.OnC
         canvasView.getCanvasHandle().fill();
         canvasView.getCanvasHandle().restore();
 
+
+//        CanvasImageResource imageResource = new CanvasImageResource("10001", getImageFromAssets(canvasView.getContext(), "wallet.png"));
+//        float width = imageResource.getBitmap().getWidth();
+//        float height = imageResource.getBitmap().getHeight();
+//
+//        float x = (float) position[0] - width / 2;
+//        float y = (float) position[1] + 10;
+
         canvasView.swapBuffer();
     }
 
@@ -116,8 +152,30 @@ public class SingleLineChart_1 implements F2CanvasView.Adapter, F2CanvasView.OnC
         canvasView.getCanvasHandle().save();
         canvasView.getCanvasHandle().setFillStyle("#ffffff");
         String text = itemData.getString("value");
-        float textWidth = canvasView.getCanvasHandle().measureText(text);
-        canvasView.getCanvasHandle().fillText(text, x + (100 - textWidth) / 2, y + 40);
+        canvasView.getCanvasHandle().setTextAlign("center");
+        canvasView.getCanvasHandle().fillText(text, x + 50, y + 40);
         canvasView.getCanvasHandle().restore();
+    }
+
+    private static Bitmap getImageFromAssets(Context context, String filePath) {
+        Bitmap bitmap = null;
+        InputStream ins = null;
+        try {
+            AssetManager assetManager = context.getAssets();
+            ins = assetManager.open(filePath);
+            bitmap = BitmapFactory.decodeStream(ins);
+            ins.close();
+        } catch (Throwable t) {
+            Log.e("SingleLineChart1", "getImageFromAssets error:" + t);
+        } finally {
+            if (ins != null) {
+                try {
+                    ins.close();
+                } catch (Throwable e) {
+                    Log.e("SingleLineChart1", "getImageFromAssets close error:" + e);
+                }
+            }
+        }
+        return bitmap;
     }
 }

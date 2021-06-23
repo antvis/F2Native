@@ -13,10 +13,6 @@ using namespace std;
 namespace xg {
 namespace geom {
 
-static vector<xg::attr::AttrType> GROUP_ATTRS = {xg::attr::AttrType::Color, xg::attr::AttrType::Size, xg::attr::AttrType::Shape};
-static string FIELD_ORIGIN = "_origin";
-static string FIELD_ORIGIN_Y = "_originY";
-
 static vector<string> ParseFields(const string &field) {
     if(field.find('*') != field.npos) {
         vector<string> v;
@@ -44,7 +40,7 @@ xg::geom::AbstractGeom &xg::geom::AbstractGeom::Position(const string &field) {
 xg::geom::AbstractGeom &xg::geom::AbstractGeom::Color(const string &field, const vector<string> &colors) {
     this->tracker_->trace("geom#%s  Color: %s colors: %lu", type_.c_str(), field.c_str(), colors.size());
     vector<string> fields(ParseFields(field));
-    std::unique_ptr<attr::AttrBase> attr = xg::make_unique<attr::Color>(fields, colors.empty() ? xg::GLOBAL_COLORS : colors);
+    std::unique_ptr<attr::AttrBase> attr = xg::make_unique<attr::Color>(fields, colors.empty() ? COLORS : colors);
     attrs_[AttrType::Color] = std::move(attr);
     return *this;
 }
@@ -58,7 +54,8 @@ xg::geom::AbstractGeom &xg::geom::AbstractGeom::Color(const string &color) {
 
 xg::geom::AbstractGeom &xg::geom::AbstractGeom::Size(const string &field, const vector<float> &sizes) {
     this->tracker_->trace("geom#%s  Size: %s sizes: %lu", type_.c_str(), field.c_str(), sizes.size());
-    std::unique_ptr<attr::AttrBase> attr = xg::make_unique<attr::Size>(field, sizes.empty() ? xg::GLOBAL_SIZES : sizes);
+    std::unique_ptr<attr::AttrBase> attr = xg::make_unique<attr::Size>(field, sizes.empty() ? GLOBAL_SIZES : sizes);
+
     attrs_[AttrType::Size] = std::move(attr);
     return *this;
 }
@@ -113,7 +110,7 @@ void xg::geom::AbstractGeom::Init(XChart *chart) {
 
 #pragma mark protected
 void xg::geom::AbstractGeom::ProcessData(XChart &chart) {
-    long timestamp = xg::CurrentTimestampAtMM();
+    auto timestamp = xg::CurrentTimestampAtMM();
     dataArray_ = GroupData(chart);
 
     std::unique_ptr<attr::AttrBase> &adjustAttr = attrs_[attr::AttrType::Adjust];
@@ -195,7 +192,7 @@ void xg::geom::AbstractGeom::Paint(XChart *chart) {
 
     this->BeforeMapping(*chart, dataArray_);
 
-    long timestamp = CurrentTimestampAtMM();
+    auto timestamp = CurrentTimestampAtMM();
     auto &xScale = chart->GetScale(GetXScaleField());
 
     for(std::size_t i = 0; i < dataArray_.size(); ++i) {
@@ -252,7 +249,7 @@ double xg::geom::AbstractGeom::GetYMinValue(XChart &chart) {
     double _min = yScale.min;
     double _max = yScale.max;
     double value = _min;
-    if(this->startOnZero_) {
+    if(styleConfig_.contains("startOnZero") && styleConfig_["startOnZero"] == true) {
         if(_max <= 0 && _min <= 0) {
             value = _max;
         } else {

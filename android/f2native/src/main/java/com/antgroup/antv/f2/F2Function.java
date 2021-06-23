@@ -26,6 +26,7 @@ public abstract class F2Function {
 
     protected final String nExecute(String param) {
         F2Config config = execute(param);
+        if (config == null) return null;
         return config.toJsonString();
     }
 

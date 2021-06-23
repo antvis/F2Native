@@ -94,7 +94,7 @@ nlohmann::json geom::Candle::getLinePoints(nlohmann::json &cfg) {
 }
 
 void geom::Candle::BeforeMapping(XChart &chart, nlohmann::json &dataArray) {
-    long timestamp = xg::CurrentTimestampAtMM();
+    auto timestamp = xg::CurrentTimestampAtMM();
     const std::string &yField = this->GetYScaleField();
     auto &xScale = chart.GetScale(GetXScaleField());
     for(std::size_t index = 0; index < dataArray.size(); ++index) {

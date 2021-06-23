@@ -284,7 +284,7 @@ class Linear : public AbstractScale {
   public:
     //    double minLimit = 0;
     //    double maxLimit = 0;
-    std::size_t tickInterval = -1;
+    double tickInterval = -1;
     std::size_t tickCount = 2;
     int precision = 0; // tickText 小数点精度
 

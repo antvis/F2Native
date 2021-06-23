@@ -50,6 +50,10 @@ class Area : public GeomShapeBase {
             l->fillStyle_ = util::CanvasFillStrokeStyle(GLOBAL_COLORS[0]);
         } else {
             l->fillStyle_ = util::ColorParser(data[start], "_color");
+            auto opacity = util::OpacityParser(data[start], "_color");
+            if (!isnan(opacity)) {
+                l->fillOpacity_ = opacity;
+            }
         }
         container.AddElement(std::move(l));
     }

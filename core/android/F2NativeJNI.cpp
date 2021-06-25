@@ -878,6 +878,13 @@ static jint SetChartGeomStyle(JNIEnv *env, jclass clazz, jlong geom, jstring con
     return 0;
 }
 
+static jint SetChartGeomAttrs(JNIEnv *env, jclass clazz, jlong geom, jstring config) {
+    xg::geom::AbstractGeom *_geom = reinterpret_cast<xg::geom::AbstractGeom *>(geom);
+    std::string _configStr = JavaStringToString(env, config);
+    _geom->SetAttrs(std::move(_configStr));
+    return 0;
+}
+
 static jint ExecuteCommand(JNIEnv *env, jclass clazz, jlong commandHandle) {
     xg::func::Command *command = reinterpret_cast<xg::func::Command *>(commandHandle);
     if(command != nullptr) {
@@ -1082,6 +1089,11 @@ static const JNINativeMethod native_chart_methods[] = {{
                                                            .fnPtr = reinterpret_cast<void *>(SetChartGeomStyle),
                                                        },
                                                        {
+                                                           .name = "nGeomAttrs",
+                                                           .signature = "(JLjava/lang/String;)I",
+                                                           .fnPtr = reinterpret_cast<void *>(SetChartGeomAttrs),
+                                                       },
+                                                       {
                                                            .name = "nExecuteCommand",
                                                            .signature = "(J)I",
                                                            .fnPtr = reinterpret_cast<void *>(ExecuteCommand),
@@ -1131,6 +1143,7 @@ static jstring nCreateFunction(JNIEnv *env, jclass clazz, jobject jhandle) {
 
 static void nFunctionBindChart(JNIEnv *env, jclass clazz, jstring jfunctionId, jlong jchart) {
     std::string functionId = JavaStringToString(env, jfunctionId);
+    F2_LOG_I("#nFunctionBindChart", "functionId: %s", functionId.data());
     xg::func::F2Function *function = xg::func::FunctionManager::GetInstance().Find(functionId);
 
     if(function != nullptr) {

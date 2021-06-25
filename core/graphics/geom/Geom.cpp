@@ -105,10 +105,29 @@ const std::string &xg::geom::AbstractGeom::GetYScaleField() { return attrs_[Attr
 void xg::geom::AbstractGeom::Init(XChart *chart) {
     // InitAttrs(*chart);
     this->tracker_->trace("geom#init %s", type_.c_str());
+    InitAttributes(*chart);
     ProcessData(*chart);
 }
 
 #pragma mark protected
+void xg::geom::AbstractGeom::InitAttributes(XChart &chart) {
+    if(this->attrs_.find(AttrType::Position) == this->attrs_.end()) {
+        return;
+    }
+
+    if(this->attrs_.find(AttrType::Adjust) == this->attrs_.end()) {
+        return;
+    }
+    std::unique_ptr<attr::AttrBase> &adjustAttr = attrs_[attr::AttrType::Adjust];
+    attr::Adjust *adjust = static_cast<attr::Adjust *>(adjustAttr.get());
+    if(chart.GetCoord().IsTransposed() && chart.GetCoord().GetType() == xg::canvas::coord::CoordType::Polar && adjust->GetAdjust() == "stack") {
+        auto &yScale = chart.GetScale(this->GetYScaleField());
+        if(yScale.values.size() > 0) {
+            yScale.Change({{"nice", false}, {"min", 0}, {"max", xg::util::JsonArrayMax(yScale.values)}});
+        }
+    }
+}
+
 void xg::geom::AbstractGeom::ProcessData(XChart &chart) {
     auto timestamp = xg::CurrentTimestampAtMM();
     dataArray_ = GroupData(chart);
@@ -228,7 +247,7 @@ void xg::geom::AbstractGeom::Mapping(XChart &chart, nlohmann::json &groupData, s
 }
 
 void xg::geom::AbstractGeom::Draw(XChart &chart, const nlohmann::json &groupData, std::size_t start, std::size_t end) const {
-    chart.geomShapeFactory_->DrawGeomShape(chart, this->type_, /*subShapeType*/ "", groupData, start, end, *container_);
+    chart.geomShapeFactory_->DrawGeomShape(chart, this->type_, /*subShapeType*/ "", groupData, start, end, *container_, this->connectNulls_);
 }
 
 bool xg::geom::AbstractGeom::ContainsAttr(attr::AttrType type) {
@@ -329,5 +348,14 @@ nlohmann::json xg::geom::AbstractGeom::GetSnapRecords(XChart *chart, util::Point
 void xg::geom::AbstractGeom::Clear() {
     if(this->container_ != nullptr) {
         this->container_->Clear();
+    }
+}
+
+void xg::geom::AbstractGeom::SetAttrs(const std::string &_attrs) noexcept {
+    nlohmann::json cfg = xg::json::ParseString(_attrs);
+    if(cfg.is_object() && cfg.size() > 0) {
+        if(cfg.contains("connectNulls") && cfg["connectNulls"].is_boolean()) {
+            this->connectNulls_ = cfg["connectNulls"];
+        }
     }
 }

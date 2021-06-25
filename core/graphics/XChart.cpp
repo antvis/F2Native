@@ -269,12 +269,11 @@ void XChart::Render() {
         return;
     }
 
-#ifdef ANDROID
     if(!canvasContext_->IsValid()) {
         this->logTracer_->trace("error: %s", "canvasContext is not valid, render end.");
         return;
     }
-#endif
+
     if(!this->data_.is_array() || this->data_.size() == 0) {
         this->logTracer_->trace("error: %s", "data is not array or size is zero, render end.");
         return;

@@ -190,6 +190,11 @@ final class NativeChartProxy {
         nGeomIntervalTag(geom.getNativeGeomHandler(), geom.getType(), config);
     }
 
+    void setGeomAttrs(F2Geom geom, String config) {
+        if (mNativeChartHandler == 0 || geom.getNativeGeomHandler() == 0) return;
+        nGeomAttrs(geom.getNativeGeomHandler(), config);
+    }
+
     String getRenderDumpInfo() {
         if (mNativeChartHandler == 0) return null;
         return nGetRenderDumpInfo(mNativeChartHandler);
@@ -282,6 +287,7 @@ final class NativeChartProxy {
     private native static int nGeomIntervalTag(long geomHandle, String type, String config);
 
     private native static int nGeomStyle(long geomHandle, String config);
+    private native static int nGeomAttrs(long geomHandle, String config);
 
     private native static int nExecuteCommand(long commandHandle);
     private native static int nDeallocCommand(long commandHandle);

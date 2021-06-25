@@ -45,7 +45,13 @@ class FunctionManager {
         functions_.erase(functionId);
     }
 
-    F2Function *Find(std::string functionId) { return this->functions_[functionId]; }
+    F2Function *Find(std::string functionId) {
+        auto it = this->functions_.find(functionId);
+        if(it == this->functions_.end()) {
+            return nullptr;
+        }
+        return it->second;
+    }
 
     void Clear(const std::string hostChartId) {
         std::unique_lock<std::mutex> lock(mutex_);

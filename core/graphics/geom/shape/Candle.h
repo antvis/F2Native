@@ -21,7 +21,8 @@ class Candle : public GeomShapeBase {
               const nlohmann::json &data,
               std::size_t start,
               std::size_t end,
-              xg::shape::Group &container) override {
+              xg::shape::Group &container,
+              bool connectNulls) override {
         if(!data.contains("_rect") || !data.contains("_line")) {
             return;
         }

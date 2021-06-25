@@ -23,8 +23,9 @@ class Line : public GeomShapeBase {
               const nlohmann::json &data,
               std::size_t start,
               std::size_t end,
-              xg::shape::Group &container) override {
-        this->drawLines(coord, data, start, end, context, container);
+              xg::shape::Group &container,
+              bool connectNulls) override {
+        this->drawLines(coord, data, start, end, context, container, connectNulls);
     }
 
   private:
@@ -34,7 +35,8 @@ class Line : public GeomShapeBase {
                    std::size_t start,
                    std::size_t end,
                    canvas::CanvasContext &canvasContext,
-                   xg::shape::Group &container) {
+                   xg::shape::Group &container,
+                   bool connectNulls) {
         size_t size = end - start + 1;
         if(size <= 0)
             return;
@@ -91,7 +93,13 @@ class Line : public GeomShapeBase {
         // todo 这里有一个判断 如果线是循环的 会将第一个点复制成新点插入队尾 形成循环 目前没有这个判断 后续添加
         for(std::size_t i = start; i <= end; i++) {
             const nlohmann::json &item = data[i];
-            points.push_back(util::Point(item["_x"], item["_y"]));
+            if(connectNulls) {
+                if(item["_x"].is_number() && !std::isnan(item["_x"]) && item["_y"].is_number() && !std::isnan(item["_y"])) {
+                    points.push_back(util::Point(item["_x"], item["_y"]));
+                }
+            } else {
+                points.push_back(util::Point(item["_x"], item["_y"]));
+            }
         }
 
         auto l = xg::make_unique<xg::shape::Polyline>(lineWidth * canvasContext.GetDevicePixelRatio(), points, smooth);

@@ -80,14 +80,16 @@ bool tooltip::ToolTipController::OnPress(event::Event &event) {
         return false;
 
     util::Point point = event.points[0];
-    bool alwaysShow = config_["alwaysShow"];
-    if(!chart_->coord_->IsContains(point.x, point.y)) {
-        chart_->GetLogTracer()->trace("%s", "#ToolTipController onPress interrupted.");
-        if(!alwaysShow) {
-            return this->HideToolTip();
-        }
-        return false;
-    }
+    point.x = fmax(chart_->GetCoord().GetXAxis().x, fmin(chart_->GetCoord().GetXAxis().y, point.x));
+    point.y = fmax(chart_->GetCoord().GetYAxis().y, fmin(chart_->GetCoord().GetYAxis().x, point.y));
+    //    bool alwaysShow = config_["alwaysShow"];
+    //    if(!chart_->coord_->IsContains(point.x, point.y)) {
+    //        chart_->GetLogTracer()->trace("%s", "#ToolTipController onPress interrupted.");
+    //        if(!alwaysShow) {
+    //            return this->HideToolTip();
+    //        }
+    //        return false;
+    //    }
 
     auto currentTime = xg::CurrentTimestampAtMM();
     auto deltaTime = currentTime - lastShowTimeStamp_;
@@ -185,7 +187,7 @@ bool tooltip::ToolTipController::ShowToolTip(const util::Point &point) {
         } else {
             util::Point xTipPoint = _point;
             xTipPoint.y = chart_->GetCoord().GetYAxis().x;
-            toolTip_->SetXTipContent(*chart_->canvasContext_, first, xTipPoint);
+            toolTip_->SetXTipContent(*chart_->canvasContext_, first, xTipPoint, chart_->GetCoord().GetXAxis());
         }
 
         this->toolTip_->SetPosition(chart_->GetCoord(), *chart_->canvasContext_, _point, first);

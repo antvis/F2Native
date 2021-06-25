@@ -17,7 +17,8 @@ class Point : public GeomShapeBase {
               const nlohmann::json &data,
               std::size_t start,
               std::size_t end,
-              xg::shape::Group &container) override {
+              xg::shape::Group &container,
+              bool connectNulls) override {
         std::string shape = "circle";
         if(data.contains("_shape")) {
             shape = data["_shape"];

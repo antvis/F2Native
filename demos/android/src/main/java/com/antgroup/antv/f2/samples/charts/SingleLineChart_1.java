@@ -66,7 +66,7 @@ public class SingleLineChart_1 implements F2CanvasView.Adapter, F2CanvasView.OnC
 
         mChart.animate(true);
 
-        mChart.line().position("date*value");
+        mChart.line().position("date*value").attrs(new F2Config.Builder().setOption("connectNulls", true).build());
         mChart.setAxis("date", new F2Chart.AxisConfigBuilder()
                 .label(new F2Chart.AxisLabelConfigBuilder().labelOffset(5.f).item(mChart, new F2Function() {
                     @Override

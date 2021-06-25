@@ -46,7 +46,7 @@ class ToolTip {
         }
     }
 
-    void SetXTipContent(canvas::CanvasContext &canvasContext, const nlohmann::json &tooltipItems, const util::Point &point) {
+    void SetXTipContent(canvas::CanvasContext &canvasContext, const nlohmann::json &tooltipItems, const util::Point &point, const util::Point &xAxis) {
         if(!config_["xTip"].is_object()) {
             return;
         }
@@ -67,19 +67,28 @@ class ToolTip {
         fontSize *= canvasContext.GetDevicePixelRatio();
         float width = canvasContext.MeasureTextWidth(content);
         float rectY = inner ? point.y - fontSize - paddingV * 2 : point.y;
-        float textY = inner ? point.y : point.y + fontSize + paddingV;
+        float textY = inner ? point.y - paddingV: point.y + fontSize + paddingV;
         float rectOffsetX = GetXTipRectOffsetX(textAlign, width);
         float rectOffsetY = GetXTipRectOffsetY(textBaseline, fontSize);
 
+        //左右边界限制
+        float left = point.x - width / 2 - paddingH + rectOffsetX;
+        float right = point.x + width / 2 + paddingH + rectOffsetX;
+        float limitX = fmax(left, xAxis.x);
+        if (right > xAxis.y) {
+            limitX = xAxis.y - width - paddingH * 2;
+        }
+        
         std::unique_ptr<shape::Rect> backRect =
-            std::make_unique<shape::Rect>(util::Point{point.x - width / 2 - paddingH + rectOffsetX, rectY + rectOffsetY},
+            std::make_unique<shape::Rect>(util::Point{limitX, rectY + rectOffsetY},
                                           util::Size{width + paddingH * 2, fontSize + paddingV * 2}, backColor);
         //        if(radius > 0) {
         //            backRect->radius_ = radius;
         //        }
         container_->AddElement(std::move(backRect));
 
-        std::unique_ptr<shape::Text> xTip = std::make_unique<shape::Text>(content, util::Point{point.x, textY}, fontSize, color, color);
+        limitX +=  width / 2 + paddingH - rectOffsetX;
+        std::unique_ptr<shape::Text> xTip = std::make_unique<shape::Text>(content, util::Point{limitX, textY}, fontSize, color, color);
         xTip->SetTextAlign(textAlign);
         xTip->SetTextBaseline(textBaseline);
         container_->AddElement(std::move(xTip));

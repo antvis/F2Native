@@ -33,6 +33,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (F2Geom * (^)(NSDictionary *config))style;
 
+/// 单独设置某个属性
+- (F2Geom * (^)(NSDictionary *config))attrs;
+
 - (void *)getGeom;
 
 @end

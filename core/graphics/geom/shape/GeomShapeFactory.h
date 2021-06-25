@@ -33,7 +33,8 @@ class GeomShapeFactory final {
                        const nlohmann::json &data,
                        std::size_t start,
                        std::size_t end,
-                       xg::shape::Group &container);
+                       xg::shape::Group &container,
+                       bool connectNulls);
 
   private:
     std::unordered_map<std::string, std::unique_ptr<GeomShapeBase>> geomShapes_;

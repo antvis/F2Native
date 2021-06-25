@@ -11,11 +11,7 @@
     self.chart.scale(@"value", @{@"nice": @(YES)});
     self.chart.scale(@"offset", @{@"nice": @(YES)});
     self.chart.axis(@"value", @{@"grid": @{@"type": @"dash", @"dash": @[@(15), @(15), @(5), @(5)]}});
-    self.chart.axis(@"offset", @{
-        @"label": @{
-            @"labelOffset": @(5),
-        }
-    });
+    self.chart.axis(@"offset", @{@"label": @{@"labelOffset": @(10), @"textAlign": @"start"}});
     self.chart.axis(@"date", @{
         @"label": @{
             @"labelOffset": @(5),

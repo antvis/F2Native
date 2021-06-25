@@ -394,6 +394,13 @@ void xg::axis::AxisController::DrawLabel(XChart &chart, std::unique_ptr<xg::axis
             }
             pt.y += bbox.height / 2;
             pt.x += labelOffset;
+
+            if(text->GetTextAlign() == "center") {
+                pt.x -= axis->maxWidth / 2;
+            } else if(text->GetTextAlign() == "left" || text->GetTextAlign() == "start") {
+                pt.x -= axis->maxWidth;
+            }
+
         } else if(axis->position == "right") {
             if(isFirst) {
                 pt.y -= labelMargin;
@@ -404,9 +411,9 @@ void xg::axis::AxisController::DrawLabel(XChart &chart, std::unique_ptr<xg::axis
             pt.x += labelOffset; // + bbox.width / 2;
 
             if(text->GetTextAlign() == "center") {
-                pt.x += bbox.width / 2;
+                pt.x += axis->maxWidth / 2;
             } else if(text->GetTextAlign() == "right" || text->GetTextAlign() == "end") {
-                pt.x += bbox.width;
+                pt.x += axis->maxWidth;
             }
         }
         text->SetPoint(pt);

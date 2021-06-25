@@ -21,7 +21,8 @@ class Interval : public GeomShapeBase {
               const nlohmann::json &data,
               std::size_t start,
               std::size_t end,
-              xg::shape::Group &container) override {
+              xg::shape::Group &container,
+              bool connectNulls) override {
         if(!data.contains("_points")) {
             return;
         }
@@ -79,7 +80,7 @@ class Interval : public GeomShapeBase {
             auto fillRect = xg::make_unique<xg::shape::Rect>(coord.GetCenter(), r, r0, startAngle, endAngle, lineWidth);
             fillRect->fillStyle_ = colorStyle;
             container.AddElement(std::move(fillRect));
-            
+
             if(lineWidth > 0) {
                 util::CanvasFillStrokeStyle strokeColor = util::CanvasFillStrokeStyle(_style["stroke"]);
                 auto strokeRect = xg::make_unique<xg::shape::Rect>(coord.GetCenter(), r, r0, startAngle, endAngle, lineWidth);

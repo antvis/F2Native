@@ -71,9 +71,12 @@ class AbstractGeom {
 
     const nlohmann::json &GetDataArray() { return dataArray_; }
 
+    virtual void SetAttrs(const std::string &_attrs) noexcept;
+
   protected:
     AbstractGeom(Group *_container, utils::Tracer *tracer) : container_(_container), tracker_(tracer){};
     // 数据分组
+    void InitAttributes(XChart &chart);
     void ProcessData(XChart &chart);
     nlohmann::json GroupData(XChart &chart);
     const set<string> GetGroupFieldNames(XChart &chart);

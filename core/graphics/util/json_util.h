@@ -1,6 +1,7 @@
 #ifndef XG_GRAPHICS_UTIL_JSON_H
 #define XG_GRAPHICS_UTIL_JSON_H
 
+#include <algorithm>
 #include <array>
 #include <iostream>
 #include <limits>
@@ -208,6 +209,12 @@ static void JsonRangeInGeomDataArray(const nlohmann::json &geomDataArray,
             }
         }
     }
+}
+
+static double JsonArrayMax(const nlohmann::json &dataArray) {
+    std::vector<double> array = dataArray;
+    auto it = std::max_element(array.begin(), array.end());
+    return array[std::distance(array.begin(), it)];
 }
 
 } // namespace util

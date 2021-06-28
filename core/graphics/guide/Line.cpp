@@ -9,7 +9,7 @@ void guide::Line::Render(XChart &chart, shape::Group *container, canvas::CanvasC
     std::vector<std::string> yFields = chart.getYScaleFields();
     const std::string yField = yFields[0];
 
-    util::Point position = this->GetPosition(chart, xField, yField);
+    util::Point position = this->GetPosition(chart, json::Get(this->config_, "position"), xField, yField);
 
     std::string orientation = config_["orientation"];
     util::CanvasFillStrokeStyle colorStyle = util::ColorParser(config_["color"]);

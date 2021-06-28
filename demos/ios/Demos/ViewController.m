@@ -46,6 +46,7 @@
         @{@"type": @"basePie", @"name": @"饼图", @"view": @"BasePieUIView"},
         @{@"type": @"basePie", @"name": @"环形饼图", @"view": @"CyclicPieUIView"},
         @{@"type": @"klineDay", @"name": @"蜡烛图(日K)", @"view": @"KLineUIView"},
+        @{@"type": @"timeSharing", @"name": @"股票分时图", @"view": @"TimeSharingUIView"},
     ];
 }
 

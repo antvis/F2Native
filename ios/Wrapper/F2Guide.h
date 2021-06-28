@@ -18,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// @{ @"position": @[@"min", @"max"], @"orientation": @"horizontal", @"color": @"#808080",  @"lineWdith": @(1), @"dash": @[...]
 - (F2Guide * (^)(NSDictionary *config))line;
 
+- (F2Guide * (^)(NSDictionary *config))background;
+
 @end
 
 NS_ASSUME_NONNULL_END

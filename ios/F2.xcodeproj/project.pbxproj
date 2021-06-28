@@ -15,6 +15,8 @@
 		3FB8F5E225CF995A0010E9E6 /* F2CanvasThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB8F5E025CF995A0010E9E6 /* F2CanvasThread.m */; };
 		3FC0056C253F0C2D00E09DD7 /* F2GestureListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FC0056A253F0C2D00E09DD7 /* F2GestureListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3FC0056D253F0C2D00E09DD7 /* F2GestureListener.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC0056B253F0C2D00E09DD7 /* F2GestureListener.m */; };
+		9500DF992689D74A00025EF1 /* Background.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500DF962689D74A00025EF1 /* Background.cpp */; };
+		9500DF9A2689D74A00025EF1 /* Background.h in Headers */ = {isa = PBXBuildFile; fileRef = 9500DF982689D74A00025EF1 /* Background.h */; };
 		9555CEAD2623E36C00202A83 /* F2CanvasView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9555CEAC2623E36C00202A83 /* F2CanvasView.mm */; };
 		955723F125ECBF7200D2FC07 /* Line.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9557237525ECBF7200D2FC07 /* Line.cpp */; };
 		955723F225ECBF7200D2FC07 /* GuideBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9557237625ECBF7200D2FC07 /* GuideBase.cpp */; };
@@ -161,6 +163,8 @@
 		3FB8F5E025CF995A0010E9E6 /* F2CanvasThread.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = F2CanvasThread.m; sourceTree = "<group>"; };
 		3FC0056A253F0C2D00E09DD7 /* F2GestureListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F2GestureListener.h; sourceTree = "<group>"; };
 		3FC0056B253F0C2D00E09DD7 /* F2GestureListener.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = F2GestureListener.m; sourceTree = "<group>"; };
+		9500DF962689D74A00025EF1 /* Background.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Background.cpp; sourceTree = "<group>"; };
+		9500DF982689D74A00025EF1 /* Background.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Background.h; sourceTree = "<group>"; };
 		9555CEAC2623E36C00202A83 /* F2CanvasView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = F2CanvasView.mm; sourceTree = "<group>"; };
 		9557237525ECBF7200D2FC07 /* Line.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Line.cpp; sourceTree = "<group>"; };
 		9557237625ECBF7200D2FC07 /* GuideBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GuideBase.cpp; sourceTree = "<group>"; };
@@ -328,6 +332,8 @@
 		9557237425ECBF7200D2FC07 /* guide */ = {
 			isa = PBXGroup;
 			children = (
+				9500DF962689D74A00025EF1 /* Background.cpp */,
+				9500DF982689D74A00025EF1 /* Background.h */,
 				9557237525ECBF7200D2FC07 /* Line.cpp */,
 				9557237625ECBF7200D2FC07 /* GuideBase.cpp */,
 				9557237725ECBF7200D2FC07 /* Text.cpp */,
@@ -738,6 +744,7 @@
 				9557245625ECBF7200D2FC07 /* Pinch.h in Headers */,
 				9557241725ECBF7200D2FC07 /* Line.h in Headers */,
 				9557243025ECBF7200D2FC07 /* Cartesian.h in Headers */,
+				9500DF9A2689D74A00025EF1 /* Background.h in Headers */,
 				9557243925ECBF7200D2FC07 /* Point.h in Headers */,
 				9557244125ECBF7200D2FC07 /* Point.h in Headers */,
 				3F56A02D25218EE5002AA2D2 /* F2.h in Headers */,
@@ -910,6 +917,7 @@
 				955723F125ECBF7200D2FC07 /* Line.cpp in Sources */,
 				955723FB25ECBF7200D2FC07 /* LegendController.cpp in Sources */,
 				3FB8F5E225CF995A0010E9E6 /* F2CanvasThread.m in Sources */,
+				9500DF992689D74A00025EF1 /* Background.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

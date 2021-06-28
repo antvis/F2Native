@@ -23,7 +23,7 @@ class GuideBase {
 
     std::string GetType() const noexcept { return this->type_; }
 
-    virtual util::Point GetPosition(XChart &chart, const std::string &xField, const std::string &yField);
+    virtual util::Point GetPosition(XChart &chart, const nlohmann::json &position, const std::string &xField, const std::string &yField);
 
   protected:
     std::string type_ = "";

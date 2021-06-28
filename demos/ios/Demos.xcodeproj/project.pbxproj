@@ -21,6 +21,7 @@
 		3F5DD47D2553A34D00FD60B3 /* BaseInterval2UIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F5DD47C2553A34D00FD60B3 /* BaseInterval2UIView.m */; };
 		3FB8F5B825C93BBE0010E9E6 /* ListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB8F5B725C93BBE0010E9E6 /* ListViewController.m */; };
 		3FD08FB025B0764A002F14AC /* KLineUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD08FAF25B0764A002F14AC /* KLineUIView.m */; };
+		9500DF9F2689F4A500025EF1 /* TimeSharingUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9500DF9E2689F4A500025EF1 /* TimeSharingUIView.m */; };
 		95127745264CF5400011EE7A /* ChartListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 95127744264CF5400011EE7A /* ChartListViewController.m */; };
 		957056B92591F88F00D26E0A /* MultiIntervalUIView2.m in Sources */ = {isa = PBXBuildFile; fileRef = 957056B82591F88F00D26E0A /* MultiIntervalUIView2.m */; };
 		957056C925931B0900D26E0A /* BaseAreaUIView2.m in Sources */ = {isa = PBXBuildFile; fileRef = 957056C825931B0900D26E0A /* BaseAreaUIView2.m */; };
@@ -83,6 +84,8 @@
 		3FB8F5B725C93BBE0010E9E6 /* ListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ListViewController.m; sourceTree = "<group>"; };
 		3FD08FAE25B0764A002F14AC /* KLineUIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KLineUIView.h; sourceTree = "<group>"; };
 		3FD08FAF25B0764A002F14AC /* KLineUIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KLineUIView.m; sourceTree = "<group>"; };
+		9500DF9D2689F4A500025EF1 /* TimeSharingUIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TimeSharingUIView.h; sourceTree = "<group>"; };
+		9500DF9E2689F4A500025EF1 /* TimeSharingUIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TimeSharingUIView.m; sourceTree = "<group>"; };
 		95127743264CF5400011EE7A /* ChartListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChartListViewController.h; sourceTree = "<group>"; };
 		95127744264CF5400011EE7A /* ChartListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChartListViewController.m; sourceTree = "<group>"; };
 		957056B72591F88F00D26E0A /* MultiIntervalUIView2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiIntervalUIView2.h; sourceTree = "<group>"; };
@@ -157,6 +160,8 @@
 				95A7D80925A3035800CA8B9F /* BasePointUIView.m */,
 				95982AF625CA8D3D0066F875 /* MultiAxiesLineUIView.h */,
 				95982AF725CA8D3D0066F875 /* MultiAxiesLineUIView.m */,
+				9500DF9D2689F4A500025EF1 /* TimeSharingUIView.h */,
+				9500DF9E2689F4A500025EF1 /* TimeSharingUIView.m */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -307,6 +312,7 @@
 			files = (
 				3F56A06B25272042002AA2D2 /* BasePieUIView.m in Sources */,
 				95127745264CF5400011EE7A /* ChartListViewController.m in Sources */,
+				9500DF9F2689F4A500025EF1 /* TimeSharingUIView.m in Sources */,
 				3F56A05125236ACE002AA2D2 /* BaseIntervalUIView.m in Sources */,
 				CC31D1762637BE0C008F6422 /* BaseAreaUIView3.m in Sources */,
 				3F5D90912535C5320091D8F7 /* CyclicPieUIView.m in Sources */,

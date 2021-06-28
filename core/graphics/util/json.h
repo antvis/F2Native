@@ -21,6 +21,8 @@ std::vector<float> ParseDashArray(const nlohmann::json &json, float ratio = 1.0f
 
 void ParseRoundings(const nlohmann::json &data, float *rst, float ratio = 1.0f);
 
+nlohmann::json Get(const nlohmann::json &obj, const std::string &key);
+
 } // namespace json
 } // namespace xg
 

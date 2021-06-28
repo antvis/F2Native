@@ -5,13 +5,8 @@
 
 using namespace xg;
 
-util::Point guide::GuideBase::GetPosition(XChart &chart, const std::string &xField, const std::string &yField) {
-    if(!this->config_.contains("position")) {
-        return util::Point(0, 0);
-    }
-
-    nlohmann::json &positionCfg = config_["position"];
-    if(!positionCfg.is_array() || positionCfg.size() != 2) {
+util::Point guide::GuideBase::GetPosition(XChart &chart, const nlohmann::json &position, const std::string &xField, const std::string &yField) {
+    if(!position.is_array() || position.size() != 2) {
         return util::Point(0, 0);
     }
 
@@ -19,8 +14,8 @@ util::Point guide::GuideBase::GetPosition(XChart &chart, const std::string &xFie
     scale::AbstractScale &yScale = chart.GetScale(yField);
 
     double x = 0;
-    if(positionCfg[0].is_string()) {
-        std::string xFieldCfg = positionCfg[0];
+    if(position[0].is_string()) {
+        std::string xFieldCfg = position[0];
         if(xFieldCfg == "min") {
             x = 0;
         } else if(xFieldCfg == "median") {
@@ -28,15 +23,15 @@ util::Point guide::GuideBase::GetPosition(XChart &chart, const std::string &xFie
         } else if(xFieldCfg == "max") {
             x = 1;
         } else {
-            x = xScale.Scale(positionCfg[0]);
+            x = xScale.Scale(position[0]);
         }
     } else {
-        x = xScale.Scale(positionCfg[0]);
+        x = xScale.Scale(position[0]);
     }
 
     double y = 0;
-    if(positionCfg[1].is_string()) {
-        std::string yFieldCfg = positionCfg[1];
+    if(position[1].is_string()) {
+        std::string yFieldCfg = position[1];
         if(yFieldCfg == "min") {
             y = 0;
         } else if(yFieldCfg == "median") {
@@ -44,10 +39,10 @@ util::Point guide::GuideBase::GetPosition(XChart &chart, const std::string &xFie
         } else if(yFieldCfg == "max") {
             y = 1;
         } else {
-            y = yScale.Scale(positionCfg[1]);
+            y = yScale.Scale(position[1]);
         }
     } else {
-        y = yScale.Scale(positionCfg[1]);
+        y = yScale.Scale(position[1]);
     }
 
     return chart.GetCoord().ConvertPoint(util::Point(x, y));

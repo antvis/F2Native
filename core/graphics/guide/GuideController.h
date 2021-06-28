@@ -11,11 +11,13 @@ namespace guide {
 
 class GuideController {
   public:
-    GuideController(shape::Group *container) : container_(container) {}
+    GuideController(shape::Group *container, shape::Group *backContainer)
+        : container_(container), backContainer_(backContainer) {}
 
     ~GuideController() {
         Clear();
         container_ = nullptr;
+        backContainer_ = nullptr;
     }
 
     // 分时图小旗子
@@ -26,6 +28,9 @@ class GuideController {
 
     // 线
     void Line(const std::string &json = "");
+
+    // 背景色
+    void Background(const std::string &json = "");
 
     void Clear() {
         this->container_->Clear();
@@ -39,6 +44,8 @@ class GuideController {
     std::vector<std::unique_ptr<GuideBase>> guides;
     std::vector<util::Rect> dangerRects = {};
     shape::Group *container_ = nullptr;
+    // backLayout 层
+    shape::Group *backContainer_ = nullptr;
 };
 } // namespace guide
 } // namespace xg

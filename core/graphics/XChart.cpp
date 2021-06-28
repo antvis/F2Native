@@ -38,7 +38,7 @@ XChart::XChart(const std::string &name, double width, double height, double rati
 
     axisController_ = new axis::AxisController(backLayout_->AddGroup());
     this->logTracer_->trace("%s", "new axisController instance.");
-    guideController_ = new guide::GuideController(frontLayout_->AddGroup());
+    guideController_ = new guide::GuideController(frontLayout_->AddGroup(), backLayout_->AddGroup());
     this->logTracer_->trace("%s", "new guideController instance.");
     legendController_ = new legend::LegendController(backLayout_->AddGroup());
     this->logTracer_->trace("%s", "new legendController instance");

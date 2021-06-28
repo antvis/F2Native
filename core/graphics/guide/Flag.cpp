@@ -15,7 +15,7 @@ void Flag::Render(XChart &chart, shape::Group *container, canvas::CanvasContext 
     std::vector<std::string> yFields = chart.getYScaleFields();
     const std::string yField = yFields[0];
 
-    util::Point position = this->GetPosition(chart, xField, yField);
+    util::Point position = this->GetPosition(chart, json::Get(this->config_, "position"), xField, yField);
 
     const float devicePixelRatio = context.GetDevicePixelRatio();
     float paddingLeft = 0.f, paddingRight = 0.f, paddingTop = 0.f, paddingBottom = 0.f;

@@ -29,6 +29,11 @@ public class F2Guide {
         mChart.getChartProxy().setGuideType("line", config.build().toJsonString());
     }
 
+    public void background(GuideBackgroundConfigBuilder config) {
+        mChart.assertRenderThread();
+        mChart.getChartProxy().setGuideType("background", config.build().toJsonString());
+    }
+
     public static class GuideFlagConfigBuilder extends F2Chart.TextConfigBuilder<GuideFlagConfigBuilder> {
         private static final String KEY_CONTENT = "content";
         private static final String KEY_PADDING = "padding";
@@ -133,5 +138,35 @@ public class F2Guide {
         public GuideLineConfigBuilder dash(double[] dash) {
             return setOption(KEY_DASH, dash);
         }
+    }
+
+    public static class GuideBackgroundConfigBuilder extends F2Config.Builder<GuideBackgroundConfigBuilder> {
+        private static final String KEY_LEFT_BOTTOM = "leftBottom";
+        private static final String KEY_RIGHT_TOP = "rightTop";
+        private static final String KEY_COLOR = "color";
+        public GuideBackgroundConfigBuilder leftBottom(String[] position ) {
+            return setOption(KEY_LEFT_BOTTOM, position);
+        }
+
+        public GuideBackgroundConfigBuilder leftBottom(JSONArray position ) {
+            return setOption(KEY_LEFT_BOTTOM, position);
+        }
+
+        public GuideBackgroundConfigBuilder rightTop(String[] position ) {
+            return setOption(KEY_RIGHT_TOP, position);
+        }
+
+        public GuideBackgroundConfigBuilder rightTop(JSONArray position ) {
+            return setOption(KEY_RIGHT_TOP, position);
+        }
+
+        public GuideBackgroundConfigBuilder color(String color) {
+            return setOption(KEY_COLOR, color);
+        }
+
+        public GuideBackgroundConfigBuilder color(F2Util.ColorGradient color) {
+            return setOption(KEY_COLOR, color);
+        }
+
     }
 }

@@ -727,6 +727,9 @@ static jint SetChartGuideType(JNIEnv *env, jclass clazz, jlong chart, jstring ty
     } else if(_type == "line") {
         _chart->Guide().Line(std::move(_config));
         F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartGuideLine");
+    } else if(_type == "background") {
+        _chart->Guide().Background(std::move(_config));
+        F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartGuideBackground");
     }
     return 0;
 }

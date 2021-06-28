@@ -11,7 +11,7 @@ void guide::Text::Render(XChart &chart, shape::Group *container, canvas::CanvasC
     std::vector<std::string> yFields = chart.getYScaleFields();
     const std::string yField = yFields[0];
 
-    util::Point position = this->GetPosition(chart, xField, yField);
+    util::Point position = this->GetPosition(chart, json::Get(this->config_, "position"), xField, yField);
 
     std::string textColor = config_["textColor"];
     std::string content = config_["content"];

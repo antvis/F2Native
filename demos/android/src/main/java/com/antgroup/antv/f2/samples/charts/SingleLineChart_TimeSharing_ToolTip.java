@@ -7,7 +7,6 @@ import com.antgroup.antv.f2.samples.Utils;
 import org.json.JSONArray;
 
 /**
- * 基础柱状图-1
  *
  * @author qingyuan.yl
  * @date 2020-09-27

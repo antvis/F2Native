@@ -38,4 +38,11 @@
     };
 }
 
+- (F2Guide * (^)(NSDictionary *config))background {
+    return ^id(NSDictionary *config) {
+        self->_guide->Background([XGSafeJson([F2Utils toJsonString:config]) UTF8String]);
+        return self;
+    };
+}
+
 @end

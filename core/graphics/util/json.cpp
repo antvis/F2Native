@@ -35,5 +35,13 @@ void ParseRoundings(const nlohmann::json &data, float *rst, float ratio) {
     }
 }
 
+nlohmann::json Get(const nlohmann::json &obj, const std::string &key) {
+    if(obj.is_object() && obj.contains(key)) {
+        return obj[key];
+    } else {
+        return nlohmann::json();
+    }
+}
+
 } // namespace json
 } // namespace xg

@@ -1,17 +1,11 @@
 package com.antgroup.antv.f2;
 
 import android.content.Context;
-import android.os.Build;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Looper;
 import android.view.Surface;
 
 import com.taobao.gcanvas.GCanvasJNI;
-
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author qingyuan.yl
@@ -36,9 +30,8 @@ final class NativeCanvasHolder {
 
     private F2Config mCanvasOptions;
 
-    private HandlerThread mRenderThread;
+    private F2RenderThread mRenderThread;
 
-    private Handler mRenderHandler;
     private Handler mUIHandler;
 
     private int surfaceWidth = 0;
@@ -50,16 +43,12 @@ final class NativeCanvasHolder {
 
     private String mCanvasId;
 
-    private boolean mAsyncRender = true;
-    private List<WeakReference<Runnable>> mRenderTasks = new ArrayList<>();
-
-
-    NativeCanvasHolder(Context context, F2Config options) {
+    NativeCanvasHolder(Context context, F2Config options, F2RenderThreadFactory threadFactory) {
         mCanvasOptions = options;
 
         mCanvasId = options.getStringField(F2Constants.CANVAS_ID);
 
-        onPreCreate(context);
+        onPreCreate(context, threadFactory);
 
         mNativeCanvasProxy = new NativeCanvasProxy(options);
     }
@@ -72,20 +61,16 @@ final class NativeCanvasHolder {
         }
     }
 
-    private void onPreCreate(Context context) {
+    private void onPreCreate(Context context, F2RenderThreadFactory threadFactory) {
         GCanvasJNI.load();
         NativeCanvasProxy.load();
 
-        mAsyncRender = mCanvasOptions.getBoolField(F2CanvasView.ConfigBuilder.KEY_ASYNC_RENDER, true);
-
-        if (mAsyncRender) {
-            mRenderThread = new HandlerThread("t-" + mCanvasId);
-            mRenderThread.start();
-            mRenderHandler = new Handler(mRenderThread.getLooper());
-        } else {
-            // 同步操作为当前线程(不一定是主线程)
-            mRenderHandler = new Handler(Looper.myLooper());
+        if (threadFactory == null) {
+            threadFactory = new F2StandaloneRenderThread.Factory();
         }
+
+        mRenderThread = threadFactory.createRenderThread(mCanvasOptions);
+        mRenderThread.start();
         mUIHandler = new Handler(Looper.getMainLooper());
         hasDestroy = false;
     }
@@ -173,24 +158,22 @@ final class NativeCanvasHolder {
 
     void destroy(final Runnable callback) {
         if (hasDestroy) {
+            innerLog("#destroy");
             if (callback != null)
                 callback.run();
             return;
         }
         hasDestroy = true;
-        removeAllIdleTasks();
         runOnRenderThread(new Runnable() {
             @Override
             public void run() {
-                innerLog("#destroy");
+                innerLog("#destroyInner");
                 handleSurfaceDestroy();
                 if (mNativeCanvasProxy != null) {
                     mNativeCanvasProxy.destroy();
                 }
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR && mRenderThread != null) {
-                    mRenderThread.quit();
-                }
+                mRenderThread.askQuit();
 
                 dispatchCanvasDestroyed();
 
@@ -230,6 +213,10 @@ final class NativeCanvasHolder {
 
     final NativeCanvasProxy getNativeCanvasProxy() {
         return mNativeCanvasProxy;
+    }
+
+    F2RenderThread getRenderThread() {
+        return mRenderThread;
     }
 
     private void saveSurfaceSize(int width, int height) {
@@ -274,18 +261,11 @@ final class NativeCanvasHolder {
     }
 
     final void runOnRenderThread(Runnable runnable) {
-        if (mRenderHandler == null) return;
-        if (mRenderHandler.getLooper() == Looper.myLooper()) {
-            runnable.run();
-        } else {
-            mRenderHandler.post(runnable);
-            mRenderTasks.add(new WeakReference<Runnable>(runnable));
-        }
+        mRenderThread.immediatePost(runnable);
     }
 
     final boolean isOnRenderThread() {
-        if (mRenderHandler == null) return false;
-        return (mRenderHandler.getLooper() == Looper.myLooper());
+        return mRenderThread.isOnRenderThread();
     }
 
     private final void runOnUIThread(Runnable runnable) {
@@ -293,18 +273,6 @@ final class NativeCanvasHolder {
             runnable.run();
         } else {
             mUIHandler.post(runnable);
-        }
-    }
-
-    private void removeAllIdleTasks() {
-        if (mRenderHandler != null && !mRenderTasks.isEmpty()) {
-            for (WeakReference<Runnable> renderTask : mRenderTasks) {
-                Runnable task = null;
-                if ((task = renderTask.get()) != null) {
-                    mRenderHandler.removeCallbacks(task);
-                }
-            }
-            mRenderTasks.clear();
         }
     }
 

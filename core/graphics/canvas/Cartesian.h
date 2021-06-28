@@ -1,10 +1,10 @@
-#ifndef XG_GRAPHICS_COORD_CARTESIAN_H
-#define XG_GRAPHICS_COORD_CARTESIAN_H
-
 #include "graphics/canvas/Coord.h"
 #include "graphics/util/Matrix.h"
 #include "graphics/util/Point.h"
 #include "graphics/util/Vector2d.h"
+
+#ifndef XG_GRAPHICS_COORD_CARTESIAN_H
+#define XG_GRAPHICS_COORD_CARTESIAN_H
 
 namespace xg {
 namespace canvas {

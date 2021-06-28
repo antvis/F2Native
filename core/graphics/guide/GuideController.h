@@ -1,10 +1,8 @@
-#ifndef XG_GRAPHICS_GUIDE_CONTROLLER_H
-#define XG_GRAPHICS_GUIDE_CONTROLLER_H
-
-
 #include "graphics/guide/GuideBase.h"
 #include "graphics/shape/Group.h"
 
+#ifndef XG_GRAPHICS_GUIDE_CONTROLLER_H
+#define XG_GRAPHICS_GUIDE_CONTROLLER_H
 
 namespace xg {
 class XChart;
@@ -21,12 +19,13 @@ class GuideController {
     }
 
     // 分时图小旗子
-    
     void Flag(const std::string &json = "");
 
     // 文字
-
     void Text(const std::string &json = "");
+
+    // 线
+    void Line(const std::string &json = "");
 
     void Clear() {
         this->container_->Clear();

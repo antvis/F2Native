@@ -581,16 +581,18 @@ static const JNINativeMethod native_canvas_methods[] = {{
 
 #if defined(TARGET_ALIPAY)
 
-static void NativeCanvasSwap(JNIEnv *env, jclass clazz, jlong view) {
-    ag::Canvas *canvas = reinterpret_cast<ag::Canvas *>(view);
-    canvas->swap();
-}
-
-static const JNINativeMethod native_canvas_methods[] = {{
-    .name = "nSwap",
-    .signature = "(J)V",
-    .fnPtr = reinterpret_cast<void *>(NativeCanvasSwap),
-}};
+// static void NativeCanvasSwap(JNIEnv *env, jclass clazz, jlong view) {
+//    ag::Canvas *canvas = reinterpret_cast<ag::Canvas *>(view);
+//    canvas->swap();
+//}
+//
+// static const JNINativeMethod native_canvas_methods[] = {
+//        {
+//    .name = "nSwap",
+//    .signature = "(J)V",
+//    .fnPtr = reinterpret_cast<void *>(NativeCanvasSwap),
+//}
+//};
 
 #endif // TARGET_ALIPAY
 static ScopedJavaGlobalRef<jclass> *gNativeCanvasProxyClass = nullptr;
@@ -605,10 +607,11 @@ static jlong CreateNativeChart(JNIEnv *env, jclass clazz, jstring name, jdouble 
     return reinterpret_cast<jlong>(chart);
 }
 
-static jint SetChartCanvas(JNIEnv *env, jclass clazz, jlong chart, jlong view) {
+static jint SetChartCanvas(JNIEnv *env, jclass clazz, jlong chart, jlong view, jstring requestFrameHandleId) {
     xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
-
-    F2_LOG_I("#SetChartCanvas", "bind canvas point:%lu", view);
+    std::string _requestFrameHandleId = JavaStringToString(env, requestFrameHandleId);
+    F2_LOG_I("#SetChartCanvas", "bind canvas requestFrameHandleId: %s", _requestFrameHandleId.data());
+    _chart->SetRequestFrameFuncId(_requestFrameHandleId);
 
 #if defined(TARGET_STANDALONE)
     F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
@@ -619,6 +622,7 @@ static jint SetChartCanvas(JNIEnv *env, jclass clazz, jlong chart, jlong view) {
     auto ctx = (ag::CanvasRenderingContext2D *)canvas->getContext("2d");
     _chart->SetCanvasContext(ctx);
 #endif
+
     return 0;
 }
 
@@ -673,6 +677,15 @@ static jint SetChartCoord(JNIEnv *env, jclass clazz, jlong chart, jstring config
     return 0;
 }
 
+static jint SetChartAnimate(JNIEnv *env, jclass clazz, jlong chart, jstring config) {
+    std::string _config = JavaStringToString(env, config);
+
+    xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
+    _chart->Animate(std::move(_config));
+    F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartAnimate");
+    return 0;
+}
+
 static jint SetChartInteraction(JNIEnv *env, jclass clazz, jlong chart, jstring type, jstring config) {
     std::string _type = JavaStringToString(env, type);
     nlohmann::json cfg = nlohmann::json::parse(JavaStringToString(env, config), nullptr, false);
@@ -700,22 +713,21 @@ static jint SetChartLegend(JNIEnv *env, jclass clazz, jlong chart, jstring field
     return 0;
 }
 
-static jint SetChartGuideText(JNIEnv *env, jclass clazz, jlong chart, jstring config) {
+static jint SetChartGuideType(JNIEnv *env, jclass clazz, jlong chart, jstring type, jstring config) {
     xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
 
+    std::string _type = JavaStringToString(env, type);
     std::string _config = JavaStringToString(env, config);
-
-    _chart->Guide().Text(std::move(_config));
-    F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartGuideText");
-    return 0;
-}
-
-static jint SetChartGuideFlag(JNIEnv *env, jclass clazz, jlong chart, jstring config) {
-    xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
-
-    std::string _config = JavaStringToString(env, config);
-    _chart->Guide().Flag(std::move(_config));
-    F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartGuideFlag");
+    if(_type == "text") {
+        _chart->Guide().Text(std::move(_config));
+        F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartGuideText");
+    } else if(_type == "flag") {
+        _chart->Guide().Flag(std::move(_config));
+        F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartGuideFlag");
+    } else if(_type == "line") {
+        _chart->Guide().Line(std::move(_config));
+        F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartGuideLine");
+    }
     return 0;
 }
 
@@ -756,6 +768,13 @@ static jstring GetChartRenderDumpInfo(JNIEnv *env, jclass clazz, jlong chart) {
     F2_LOG_I(_chart->GetChartName(), "%s", "#:GetChartRenderDumpInfo");
     std::string dumpInfo = _chart->GetRenderInfo();
     return env->NewStringUTF(dumpInfo.data());
+}
+
+static jstring GetChartScaleTicks(JNIEnv *env, jclass clazz, jlong chart, jstring field) {
+    xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
+    std::string _field = JavaStringToString(env, field);
+    std::string ticks = _chart->GetScaleTicks(_field);
+    return env->NewStringUTF(ticks.data());
 }
 
 static jint DestroyChart(JNIEnv *env, jclass clazz, jlong chart) {
@@ -859,6 +878,30 @@ static jint SetChartGeomStyle(JNIEnv *env, jclass clazz, jlong geom, jstring con
     return 0;
 }
 
+static jint SetChartGeomAttrs(JNIEnv *env, jclass clazz, jlong geom, jstring config) {
+    xg::geom::AbstractGeom *_geom = reinterpret_cast<xg::geom::AbstractGeom *>(geom);
+    std::string _configStr = JavaStringToString(env, config);
+    _geom->SetAttrs(std::move(_configStr));
+    return 0;
+}
+
+static jint ExecuteCommand(JNIEnv *env, jclass clazz, jlong commandHandle) {
+    xg::func::Command *command = reinterpret_cast<xg::func::Command *>(commandHandle);
+    if(command != nullptr) {
+        command->run();
+        delete command;
+    }
+    return 0;
+}
+
+static jint DeallocCommand(JNIEnv *env, jclass clazz, jlong commandHandle) {
+    xg::func::Command *command = reinterpret_cast<xg::func::Command *>(commandHandle);
+    if(command != nullptr) {
+        delete command;
+    }
+    return 0;
+}
+
 static jint SetChartGeomShapes(JNIEnv *env, jclass clazz, jlong geom, jstring type, jstring field, jobjectArray shapes) {
     xg::geom::AbstractGeom *_geom = reinterpret_cast<xg::geom::AbstractGeom *>(geom);
     std::string _field = JavaStringToString(env, field);
@@ -895,7 +938,7 @@ static const JNINativeMethod native_chart_methods[] = {{
                                                        },
                                                        {
                                                            .name = "nSetCanvasView",
-                                                           .signature = "(JJ)I",
+                                                           .signature = "(JJLjava/lang/String;)I",
                                                            .fnPtr = reinterpret_cast<void *>(SetChartCanvas),
                                                        },
                                                        {
@@ -929,6 +972,11 @@ static const JNINativeMethod native_chart_methods[] = {{
                                                            .fnPtr = reinterpret_cast<void *>(SetChartCoord),
                                                        },
                                                        {
+                                                           .name = "nSetAnimate",
+                                                           .signature = "(JLjava/lang/String;)I",
+                                                           .fnPtr = reinterpret_cast<void *>(SetChartAnimate),
+                                                       },
+                                                       {
                                                            .name = "nSetInteraction",
                                                            .signature = "(JLjava/lang/String;Ljava/lang/String;)I",
                                                            .fnPtr = reinterpret_cast<void *>(SetChartInteraction),
@@ -944,14 +992,9 @@ static const JNINativeMethod native_chart_methods[] = {{
                                                            .fnPtr = reinterpret_cast<void *>(SetChartLegend),
                                                        },
                                                        {
-                                                           .name = "nSetGuideText",
-                                                           .signature = "(JLjava/lang/String;)I",
-                                                           .fnPtr = reinterpret_cast<void *>(SetChartGuideText),
-                                                       },
-                                                       {
-                                                           .name = "nSetGuideFlag",
-                                                           .signature = "(JLjava/lang/String;)I",
-                                                           .fnPtr = reinterpret_cast<void *>(SetChartGuideFlag),
+                                                           .name = "nSetGuideType",
+                                                           .signature = "(JLjava/lang/String;Ljava/lang/String;)I",
+                                                           .fnPtr = reinterpret_cast<void *>(SetChartGuideType),
                                                        },
                                                        {
                                                            .name = "nSendTouchEvent",
@@ -967,6 +1010,11 @@ static const JNINativeMethod native_chart_methods[] = {{
                                                            .name = "nGetRenderDumpInfo",
                                                            .signature = "(J)Ljava/lang/String;",
                                                            .fnPtr = reinterpret_cast<void *>(GetChartRenderDumpInfo),
+                                                       },
+                                                       {
+                                                           .name = "nGetScaleTicks",
+                                                           .signature = "(JLjava/lang/String;)Ljava/lang/String;",
+                                                           .fnPtr = reinterpret_cast<void *>(GetChartScaleTicks),
                                                        },
                                                        {
                                                            .name = "nDestroy",
@@ -1039,6 +1087,21 @@ static const JNINativeMethod native_chart_methods[] = {{
                                                            .name = "nGeomStyle",
                                                            .signature = "(JLjava/lang/String;)I",
                                                            .fnPtr = reinterpret_cast<void *>(SetChartGeomStyle),
+                                                       },
+                                                       {
+                                                           .name = "nGeomAttrs",
+                                                           .signature = "(JLjava/lang/String;)I",
+                                                           .fnPtr = reinterpret_cast<void *>(SetChartGeomAttrs),
+                                                       },
+                                                       {
+                                                           .name = "nExecuteCommand",
+                                                           .signature = "(J)I",
+                                                           .fnPtr = reinterpret_cast<void *>(ExecuteCommand),
+                                                       },
+                                                       {
+                                                           .name = "nDeallocCommand",
+                                                           .signature = "(J)I",
+                                                           .fnPtr = reinterpret_cast<void *>(DeallocCommand),
                                                        }};
 //###################### F2Chart END ###################################
 
@@ -1080,6 +1143,7 @@ static jstring nCreateFunction(JNIEnv *env, jclass clazz, jobject jhandle) {
 
 static void nFunctionBindChart(JNIEnv *env, jclass clazz, jstring jfunctionId, jlong jchart) {
     std::string functionId = JavaStringToString(env, jfunctionId);
+    F2_LOG_I("#nFunctionBindChart", "functionId: %s", functionId.data());
     xg::func::F2Function *function = xg::func::FunctionManager::GetInstance().Find(functionId);
 
     if(function != nullptr) {
@@ -1159,10 +1223,10 @@ static bool OnJniLoad(JNIEnv *env) {
         return false;
     }
 #elif defined(TARGET_ALIPAY)
-    if(!RegisterJNIInterface(env, &gNativeCanvasProxyClass, "com/antgroup/antv/f2/F2CanvasView", native_canvas_methods,
-                             xg_jni_arraysize(native_canvas_methods))) {
-        return false;
-    }
+//    if(!RegisterJNIInterface(env, &gNativeCanvasProxyClass, "com/antgroup/antv/f2/F2CanvasView", native_canvas_methods,
+//                             xg_jni_arraysize(native_canvas_methods))) {
+//        return false;
+//    }
 #endif
     F2_LOG_I("#OnJniLoad", "%s", "register canvas view success");
 

@@ -26,7 +26,8 @@ class GeomShapeBase {
                       const nlohmann::json &data,
                       std::size_t start,
                       std::size_t end,
-                      xg::shape::Group &container) = 0;
+                      xg::shape::Group &container,
+                      bool connectNulls) = 0;
 
     // // line暂未用到
     util::Point ParsePoint(canvas::coord::AbstractCoord &coord, const util::Point &point) {

@@ -28,5 +28,5 @@ bool interaction::Pan::OnPan(event::Event &event) {
 
 bool interaction::Pan::onPanEnd(event::Event &event) {
     this->chart_->interactionContext_->UpdateTicks();
-    return true;
+    return false;
 }

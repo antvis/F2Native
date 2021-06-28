@@ -13,10 +13,6 @@ using namespace std;
 namespace xg {
 namespace geom {
 
-static vector<xg::attr::AttrType> GROUP_ATTRS = {xg::attr::AttrType::Color, xg::attr::AttrType::Size, xg::attr::AttrType::Shape};
-static string FIELD_ORIGIN = "_origin";
-static string FIELD_ORIGIN_Y = "_originY";
-
 static vector<string> ParseFields(const string &field) {
     if(field.find('*') != field.npos) {
         vector<string> v;
@@ -44,7 +40,7 @@ xg::geom::AbstractGeom &xg::geom::AbstractGeom::Position(const string &field) {
 xg::geom::AbstractGeom &xg::geom::AbstractGeom::Color(const string &field, const vector<string> &colors) {
     this->tracker_->trace("geom#%s  Color: %s colors: %lu", type_.c_str(), field.c_str(), colors.size());
     vector<string> fields(ParseFields(field));
-    std::unique_ptr<attr::AttrBase> attr = xg::make_unique<attr::Color>(fields, colors.empty() ? xg::GLOBAL_COLORS : colors);
+    std::unique_ptr<attr::AttrBase> attr = xg::make_unique<attr::Color>(fields, colors.empty() ? COLORS : colors);
     attrs_[AttrType::Color] = std::move(attr);
     return *this;
 }
@@ -58,7 +54,8 @@ xg::geom::AbstractGeom &xg::geom::AbstractGeom::Color(const string &color) {
 
 xg::geom::AbstractGeom &xg::geom::AbstractGeom::Size(const string &field, const vector<float> &sizes) {
     this->tracker_->trace("geom#%s  Size: %s sizes: %lu", type_.c_str(), field.c_str(), sizes.size());
-    std::unique_ptr<attr::AttrBase> attr = xg::make_unique<attr::Size>(field, sizes.empty() ? xg::GLOBAL_SIZES : sizes);
+    std::unique_ptr<attr::AttrBase> attr = xg::make_unique<attr::Size>(field, sizes.empty() ? GLOBAL_SIZES : sizes);
+
     attrs_[AttrType::Size] = std::move(attr);
     return *this;
 }
@@ -108,12 +105,31 @@ const std::string &xg::geom::AbstractGeom::GetYScaleField() { return attrs_[Attr
 void xg::geom::AbstractGeom::Init(XChart *chart) {
     // InitAttrs(*chart);
     this->tracker_->trace("geom#init %s", type_.c_str());
+    InitAttributes(*chart);
     ProcessData(*chart);
 }
 
 #pragma mark protected
+void xg::geom::AbstractGeom::InitAttributes(XChart &chart) {
+    if(this->attrs_.find(AttrType::Position) == this->attrs_.end()) {
+        return;
+    }
+
+    if(this->attrs_.find(AttrType::Adjust) == this->attrs_.end()) {
+        return;
+    }
+    std::unique_ptr<attr::AttrBase> &adjustAttr = attrs_[attr::AttrType::Adjust];
+    attr::Adjust *adjust = static_cast<attr::Adjust *>(adjustAttr.get());
+    if(chart.GetCoord().IsTransposed() && chart.GetCoord().GetType() == xg::canvas::coord::CoordType::Polar && adjust->GetAdjust() == "stack") {
+        auto &yScale = chart.GetScale(this->GetYScaleField());
+        if(yScale.values.size() > 0) {
+            yScale.Change({{"nice", false}, {"min", 0}, {"max", xg::util::JsonArrayMax(yScale.values)}});
+        }
+    }
+}
+
 void xg::geom::AbstractGeom::ProcessData(XChart &chart) {
-    long timestamp = xg::CurrentTimestampAtMM();
+    auto timestamp = xg::CurrentTimestampAtMM();
     dataArray_ = GroupData(chart);
 
     std::unique_ptr<attr::AttrBase> &adjustAttr = attrs_[attr::AttrType::Adjust];
@@ -195,7 +211,7 @@ void xg::geom::AbstractGeom::Paint(XChart *chart) {
 
     this->BeforeMapping(*chart, dataArray_);
 
-    long timestamp = CurrentTimestampAtMM();
+    auto timestamp = CurrentTimestampAtMM();
     auto &xScale = chart->GetScale(GetXScaleField());
 
     for(std::size_t i = 0; i < dataArray_.size(); ++i) {
@@ -231,7 +247,7 @@ void xg::geom::AbstractGeom::Mapping(XChart &chart, nlohmann::json &groupData, s
 }
 
 void xg::geom::AbstractGeom::Draw(XChart &chart, const nlohmann::json &groupData, std::size_t start, std::size_t end) const {
-    chart.geomShapeFactory_->DrawGeomShape(chart, this->type_, /*subShapeType*/ "", groupData, start, end, *container_);
+    chart.geomShapeFactory_->DrawGeomShape(chart, this->type_, /*subShapeType*/ "", groupData, start, end, *container_, this->connectNulls_);
 }
 
 bool xg::geom::AbstractGeom::ContainsAttr(attr::AttrType type) {
@@ -252,7 +268,7 @@ double xg::geom::AbstractGeom::GetYMinValue(XChart &chart) {
     double _min = yScale.min;
     double _max = yScale.max;
     double value = _min;
-    if(this->startOnZero_) {
+    if(styleConfig_.contains("startOnZero") && styleConfig_["startOnZero"] == true) {
         if(_max <= 0 && _min <= 0) {
             value = _max;
         } else {
@@ -332,5 +348,14 @@ nlohmann::json xg::geom::AbstractGeom::GetSnapRecords(XChart *chart, util::Point
 void xg::geom::AbstractGeom::Clear() {
     if(this->container_ != nullptr) {
         this->container_->Clear();
+    }
+}
+
+void xg::geom::AbstractGeom::SetAttrs(const std::string &_attrs) noexcept {
+    nlohmann::json cfg = xg::json::ParseString(_attrs);
+    if(cfg.is_object() && cfg.size() > 0) {
+        if(cfg.contains("connectNulls") && cfg["connectNulls"].is_boolean()) {
+            this->connectNulls_ = cfg["connectNulls"];
+        }
     }
 }

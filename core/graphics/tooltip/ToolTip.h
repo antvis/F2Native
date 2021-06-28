@@ -8,6 +8,7 @@
 #include "graphics/shape/Rect.h"
 #include "graphics/shape/Text.h"
 #include "graphics/util/Point.h"
+#include "graphics/util/json.h"
 #include <nlohmann/json.hpp>
 
 #ifndef XG_GRAPHICS_TOOLTIP_H
@@ -20,82 +21,122 @@ class ToolTip {
     ToolTip(shape::Group *container, nlohmann::json cfg) : container_(container), config_(cfg) {}
     ~ToolTip() { container_ = nullptr; }
 
-    void SetPosition(canvas::coord::AbstractCoord &coord,
-                     canvas::CanvasContext &canvasContext,
-                     util::Point point,
-                     nlohmann::json &tooltipItems,
-                     const std::string &yTip) {
+    void SetPosition(canvas::coord::AbstractCoord &coord, canvas::CanvasContext &canvasContext, util::Point point, const nlohmann::json &tooltipItems) {
         this->_ShowCrosshairs(coord, canvasContext, point, true);
-        this->SetYTipContent(coord, canvasContext, yTip, point);
+        this->SetYTipContent(coord, canvasContext, tooltipItems, point);
     }
 
-    void SetXTipContent(canvas::CanvasContext &canvasContext, const std::string &content, util::Point point) {
+    float GetXTipRectOffsetX(const std::string &textAlign, float fontWidth) {
+        if(textAlign == "start") {
+            return fontWidth / 2;
+        } else if(textAlign == "end") {
+            return -fontWidth / 2;
+        } else {
+            return 0;
+        }
+    }
+
+    float GetXTipRectOffsetY(const std::string &textBaseline, float fontSize) {
+        if(textBaseline == "top") {
+            return -fontSize;
+        } else if(textBaseline == "middle") {
+            return -fontSize / 2;
+        } else {
+            return 0;
+        }
+    }
+
+    void SetXTipContent(canvas::CanvasContext &canvasContext, const nlohmann::json &tooltipItems, const util::Point &point, const util::Point &xAxis) {
         if(!config_["xTip"].is_object()) {
             return;
         }
+        const std::string &content = tooltipItems["title"];
         nlohmann::json &backCfg = config_["background"];
-        std::string backColor = backCfg["fill"];
+        const std::string &backColor = backCfg["fill"];
         nlohmann::json &padding = backCfg["padding"];
         double radius = backCfg["radius"].get<double>() * canvasContext.GetDevicePixelRatio();
         double paddingH = padding[0].get<double>() * canvasContext.GetDevicePixelRatio();
         double paddingV = padding[1].get<double>() * canvasContext.GetDevicePixelRatio();
 
-        nlohmann::json &xTipCfg = config_["xTip"];
+        const nlohmann::json &xTipCfg = tooltipItems["xTip"];
+        const std::string &color = xTipCfg["fill"];
+        const std::string &textAlign = xTipCfg["textAlign"];
+        const std::string &textBaseline = xTipCfg["textBaseline"];
         double fontSize = xTipCfg["fontSize"];
+        bool inner = xTipCfg["inner"];
         fontSize *= canvasContext.GetDevicePixelRatio();
         float width = canvasContext.MeasureTextWidth(content);
+        float rectY = inner ? point.y - fontSize - paddingV * 2 : point.y;
+        float textY = inner ? point.y - paddingV: point.y + fontSize + paddingV;
+        float rectOffsetX = GetXTipRectOffsetX(textAlign, width);
+        float rectOffsetY = GetXTipRectOffsetY(textBaseline, fontSize);
 
+        //左右边界限制
+        float left = point.x - width / 2 - paddingH + rectOffsetX;
+        float right = point.x + width / 2 + paddingH + rectOffsetX;
+        float limitX = fmax(left, xAxis.x);
+        if (right > xAxis.y) {
+            limitX = xAxis.y - width - paddingH * 2;
+        }
+        
         std::unique_ptr<shape::Rect> backRect =
-            std::make_unique<shape::Rect>(util::Point{point.x - width / 2 - paddingH, point.y},
+            std::make_unique<shape::Rect>(util::Point{limitX, rectY + rectOffsetY},
                                           util::Size{width + paddingH * 2, fontSize + paddingV * 2}, backColor);
         //        if(radius > 0) {
         //            backRect->radius_ = radius;
         //        }
         container_->AddElement(std::move(backRect));
 
-        std::string color = xTipCfg["fill"];
-        std::string textAlign = xTipCfg["textAlign"];
-        std::string textBaseline = xTipCfg["textBaseline"];
-        std::unique_ptr<shape::Text> xTip =
-            std::make_unique<shape::Text>(content, util::Point{point.x, point.y + fontSize + paddingV}, fontSize, color, color);
+        limitX +=  width / 2 + paddingH - rectOffsetX;
+        std::unique_ptr<shape::Text> xTip = std::make_unique<shape::Text>(content, util::Point{limitX, textY}, fontSize, color, color);
         xTip->SetTextAlign(textAlign);
         xTip->SetTextBaseline(textBaseline);
         container_->AddElement(std::move(xTip));
     }
 
-    void SetYTipContent(canvas::coord::AbstractCoord &coord, canvas::CanvasContext &canvasContext, std::string content, util::Point point) {
+    void SetYTipContent(canvas::coord::AbstractCoord &coord,
+                        canvas::CanvasContext &canvasContext,
+                        const nlohmann::json &tooltipItems,
+                        const util::Point &point) {
         if(!config_["yTip"].is_object()) {
             return;
         }
+        const std::string &content = tooltipItems["value"];
         nlohmann::json &backCfg = config_["background"];
-        std::string backColor = backCfg["fill"];
+        const std::string &backColor = backCfg["fill"];
         nlohmann::json &padding = backCfg["padding"];
         double paddingH = padding[0].get<double>() * canvasContext.GetDevicePixelRatio();
         double paddingV = padding[1].get<double>() * canvasContext.GetDevicePixelRatio();
 
-        nlohmann::json &yTipCfg = config_["yTip"];
+        const nlohmann::json &yTipCfg = tooltipItems["yTip"];
+        const std::string &color = yTipCfg["fill"];
+        const std::string &textAlign = yTipCfg["textAlign"];
+        const std::string &textBaseline = yTipCfg["textBaseline"];
         double fontSize = yTipCfg["fontSize"];
+        bool inner = yTipCfg["inner"];
         fontSize *= canvasContext.GetDevicePixelRatio();
         float width = canvasContext.MeasureTextWidth(content);
+        float rectX = inner ? coord.GetXAxis().x : coord.GetXAxis().x - width - paddingH * 2;
+        float textX = inner ? coord.GetXAxis().x + width / 2 + paddingH : coord.GetXAxis().x - width / 2 - paddingH;
+        float rectOffsetX = GetXTipRectOffsetX(textAlign, width);
+        float rectOffsetY = GetXTipRectOffsetY(textBaseline, fontSize);
 
         std::unique_ptr<shape::Rect> backRect =
-            std::make_unique<shape::Rect>(util::Point{coord.GetXAxis().x - width - paddingH * 2, point.y - fontSize / 2 - paddingV},
+            std::make_unique<shape::Rect>(util::Point{rectX + rectOffsetX, point.y - fontSize / 2 - paddingV + rectOffsetY},
                                           util::Size{width + paddingH * 2, fontSize + paddingV * 2}, backColor);
         container_->AddElement(std::move(backRect));
 
-        std::string color = yTipCfg["fill"];
-        std::string textAlign = yTipCfg["textAlign"];
-        std::string textBaseline = yTipCfg["textBaseline"];
         std::unique_ptr<shape::Text> yTip =
-            std::make_unique<shape::Text>(content, util::Point{coord.GetXAxis().x - width / 2 - paddingH, point.y + fontSize / 2},
-                                          fontSize, color, color);
+            std::make_unique<shape::Text>(content, util::Point{textX, point.y + fontSize / 2}, fontSize, color, color);
         yTip->SetTextAlign(textAlign);
         yTip->SetTextBaseline(textBaseline);
         container_->AddElement(std::move(yTip));
     }
 
-    void Show(canvas::CanvasContext &canvasContext) {
-
+    void Show(canvas::CanvasContext &canvasContext, utils::Tracer *tracer) {
+        if(tracer != nullptr) {
+            tracer->trace("tooltip#Show container: %lu ", container_->children_.size());
+        }
         container_->Show();
         container_->Draw(canvasContext);
     }
@@ -108,10 +149,10 @@ class ToolTip {
             return;
         }
 
-        nlohmann::json &crosshairsStyle = config_["crosshairsStyle"];
-        std::string lineColor = crosshairsStyle["stroke"];
+        const nlohmann::json &crosshairsStyle = config_["crosshairsStyle"];
+        const std::string &lineColor = crosshairsStyle["stroke"];
         double lineWidth = crosshairsStyle["lineWidth"];
-        std::string type = crosshairsStyle["type"];
+        const std::string &type = crosshairsStyle["type"];
 
         lineWidth *= canvasContext.GetDevicePixelRatio();
 
@@ -121,7 +162,7 @@ class ToolTip {
 
         auto xLine = xg::make_unique<shape::Polyline>(lineWidth, xPoints, lineColor, "", false);
         if(type == "dash") {
-            xLine->SetDashLine(xg::GLOBAL_LINE_DASH);
+            xLine->SetDashLine(json::ParseDashArray(crosshairsStyle["dash"], canvasContext.GetDevicePixelRatio()));
         }
 
         container_->AddElement(std::move(xLine));
@@ -134,7 +175,7 @@ class ToolTip {
             auto yLine = xg::make_unique<shape::Polyline>(lineWidth, yPoints, lineColor, "", false);
 
             if(type == "dash") {
-                yLine->SetDashLine(xg::GLOBAL_LINE_DASH);
+                yLine->SetDashLine(json::ParseDashArray(crosshairsStyle["dash"], canvasContext.GetDevicePixelRatio()));
             }
             container_->AddElement(std::move(yLine));
         }

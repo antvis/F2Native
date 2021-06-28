@@ -20,13 +20,13 @@
 
 - (instancetype)init {
     if(self = [super initWithFrame:CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width, 280)]) {
+        [self addSubview:self.canvasView];
         [self chartRender];
     }
     return self;
 }
 
 - (void)chartRender {
-    [self addSubview:self.canvasView];
 
     NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"Res/mockData_klineDay" ofType:@"json"];
     NSString *jsonData = [NSString stringWithContentsOfFile:jsonPath encoding:NSUTF8StringEncoding error:nil];

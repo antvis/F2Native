@@ -1,11 +1,11 @@
-#ifndef XG_GRAPHICS_COORD_POLAR_H
-#define XG_GRAPHICS_COORD_POLAR_H
-
 #include "graphics/canvas/Coord.h"
 #include "graphics/util/Matrix.h"
 #include "graphics/util/Point.h"
 #include "graphics/util/Vector2d.h"
 #include <math.h>
+
+#ifndef XG_GRAPHICS_COORD_POLAR_H
+#define XG_GRAPHICS_COORD_POLAR_H
 
 namespace xg {
 namespace canvas {
@@ -99,9 +99,11 @@ class Polar : public AbstractCoord {
     util::Point xAxis_; // x 轴的坐标 [x 起点， x 终点]
     util::Point yAxis_; // y 轴的坐标 [y 起点， y 终点]
     util::Matrix matrix_;
+
+  public:
     double startAngle_ = -M_PI / 2;
     double endAngle_ = M_PI * 3 / 2;
-    double circleRadius_;
+    double circleRadius_ = 0;
 };
 } // namespace coord
 } // namespace canvas

@@ -103,7 +103,7 @@ class Color : public AttrBase {
         for(size_t i = start; i <= end; i++) {
             auto &item = groupData[i];
             if(!fields_.empty() && scale::IsCategory(xScale.GetType())) {
-                const Category &cat = (Category &)xScale;
+                const scale::Category &cat = (scale::Category &)xScale;
                 std::size_t index = cat.Transform(item[fields_[0]]);
                 item["_color"] = colors_[index];
             } else {
@@ -162,9 +162,12 @@ class Shape : public AttrBase {
 
     AttrType GetType() const override { return AttrType::Shape; }
 
-    inline const string &GetShape(int index) const { return index < shapes_.size() ? shapes_[index] : shapes_[0]; }
+    // inline const string &GetShape(int index) const { return index < shapes_.size() ? shapes_[index] : shapes_[0]; }
 
     void Mapping(nlohmann::json &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
+        if(shapes_.empty()) {
+            return;
+        }
         for(std::size_t index = start; index <= end; ++index) {
             groupData[index]["_shape"] = shapes_[0];
         }

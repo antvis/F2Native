@@ -71,7 +71,6 @@ public class F2Geom {
     public F2Geom fixedShape(final String shape) {
         mF2Chart.assertRenderThread();
         mF2Chart.getChartProxy().setGeomShape(F2Geom.this, shape);
-
         return this;
     }
 
@@ -90,6 +89,18 @@ public class F2Geom {
     public F2Geom style(final String jsonConfig) {
         mF2Chart.assertRenderThread();
         mF2Chart.getChartProxy().setGeomStyle(this, jsonConfig);
+        return this;
+    }
+
+    public F2Geom attrs(final F2Config config) {
+        mF2Chart.assertRenderThread();
+        mF2Chart.getChartProxy().setGeomAttrs(this, config.toJsonString());
+        return this;
+    }
+
+    public F2Geom attrs(final String jsonConfig) {
+        mF2Chart.assertRenderThread();
+        mF2Chart.getChartProxy().setGeomAttrs(this, jsonConfig);
         return this;
     }
 

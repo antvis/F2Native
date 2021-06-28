@@ -106,12 +106,11 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
 
     if(fieldCfg["label"].is_object()) {
         axis->labelCfg = fieldCfg["label"];
-
-        if(axis->key == "left") {
-            axis->labelCfg["textAlign"] = "end";
-        } else if(axis->key == "right") {
-            axis->labelCfg["textAlign"] = "start";
-        }
+        //            if(axis->key == "left") {
+        //                axis->labelCfg["textAlign"] = "end";
+        //            } else if(axis->key == "right") {
+        //                axis->labelCfg["textAlign"] = "start";
+        //            }
     }
 
     if(fieldCfg["line"].is_object()) {
@@ -207,7 +206,7 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
 }
 
 void xg::axis::AxisController::InitAxisConfig(xg::XChart &chart) {
-    long ts = xg::CurrentTimestampAtMM();
+    auto ts = xg::CurrentTimestampAtMM();
     std::for_each(axes.begin(), axes.end(), [&](std::unique_ptr<xg::axis::Axis> &axis) {
         const std::vector<xg::scale::Tick> &ticks = axis->ticks;
 
@@ -395,14 +394,27 @@ void xg::axis::AxisController::DrawLabel(XChart &chart, std::unique_ptr<xg::axis
             }
             pt.y += bbox.height / 2;
             pt.x += labelOffset;
+
+            if(text->GetTextAlign() == "center") {
+                pt.x -= axis->maxWidth / 2;
+            } else if(text->GetTextAlign() == "left" || text->GetTextAlign() == "start") {
+                pt.x -= axis->maxWidth;
+            }
+
         } else if(axis->position == "right") {
             if(isFirst) {
                 pt.y -= labelMargin;
             } else if(isLast) {
                 pt.y += labelMargin;
             }
-            pt.x += bbox.width / 2;
-            pt.x += labelOffset;
+            pt.y += bbox.height / 2;
+            pt.x += labelOffset; // + bbox.width / 2;
+
+            if(text->GetTextAlign() == "center") {
+                pt.x += axis->maxWidth / 2;
+            } else if(text->GetTextAlign() == "right" || text->GetTextAlign() == "end") {
+                pt.x += axis->maxWidth;
+            }
         }
         text->SetPoint(pt);
         this->container_->AddElement(std::move(text));

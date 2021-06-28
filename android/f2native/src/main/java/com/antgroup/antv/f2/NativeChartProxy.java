@@ -15,11 +15,11 @@ final class NativeChartProxy {
         }
     }
 
-    int setCanvas(long nativeCanvas) {
+    int setCanvas(long nativeCanvas, String functionId) {
         if (mNativeChartHandler == 0 || nativeCanvas == 0) {
             return F2Constants.CODE_FAIL_UNKNOWN;
         }
-        return nSetCanvasView(mNativeChartHandler, nativeCanvas);
+        return nSetCanvasView(mNativeChartHandler, nativeCanvas, functionId);
     }
 
     int source(String json) {
@@ -62,6 +62,11 @@ final class NativeChartProxy {
         return nSetCoord(mNativeChartHandler, config);
     }
 
+    int setAnimate(String config) {
+        if (mNativeChartHandler == 0) return F2Constants.CODE_FAIL_UNKNOWN;
+        return nSetAnimate(mNativeChartHandler, config);
+    }
+
     int setInteraction(String type, String config) {
         if (mNativeChartHandler == 0) return F2Constants.CODE_FAIL_UNKNOWN;
         return nSetInteraction(mNativeChartHandler, type, config);
@@ -77,14 +82,9 @@ final class NativeChartProxy {
         return nSetLegend(mNativeChartHandler, field, config);
     }
 
-    int setGuideText(String config) {
+    int setGuideType(String type, String config) {
         if (mNativeChartHandler == 0) return F2Constants.CODE_FAIL_UNKNOWN;
-        return nSetGuideText(mNativeChartHandler, config);
-    }
-
-    int setGuideFlag(String config) {
-        if (mNativeChartHandler == 0) return F2Constants.CODE_FAIL_UNKNOWN;
-        return nSetGuideFlag(mNativeChartHandler, config);
+        return nSetGuideType(mNativeChartHandler, type, config);
     }
 
     int sendTouchEvent(String event) {
@@ -190,9 +190,29 @@ final class NativeChartProxy {
         nGeomIntervalTag(geom.getNativeGeomHandler(), geom.getType(), config);
     }
 
+    void setGeomAttrs(F2Geom geom, String config) {
+        if (mNativeChartHandler == 0 || geom.getNativeGeomHandler() == 0) return;
+        nGeomAttrs(geom.getNativeGeomHandler(), config);
+    }
+
     String getRenderDumpInfo() {
         if (mNativeChartHandler == 0) return null;
         return nGetRenderDumpInfo(mNativeChartHandler);
+    }
+
+    String getScaleTicks(String field) {
+        if (mNativeChartHandler == 0) return null;
+        return nGetScaleTicks(mNativeChartHandler, field);
+    }
+
+    static void executeCommand(long command) {
+        if (command == 0) return;
+        nExecuteCommand(command);
+    }
+
+    static void deallocCommand(long command) {
+        if (command == 0) return;
+        nDeallocCommand(command);
     }
 
     int destroy() {
@@ -210,7 +230,7 @@ final class NativeChartProxy {
 
     private native static long nCreateNativeChart(String name, double width, double height, double ratio);
 
-    private native static int nSetCanvasView(long nativeChartHandler, long nativeViewHandle);
+    private native static int nSetCanvasView(long nativeChartHandler, long nativeViewHandle, String functionId);
 
     private native static int nSetSource(long nativeChartHandler, String json);
 
@@ -223,6 +243,7 @@ final class NativeChartProxy {
     private native static int nSetAxis(long nativeChartHandler, String field, String json);
 
     private native static int nSetCoord(long nativeChartHandler, String json);
+    private native static int nSetAnimate(long nativeChartHandler, String json);
 
     private native static int nSetInteraction(long nativeChartHandler, String type, String config);
 
@@ -230,15 +251,14 @@ final class NativeChartProxy {
 
     private native static int nSetLegend(long nativeChartHandler, String field, String config);
 
-    private native static int nSetGuideText(long nativeChartHandler, String config);
-
-    private native static int nSetGuideFlag(long nativeChartHandler, String config);
+    private native static int nSetGuideType(long nativeChartHandler, String type, String config);
 
     private native static int nSendTouchEvent(long nativeChartHandler, String event);
 
     private native static long nCreateGeom(long nativeChartHandler, String geomType);
 
     private native static String nGetRenderDumpInfo(long nativeChartHandler);
+    private native static String nGetScaleTicks(long nativeChartHandler, String field);
 
     private native static int nDestroy(long nativeChartHandler);
 
@@ -267,4 +287,8 @@ final class NativeChartProxy {
     private native static int nGeomIntervalTag(long geomHandle, String type, String config);
 
     private native static int nGeomStyle(long geomHandle, String config);
+    private native static int nGeomAttrs(long geomHandle, String config);
+
+    private native static int nExecuteCommand(long commandHandle);
+    private native static int nDeallocCommand(long commandHandle);
 }

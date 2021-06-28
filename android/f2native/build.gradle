@@ -67,7 +67,7 @@ android {
 
 repositories {
     flatDir {
-        dirs '../../third_party/GCanvas/android/gcanvas_library/build/outputs/aar'
+        dirs '../../third_party/GCanvas/android/gcanvas_library/build/outputs/aar', '../../third_party/AntGraphic'
     }
 }
 
@@ -76,5 +76,7 @@ dependencies {
     standaloneImplementation(name: 'gcanvas_library-1.2.0', ext: 'aar')
 
     aliPayImplementation 'com.alibaba:fastjson:1.2.73'
-    aliPayImplementation 'com.alipay.android.phone.wallet:antgraphic-standalone:0.1.1-SNAPSHOT'
+//    aliPayImplementation 'com.alipay.android.phone.wallet:antgraphic-standalone:0.1.4-SNAPSHOT'
+    aliPayImplementation (name: 'antg-build-android-release', ext:'aar')
+
 }

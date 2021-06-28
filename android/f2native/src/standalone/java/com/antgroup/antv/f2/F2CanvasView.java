@@ -143,9 +143,13 @@ public class F2CanvasView extends TextureView implements TextureView.SurfaceText
     }
 
     public void initCanvasContext(F2Config config) {
+        initCanvasContext(config, null);
+    }
+
+    public void initCanvasContext(F2Config config, F2RenderThreadFactory threadFactory) {
         if (hasCallInitCanvas) return;
         innerLog("#initCanvasContext  callInitCanvas");
-        callInitCanvas(getContext(), config);
+        callInitCanvas(getContext(), config, threadFactory);
     }
 
     @Override
@@ -176,13 +180,7 @@ public class F2CanvasView extends TextureView implements TextureView.SurfaceText
     public void postCanvasDraw() {
         if (!hasCallInitCanvas || mCanvasHolder == null || mAdapter == null || surface == null)
             return;
-        mCanvasHolder.runOnRenderThread(new Runnable() {
-            @Override
-            public void run() {
-                innerLog("#postCanvasDraw");
-                mAdapter.onCanvasDraw(F2CanvasView.this);
-            }
-        });
+        mCanvasHolder.runOnRenderThread(new RenderTask(this));
     }
 
     @Override
@@ -196,7 +194,7 @@ public class F2CanvasView extends TextureView implements TextureView.SurfaceText
         innerLog("#onDetachedFromWindow");
     }
 
-    private void callInitCanvas(Context context, F2Config config) {
+    private void callInitCanvas(Context context, F2Config config, F2RenderThreadFactory threadFactory) {
         if (hasCallInitCanvas) {
             return;
         }
@@ -205,11 +203,9 @@ public class F2CanvasView extends TextureView implements TextureView.SurfaceText
             config = new ConfigBuilder().build();
         }
 
-        mCanvasHolder = new NativeCanvasHolder(context, config);
+        mCanvasHolder = new NativeCanvasHolder(context, config, threadFactory);
         mCanvasHolder.setListener(mCanvasListener);
         hasCallInitCanvas = true;
-
-        innerLog("#callInitCanvas");
     }
 
     final void onSurfaceReady() {
@@ -302,6 +298,14 @@ public class F2CanvasView extends TextureView implements TextureView.SurfaceText
         post(canvasFrameUpdateFinishRunnable);
     }
 
+    public final F2RenderThread getRenderThread() {
+        return mCanvasHolder == null ? null : mCanvasHolder.getRenderThread();
+    }
+
+    public boolean hasAdapter() {
+        return mAdapter != null;
+    }
+
     public void destroy() {
         innerLog("#destroy");
         if (mCanvasHolder != null) {
@@ -322,7 +326,6 @@ public class F2CanvasView extends TextureView implements TextureView.SurfaceText
         if (mAdapter != null) {
             mAdapter.onDestroy();
         }
-        mAdapter = null;
     }
 
     public void swapBuffer() {
@@ -474,12 +477,43 @@ public class F2CanvasView extends TextureView implements TextureView.SurfaceText
     @Override
     protected void finalize() throws Throwable {
         try {
-            innerDestroy();
+//            innerDestroy();
+            innerLog("finalize...");
+            destroy();
         } catch (Exception e) {
         } finally {
             super.finalize();
         }
     }
+
+    private static final class RenderTask implements Runnable {
+        private WeakReference<F2CanvasView> wCanvasView;
+        private RenderTask(F2CanvasView canvasView) {
+            this.wCanvasView = new WeakReference<>(canvasView);
+        }
+
+        @Override
+        public void run() {
+            try {
+                F2CanvasView canvasView = null;
+                if ((canvasView = this.wCanvasView.get()) == null) {
+                    return;
+                }
+
+                if (!canvasView.hasCallInitCanvas ||
+                        canvasView.mCanvasHolder == null ||
+                        canvasView.mAdapter == null ||
+                        canvasView.surface == null) {
+                    return;
+                }
+
+                canvasView.innerLog("#postCanvasDraw");
+                canvasView.mAdapter.onCanvasDraw(canvasView);
+            } catch (Exception e) {
+            }
+        }
+    }
+
 
     public final static class F2CanvasHandle {
         private NativeCanvasHolder mHolder = null;

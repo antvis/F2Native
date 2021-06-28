@@ -45,8 +45,8 @@ class ToolTipController {
                               {"crosshairsStyle", {{"stroke", "#1890FF"}, {"lineWidth", 1}, {"type", "dash"}, {"dash", {4, 4}}}},
                               {"showTooltipMarker", true},
                               {"background", {{"radius", 1}, {"fill", "#1890FF"}, {"padding", {3, 3}}}},
-                              {"xTip", {{"fontSize", 10}, {"fill", "#ffffff"}, {"textAlign", "center"}, {"textBaseline", "bottom"}}},
-                              {"yTip", {{"fontSize", 10}, {"fill", "#ffffff"}, {"textAlign", "center"}, {"textBaseline", "bottom"}}},
+                              {"xTip", {{"inner", false}, {"fontSize", 10}, {"fill", "#ffffff"}, {"textAlign", "center"}, {"textBaseline", "bottom"}}},
+                              {"yTip", {{"inner", false}, {"fontSize", 10}, {"fill", "#ffffff"}, {"textAlign", "center"}, {"textBaseline", "bottom"}}},
                               {"titleStyle", {{"fontSize", 12}, {"fill", "#ffffff"}, {"textAlign", "start"}, {"textBaseline", "top"}}},
                               {"nameStyle", {{"fontSize", 12}, {"fill", "#ffffffa6"}, {"textAlign", "start"}, {"textBaseline", "top"}}},
                               {"valueStyle", {{"fontSize", 12}, {"fill", "#ffffff"}, {"textAlign", "start"}, {"textBaseline", "middle"}}},
@@ -56,7 +56,7 @@ class ToolTipController {
                               {"onPress", false},
                               {"snap", false},
                               {"hidden", false}};
-    long lastShowTimeStamp_ = 0;
+    long long lastShowTimeStamp_ = 0;
     std::vector<ToolTipMarkerItemsCallback> actionListeners_{};
     shape::Group *container_ = nullptr;
 };

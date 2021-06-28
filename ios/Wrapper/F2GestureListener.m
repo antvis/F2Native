@@ -1,19 +1,14 @@
 
 
-const double LONG_GESTURE_MINI_DURATION = 0.25f;
+const double LONG_GESTURE_MINI_DURATION = 0.0f;
 
 #import "F2GestureListener.h"
+#import "F2Utils.h"
 
 @interface F2GestureListener ()
-
-@property (nonatomic, strong) UILongPressGestureRecognizer *longGesture;
-@property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
-@property (nonatomic, strong) UIPinchGestureRecognizer *pinchGesture;
-@property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
-@property (nonatomic, strong) UITapGestureRecognizer *doubleTapGesture;
 @property (nonatomic, weak) UIView *view;
 @property (nonatomic, strong) UIGestureRecognizer *currentGesture;
-
+@property (nonatomic, copy) NSDictionary *event;
 @end
 
 @implementation F2GestureListener
@@ -30,6 +25,7 @@ const double LONG_GESTURE_MINI_DURATION = 0.25f;
     [self addLongPressGesture];
     [self addPinchingGesture];
     [self addPanningGesture];
+    [self addTapGesture];
 }
 
 - (void)gestureAction:(id)sender {
@@ -55,10 +51,32 @@ const double LONG_GESTURE_MINI_DURATION = 0.25f;
     if([self.delegate respondsToSelector:@selector(handleGestureInfo:)]) {
         [self.delegate handleGestureInfo:event];
     }
+    [self supplementAction:event];
+}
+
+//对齐android的长按手势
+//250ms后补发一个touchmove事件,使得F2Native能判断出是长按手势
+//F2 PRESS_DELAY = 250ms
+-(void)supplementAction:(NSDictionary *)event {
+    self.event = event;
+    WeakSelf;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(250 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
+        StrongSelf;
+        NSString *eventType = [strongSelf.event objectForKey:@"eventType"];
+        if ([eventType isEqualToString:@"touchstart"]) {
+            NSArray *points = [strongSelf.event objectForKey:@"points"];
+            [strongSelf.delegate handleGestureInfo:@{@"eventType": @"touchmove", @"points": points ? : @[]}];
+        }
+    });
 }
 
 - (NSString *)eventType:(id)sender {
     UIGestureRecognizer *gesture = (UIGestureRecognizer *)sender;
+    // once
+    if ([gesture isKindOfClass:[UITapGestureRecognizer class]]) {
+        return @"tap";
+    }
+    // continue
     switch(gesture.state) {
         case UIGestureRecognizerStateBegan:
             if(self.currentGesture) {
@@ -99,6 +117,14 @@ const double LONG_GESTURE_MINI_DURATION = 0.25f;
     self.pinchGesture = pinchGesture;
 }
 
+
+-(void)addTapGesture {
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer  alloc] initWithTarget:self action:@selector(gestureAction:)];
+    [_view addGestureRecognizer:tapGesture];
+    tapGesture.delegate = self;
+    self.tapGesture = tapGesture;
+}
+
 - (void)addPanningGesture {
     UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(gestureAction:)];
     panGesture.minimumNumberOfTouches = 1;
@@ -108,9 +134,18 @@ const double LONG_GESTURE_MINI_DURATION = 0.25f;
     self.panGesture = panGesture;
 }
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
-    shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+    if ([self.delegate respondsToSelector:@selector(handleGestureRecognizerShouldBegin:listener:)]) {
+        return [self.delegate handleGestureRecognizerShouldBegin:gestureRecognizer listener:self];
+    }
     return YES;
 }
 
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    if ([self.delegate respondsToSelector:@selector(handleGestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:listener:)]) {
+        return [self.delegate handleGestureRecognizer:gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:otherGestureRecognizer listener:self];
+    }
+    return YES;
+}
 @end

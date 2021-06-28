@@ -4,7 +4,6 @@
 @implementation MultiAxiesLineUIView
 
 - (void)chartRender {
-    [self addSubview:self.canvasView];
     NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"Res/mockData_multiAxiesLine" ofType:@"json"];
     NSString *jsonData = [NSString stringWithContentsOfFile:jsonPath encoding:NSUTF8StringEncoding error:nil];
     self.chart.canvas(self.canvasView).padding(20, 10, 20, 0.f).source(jsonData);
@@ -12,11 +11,7 @@
     self.chart.scale(@"value", @{@"nice": @(YES)});
     self.chart.scale(@"offset", @{@"nice": @(YES)});
     self.chart.axis(@"value", @{@"grid": @{@"type": @"dash", @"dash": @[@(15), @(15), @(5), @(5)]}});
-    self.chart.axis(@"offset", @{
-        @"label": @{
-            @"labelOffset": @(5),
-        }
-    });
+    self.chart.axis(@"offset", @{@"label": @{@"labelOffset": @(10), @"textAlign": @"start"}});
     self.chart.axis(@"date", @{
         @"label": @{
             @"labelOffset": @(5),

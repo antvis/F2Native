@@ -64,6 +64,8 @@ class Rect : public Shape {
 
     util::BBox CalculateBox(canvas::CanvasContext &context) const override;
 
+    virtual void UpdateAttribute(std::string attrName, double val) override;
+
   protected:
     void CreatePath(canvas::CanvasContext &context) const override;
 

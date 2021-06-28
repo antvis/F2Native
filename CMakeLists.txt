@@ -34,6 +34,7 @@ aux_source_directory(core/graphics DIR_SRC_GRAPHICS)
 aux_source_directory(core/utils DIR_SRC_UTILS)
 
 aux_source_directory(core/graphics/axis DIR_SRC_GRAPHICS_AXIS)
+aux_source_directory(core/graphics/animate DIR_SRC_GRAPHICS_ANIMATE)
 aux_source_directory(core/graphics/canvas DIR_SRC_GRAPHICS_CANVAS)
 aux_source_directory(core/graphics/geom DIR_SRC_GRAPHICS_GEOM)
 aux_source_directory(core/graphics/geom/attr DIR_SRC_GRAPHICS_GEOM_ATTR)
@@ -52,6 +53,7 @@ aux_source_directory(core/graphics/func DIR_SRC_GRAPHICS_FUNC)
 
 
 list(APPEND DIR_SRC_GRAPHICS ${DIR_SRC_GRAPHICS_AXIS})
+list(APPEND DIR_SRC_GRAPHICS ${DIR_SRC_GRAPHICS_ANIMATE})
 list(APPEND DIR_SRC_GRAPHICS ${DIR_SRC_GRAPHICS_CANVAS})
 list(APPEND DIR_SRC_GRAPHICS ${DIR_SRC_GRAPHICS_GEOM})
 list(APPEND DIR_SRC_GRAPHICS ${DIR_SRC_GRAPHICS_GEOM_ATTR})

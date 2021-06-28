@@ -30,6 +30,8 @@ class Text : public Shape {
 
     int GetLineCount() const { return this->lineCount_; }
 
+    const std::string &GetTextAlign() noexcept { return textAlign_; }
+
   protected:
     void DrawInner(canvas::CanvasContext &context) const override;
 

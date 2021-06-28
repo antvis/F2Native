@@ -1,6 +1,6 @@
 #include "utils/xtime.h"
 #include <nlohmann/json.hpp>
-#include <random>
+#include <stdlib.h>
 #include <string>
 #include <unordered_map>
 
@@ -11,13 +11,7 @@ namespace xg {
 
 namespace func {
 
-static std::string MakeFunctionId() {
-    std::random_device rd;  // Will be used to obtain a seed for the random number engine
-    std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
-    std::uniform_int_distribution<> distrib(1, 100000);
-
-    return std::to_string(xg::CurrentTimestampAtMM()) + "-" + std::to_string(distrib(gen));
-}
+static std::string MakeFunctionId() { return std::to_string(xg::CurrentTimestampAtMM()) + "-" + std::to_string(rand()); }
 
 //// Java|OC <--> C+ 的 Function 都必须保持在同线程同步调用
 struct F2Function {
@@ -41,13 +35,26 @@ class FunctionManager {
     FunctionManager(FunctionManager const &) = delete;
     void operator=(FunctionManager const &) = delete;
 
-    void Add(F2Function *function) { this->functions_[function->functionId] = function; }
+    void Add(F2Function *function) {
+        std::unique_lock<std::mutex> lock(mutex_);
+        this->functions_[function->functionId] = function;
+    }
 
-    void Remove(std::string functionId) { functions_.erase(functionId); }
+    void Remove(std::string functionId) {
+        std::unique_lock<std::mutex> lock(mutex_);
+        functions_.erase(functionId);
+    }
 
-    F2Function *Find(std::string functionId) { return this->functions_[functionId]; }
+    F2Function *Find(std::string functionId) {
+        auto it = this->functions_.find(functionId);
+        if(it == this->functions_.end()) {
+            return nullptr;
+        }
+        return it->second;
+    }
 
     void Clear(const std::string hostChartId) {
+        std::unique_lock<std::mutex> lock(mutex_);
         for(auto it = functions_.begin(); it != functions_.end();) {
             if(it->second != nullptr && it->second->hostChartId == hostChartId) {
                 delete it->second;
@@ -63,6 +70,7 @@ class FunctionManager {
 
   private:
     std::unordered_map<std::string, F2Function *> functions_;
+    std::mutex mutex_;
 };
 
 static nlohmann::json InvokeFunction(const std::string &functionId, const nlohmann::json &param) {

@@ -15,18 +15,22 @@ using namespace std;
 
 namespace xg {
 
-static long CurrentTimestampAtMM() {
+static long long CurrentTimestampAtMM() {
     timeval tv;
     gettimeofday(&tv, NULL);
-    long now = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+    long long now = (static_cast<long long>(tv.tv_sec) * 1000LL) + (static_cast<long long>(tv.tv_usec) / 1000);
     return now;
 }
 
-static string TimeStampToHHmm(long long tsMM) {
+static string TimeStampToHHmm(long long tsMM, bool timeZone = false) {
     struct tm *p;
     time_t t;
     t = tsMM / 1000;
-    p = localtime(&t);
+    if(timeZone) {
+        p = gmtime(&t);
+    } else {
+        p = localtime(&t);
+    }
     char s[100];
     strftime(s, 100, "%H:%M", p);
     return std::string(s);
@@ -57,6 +61,25 @@ static tm DateParserAtTM(std::string date, std::string format = "%Y-%m-%d %H:%M:
     strptime(buf, format.data(), &tm_); //将字符串转换为tm时间
     tm_.tm_isdst = -1;
     return std::move(tm_);
+}
+
+static long DateGetLocalTimeZoneOffset() {
+    time_t t = time(NULL);
+    struct tm lt = {0};
+    localtime_r(&t, &lt);
+    return lt.tm_gmtoff;
+}
+
+static tm DateParserTimeStamp(long long timestamp, bool timeZone = false) {
+    time_t t = timestamp / 1000;
+
+    std::tm rt = {0};
+    if(timeZone) {
+        gmtime_r(&t, &rt);
+    } else {
+        localtime_r(&t, &rt);
+    }
+    return std::move(rt);
 }
 
 } // namespace xg

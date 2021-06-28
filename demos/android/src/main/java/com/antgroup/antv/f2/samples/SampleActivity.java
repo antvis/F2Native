@@ -21,7 +21,7 @@ public class SampleActivity extends AppCompatActivity {
         mCanvasView.initCanvasContext(new F2CanvasView.ConfigBuilder()
                 .canvasId("F2AntCanvas")
 //                .backgroundColor("#000000")
-                .asyncRender(false)
+                .asyncRender(true)
                 .setOption("canvasBizId", "F2NativeDemo")
                 .setOption("appId", "1000")
                 .build());

@@ -12,7 +12,10 @@ class Interval : public AbstractGeom {
     Interval(Group *_container, utils::Tracer *tracer) : AbstractGeom(_container, tracer) {
         type_ = "interval";
         generatePoints_ = true;
-        this->styleConfig_ = {{"lineWidth", 1}, {"widthRatio", 0.5}};
+        nlohmann::json defaultCfg ={{"lineWidth", 1}, {"stroke", "#ffffff"}, {"widthRatio", 0.5}};
+        if(this->styleConfig_.is_object()) {
+            this->styleConfig_.merge_patch(defaultCfg);
+        }
     }
 
     float GetDefaultWidthRatio(XChart &chart);

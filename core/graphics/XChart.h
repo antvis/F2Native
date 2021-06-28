@@ -1,9 +1,12 @@
 
+#include "graphics/animate/GeomAnimate.h"
+#include "graphics/animate/TimeLine.h"
 #include "graphics/axis/AxisController.h"
 #include "graphics/canvas/Canvas.h"
 #include "graphics/canvas/CanvasContext.h"
 #include "graphics/canvas/Coord.h"
 #include "graphics/event/EventController.h"
+#include "graphics/func/Command.h"
 #include "graphics/geom/Area.h"
 #include "graphics/geom/Candle.h"
 #include "graphics/geom/Interval.h"
@@ -54,6 +57,8 @@
 #define ACTION_CHART_AFTER_GEOM_DRAW "ChartAfterGeomDraw"
 #define ACTION_CHART_AFTER_RENDER "ChartAfterRender"
 #define ACTION_CHART_CLEAR_INNER "ChartClearInner"
+#define ACTION_CHART_BEFORE_CANVAS_DRAW "ChartBeforeCanvasDraw"
+#define ACTION_CHART_AFTER_CANVAS_DESTROY "ChartAfterCanvasDestroy"
 
 using namespace std;
 
@@ -75,6 +80,8 @@ class XChart {
     friend interaction::Pan;
     friend interaction::Pinch;
     friend interaction::InteractionContext;
+    friend animate::TimeLine;
+    friend animate::GeomAnimate;
 
   public:
     XChart(const std::string &name, double width, double height, double ratio = 1.0);
@@ -85,11 +92,13 @@ class XChart {
 #if defined(TARGET_STANDALONE)
 #if defined(ANDROID)
     XChart &SetCanvasContext(F2CanvasView *context) {
+        XG_RELEASE_POINTER(canvasContext_);
         canvasContext_ = new canvas::StandaloneCanvasContext(context, static_cast<float>(ratio_), nullptr);
         return *this;
     }
 #else
     XChart &SetCanvasContext(GCanvasContext *context) {
+        XG_RELEASE_POINTER(canvasContext_);
         canvasContext_ = new canvas::StandaloneCanvasContext(context, static_cast<float>(ratio_), nullptr);
         return *this;
     }
@@ -98,6 +107,7 @@ class XChart {
 
 #if defined(TARGET_ALIPAY)
     XChart &SetCanvasContext(ag::CanvasRenderingContext2D *context) {
+        XG_RELEASE_POINTER(canvasContext_);
         canvasContext_ = new canvas::AliPayCanvasContext(context, static_cast<float>(ratio_), nullptr);
         return *this;
     }
@@ -120,6 +130,8 @@ class XChart {
 
     XChart &Coord(const std::string &json = "");
 
+    XChart &Animate(const std::string &json = "");
+
     bool OnTouchEvent(const std::string &json = "");
 
     geom::Line &Line();
@@ -133,6 +145,8 @@ class XChart {
     void Repaint();
 
     void Clear();
+
+    std::size_t RequestAnimationFrame(func::Command *c, long delay = 16);
 
     scale::AbstractScale &GetScale(const std::string &field);
 
@@ -156,6 +170,8 @@ class XChart {
     inline const double GetWidth() const noexcept { return width_; }
     inline const double GetHeight() const noexcept { return height_; }
 
+    std::string GetScaleTicks(const std::string &field) noexcept;
+
     // 计算某一项数据对应的坐标位置
     const util::Point GetPosition(const nlohmann::json &item);
 
@@ -163,10 +179,18 @@ class XChart {
 
     canvas::CanvasContext &GetCanvasContext() const { return *canvasContext_; }
 
-    void AddMonitor(const std::string &action, ChartActionCallback callback) { actionListeners_[action].push_back(callback); }
+    void AddMonitor(const std::string &action, ChartActionCallback callback, bool forChart = true) {
+        if(forChart) {
+            chartActionListeners_[action].push_back(callback);
+        } else {
+            renderActionListeners_[action].push_back(callback);
+        }
+    }
 
     inline const std::array<double, 4> GetPadding() { return userPadding_; }
     inline const std::array<double, 4> GetMargin() { return margin_; }
+
+    inline void SetRequestFrameFuncId(std::string funcId) noexcept { this->requestFrameHandleId_ = funcId; }
 
   private:
     // 初始化布局边界和三层视图容器
@@ -188,8 +212,11 @@ class XChart {
     void Redraw();
 
     void NotifyAction(const std::string &action) {
-        auto &callbacks = actionListeners_[action];
-        std::for_each(callbacks.begin(), callbacks.end(), [&](ChartActionCallback &callback) -> void { callback(); });
+        auto &chartCallbacks = chartActionListeners_[action];
+        std::for_each(chartCallbacks.begin(), chartCallbacks.end(), [&](ChartActionCallback &callback) -> void { callback(); });
+
+        auto &renderCallbacks = renderActionListeners_[action];
+        std::for_each(renderCallbacks.begin(), renderCallbacks.end(), [&](ChartActionCallback &callback) -> void { callback(); });
     }
 
   private:
@@ -204,6 +231,7 @@ class XChart {
     tooltip::ToolTipController *tooltipController_ = nullptr;
     interaction::InteractionContext *interactionContext_ = nullptr;
     legend::LegendController *legendController_ = nullptr;
+    animate::GeomAnimate *geomAnimate_ = nullptr;
     std::array<double, 4> padding_ = {{0, 0, 0, 0}};
     std::array<double, 4> userPadding_ = {{0, 0, 0, 0}};
     std::array<double, 4> margin_ = {{0, 0, 0, 0}};
@@ -215,7 +243,7 @@ class XChart {
     double width_;
     double height_;
     double ratio_ = 1.0f;
-    long renderDurationMM_ = 0;
+    long long renderDurationMM_ = 0;
 
     // 默认三层渲染
     shape::Group *backLayout_;
@@ -229,10 +257,13 @@ class XChart {
 
     nlohmann::json coordCfg_ = {{"type", "cartesian"}, {"transposed", false}};
 
-    std::map<std::string, std::vector<ChartActionCallback>> actionListeners_{};
+    std::map<std::string, std::vector<ChartActionCallback>> renderActionListeners_{}; // 针对每次渲染的监听事件， clear 时会清除
+    std::map<std::string, std::vector<ChartActionCallback>> chartActionListeners_{}; // 针对 chart 实例的监听事件，只有在 chart 回收时才清除
     std::vector<std::unique_ptr<xg::interaction::InteractionBase>> interactions_{};
 
     std::string chartId_;
+    std::string requestFrameHandleId_ = "";
+    nlohmann::json animateCfg_ = false;
 };
 } // namespace xg
 

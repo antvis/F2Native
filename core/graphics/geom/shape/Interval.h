@@ -21,7 +21,8 @@ class Interval : public GeomShapeBase {
               const nlohmann::json &data,
               std::size_t start,
               std::size_t end,
-              xg::shape::Group &container) override {
+              xg::shape::Group &container,
+              bool connectNulls) override {
         if(!data.contains("_points")) {
             return;
         }
@@ -76,13 +77,16 @@ class Interval : public GeomShapeBase {
                 endAngle = endAngle - 2 * M_PI;
             }
 
-            auto rect = xg::make_unique<xg::shape::Rect>(coord.GetCenter(), r, r0, startAngle, endAngle, lineWidth);
-            if(isFill) {
-                rect->fillStyle_ = colorStyle;
-            } else {
-                rect->strokeStyle_ = colorStyle;
+            auto fillRect = xg::make_unique<xg::shape::Rect>(coord.GetCenter(), r, r0, startAngle, endAngle, lineWidth);
+            fillRect->fillStyle_ = colorStyle;
+            container.AddElement(std::move(fillRect));
+
+            if(lineWidth > 0) {
+                util::CanvasFillStrokeStyle strokeColor = util::CanvasFillStrokeStyle(_style["stroke"]);
+                auto strokeRect = xg::make_unique<xg::shape::Rect>(coord.GetCenter(), r, r0, startAngle, endAngle, lineWidth);
+                strokeRect->strokeStyle_ = strokeColor;
+                container.AddElement(std::move(strokeRect));
             }
-            container.AddElement(std::move(rect));
         } else {
             util::Size size(points[2].x - points[0].x, points[2].y - points[0].y);
 

@@ -21,7 +21,7 @@ class Event {
     std::string eventType;
     std::vector<util::Point> points;
     std::string direction;
-    long timeStamp;
+    long long timeStamp;
     double zoom = 1.;
     util::Point center;
     double deltaX = 0;
@@ -39,13 +39,19 @@ class EventController {
         // TODO 增加安全行校验，当前是否数据 or 状态是否支持能够支持事件分发
 
         if(event.eventType == "touchstart") {
-            return this->OnTouchStart(event);
+            bool ret = false;
+            // fixed: 上一次的事件序列还未结束又开始新的事件，先结束之前的。
+            if(!startEvent_.eventType.empty()) {
+                ret = this->OnTouchEnd(startEvent_);
+            }
+            return this->OnTouchStart(event) || ret;
         } else if(event.eventType == "touchmove") {
             return this->OnTouchMove(event);
         } else if(event.eventType == "touchend") {
             return this->OnTouchEnd(event);
         } else if(event.eventType == "touchcancel") {
-            return this->OnTouchCancel(event);
+            //            return this->OnTouchCancel(event);
+            return this->OnTouchEnd(event);
         }
         return false;
     }

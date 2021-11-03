@@ -10,7 +10,7 @@
 
 void xg::guide::GuideController::Render(xg::XChart &chart, canvas::CanvasContext &context) {
     std::for_each(guides.begin(), guides.end(), [&](const std::unique_ptr<xg::guide::GuideBase> &guide) -> void {
-        if(guide->GetType() == "background") {
+        if(guide->GetType() == "background" || !guide->isTop()) {
             guide->Render(chart, backContainer_, context, this->dangerRects);
         } else {
             guide->Render(chart, container_, context, this->dangerRects);

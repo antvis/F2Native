@@ -620,6 +620,7 @@ static jint SetChartCanvas(JNIEnv *env, jclass clazz, jlong chart, jlong view, j
 #elif defined(TARGET_ALIPAY)
     ag::Canvas *canvas = reinterpret_cast<ag::Canvas *>(view);
     auto ctx = (ag::CanvasRenderingContext2D *)canvas->getContext("2d");
+    F2_LOG_I("#SetChartCanvas", "bind canvas ctx: %p", ctx);
     _chart->SetCanvasContext(ctx);
 #endif
 

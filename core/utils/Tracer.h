@@ -4,6 +4,10 @@
 #include "android/F2NativeJNI.h"
 #endif
 
+#if defined(__APPLE__)
+#include "ios/F2Logger.h"
+#endif
+
 #ifndef X_CHART_UTILS_TRACER_H
 #define X_CHART_UTILS_TRACER_H
 namespace utils {
@@ -20,6 +24,8 @@ class Tracer {
         va_end(args);
 
 #ifdef ANDROID
+        F2_LOG_I(this->name_.data(), "%s", buffer);
+#elif defined(__APPLE__)
         F2_LOG_I(this->name_.data(), "%s", buffer);
 #else
         printf("%s %s\n", this->name_.data(), buffer);

@@ -9,9 +9,11 @@
 
 @interface F2Chart ()
 @property (nonatomic, assign) xg::XChart *chart;
-@property (nonatomic, weak) F2CanvasView *gcanvas;
+@property (nonatomic, weak) F2CanvasView *canvasView;
 @property (nonatomic, strong) RequestAnimationFrameHandle *requestAnimationFrameHandle;
 @property (nonatomic, assign) BOOL isBackground;
+@property (nonatomic, assign) BOOL cachedRender;
+@property (nonatomic, assign) BOOL cachedRepaint;
 @property (nonatomic, strong) NSMutableArray *callbackList;
 @end
 
@@ -24,6 +26,8 @@
 - (instancetype)initWithSize:(CGSize)size name:(NSString *)name {
     if(self = [super init]) {
         _chart = new xg::XChart([XGSafeString(name) UTF8String], size.width, size.height, [UIScreen mainScreen].nativeScale);
+        _cachedRender = NO;
+        _cachedRepaint = NO;
     }
     [self addSystemNotification];
     return self;
@@ -39,12 +43,12 @@
 
 - (F2Chart * (^)(F2CanvasView *gcanvas))canvas {
     return ^id(F2CanvasView *gcanvas) {
-        self.gcanvas = gcanvas;
+        self.canvasView = gcanvas;
 
 #if defined(TARGET_ALIPAY)
-        ag::CanvasRenderingContext2D *context = (ag::CanvasRenderingContext2D *)[self.gcanvas getContext];
+        ag::CanvasRenderingContext2D *context = (ag::CanvasRenderingContext2D *)(self.canvasView.canvas.context2d);
 #else
-        GCanvasContext *context = ((gcanvas::GCanvas *)[self.gcanvas gcanvas])->GetGCanvasContext();
+        GCanvasContext *context = (GCanvasContext *)(self.canvasView.canvas.context2d);
 
 #endif
         self.chart->SetCanvasContext(context);
@@ -179,10 +183,13 @@
         if(!self.isBackground) {
             NSTimeInterval start = [[NSDate date] timeIntervalSince1970] * 1000;
             self.chart->Render();
-            [self.gcanvas drawFrame];
+            [self.canvasView drawFrame];
             NSString *info = self.getRenderDumpInfo();
             NSTimeInterval end = [[NSDate date] timeIntervalSince1970] * 1000;
-            [self.gcanvas logPerformance:end - start withInfo:info];
+            [self.canvasView.canvas logPerformance:end - start withInfo:info];
+        }else {
+            //标记下 待回到前台在进行绘制
+            self.cachedRender = YES;
         }
         return self;
     };
@@ -200,10 +207,12 @@
         if(!self.isBackground) {
             NSTimeInterval start = [[NSDate date] timeIntervalSince1970] * 1000;
             self.chart->Repaint();
-            [self.gcanvas drawFrame];
+            [self.canvasView drawFrame];
             NSString *info = self.getRenderDumpInfo();
             NSTimeInterval end = [[NSDate date] timeIntervalSince1970] * 1000;
-            [self.gcanvas logPerformance:end - start withInfo:info];
+            [self.canvasView.canvas logPerformance:end - start withInfo:info];
+        }else {
+            self.cachedRepaint = YES;
         }
         return self;
     };
@@ -214,10 +223,10 @@
         long start = [[NSDate date] timeIntervalSince1970] * 1000;
         bool changed = self.chart->OnTouchEvent([XGSafeJson([F2Utils toJsonString:config]) UTF8String]);
         if(changed) {
-            [self.gcanvas drawFrame];
+            [self.canvasView drawFrame];
             NSString *info = self.getRenderDumpInfo();
             NSTimeInterval end = [[NSDate date] timeIntervalSince1970] * 1000;
-            [self.gcanvas logPerformance:end - start withInfo:info];
+            [self.canvasView.canvas logPerformance:end - start withInfo:info];
         }
         return self;
     };
@@ -278,7 +287,17 @@
 
 - (void)appWillEnterForeground {
     _isBackground = NO;
-    [self render];
+    
+    //渲染因退到后台没有绘制的图形
+    if (self.cachedRender) {
+        self.cachedRender = NO;
+        self.render();
+    }
+    
+    if (self.cachedRepaint) {
+        self.cachedRepaint = NO;
+        self.repaint();
+    }
 }
 
 - (void)bindF2CallbackObj:(F2CallbackObj *)callback {

@@ -32,7 +32,7 @@ static scale::AbstractScale &_GetToolTipGroupScale(XChart *chart, std::unique_pt
     return _GetToolTipValueScale(chart, geom);
 }
 
-static std::string _GetToolTipGroupNameField(XChart *chart, std::unique_ptr<geom::AbstractGeom> &geom) {
+static const std::string &_GetToolTipGroupNameField(XChart *chart, std::unique_ptr<geom::AbstractGeom> &geom) {
     auto &attr = geom->GetAttr(attr::AttrType::Color);
     if(attr.get() != nullptr && !attr->GetFields().empty()) {
         auto &scale = chart->GetScale(attr->GetFields()[0]);
@@ -131,12 +131,35 @@ void tooltip::ToolTipController::OnClearInner() { this->container_->Clear(); }
 bool tooltip::ToolTipController::ShowToolTip(const util::Point &point) {
 
     util::Point _point = point;
-
+    
+    //限制point.x的坐标为数据点的最后一个坐标
+    double maxPointX = FLT_MIN;
+    double minPointX = FLT_MAX;
+    std::for_each(chart_->geoms_.begin(), chart_->geoms_.end(), [&](auto &geom) -> void {
+        const nlohmann::json &lastRecords = geom->GetLastSnapRecord(chart_);
+        const nlohmann::json &firstRecords = geom->GetFirstSnapRecord(chart_);
+        for(std::size_t index = 0; index < lastRecords.size(); ++index) {
+            const nlohmann::json &lastRecord = lastRecords[index];
+            const nlohmann::json &firstRecord = firstRecords[index];
+            //在各分组中取最大的
+            if (lastRecord.contains("_x")) {
+                maxPointX = fmax(maxPointX, lastRecord["_x"].get<double>());
+                minPointX = fmin(minPointX, lastRecord["_x"].get<double>());
+            }
+            
+            if (firstRecord.contains("_x")) {
+                maxPointX = fmax(maxPointX, firstRecord["_x"].get<double>());
+                minPointX = fmin(minPointX, firstRecord["_x"].get<double>());
+            }
+        }
+    });
+    _point.x = fmax(fmin(_point.x, maxPointX), minPointX);
+    
     auto timestampStart = xg::CurrentTimestampAtMM();
     nlohmann::json tooltipMarkerItems;
     std::for_each(chart_->geoms_.begin(), chart_->geoms_.end(), [&](auto &geom) -> void {
         // TODO geom is visible
-        nlohmann::json records = geom->GetSnapRecords(chart_, point);
+        nlohmann::json records = geom->GetSnapRecords(chart_, _point);
         for(std::size_t index = 0; index < records.size(); ++index) {
             nlohmann::json &record = records[index];
             if(record.contains("_x") && record.contains("_y")) {
@@ -147,20 +170,16 @@ bool tooltip::ToolTipController::ShowToolTip(const util::Point &point) {
                 tooltipItem["xTip"] = config_["xTip"];
                 tooltipItem["yTip"] = config_["yTip"];
 
-                auto nameField = tooltip::_GetToolTipGroupNameField(chart_, geom);
-                auto &nameScale = chart_->GetScale(nameField);
-                tooltipItem["name"] = nameScale.GetTickText(nameField);
+                auto &nameField = tooltip::_GetToolTipGroupNameField(chart_, geom);
+                auto &yScale = chart_->GetScale(nameField);
+                tooltipItem["name"] = nameField;
 
-                auto &scale = tooltip::_GetToolTipValueScale(chart_, geom);
-                std::string nameVal = scale.GetTickText(record[nameField]);
-                if(nameVal.empty() && record.contains(nameField)) {
-                    nameVal = record[nameField].dump();
-                }
                 _point.x = record["_x"];
-                tooltipItem["value"] = InvertYTip(_point);
-
+                tooltipItem["value"] = InvertYTip(_point, yScale);
                 tooltipItem["title"] = chart_->GetScale(geom->GetXScaleField()).GetTickText(record[geom->GetXScaleField()]);
-
+                
+                tooltipItem["touchX"] = _point.x;
+                tooltipItem["touchY"] = _point.y;
                 tooltipMarkerItems.push_back(tooltipItem);
             }
         }
@@ -214,9 +233,8 @@ bool tooltip::ToolTipController::HideToolTip() {
     return true;
 }
 
-std::string tooltip::ToolTipController::InvertYTip(const util::Point &p) {
+std::string tooltip::ToolTipController::InvertYTip(const util::Point &p, xg::scale::AbstractScale &yScale) {
     util::Point invertPoint = chart_->GetCoord().InvertPoint(p);
-    auto &yScale = chart_->GetScale(chart_->getYScaleFields()[0]);
     nlohmann::json yVal = yScale.Invert(invertPoint.y);
     return yScale.GetTickText(yVal);
 }

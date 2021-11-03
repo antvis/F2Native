@@ -17,7 +17,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.edgesForExtendedLayout = UIRectEdgeNone;
-    self.navigationController.navigationBar.backgroundColor = [UIColor redColor];
+    self.navigationController.navigationBar.backgroundColor = [UIColor whiteColor];
     self.title = @"ChatList";
     [self.view addSubview:self.demoTable];
 }

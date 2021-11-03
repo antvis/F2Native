@@ -45,7 +45,7 @@ dependencies {
     standaloneImplementation 'com.alibaba:fastjson:1.2.73'
 
     aliPayImplementation project(':android:f2native')
-    aliPayImplementation(name: 'antg-build-android-release', ext: 'aar')
+    aliPayImplementation(name: 'antg-build-android-debug', ext: 'aar')
 //    aliPayImplementation 'com.alipay.android.phone.wallet:antgraphic-standalone:0.1.4-SNAPSHOT'
     aliPayImplementation 'com.alibaba:fastjson:1.2.73'
 

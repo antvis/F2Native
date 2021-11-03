@@ -34,6 +34,7 @@ class GuideController {
 
     void Clear() {
         this->container_->Clear();
+        this->backContainer_->Clear();
         this->guides.clear();
         this->dangerRects.clear();
     }

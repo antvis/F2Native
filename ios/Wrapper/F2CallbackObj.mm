@@ -116,31 +116,36 @@ void *cexecute(void *caller, const char *parameter) { return [(__bridge id)calle
     if(!paramStr) {
         return &_result;
     }
-    NSData *data = [paramStr dataUsingEncoding:NSUTF8StringEncoding];
-    NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-    NSTimeInterval delay = [dic[@"delay"] doubleValue];
+    NSDictionary *dic = [F2Utils toJsonObject:paramStr];
+    NSTimeInterval delay =  [dic[@"delay"] doubleValue];
     long commandPointer = [dic[@"command"] longValue];
     if(delay <= 0) {
         delay = 16;
     }
-
-    NSTimeInterval start = [[NSDate date] timeIntervalSince1970];
-
+    
     WeakSelf;
-    [[self.canvasView canvasThread]
-        runBlockASyncOnExecuteThread:^(void) {
-            NSLog(@"command receive  execute %@", @([[NSDate date] timeIntervalSince1970] - start));
-
+    if (self.canvasView.canvasThread ) {
+        [self.canvasView.canvasThread performSelector:@selector(performBlockASyncOnThread:) withObject:^(void) {
             StrongSelf;
-            xg::func::Command *command = reinterpret_cast<xg::func::Command *>(commandPointer);
-            if(strongSelf.canvasView.gcanvas) {
-                command->run();
-                [strongSelf.canvasView drawFrame];
-            }
-            delete command;
-        }
-                               delay:delay];
+            [strongSelf runCommand:commandPointer];
+        } afterDelay:delay / 1000];
+    }else {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
+            StrongSelf;
+            [strongSelf runCommand:commandPointer];
+        });
+    }
+  
     return &_result;
+}
+
+-(void)runCommand:(long)commandPointer {
+    xg::func::Command *command = reinterpret_cast<xg::func::Command *>(commandPointer);
+    if (self.canvasView.canvas) {
+        command->run();
+        [self.canvasView drawFrame];
+    }
+    delete command;
 }
 
 @end

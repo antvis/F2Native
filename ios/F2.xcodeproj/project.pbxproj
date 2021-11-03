@@ -123,9 +123,13 @@
 		9557245725ECBF7200D2FC07 /* InteractionContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 955723EC25ECBF7200D2FC07 /* InteractionContext.cpp */; };
 		9557245825ECBF7200D2FC07 /* Command.h in Headers */ = {isa = PBXBuildFile; fileRef = 955723EE25ECBF7200D2FC07 /* Command.h */; };
 		9557245925ECBF7200D2FC07 /* Func.h in Headers */ = {isa = PBXBuildFile; fileRef = 955723EF25ECBF7200D2FC07 /* Func.h */; };
+		CC019E5F2692EFA800543DB9 /* F2Canvas.h in Headers */ = {isa = PBXBuildFile; fileRef = CC019E5C2692EFA800543DB9 /* F2Canvas.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CC019E602692EFA800543DB9 /* F2Canvas.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC019E5E2692EFA800543DB9 /* F2Canvas.mm */; };
 		CC195216250B76CA0000FBFA /* F2CanvasView.h in Headers */ = {isa = PBXBuildFile; fileRef = CC195214250B76C90000FBFA /* F2CanvasView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC19521A250B8CB30000FBFA /* F2GLESEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC195218250B8CB30000FBFA /* F2GLESEnv.mm */; };
 		CC19521B250B8CB30000FBFA /* F2GLESEnv.h in Headers */ = {isa = PBXBuildFile; fileRef = CC195219250B8CB30000FBFA /* F2GLESEnv.h */; };
+		CC3C01E426A00E9300335A1C /* F2Logger.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC3C01E226A00E9300335A1C /* F2Logger.mm */; };
+		CC3C01E526A00E9300335A1C /* F2Logger.h in Headers */ = {isa = PBXBuildFile; fileRef = CC3C01E326A00E9300335A1C /* F2Logger.h */; };
 		CC6124DC250A1D0C00315124 /* StringUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = CC611D17250A1D0800315124 /* StringUtil.h */; };
 		CC6124DD250A1D0C00315124 /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = CC611D18250A1D0800315124 /* common.h */; };
 		CC6124DF250A1D0C00315124 /* Tracer.h in Headers */ = {isa = PBXBuildFile; fileRef = CC611D1A250A1D0800315124 /* Tracer.h */; };
@@ -271,9 +275,13 @@
 		955723EC25ECBF7200D2FC07 /* InteractionContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InteractionContext.cpp; sourceTree = "<group>"; };
 		955723EE25ECBF7200D2FC07 /* Command.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Command.h; sourceTree = "<group>"; };
 		955723EF25ECBF7200D2FC07 /* Func.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Func.h; sourceTree = "<group>"; };
+		CC019E5C2692EFA800543DB9 /* F2Canvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F2Canvas.h; sourceTree = "<group>"; };
+		CC019E5E2692EFA800543DB9 /* F2Canvas.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = F2Canvas.mm; sourceTree = "<group>"; };
 		CC195214250B76C90000FBFA /* F2CanvasView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F2CanvasView.h; sourceTree = "<group>"; };
 		CC195218250B8CB30000FBFA /* F2GLESEnv.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = F2GLESEnv.mm; sourceTree = "<group>"; };
 		CC195219250B8CB30000FBFA /* F2GLESEnv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F2GLESEnv.h; sourceTree = "<group>"; };
+		CC3C01E226A00E9300335A1C /* F2Logger.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = F2Logger.mm; sourceTree = "<group>"; };
+		CC3C01E326A00E9300335A1C /* F2Logger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F2Logger.h; sourceTree = "<group>"; };
 		CC611D17250A1D0800315124 /* StringUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringUtil.h; sourceTree = "<group>"; };
 		CC611D18250A1D0800315124 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		CC611D1A250A1D0800315124 /* Tracer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tracer.h; sourceTree = "<group>"; };
@@ -555,9 +563,19 @@
 			path = func;
 			sourceTree = "<group>";
 		};
+		CC3C01E126A00E6700335A1C /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				CC3C01E226A00E9300335A1C /* F2Logger.mm */,
+				CC3C01E326A00E9300335A1C /* F2Logger.h */,
+			);
+			path = ios;
+			sourceTree = "<group>";
+		};
 		CC611D11250A1D0800315124 /* core */ = {
 			isa = PBXGroup;
 			children = (
+				CC3C01E126A00E6700335A1C /* ios */,
 				9557237325ECBF7200D2FC07 /* graphics */,
 				CC611D12250A1D0800315124 /* utils */,
 			);
@@ -639,26 +657,28 @@
 		CC612BAE250A1E5800315124 /* Wrapper */ = {
 			isa = PBXGroup;
 			children = (
-				9555CEAC2623E36C00202A83 /* F2CanvasView.mm */,
+				CC019E5C2692EFA800543DB9 /* F2Canvas.h */,
+				CC019E5E2692EFA800543DB9 /* F2Canvas.mm */,
+				3F58178B257A3CCF002023ED /* F2-Prefix.pch */,
+				3F56A02C25218EE5002AA2D2 /* F2.h */,
 				3F5817E1257FB72F002023ED /* F2CallbackObj.h */,
 				3F5817E3257FB72F002023ED /* F2CallbackObj.mm */,
-				CC195219250B8CB30000FBFA /* F2GLESEnv.h */,
-				3F58178B257A3CCF002023ED /* F2-Prefix.pch */,
-				CC195218250B8CB30000FBFA /* F2GLESEnv.mm */,
+				3FB8F5DF25CF995A0010E9E6 /* F2CanvasThread.h */,
+				3FB8F5E025CF995A0010E9E6 /* F2CanvasThread.m */,
+				CC195214250B76C90000FBFA /* F2CanvasView.h */,
+				9555CEAC2623E36C00202A83 /* F2CanvasView.mm */,
 				CC612BEC250B2EF600315124 /* F2Chart.h */,
 				CC612BEF250B2EF700315124 /* F2Chart.mm */,
 				CC612BF0250B2EF700315124 /* F2Geom.h */,
 				CC612BF1250B2EF700315124 /* F2Geom.mm */,
+				3FC0056A253F0C2D00E09DD7 /* F2GestureListener.h */,
+				3FC0056B253F0C2D00E09DD7 /* F2GestureListener.m */,
+				CC195219250B8CB30000FBFA /* F2GLESEnv.h */,
+				CC195218250B8CB30000FBFA /* F2GLESEnv.mm */,
 				CC612BEE250B2EF600315124 /* F2Guide.h */,
 				CC612BF2250B2EF700315124 /* F2Guide.mm */,
 				CC612BEB250B2EF600315124 /* F2Utils.h */,
 				CC612BED250B2EF600315124 /* F2Utils.m */,
-				3FB8F5DF25CF995A0010E9E6 /* F2CanvasThread.h */,
-				3FB8F5E025CF995A0010E9E6 /* F2CanvasThread.m */,
-				CC195214250B76C90000FBFA /* F2CanvasView.h */,
-				3FC0056A253F0C2D00E09DD7 /* F2GestureListener.h */,
-				3FC0056B253F0C2D00E09DD7 /* F2GestureListener.m */,
-				3F56A02C25218EE5002AA2D2 /* F2.h */,
 			);
 			path = Wrapper;
 			sourceTree = "<group>";
@@ -698,6 +718,7 @@
 			files = (
 				9557244825ECBF7200D2FC07 /* Line.h in Headers */,
 				955723F825ECBF7200D2FC07 /* Line.h in Headers */,
+				CC019E5F2692EFA800543DB9 /* F2Canvas.h in Headers */,
 				955723F525ECBF7200D2FC07 /* Flag.h in Headers */,
 				CC612BF4250B2EF700315124 /* F2Chart.h in Headers */,
 				9557245825ECBF7200D2FC07 /* Command.h in Headers */,
@@ -721,6 +742,7 @@
 				CC612BF3250B2EF700315124 /* F2Utils.h in Headers */,
 				3FC0056C253F0C2D00E09DD7 /* F2GestureListener.h in Headers */,
 				9557241225ECBF7200D2FC07 /* Rect.h in Headers */,
+				CC3C01E526A00E9300335A1C /* F2Logger.h in Headers */,
 				9557242625ECBF7200D2FC07 /* Path.h in Headers */,
 				9557245525ECBF7200D2FC07 /* InteractionContext.h in Headers */,
 				9557244425ECBF7200D2FC07 /* Area.h in Headers */,
@@ -906,12 +928,14 @@
 				9557240825ECBF7200D2FC07 /* Line.cpp in Sources */,
 				955723F325ECBF7200D2FC07 /* Text.cpp in Sources */,
 				9557242C25ECBF7200D2FC07 /* json.cpp in Sources */,
+				CC019E602692EFA800543DB9 /* F2Canvas.mm in Sources */,
 				9557241525ECBF7200D2FC07 /* Shape.cpp in Sources */,
 				9557245325ECBF7200D2FC07 /* Pan.cpp in Sources */,
 				9557241925ECBF7200D2FC07 /* Area.cpp in Sources */,
 				3FC0056D253F0C2D00E09DD7 /* F2GestureListener.m in Sources */,
 				CC612BF7250B2EF700315124 /* F2Chart.mm in Sources */,
 				CC612BFA250B2EF700315124 /* F2Guide.mm in Sources */,
+				CC3C01E426A00E9300335A1C /* F2Logger.mm in Sources */,
 				CC612BF9250B2EF700315124 /* F2Geom.mm in Sources */,
 				9557240A25ECBF7200D2FC07 /* Text.cpp in Sources */,
 				955723F125ECBF7200D2FC07 /* Line.cpp in Sources */,
@@ -1047,7 +1071,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 57ZEL2VPN6;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1095,9 +1119,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 57ZEL2VPN6;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";

@@ -125,42 +125,76 @@ class Category : public AbstractScale {
 
   protected:
     virtual nlohmann::json CalculateTicks() override {
-        std::size_t valueSize = values.size();
-        if(valueSize == 0) {
-            return {};
-        }
-        if(this->tickCount > 0 && this->tickCount <= max - min + 1) {
+            std::size_t valueSize = values.size();
+            if(valueSize == 0) {
+                return {};
+            }
             nlohmann::json rst;
-            double Q[] = {1, 2, 5, 3, 4, 7, 6, 8, 9};
-            double w[] = {0.25, 0.2, 0.5, 0.05};
-            double outlmin, outlmax, outlstep;
-            wilk_ext(min, max, this->tickCount, -1, Q, 6, w, &outlmin, &outlmax, &outlstep);
+            if (this->tickCount == 0) {
+                return {};
+            }else if(this->tickCount == 1) {
+                double Q[] = {1, 2, 5, 3, 4, 7, 6, 8, 9};
+                double w[] = {0.25, 0.2, 0.5, 0.05};
+                double outlmin, outlmax, outlstep;
+                wilk_ext(min, max, this->tickCount, -1, Q, 6, w, &outlmin, &outlmax, &outlstep);
 
-            int step = static_cast<int>(outlstep);
+                int step = static_cast<int>(outlstep);
 
-            if(step > 0) {
-                std::size_t _max = static_cast<std::size_t>(max);
-                for(std::size_t index = static_cast<std::size_t>(min); index <= _max; index += step) {
+                if(step > 0) {
+                    std::size_t _max = static_cast<std::size_t>(max);
+                    for(std::size_t index = static_cast<std::size_t>(min); index <= _max; index += step) {
+                        nlohmann::json &_item = values[index];
+                        rst.push_back(_item);
+                    }
+                }
+                if(rst.size() < tickCount) {
+                    rst.push_back(values[valueSize - 1]);
+                }
+                return rst;
+            }
+            //cat平均算法，保头保尾
+            else {
+                size_t outlstep = values.size() / (tickCount - 1);
+                outlstep = fmax(outlstep, 1);
+                for (size_t index = 0; index < values.size(); index = index + outlstep) {
                     nlohmann::json &_item = values[index];
                     rst.push_back(_item);
                 }
+                         
+                // 如果最后一个tick不等于原数据的最后一个
+                auto &last = values[values.size() - 1];
+                if(rst[rst.size() -1] != last) {
+                    if(rst.size() >= tickCount) {
+                        rst[rst.size() - 1] = last;
+                    }else {
+                        rst.push_back(last);
+                    }
+                }
+                
+                return rst;
             }
-            if(rst.size() < tickCount) {
-                rst.push_back(values[valueSize - 1]);
-            }
-            return std::move(rst);
         }
-        return values;
-    }
+    
     // 定义域转 0~1 值域
-    static inline double CalculatePercent(double index, double min, double max) { return (index - min) / fmax(max - min, 1); }
+    static inline double CalculatePercent(double index, double min, double max) {
+        if(xg::IsEqual(max, min)) {
+            return (index - min);
+        }
+        return (index - min) / (max - min);
+    }
 
     static inline double CalculateValue(double percent, double min, double max) { return min + percent * (max - min); }
 
     virtual void InitConfig() {
-        nlohmann::json &range = config_["range"];
-        rangeMin = range[0];
-        rangeMax = range[1];
+        rangeMin = 0.0;
+        rangeMax = 1.0;
+        if(config_.contains("range") && config_["range"].is_array()) {
+            const nlohmann::json &range = config_["range"];
+            if (range.size() >= 2) {
+                rangeMin = range[0];
+                rangeMax = range[1];
+            }
+        }
 
         if(config_.contains("domain") && config_["domain"].is_array()) {
             nlohmann::json &domain = config_["domain"];
@@ -182,8 +216,8 @@ class Category : public AbstractScale {
         }
 
         if(config_.contains("ticks") && config_["ticks"].is_array()) {
-            this->ticks  = config_["ticks"];
-        }else {
+            this->ticks = config_["ticks"];
+        } else {
             this->ticks = this->CalculateTicks();
         }
     }

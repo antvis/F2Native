@@ -22,6 +22,14 @@ class GuideBase {
     virtual util::BBox GetBBox() { return bbox_; }
 
     std::string GetType() const noexcept { return this->type_; }
+    
+    //是否绘制在最顶层
+    bool isTop() const noexcept {
+        if (config_.contains("top")) {
+            return config_["top"].get<bool>();
+        }
+        return true;
+    }
 
     virtual util::Point GetPosition(XChart &chart, const nlohmann::json &position, const std::string &xField, const std::string &yField);
 

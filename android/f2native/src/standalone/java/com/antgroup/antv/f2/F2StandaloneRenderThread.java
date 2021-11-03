@@ -191,8 +191,8 @@ public abstract class F2StandaloneRenderThread implements F2RenderThread {
         protected void removeAllIdleTasks() {
             if (!mRenderTasks.isEmpty()) {
                 for (WeakReference<Runnable> renderTask : mRenderTasks) {
-                    Runnable task = null;
-                    if ((task = renderTask.get()) != null) {
+                    Runnable task = renderTask != null ? renderTask.get() : null;
+                    if (task != null) {
                         mHandler.removeCallbacks(task);
                     }
                 }

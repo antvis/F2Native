@@ -136,8 +136,8 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
         float labelFontSize = axis->labelCfg["textSize"];
         labelFontSize *= chart.GetRatio();
 
-        const std::string &textAlign = axis->labelCfg["textAlign"];
-        const std::string &textBaseline = axis->labelCfg["textBaseline"];
+        const auto &textAlign = axis->labelCfg["textAlign"];
+        const auto &textBaseline = axis->labelCfg["textBaseline"];
 
         func::F2Function *labelItemFunc = nullptr;
         if(axis->labelCfg.contains("item")) {
@@ -177,8 +177,13 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
                         xg::make_unique<xg::shape::Text>(textContent, util::Point{xOffset, yOffset}, textSize, "", itemStyle["textColor"]);
 
                     text->ext["tickValue"] = tick.value;
-                    text->SetTextAlign(itemStyle["textAlign"]);
-                    text->SetTextBaseline(itemStyle["textBaseline"]);
+                    if(itemStyle["textAlign"].is_string()) {
+                        text->SetTextAlign(itemStyle["textAlign"]);
+                    }
+                    
+                    if (itemStyle["textBaseline"].is_string()) {
+                        text->SetTextBaseline(itemStyle["textBaseline"]);
+                    }                    
                     xg::util::BBox bbox = text->GetBBox(chart.GetCanvasContext());
 
                     axis->maxWidth = fmax(axis->maxWidth, static_cast<double>(bbox.width));
@@ -189,8 +194,18 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
                     std::unique_ptr<xg::shape::Text> text =
                         xg::make_unique<xg::shape::Text>(tick.text, util::Point{0, 0}, labelFontSize, "", labelColor);
                     text->ext["tickValue"] = tick.value;
-                    text->SetTextAlign(textAlign);
-                    text->SetTextBaseline(textBaseline);
+                    if (textAlign.is_string()) {
+                        text->SetTextAlign(textAlign);
+                    }else if(textAlign.is_array() && textAlign.size() > index){
+                        text->SetTextAlign(textAlign[index]);
+                    }
+                    
+                    if (textBaseline.is_string()) {
+                        text->SetTextBaseline(textBaseline);
+                    }else if(textBaseline.is_array() && textBaseline.size() > index) {
+                        text->SetTextBaseline(textBaseline[index]);
+                    }
+                        
                     xg::util::BBox bbox = text->GetBBox(chart.GetCanvasContext());
 
                     axis->maxWidth = fmax(axis->maxWidth, static_cast<double>(bbox.width));

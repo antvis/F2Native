@@ -32,7 +32,7 @@ public class F2Chart {
     }
 
     public void setCanvas(F2CanvasView canvasView) {
-        innerLog("#bind canvas: " + canvasView);
+        innerLog("#bind canvas: " + canvasView.getNativeCanvas());
         mCanvasView = canvasView;
         if (hasDestroyed) return;
         assertRenderThread();

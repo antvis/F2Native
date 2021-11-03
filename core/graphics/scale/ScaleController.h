@@ -8,6 +8,7 @@
 #include "graphics/scale/TimeCategory.h"
 #include "graphics/scale/continuous/Linear.h"
 #include "graphics/scale/continuous/TimeSharingLinear.h"
+#include "graphics/util/json.h"
 #include "graphics/util/json_util.h"
 #include <algorithm>
 #include <nlohmann/json.hpp>
@@ -99,7 +100,7 @@ class ScaleController {
                                                       const nlohmann::json &data,
                                                       utils::Tracer *tracer,
                                                       std::unique_ptr<canvas::coord::AbstractCoord> &coord) {
-        nlohmann::json &fieldConfig = colConfigs[field_];
+        nlohmann::json fieldConfig = json::Get(colConfigs, field_);
         if(!scales_.empty()) {
             std::string _key = field_;
             if(fieldConfig.contains("assign")) {

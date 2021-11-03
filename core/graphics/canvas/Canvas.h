@@ -22,7 +22,14 @@ class Canvas : public shape::Group {
 
     void Draw();
 
-    void Destroy() override { Group::Destroy(); }
+    void Destroy() override {
+        Group::Destroy();
+        chart_ = nullptr;
+    }
+    
+    void Clear() { animateHandler_ = false; }
+
+    virtual ~Canvas() { chart_ = nullptr; }
 
   protected:
     // // clear Rect

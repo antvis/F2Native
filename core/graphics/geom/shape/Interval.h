@@ -100,7 +100,7 @@ class Interval : public GeomShapeBase {
             if(_style.contains("radius")) {
                 float roundings[4] = {0, 0, 0, 0};
                 json::ParseRoundings(_style["radius"], &roundings[0], context.GetDevicePixelRatio());
-                memcpy(rect->roundings, roundings, sizeof(float) * 4);
+                rect->SetRoundings(roundings);
             }
 
             container.AddElement(std::move(rect));

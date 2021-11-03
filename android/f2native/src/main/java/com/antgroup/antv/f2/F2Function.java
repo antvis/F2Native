@@ -25,9 +25,14 @@ public abstract class F2Function {
     public abstract F2Config execute(String param);
 
     protected final String nExecute(String param) {
-        F2Config config = execute(param);
-        if (config == null) return null;
-        return config.toJsonString();
+        try {
+            F2Config config = execute(param);
+            if (config == null) return null;
+            return config.toJsonString();
+        } catch (Exception e) {
+            F2Log.e("F2Function", "execute failed id: " + functionId, e);
+            return null;
+        }
     }
 
     private static native String nCreateFunction(Object thisObj);

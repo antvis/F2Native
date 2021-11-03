@@ -13,6 +13,8 @@ class TimeLine {
     void Play();
 
     void Stop();
+    
+    void Clear() { playing_ = false; }
 
     void PushAnim(AnimInfo &&animInfo);
 

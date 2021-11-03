@@ -1,14 +1,18 @@
-
-#import "F2CanvasThread.h"
-#import "F2GestureListener.h"
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "F2CanvasThread.h"
+#import "F2GestureListener.h"
+#import "F2Canvas.h"
+
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface F2CanvasView : UIView
 
-+ (F2CanvasView *)canvasWithFrame:(CGRect)frame;
++ (F2CanvasView *)canvasWithFrame:(CGRect)frame
+                        andBizId:(NSString *)bizId
+                        complete:(void (^)(F2CanvasView *))callback;
+
 
 + (F2CanvasView *)canvasWithFrame:(CGRect)frame
                          andBizId:(NSString *)bizId
@@ -16,19 +20,21 @@ NS_ASSUME_NONNULL_BEGIN
                          complete:(void (^)(F2CanvasView *))callback;
 
 @property (nonatomic, weak) id<F2GestureDelegate> delegate;
-@property (nonatomic, strong,readonly) F2CanvasThread *canvasThread;
 
-///render frame
+@property (nonatomic, strong, readonly) F2Canvas *canvas;
+
+@property (nonatomic, strong, readonly) F2GestureListener *listener;
+
+@property (nonatomic, strong, readonly) F2CanvasThread *canvasThread;
+
+/// render canvas
 - (void)drawFrame;
 
-/// get c++ canvas obj
-- (void *)gcanvas;
-
-/// release canvas and f2 chart resources
+/// destory canvas release ssource
 - (void)destroy;
 
-///上报监控信息
-- (void)logPerformance:(NSTimeInterval)duration withInfo:(NSString *)info;
+/// get c++ canvas  context obj
+- (void *)context;
 
 @end
 

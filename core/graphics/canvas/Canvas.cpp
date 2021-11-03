@@ -4,12 +4,17 @@
 using namespace xg;
 
 void canvas::Canvas::innerDrawInner() {
+    if(chart_ == nullptr) {
+        return;
+    }
+
     func::Command *c = func::CreateCommand([&]() -> void {
         animateHandler_ = false;
         if(toDraw_) {
             this->innerDrawInner();
         }
     });
+
     chart_->RequestAnimationFrame(c);
     animateHandler_ = true;
 
@@ -22,7 +27,7 @@ void canvas::Canvas::innerDrawInner() {
 }
 
 void canvas::Canvas::Draw() {
-    if(this->IsDestroyed()) {
+    if(this->IsDestroyed() || chart_ == nullptr) {
         return;
     }
 

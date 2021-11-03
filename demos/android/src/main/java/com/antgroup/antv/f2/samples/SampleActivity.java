@@ -24,6 +24,7 @@ public class SampleActivity extends AppCompatActivity {
                 .asyncRender(true)
                 .setOption("canvasBizId", "F2NativeDemo")
                 .setOption("appId", "1000")
+                .useNativeDraw(true)
                 .build());
 
         ChartModel chartModel = (ChartModel) getIntent().getSerializableExtra("ChartModel");

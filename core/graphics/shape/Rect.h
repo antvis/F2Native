@@ -65,6 +65,8 @@ class Rect : public Shape {
     util::BBox CalculateBox(canvas::CanvasContext &context) const override;
 
     virtual void UpdateAttribute(std::string attrName, double val) override;
+    
+    void SetRoundings(float (&roundings)[4]);
 
   protected:
     void CreatePath(canvas::CanvasContext &context) const override;

@@ -226,3 +226,10 @@ void animate::GeomAnimate::OnBeforeCanvasDraw() {
         animate::action::DoGroupAnimate(cfg["animate"], timeLine_, (*it)->container_, cfg, chart_->coord_.get(), zeroY);
     }
 }
+
+void animate::GeomAnimate::Clear() {
+    isUpdate_ = false;
+    if (timeLine_) {
+        timeLine_->Clear();
+    }
+}

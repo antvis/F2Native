@@ -14,8 +14,7 @@
 
 - (instancetype)init {
     if(self = [super initWithFrame:CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width, 280)]) {
-        F2CanvasThread *cthread = [[F2CanvasThread alloc] initWithAsync:YES];
-        cthread.name = [self name];
+        F2CanvasThread *cthread = [[F2CanvasThread alloc] initWithName:[self name]];
         __weak __typeof(self) weakSelf = self;
         self.chartSize = self.frame.size;
         F2CanvasView *view = [F2CanvasView canvasWithFrame:self.frame
@@ -23,7 +22,10 @@
                                                  andThread:nil
                                                   complete:^(F2CanvasView *view) {
                                                       __strong __typeof(weakSelf) strongSelf = weakSelf;
-                                                      [strongSelf render];
+            if(strongSelf) {
+                strongSelf.canvasView = view;
+                [strongSelf render];
+            }
                                                   }];
 
         self.canvasView = view;
@@ -46,7 +48,7 @@
     NSString *jsonData = [NSString stringWithContentsOfFile:jsonPath encoding:NSUTF8StringEncoding error:nil];
     self.chart.clear();
     self.chart.canvas(self.canvasView).padding(20, 10, 20, 0.f).source(jsonData);
-    self.chart.scale(@"date", @{@"tickCount": @(5)});
+    self.chart.scale(@"date", @{@"tickCount": @(3)});
     self.chart.scale(@"value", @{@"nice": @(YES)});
     self.chart.axis(@"date", @{
         @"grid": @(NO),
@@ -68,9 +70,14 @@
             return tips;
         }]
     });
+    
+    self.chart.guide().background(@{@"color":@"#FF00001D",@"leftBottom":@[@"min", @"min"], @"rightTop":@[@"max", @(80)]});
+    self.chart.guide().background(@{@"color":@"#00FF001D",@"leftBottom":@[@"min", @(80)], @"rightTop":@[@"max", @(320)]});
+    
     self.chart.animate(@(YES));
     self.chart.interaction(@"pinch", @{});
     self.chart.interaction(@"pan", @{});
+    
     self.chart.render();
 }
 
@@ -85,7 +92,7 @@
     return _chart;
 }
 
-- (void)handleGestureInfo:(NSDictionary *)info {
+- (void)handleGestureInfo:(NSDictionary *)info sender:(nonnull UIGestureRecognizer *)gestureRecognizer {
     self.chart.postTouchEvent(info);
 }
 

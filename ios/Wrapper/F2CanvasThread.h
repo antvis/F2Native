@@ -6,28 +6,34 @@
 //  Copyright © 2021 com.alipay.xgraph. All rights reserved.
 //
 
+
 #import <Foundation/Foundation.h>
+
+#if defined(PRODUCT_WALLET)
+#import <AntCanvas/AntCanvasThread.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
+#if defined(PRODUCT_WALLET)
+
+@interface F2CanvasThread : AntCanvasThread
+@end
+#else
 @interface F2CanvasThread : NSObject
 
-@property (nonatomic, copy) NSString *name;
+@property (nonatomic, strong) NSThread *myThread;
 
-- (instancetype)initWithAsync:(BOOL)async;
+- (instancetype)initWithName:(NSString *)name;
 
-- (void)runBlockSyncOnExecuteThread:(void (^)(void))block;
+- (void)performBlockASyncOnThread:(void (^)(void))block;
 
-- (void)runBlockSyncOnExecuteThread:(void (^)(void))block forcePost:(BOOL)force;
-
-- (void)runBlockASyncOnExecuteThread:(void (^)(void))block;
-
-- (void)runBlockASyncOnExecuteThread:(void (^)(void))block forcePost:(BOOL)force;
-
-- (void)runBlockASyncOnExecuteThread:(void (^)(void))block delay:(NSTimeInterval)timeInterval;
-
-- (BOOL)isMainThread;
+/// 需要调用 destroy 来停止 runloop
+- (void)destroy;
 
 @end
+#endif
 
 NS_ASSUME_NONNULL_END
+
+

@@ -1,6 +1,7 @@
 #include "ToolTip.h"
 #include "graphics/event/EventController.h"
 #include "graphics/shape/Group.h"
+#include "graphics/scale/Scale.h"
 #include <nlohmann/json.hpp>
 
 #ifndef XG_GRAPHICS_TOOLTIP_CONTROLLER_H
@@ -20,6 +21,7 @@ class ToolTipController {
 
     void AddMonitor(ToolTipMarkerItemsCallback callback) { actionListeners_.push_back(callback); }
 
+    void Clear() { toolTip_ = nullptr;}
   protected:
     void OnRender();
     void OnClearInner();
@@ -33,7 +35,7 @@ class ToolTipController {
 
     bool HideToolTip();
 
-    std::string InvertYTip(const util::Point &p);
+    std::string InvertYTip(const util::Point &p, xg::scale::AbstractScale &yScale);
 
   private:
     XChart *chart_;

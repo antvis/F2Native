@@ -167,7 +167,7 @@ class ToolTip {
 
         container_->AddElement(std::move(xLine));
 
-        if(showY && config_["yTip"].is_object()) {
+        if(showY) {
             vector<xg::util::Point> yPoints;
             yPoints.push_back(util::Point{coord.GetXAxis().x, point.y});
             yPoints.push_back(util::Point{coord.GetXAxis().y, point.y});

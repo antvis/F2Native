@@ -31,7 +31,7 @@
     NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"Res/mockData_klineDay" ofType:@"json"];
     NSString *jsonData = [NSString stringWithContentsOfFile:jsonPath encoding:NSUTF8StringEncoding error:nil];
 
-    self.candleChart.canvas(self.canvasView).padding(15, 10, 0, 0.f).source(jsonData);
+    self.candleChart.canvas(self.canvasView).padding(15, 10, 15, 0.f).source(jsonData);
     self.candleChart.candle().position(@"date*values"); // .style(@{@"stroke": @[@"#1CAA3D", @"#808080", @"#F4333C"]});
     self.candleChart.line().position(@"date*m5").fixedColor(@"#A46FFE");
     self.candleChart.line().position(@"date*m10").fixedColor(@"#46ACFF");
@@ -53,7 +53,7 @@
 
     self.subChart.canvas(self.canvasView);
     self.subChart.margin(0, 210, 0, 0);
-    self.subChart.padding(12, 0, 0, 20);
+    self.subChart.padding(15, 10, 15, 10);
     self.subChart.source(jsonData);
     self.subChart.axis(@"date", @{@"hidden": @(YES)});
     self.subChart.interval().position(@"date*volumn");
@@ -73,7 +73,7 @@
 
 - (F2CanvasView *)canvasView {
     if(!_canvasView) {
-        _canvasView = [F2CanvasView canvasWithFrame:self.frame];
+        _canvasView = [F2CanvasView canvasWithFrame:self.frame andBizId:@"KLineUIView" complete:nil];
         _canvasView.delegate = self;
     }
     return _canvasView;
@@ -97,7 +97,7 @@
     return _subChart;
 }
 
-- (void)handleGestureInfo:(NSDictionary *)info {
+- (void)handleGestureInfo:(NSDictionary *)info sender:(nonnull UIGestureRecognizer *)gestureRecognizer {
     self.candleChart.postTouchEvent(info);
     self.subChart.postTouchEvent(info);
 }

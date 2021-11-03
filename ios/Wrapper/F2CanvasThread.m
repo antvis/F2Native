@@ -8,33 +8,19 @@
 
 #import "F2CanvasThread.h"
 
-@implementation F2CanvasThread {
-    NSThread *_execThread;
-}
+@implementation F2CanvasThread
 
-- (void)dealloc {
-    CFRunLoopStop([[NSRunLoop currentRunLoop] getCFRunLoop]);
-    _execThread = nil;
-}
+#if defined(PRODUCT_WALLET)
 
-- (instancetype)initWithAsync:(BOOL)async {
+#else
+- (instancetype)initWithName:(NSString *)name {
     self = [super init];
     if(self) {
-        if(async) {
-            _execThread = [[NSThread alloc] initWithTarget:self selector:@selector(runRunLoopThread) object:nil];
-            [_execThread start];
-        } else {
-            _execThread = [NSThread mainThread];
-        }
+        self.myThread = [[NSThread alloc] initWithTarget:self selector:@selector(runRunLoopThread) object:nil];
+        [self.myThread start];
+
     }
     return self;
-}
-
-- (void)setName:(NSString *)name {
-    _name = name;
-    if(![_execThread isMainThread]) {
-        _execThread.name = _name;
-    }
 }
 
 - (void)runRunLoopThread {
@@ -48,43 +34,26 @@
     }
 }
 
-- (void)runBlockSyncOnExecuteThread:(void (^)())block {
+- (void)performBlockASyncOnThread:(void (^)())block {
     [self runBlockSyncOnExecuteThread:block forcePost:NO];
 }
 
 - (void)runBlockSyncOnExecuteThread:(void (^)(void))block forcePost:(BOOL)force {
-    if(!force && [NSThread currentThread] == _execThread) {
+    if(!force && [NSThread currentThread] == self.myThread) {
         block();
     } else {
-        [self performSelector:@selector(runBlockSyncOnExecuteThread:)
-                     onThread:_execThread
+        [self performSelector:@selector(performBlockASyncOnThread:)
+                     onThread:self.myThread
                    withObject:[block copy]
                 waitUntilDone:YES];
     }
 }
 
-- (void)runBlockASyncOnExecuteThread:(void (^)())block {
-    [self runBlockASyncOnExecuteThread:block forcePost:NO];
+- (void)destroy; {
+    CFRunLoopStop([[NSRunLoop currentRunLoop] getCFRunLoop]);
+    self.myThread = nil;
 }
 
-- (void)runBlockASyncOnExecuteThread:(void (^)(void))block forcePost:(BOOL)force {
-    if(!force && [NSThread currentThread] == _execThread) {
-        block();
-    } else {
-        [self performSelector:@selector(runBlockSyncOnExecuteThread:)
-                     onThread:_execThread
-                   withObject:[block copy]
-                waitUntilDone:NO];
-    }
-}
-
-- (void)runBlockASyncOnExecuteThread:(void (^)(void))block delay:(NSTimeInterval)timeInterval {
-
-    [self performSelector:@selector(runBlockSyncOnExecuteThread:) withObject:block afterDelay:timeInterval / 1000];
-}
-
-- (BOOL)isMainThread {
-    return [_execThread isMainThread];
-}
+#endif
 
 @end

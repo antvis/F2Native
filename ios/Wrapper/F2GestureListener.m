@@ -1,9 +1,7 @@
-
-
-const double LONG_GESTURE_MINI_DURATION = 0.0f;
-
 #import "F2GestureListener.h"
 #import "F2Utils.h"
+
+const double LONG_GESTURE_MINI_DURATION = 0.25f;
 
 @interface F2GestureListener ()
 @property (nonatomic, weak) UIView *view;
@@ -28,12 +26,22 @@ const double LONG_GESTURE_MINI_DURATION = 0.0f;
     [self addTapGesture];
 }
 
+- (void)removeAllGestures {
+    for(UIGestureRecognizer *gesture in _view.gestureRecognizers) {
+        [_view removeGestureRecognizer:gesture];
+    }
+}
+
+- (void)removeGesture:(UIGestureRecognizer *)gesture {
+    [_view removeGestureRecognizer:gesture];
+}
+
 - (void)gestureAction:(id)sender {
     NSString *eventType = [self eventType:sender];
     if(!eventType) {
         return;
     }
-    CGFloat scale = [UIScreen mainScreen].scale;
+    CGFloat scale = [UIScreen mainScreen].nativeScale;
     UIGestureRecognizer *gesture = (UIGestureRecognizer *)sender;
     NSArray *points = nil;
     if(gesture.numberOfTouches == 2) {
@@ -48,16 +56,16 @@ const double LONG_GESTURE_MINI_DURATION = 0.0f;
         points = @[point];
     }
     NSDictionary *event = @{ @"eventType": eventType, @"points": points };
-    if([self.delegate respondsToSelector:@selector(handleGestureInfo:)]) {
-        [self.delegate handleGestureInfo:event];
+    if([self.delegate respondsToSelector:@selector(handleGestureInfo:sender:)]) {
+        [self.delegate handleGestureInfo:event sender:sender];
     }
-    [self supplementAction:event];
+    [self supplementAction:event sender:sender];
 }
 
 //对齐android的长按手势
 //250ms后补发一个touchmove事件,使得F2Native能判断出是长按手势
 //F2 PRESS_DELAY = 250ms
--(void)supplementAction:(NSDictionary *)event {
+-(void)supplementAction:(NSDictionary *)event sender:(id)sender  {
     self.event = event;
     WeakSelf;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(250 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
@@ -65,7 +73,7 @@ const double LONG_GESTURE_MINI_DURATION = 0.0f;
         NSString *eventType = [strongSelf.event objectForKey:@"eventType"];
         if ([eventType isEqualToString:@"touchstart"]) {
             NSArray *points = [strongSelf.event objectForKey:@"points"];
-            [strongSelf.delegate handleGestureInfo:@{@"eventType": @"touchmove", @"points": points ? : @[]}];
+            [strongSelf.delegate handleGestureInfo:@{@"eventType": @"touchmove", @"points": points ? : @[]} sender:sender];
         }
     });
 }

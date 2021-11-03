@@ -62,6 +62,9 @@ class TimeSharingLinear : public AbstractScale {
     }
 
     double Scale(const nlohmann::json &key) override {
+        if (!key.is_number()) {
+            return std::nan("0.0");
+        }
         double time = key;
 
         if(time < min_ || time > max_)
@@ -77,7 +80,7 @@ class TimeSharingLinear : public AbstractScale {
                 time = range[1];
             }
 
-            if(time < range[1]) {
+            if(time <= range[1]) {
                 double delta = time - range0;
                 if(delta < 0) {
                     delta = 0;
@@ -88,10 +91,10 @@ class TimeSharingLinear : public AbstractScale {
                 //                printf("%lf rst %lf time\n", rst, time);
                 //                return rst;
             } else {
-                index += (range1 - range0) / 60000;
+                index += (range1 - range0) / 60000 + 1;
             }
         }
-        double rst = index / valueSize_;
+        double rst = index / (valueSize_ -1 );
         return rst;
     }
 
@@ -111,7 +114,7 @@ class TimeSharingLinear : public AbstractScale {
             if(item == range[0] && i > 0) {
                 long long lastEnd = timeRange[i - 1][1];
                 if(lastEnd == item) {
-                    return "";
+                    return xg::TimeStampToHHmm(item.get<long long>() + timeZoneOffset, forceTimeZone);
                 }
                 return xg::TimeStampToHHmm(lastEnd + timeZoneOffset, forceTimeZone) + "/" +
                        xg::TimeStampToHHmm(item.get<long long>() + timeZoneOffset, forceTimeZone);
@@ -136,13 +139,13 @@ class TimeSharingLinear : public AbstractScale {
     }
 
     nlohmann::json Invert(double val) override {
-        std::size_t index = val * _GetValuesSize();
+        std::size_t index = val * (valueSize_ -1);
         nlohmann::json &timeRange = config_["timeRange"];
         for(std::size_t i = 0; i < timeRange.size(); ++i) {
             nlohmann::json &range = timeRange[i];
             long long start = range[0];
             long long end = range[1];
-            std::size_t count = (end - start) / (60 * 1000);
+            std::size_t count = (end - start) / (60 * 1000) + 1;
             if(index >= count) {
                 index -= count;
             } else {
@@ -160,7 +163,7 @@ class TimeSharingLinear : public AbstractScale {
             nlohmann::json &range = timeRange[i];
             long long start = range[0];
             long long end = range[1];
-            count += (end - start) / (60 * 1000);
+            count += (end - start) / (60 * 1000) + 1;
         }
         return count;
     }

@@ -282,6 +282,7 @@
 		CC195219250B8CB30000FBFA /* F2GLESEnv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F2GLESEnv.h; sourceTree = "<group>"; };
 		CC3C01E226A00E9300335A1C /* F2Logger.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = F2Logger.mm; sourceTree = "<group>"; };
 		CC3C01E326A00E9300335A1C /* F2Logger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F2Logger.h; sourceTree = "<group>"; };
+		CC5DE189273292E300B7A53C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CC611D17250A1D0800315124 /* StringUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringUtil.h; sourceTree = "<group>"; };
 		CC611D18250A1D0800315124 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		CC611D1A250A1D0800315124 /* Tracer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tracer.h; sourceTree = "<group>"; };
@@ -686,6 +687,7 @@
 		CC793C312509FBAA00E9D913 = {
 			isa = PBXGroup;
 			children = (
+				CC5DE189273292E300B7A53C /* Info.plist */,
 				CC612BAE250A1E5800315124 /* Wrapper */,
 				CC611D11250A1D0800315124 /* core */,
 				CC611D6B250A1D0800315124 /* third_party */,
@@ -1097,7 +1099,7 @@
 					"\"$(SRCROOT)/../third_party/GCanvas/core/src/gcanvas/GL\"",
 					"\"$(SRCROOT)/../third_party/GCanvas/core/src/platform\"",
 				);
-				INFOPLIST_FILE = "";
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1106,7 +1108,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACH_O_TYPE = staticlib;
-				PRODUCT_BUNDLE_IDENTIFIER = com.alipay.xgraph;
+				PRODUCT_BUNDLE_IDENTIFIER = com.alipay.f2;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1147,7 +1149,7 @@
 					"\"$(SRCROOT)/../third_party/GCanvas/core/src/gcanvas/GL\"",
 					"\"$(SRCROOT)/../third_party/GCanvas/core/src/platform\"",
 				);
-				INFOPLIST_FILE = "";
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1156,7 +1158,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACH_O_TYPE = staticlib;
-				PRODUCT_BUNDLE_IDENTIFIER = com.alipay.xgraph;
+				PRODUCT_BUNDLE_IDENTIFIER = com.alipay.f2;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;

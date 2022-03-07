@@ -1,3 +1,9 @@
+#if defined(__APPLE__)
+#import <TargetConditionals.h>
+#endif
+
+#if defined(TARGET_STANDALONE) && (TARGET_OS_MACCATALYST != 1)
+
 #import <OpenGLES/EAGLDrawable.h>
 #import <OpenGLES/ES2/gl.h>
 #import <OpenGLES/ES2/glext.h>
@@ -17,3 +23,5 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 NS_ASSUME_NONNULL_END
+
+#endif

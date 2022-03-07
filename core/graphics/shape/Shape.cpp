@@ -3,11 +3,13 @@
 xg::shape::Shape::Shape() : Element() { isShape_ = true; }
 
 void xg::shape::Shape::DrawInner(canvas::CanvasContext &context) const {
-    CreatePath(context);
-
     float originOpacity = context.GlobalAlpha();
+    //coregraphics context path和fill必须配对 path和stroke必须配对
+    //在既有fill又有stroke的case 会浪费一点性能
+    
     // fill case
     if(HasFill()) {
+        CreatePath(context);
         if(!std::isnan(fillOpacity_)) {
             context.SetGlobalAlpha(fillOpacity_);
             context.Fill();
@@ -19,6 +21,7 @@ void xg::shape::Shape::DrawInner(canvas::CanvasContext &context) const {
 
     // stroke case
     if(HasStroke() && lineWidth_ > 0) {
+        CreatePath(context);
         if(!std::isnan(strokeOpacity_)) {
             context.SetGlobalAlpha(strokeOpacity_);
             context.Stroke();

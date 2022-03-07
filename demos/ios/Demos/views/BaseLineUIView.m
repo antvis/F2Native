@@ -13,32 +13,23 @@
 }
 
 - (instancetype)init {
-    if(self = [super initWithFrame:CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width, 280)]) {
-        F2CanvasThread *cthread = [[F2CanvasThread alloc] initWithAsync:YES];
-        cthread.name = [self name];
-        __weak __typeof(self) weakSelf = self;
-        self.chartSize = self.frame.size;
-        F2CanvasView *view = [F2CanvasView canvasWithFrame:self.frame
-                                                  andBizId:[self name]
-                                                 andThread:nil
-                                                  complete:^(F2CanvasView *view) {
-                                                      __strong __typeof(weakSelf) strongSelf = weakSelf;
-                                                      [strongSelf render];
-                                                  }];
-
-        self.canvasView = view;
-        self.canvasView.delegate = self;
-        [self addSubview:self.canvasView];
-    }
-    return self;
+    return [self initWithFrame:CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width, 280)];
 }
 
-- (void)render {
-    NSTimeInterval start = [[NSDate date] timeIntervalSince1970];
-    NSLog(@"== 开始 == 线程：%@", [NSThread currentThread]);
-    [self chartRender];
-    NSTimeInterval end = [[NSDate date] timeIntervalSince1970];
-    NSLog(@"== 结束 == 线程：%@ ; 耗时：%f", [NSThread currentThread], (end - start) * 1000);
+- (instancetype)initWithFrame:(CGRect)frame {
+    if(self = [super initWithFrame:frame]) {
+        self.chartSize = self.frame.size;
+        F2CanvasView *view = [F2CanvasView canvasWithFrame:frame
+                                                  andBizId:[self name]
+                                                  complete:nil];
+        view.backgroundColor = [UIColor whiteColor];
+        self.canvasView = view;
+        self.canvasView.delegate = self;
+        [self chartRender];
+        [self addSubview:self.canvasView];
+        
+    }
+    return self;
 }
 
 - (void)chartRender {
@@ -46,11 +37,12 @@
     NSString *jsonData = [NSString stringWithContentsOfFile:jsonPath encoding:NSUTF8StringEncoding error:nil];
     self.chart.clear();
     self.chart.canvas(self.canvasView).padding(20, 10, 20, 0.f).source(jsonData);
-    self.chart.scale(@"date", @{@"tickCount": @(5)});
+    self.chart.scale(@"date", @{@"tickCount": @(3)});
     self.chart.scale(@"value", @{@"nice": @(YES)});
     self.chart.axis(@"date", @{
         @"grid": @(NO),
         @"label": @{
+            @"textAlign": @[@"start", @"center", @"end"],
             @"item": [F2CallbackObj initWithCallback:^id _Nullable(NSString *_Nonnull param) {
                 NSData *data = [param dataUsingEncoding:NSUTF8StringEncoding];
                 NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
@@ -68,9 +60,12 @@
             return tips;
         }]
     });
+    
+    self.chart.guide().background(@{@"color":@"#FF00001D",@"leftBottom":@[@"min", @"min"], @"rightTop":@[@"max", @(80)]});
+    self.chart.guide().background(@{@"color":@"#00FF001D",@"leftBottom":@[@"min", @(80)], @"rightTop":@[@"max", @(320)]});
+    
     self.chart.animate(@(YES));
-    self.chart.interaction(@"pinch", @{});
-    self.chart.interaction(@"pan", @{});
+    
     self.chart.render();
 }
 
@@ -85,7 +80,7 @@
     return _chart;
 }
 
-- (void)handleGestureInfo:(NSDictionary *)info {
+- (void)handleGestureInfo:(NSDictionary *)info sender:(nonnull UIGestureRecognizer *)gestureRecognizer {
     self.chart.postTouchEvent(info);
 }
 

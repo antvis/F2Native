@@ -2,5 +2,6 @@
 
 @interface ViewController : UIViewController
 
++ (NSArray *)demoInfo;
 
 @end

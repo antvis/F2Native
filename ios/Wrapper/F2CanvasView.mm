@@ -1,83 +1,112 @@
 #import "F2CanvasView.h"
-#import "F2CanvasThread.h"
-#import "F2GLESEnv.h"
 #import "F2Utils.h"
-#import <gcanvas/GCanvas.hpp>
-#import <gcanvas/GCanvas2dContext.h>
-#import <gcanvas/GCanvasManager.h>
+#import "F2CoreGraphicsCanvasContext.h"
+#import "F2AlipayCanvasContext.h"
+
+#if defined(TARGET_ALIPAY)
+#import "XGEventLogger.h"
+#import <APConfig/APConfigService.h>
+#import <APMobileFramework/DTContext.h>
+#import <AntUI/AntUI.h>
+#endif
 
 @interface F2CanvasView () <F2GestureDelegate>
-
-@property (nonatomic, assign) gcanvas::GCanvas *canvas;
-@property (nonatomic, assign) GCanvasContext *context2d;
-@property (nonatomic, strong) F2GLESEnv *env;
+@property (nonatomic, strong) F2CanvasContext *canvasContext;
 @property (nonatomic, strong) F2GestureListener *listener;
-@property (nonatomic, strong) F2CanvasThread *canvasThread;
-
+@property (nonatomic, assign, readwrite) BOOL isUseCGBackend;
+@property (nonatomic, copy, readwrite) NSString *bizId;
 @end
 
 @implementation F2CanvasView
 
-+ (F2CanvasView *)canvasWithFrame:(CGRect)frame {
-    F2CanvasView *view = [[F2CanvasView alloc] initWithFrame:frame];
-    view.canvasThread = [[F2CanvasThread alloc] initWithAsync:false];
-    view.env = [[F2GLESEnv alloc] init:view.layer];
-    CGFloat scale = UIScreen.mainScreen.nativeScale;
-    CGRect bufferFrame = CGRectMake(view.frame.origin.x * scale, view.frame.origin.y * scale, view.frame.size.width * scale,
-                                    view.frame.size.height * scale);
-    [view createCanvas:bufferFrame];
-    return view;
+//NativeCanvas上线开关
++(NSString *)backendTypeStr {
+#if defined(TARGET_ALIPAY)
+    static NSString *backendStr;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        id<APConfigService> configService = [DTContextGet() findServiceByName:@"APConfigService"];
+        backendStr = [configService stringValueForKey:@"kF2NativeCanvasBackendKey"];
+    });
+    return backendStr;
+#endif
+    
+    return @"true";
+}
+
++(NSString *)toastStr {
+#if defined(TARGET_ALIPAY)
+    static NSString *toastStr;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        id<APConfigService> configService = [DTContextGet() findServiceByName:@"APConfigService"];
+        toastStr = [configService stringValueForKey:@"kF2NativeCanvasBackendToast"];
+    });
+    return toastStr;
+#endif
+    
+    return @"false";
 }
 
 + (F2CanvasView *)canvasWithFrame:(CGRect)frame
                          andBizId:(NSString *)bizId
-                        andThread:(F2CanvasThread *)thread
                          complete:(void (^)(F2CanvasView *))callback {
+    bool cgBackend = [[F2CanvasView backendTypeStr] isEqualToString:@"true"];
+    return [F2CanvasView canvasWithFrame:frame cgBackend:cgBackend andBizId:bizId complete:callback];
+    
+}
 
++ (F2CanvasView *)canvasWithFrame:(CGRect)frame
+                        cgBackend:(BOOL)isUseCGBackend
+                        andBizId:(NSString *)bizId
+                         complete:(void (^)(F2CanvasView *))callback {
     F2CanvasView *view = [[F2CanvasView alloc] initWithFrame:frame];
-    if(!thread) {
-        view.canvasThread = [[F2CanvasThread alloc] initWithAsync:false];
-    } else {
-        view.canvasThread = thread;
-    }
-
-    CGFloat scale = UIScreen.mainScreen.nativeScale;
-    CGRect bufferFrame = CGRectMake(view.frame.origin.x * scale, view.frame.origin.y * scale, view.frame.size.width * scale,
-                                    view.frame.size.height * scale);
-
-    __weak __typeof(view) weakView = view;
-    CALayer *layer = view.layer;
-    [view
-        runBlockOnExecuteThread:^{
-            __strong __typeof(weakView) strongView = weakView;
-            strongView.env = [[F2GLESEnv alloc] init:layer];
-            [strongView createCanvas:bufferFrame];
-            callback(strongView);
-        }
-                        isAsync:true
-                      forcePost:YES];
+    [view createCanvasWithFrame:frame cgBackend:isUseCGBackend andBizId:bizId complete:callback];
     return view;
 }
 
-- (void)destroy {
-    WeakSelf;
-    [self
-        runBlockOnExecuteThread:^{
-            StrongSelf;
-            [strongSelf destroyCanvas];
-            [strongSelf.env destroyContext];
+- (void)createCanvasWithFrame:(CGRect)frame
+                    cgBackend:(BOOL)isUseCGBackend
+                          andBizId:(NSString *)bizId
+                          complete:(void (^)(F2CanvasView *))callback{
+    self.isUseCGBackend = isUseCGBackend;
+    self.bizId = bizId;
+#if defined(TARGET_ALIPAY)
+    [XGEventLogger logGraph:bizId];
+    if (self.isUseCGBackend) {
+        self.canvasContext = [F2CoreGraphicsCanvasContext new];
+        
+        //方便测试 后续随老canvas一起下线
+        if ([[F2CanvasView toastStr] isEqualToString:@"true"]) {
+            [AUToast presentToastWithin:[UIApplication sharedApplication].keyWindow.rootViewController.view
+                               withIcon:AUToastIconNone
+                                   text:@"新Canvas绘制"
+                               duration:0.4
+                                 logTag:@"F2Native"];
         }
-                        isAsync:NO
-                      forcePost:NO];
+        
+    }else {
+        self.canvasContext = [F2AlipayCanvasContext new];
+    }
+#endif
+#if defined(TARGET_STANDALONE)
+    self.canvasContext = [F2CoreGraphicsCanvasContext new];
+#endif
+    F2WeakSelf;
+    [self.canvasContext createContextWithFrame:frame complete:^(F2CanvasContext * _Nonnull canvas) {
+        F2StrongSelf;
+        if (!strongSelf) {
+            return;
+        }
+        [strongSelf addSubview:canvas.contextView];
+        if (callback) {
+            callback(strongSelf);
+        }
+    }];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if(self = [super initWithFrame:frame]) {
-        CAEAGLLayer *eaglLayer = (CAEAGLLayer *)self.layer;
-        eaglLayer.opaque = YES;
-        eaglLayer.drawableProperties =
-            @{kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGBA8, kEAGLDrawablePropertyRetainedBacking: @(YES)};
-        eaglLayer.contentsScale = UIScreen.mainScreen.nativeScale;
         self.listener = [[F2GestureListener alloc] initWithView:self];
         self.listener.delegate = self;
         self.userInteractionEnabled = YES;
@@ -86,112 +115,65 @@
     return self;
 }
 
-- (void)createCanvas:(CGRect)frame {
-    static NSInteger canvasId = 1;
-    GCanvasConfig config;
-    config.useFbo = true;
-    config.flip = false;
-    config.sharedFont = false;
-    config.sharedShader = false;
-    gcanvas::GCanvasManager *manager = gcanvas::GCanvasManager::GetManager();
-    self.canvas = manager->NewCanvas(std::to_string(canvasId++), config);
-    self.canvas->CreateContext();
-    self.context2d = self.canvas->GetGCanvasContext();
-    self.context2d->SetFontManager(GFontManager::NewInstance());
-    // gcanvas中按px计算
-    self.context2d->SetDevicePixelRatio(1.0f);
-    self.canvas->OnSurfaceChanged(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
-    self.context2d->ClearScreen();
-}
-
-- (void)destroyCanvas {
-    gcanvas::GCanvasManager *manager = gcanvas::GCanvasManager::GetManager();
-    manager->RemoveCanvas(self.canvas->mContextId);
-    self.canvas = nil;
-}
-
-- (void *)gcanvas {
-    return self.canvas;
-}
-
 - (void)drawFrame {
-    WeakSelf;
-    [self
-        runBlockOnExecuteThread:^{
-            StrongSelf;
-
-            strongSelf.canvas->drawFrame();
-            [strongSelf.env swapBuffers];
-        }
-                        isAsync:NO
-                      forcePost:NO];
+    [self.canvasContext draw];
 }
 
-- (void)logPerformance:(NSTimeInterval)duration withInfo:(NSString *)info {
-    WeakSelf;
-    [self
-        runBlockOnExecuteThread:^{
-            StrongSelf;
-            @try {
-                NSData *jsonData = [info dataUsingEncoding:NSUTF8StringEncoding];
-                NSError *err;
-                NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:jsonData
-                                                                    options:NSJSONReadingMutableContainers
-                                                                      error:&err];
-                NSString *color = @"noraml";
-                if([dic[@"cmdCount"] intValue] <= 0) {
-                    color = @"white";
-                }
-                [strongSelf logPerformance:[NSString stringWithFormat:@"%f", duration]
-                                     color:color
-                                  cmdCount:[[dic objectForKey:@"cmdCount"] intValue]];
-            } @catch(NSException *exception) {
-            }
-        }
-                        isAsync:YES
-                      forcePost:NO];
+- (void)dealloc {
+    [_canvasContext destroy];
 }
 
-- (F2CanvasThread *)canvasThread {
-    return _canvasThread;
+- (void)destroy {
+    [self.canvasContext destroy];
+    self.canvasContext = nil;
 }
 
-+ (Class)layerClass {
-    return [CAEAGLLayer class];
+- (UIImage *)snapshot {
+    return self.canvasContext.snapshot;
 }
 
-- (void)handleGestureInfo:(nonnull NSDictionary *)info {
-    WeakSelf;
-    [self
-        runBlockOnExecuteThread:^{
-            StrongSelf;
-            if(info && [strongSelf.delegate respondsToSelector:@selector(handleGestureInfo:)]) {
-                [strongSelf.delegate handleGestureInfo:info];
-            }
-        }
-                        isAsync:NO
-                      forcePost:NO];
-}
-
-- (void)logPerformance:(NSString *)duration color:(NSString *)color cmdCount:(int)cmdCount {
-    NSLog(@"logPerformance: duration:%@,color:%@, cmdCoun:%d", duration, color, cmdCount);
-}
-
-- (void)runBlockOnExecuteThread:(void (^)(void))block isAsync:(BOOL)async forcePost:(BOOL)force {
-    if(self.canvasThread) {
-        async ? [self.canvasThread
-                    runBlockASyncOnExecuteThread:^{
-                        block();
-                    }
-                                       forcePost:force] :
-                [self.canvasThread
-                    runBlockSyncOnExecuteThread:^{
-                        block();
-                    }
-                                      forcePost:force];
-    } else {
-        block();
+- (void)handleGestureInfo:(nonnull NSDictionary *)info sender:(nonnull UIGestureRecognizer *)gestureRecognizer{
+    if(info && [self.delegate respondsToSelector:@selector(handleGestureInfo:sender:)]) {
+        [self.delegate handleGestureInfo:info sender:gestureRecognizer];
     }
 }
 
+- (void)logPerformance:(NSString *)chartName
+        renderDuration:(NSTimeInterval)duration
+           renderCount:(NSInteger)count {
+#if defined(TARGET_ALIPAY)
+    [XGEventLogger log:@"1010183" extParams:@{
+        @"xg_tag" : self.bizId ? : @"",
+        @"xg_duration": [NSString stringWithFormat:@"%.2f", duration],
+        @"xg_index": @"1",
+        @"xg_type": @"f2chart",
+        @"xg_cmds": [NSString stringWithFormat:@"%ld", (long)count],
+        @"xg_size": @"0",
+        @"xg_width": [NSString stringWithFormat:@"%f",self.frame.size.width],
+        @"xg_height": [NSString stringWithFormat:@"%f",self.frame.size.height],
+        @"xg_scale": [NSString stringWithFormat:@"%f", F2NativeScale],
+        @"xg_color": @"normal",
+        @"xg_render": self.isUseCGBackend ? @"coregraphics" : @"antg",
+        @"xg_jsengine": @"jscore"
+    }];
+#endif
+    NSLog(@"%@#Performance renderCount %ld renderDuration %.0f ms",chartName, (long)count, duration);
+}
+
+- (BOOL)handleGestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer listener:(F2GestureListener*) listener{
+    if ([self.delegate respondsToSelector:@selector(handleGestureRecognizerShouldBegin:listener:)]) {
+        return [self.delegate handleGestureRecognizerShouldBegin:gestureRecognizer listener:listener];
+    }
+    return YES;
+}
+
+
+- (BOOL)handleGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+listener:(F2GestureListener *)listener {
+    if ([self.delegate respondsToSelector:@selector(handleGestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:listener:)]) {
+        return [self.delegate handleGestureRecognizer:gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:otherGestureRecognizer listener:listener];
+    }
+    return YES;
+}
 @end

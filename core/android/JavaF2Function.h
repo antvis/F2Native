@@ -1,6 +1,7 @@
 #include "android/F2NativeJNI.h"
 #include "android/JNIUtil.h"
 #include "graphics/func/Func.h"
+#include "graphics/util/json.h"
 #include <jni.h>
 #include <nlohmann/json.hpp>
 
@@ -29,8 +30,8 @@ class JavaF2Function : public func::F2Function {
 
         // double check nExecuteMethod_.
         if(nExecuteMethod_ == nullptr || jni::HasException(env)) {
-            F2_LOG_E("JavaF2Function", "Get nExecute Method failed.  functionId: %s", functionId.data());
             jni::ClearException(env);
+            F2_LOG_E("JavaF2Function", "Get nExecute Method failed.  functionId: %s", functionId.data());
             return nlohmann::json();
         }
 
@@ -44,14 +45,14 @@ class JavaF2Function : public func::F2Function {
         jstring jrst = (jstring)env->CallObjectMethod(handle_->obj(), nExecuteMethod_, jparam);
 
         if(jni::HasException(env)) {
-            F2_LOG_E("JavaF2Function", "execute nExecute Method failed.  functionId: %s", functionId.data());
             jni::ClearException(env);
+            F2_LOG_E("JavaF2Function", "execute nExecute Method failed.  functionId: %s", functionId.data());
             return nlohmann::json();
         }
 
         std::string result = JavaStringToString(env, jrst);
 
-        nlohmann::json rst = nlohmann::json::parse(result, nullptr, false);
+        nlohmann::json rst = json::ParseString(result);
         if(!rst.is_object() && !rst.is_array()) {
             rst = result;
         }

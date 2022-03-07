@@ -14,7 +14,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
                        listener:(F2GestureListener*)listener;
 
 @required
-- (void)handleGestureInfo:(NSDictionary *)info;
+- (void)handleGestureInfo:(NSDictionary *)info sender:(UIGestureRecognizer *)gestureRecognizer;
 
 @end
 
@@ -28,6 +28,10 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 @property (nonatomic, strong) UITapGestureRecognizer *doubleTapGesture;
 
 - (instancetype)initWithView:(UIView *)view;
+
+- (void)removeAllGestures;
+
+- (void)removeGesture:(UIGestureRecognizer *)gesture;
 
 @end
 

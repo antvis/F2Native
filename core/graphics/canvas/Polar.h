@@ -42,23 +42,24 @@ class Polar : public AbstractCoord {
     // @param point -- 实际坐标值
     // @return 度量坐标值
     util::Point InvertPoint(util::Point point) const override {
-        util::Matrix m;
-        util::MatrixUtil::Rotate(&m, this->matrix_, xAxis_.x);
+        util::Matrix matrixM;
+        util::Matrix m = { 1, 0, 0, 1, 0, 0};
+        util::MatrixUtil::Rotate(&matrixM, m, xAxis_.x);
         util::Vector2D startV;
         util::Vector2D v = {1, 0};
-        util::Vector2DUtil::TransformMat2D(&startV, v, m);
+        util::Vector2DUtil::TransformMat2D(&startV, v, matrixM);
         util::Vector2D pointV = {point.x - center_.x, point.y - center_.y};
-        if(Vector2DUtil::Zero(pointV)) {
+        if(util::Vector2DUtil::Zero(pointV)) {
             return std::move(util::Point(0, 0));
         }
-        double theta = Vector2DUtil::AngleTo(startV, pointV, xAxis_.y < xAxis_.x);
+        double theta = util::Vector2DUtil::AngleTo(startV, pointV, xAxis_.y < xAxis_.x);
         if(abs(theta - M_PI * 2) < 0.001) {
             theta = 0;
         }
-        double l = Vector2DUtil::Length(pointV);
+        double l = util::Vector2DUtil::Length(pointV);
         double percentX = theta / (xAxis_.y - xAxis_.x);
         percentX = xAxis_.y - xAxis_.x > 0 ? percentX : -percentX;
-        double percentY = (l - yAxis_.y) / (yAxis_.y - yAxis_.x);
+        double percentY = (l - yAxis_.x) / (yAxis_.y - yAxis_.x);
         if(this->transposed_) {
             return std::move(util::Point(percentY, percentX));
         } else {
@@ -67,6 +68,8 @@ class Polar : public AbstractCoord {
     }
 
     virtual void Reset(util::Point start, util::Point end) noexcept override {
+        start_ = start;
+        end_ = end;
         util::MatrixUtil::Reset(&this->matrix_);
         double width = abs(end.x - start.x);
         double height = abs(end.y - start.y);
@@ -75,7 +78,7 @@ class Polar : public AbstractCoord {
             center_.Reset((start.x + end.x) / 2, start.y);
         } else {
             circleRadius_ = fmin(width, height) / 2;
-            center_.Reset(start.x + circleRadius_, end.y + circleRadius_);
+            center_.Reset((start.x + end.x) / 2, (start.y + end.y) / 2);
         }
         xAxis_.Reset(startAngle_, endAngle_);
         yAxis_.Reset(0, circleRadius_);
@@ -83,19 +86,30 @@ class Polar : public AbstractCoord {
 
     virtual CoordType GetType() const noexcept override { return CoordType::Polar; }
 
-    float GetWidth() const noexcept override { return xAxis_.y - xAxis_.x; }
+    //是角度
+    double GetWidth() const noexcept override { return xAxis_.y - xAxis_.x; }
 
     double GetRadius() const noexcept override { return circleRadius_; }
 
-    util::Point GetXAxis() noexcept override { return xAxis_; }
+    //是角度
+    util::Point GetXAxis() const noexcept override { return xAxis_; }
 
-    util::Point GetYAxis() noexcept override { return yAxis_; }
+    //x是0，y是半径
+    util::Point GetYAxis() const noexcept override { return yAxis_; }
+    
+    //坐标系左下角的点
+    inline util::Point GetStart() noexcept override { return start_;}
+    
+    //坐标系右上角的点
+    inline util::Point GetEnd() noexcept override { return end_;}
 
     bool IsContains(double x, double y) noexcept override {
-        return (x >= xAxis_.x && x <= xAxis_.y && y >= yAxis_.x && y <= yAxis_.y);
+        return (x >= GetStart().x && x <= GetEnd().x && y >= GetEnd().y && y <= GetStart().y);
     }
 
   private:
+    util::Point start_;
+    util::Point end_;
     util::Point xAxis_; // x 轴的坐标 [x 起点， x 终点]
     util::Point yAxis_; // y 轴的坐标 [y 起点， y 终点]
     util::Matrix matrix_;

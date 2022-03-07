@@ -8,10 +8,10 @@ xg::shape::Text::Text(const std::string &text, const Point &pt, const float font
     fontSize_ = fontSize;
 
     if(!fillColor.empty()) {
-        fillStyle_ = util::CanvasFillStrokeStyle(fillColor);
+        fillStyle_ = canvas::CanvasFillStrokeStyle(fillColor);
     }
     if(!strokeColor.empty()) {
-        strokeStyle_ = util::CanvasFillStrokeStyle(strokeColor);
+        strokeStyle_ = canvas::CanvasFillStrokeStyle(strokeColor);
     }
 
     font_ = GetFontStyle();

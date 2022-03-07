@@ -1,10 +1,28 @@
-
-#include "graphics/util/Color.h"
 #include <utils/Tracer.h>
 #include <vector>
+#include "CanvasImage.h"
+#include "CanvasFillStrokeStyle.h"
 
 #ifndef XG_GRAPHICS_CANVAS_CONTEXT_H
 #define XG_GRAPHICS_CANVAS_CONTEXT_H
+
+/// release版本提升性能，减少日志中std::to_string的消耗
+/// debug的时候可以输出绘制指令
+/// 其它模式只累加cmdCount
+#ifdef DEBUG
+#define TraceCommand(val) AppendCommand(val);
+#else
+#define TraceCommand(val) AppendCommandCount();
+#endif
+
+#if defined(__ANDROID__) || defined(ANDROID)
+#   define F2ASSERT(condition, message) \
+   do { \
+    if (!(condition)) { printf((message)); } \
+    assert ((condition)); } while(false)
+#else
+#   define ASSERT(condition, message) do { } while (false)
+#endif
 
 namespace xg {
 namespace canvas {
@@ -22,11 +40,11 @@ class CanvasContext {
 
     virtual void SetFillStyle(const std::string &color) = 0;
 
-    virtual void SetFillStyle(const util::CanvasFillStrokeStyle &style) = 0;
+    virtual void SetFillStyle(const CanvasFillStrokeStyle &style) = 0;
 
     virtual void SetStrokeStyle(const std::string &color) = 0;
 
-    virtual void SetStrokeStyle(const util::CanvasFillStrokeStyle &style) = 0;
+    virtual void SetStrokeStyle(const CanvasFillStrokeStyle &style) = 0;
 
     virtual void SetLineCap(const std::string &lineCap) = 0;
 
@@ -36,21 +54,9 @@ class CanvasContext {
 
     virtual void SetLineDashOffset(float v) = 0;
 
-    virtual void SetLineDash(std::vector<float> params) = 0;
+    virtual void SetLineDash(const std::vector<float> &params) = 0;
 
     virtual void SetMiterLimit(float limit) = 0;
-
-    //    void SetGlobalCompositeOp(const std::string &op) {
-    //#ifdef ANDROID
-    //        canvasContext_->SetGlobalCompositeOp(op);
-    //#else
-    //    const char *pp = op.data();
-    //    GCompositeOperation gop = gcanvas::StringToGlobalCompositeOp(pp);
-    //    if (gop != GCompositeOperation::COMPOSITE_OP_NONE) {
-    //        canvasContext_->SetGlobalCompositeOperation(gop);
-    //    }
-    //#endif
-    //    }
 
     virtual void SetGlobalAlpha(float globalAlpha) = 0;
 
@@ -60,7 +66,7 @@ class CanvasContext {
 
     virtual void FillText(const std::string &text, float x, float y, float maxWidth = SHRT_MAX) = 0;
 
-    virtual void StrokeText(std::string &text, float x, float y, float maxWidth) = 0;
+    virtual void StrokeText(const std::string &text, float x, float y, float maxWidth) = 0;
 
     virtual std::string TextAlign() const = 0;
 
@@ -98,7 +104,7 @@ class CanvasContext {
 
     virtual void FillRect(float x, float y, float width, float height) = 0;
 
-    virtual void Fill(std::string fillRule = "nonzero") = 0;
+    virtual void Fill(const std::string &fillRule = "nonzero") = 0;
 
     virtual void Stroke() = 0;
 
@@ -110,7 +116,7 @@ class CanvasContext {
 
     virtual void LineTo(float x, float y) = 0;
 
-    virtual void Clip(std::string fillRule = "nonzero") = 0;
+    virtual void Clip(const std::string &fillRule = "nonzero") = 0;
 
     virtual void QuadraticCurveTo(float cpx, float cpy, float x, float y) = 0;
 
@@ -125,9 +131,13 @@ class CanvasContext {
     virtual void Rotate(float angle) = 0;
 
     virtual void Translate(float x, float y) = 0;
+    
+    virtual void DrawImage(CanvasImage *image, float dx, float dy) = 0;
+    
+    virtual void DrawImage(CanvasImage *image, float dx, float dy, float width, float height) = 0;
 
   public:
-    float GetDevicePixelRatio() { return devicePixelRatio_; }
+    inline float GetDevicePixelRatio() { return devicePixelRatio_; }
 
     void Reset() { cmdCount_ = 0; }
 
@@ -137,10 +147,14 @@ class CanvasContext {
     long cmdCount_ = 0;
 
     void AppendCommand(const std::string &cmd) {
-        cmdCount_++;
+        AppendCommandCount();
         if(tracer_ != nullptr) {
             tracer_->trace("%s", cmd.c_str());
         }
+    }
+    
+    inline void AppendCommandCount() {
+        cmdCount_++;
     }
 
   protected:

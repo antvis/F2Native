@@ -18,7 +18,7 @@ using namespace xg;
 using namespace std;
 
 XChart::XChart(const std::string &name, double width, double height, double ratio) : chartName_(name) {
-    this->chartId_ = chartName_ + "_" + std::to_string(CurrentTimestampAtMM());
+    this->chartId_ = chartName_ + "_" + std::to_string(CreateChartId());
     width_ = width * ratio;
     height_ = height * ratio;
     ratio_ = ratio;
@@ -31,7 +31,7 @@ XChart::XChart(const std::string &name, double width, double height, double rati
     scaleController_ = new scale::ScaleController();
     this->logTracer_->trace("%s", "new ScaleController instance.");
     // 画布
-    this->canvas_ = new canvas::Canvas(this);
+    this->canvas_ = new canvas::Canvas();
     this->logTracer_->trace("%s", "new canvas instance.");
     // 布局层级
     this->InitLayout();
@@ -162,12 +162,19 @@ XChart &XChart::Legend(const std::string &field, const std::string &json) {
 }
 
 bool XChart::OnTouchEvent(const std::string &json) {
+    if(!canvasContext_ || !canvasContext_->IsValid()) {
+        return false;
+    }
     nlohmann::json cfg = xg::json::ParseString(json);
     if(!cfg.is_object() || !cfg.contains("eventType") || !cfg.contains("points"))
         return false;
     event::Event event;
     event.eventType = cfg["eventType"];
     nlohmann::json &_points = cfg["points"];
+    if(!_points.is_array() || _points.empty()) {
+        return false;
+    }
+
     for(std::size_t i = 0; i < _points.size(); ++i) {
         nlohmann::json &_point = _points[i];
         util::Point point{_point["x"], _point["y"]};
@@ -175,7 +182,7 @@ bool XChart::OnTouchEvent(const std::string &json) {
     }
     event.devicePixelRatio = ratio_;
     event.timeStamp = xg::CurrentTimestampAtMM();
-    this->logTracer_->trace("#onTouchEvent: %s", json.data());
+//    this->logTracer_->trace("#onTouchEvent: %s", json.data());
     return this->eventController_->OnTouchEvent(event);
 }
 
@@ -251,6 +258,10 @@ std::vector<std::string> XChart::getYScaleFields() {
 
 std::string XChart::GetScaleTicks(const std::string &field) noexcept {
     nlohmann::json rst = {};
+    if (!canvasContext_ || !canvasContext_->IsValid()) {
+        return rst.dump();
+    }
+
     scale::AbstractScale &scale = this->GetScale(field);
     std::vector<scale::Tick> ticks = scale.GetTicks();
 
@@ -328,13 +339,13 @@ void XChart::Render() {
     this->logTracer_->trace("%s", "canvas#startDraw");
     this->canvasContext_->Reset();
     this->NotifyAction(ACTION_CHART_BEFORE_CANVAS_DRAW);
-    this->canvas_->Draw();
+    this->canvas_->Draw(GetCanvasContext());
     this->NotifyAction(ACTION_CHART_AFTER_RENDER);
 
     renderDurationMM_ = xg::CurrentTimestampAtMM() - startTimeStamp;
 
     long count = this->canvasContext_->GetRenderCount();
-    this->logTracer_->trace("%s renderCount: %ld, duration: %lums", "canvas#endDraw", count, renderDurationMM_);
+    this->logTracer_->trace("%s %s renderCount: %ld, duration: %lums", chartId_.c_str(), "canvas#endDraw", count, renderDurationMM_);
 }
 
 void XChart::Repaint() {
@@ -350,6 +361,9 @@ void XChart::Repaint() {
 void XChart::Clear() {
     guideController_->Clear();
     scaleController_->Clear();
+    if(tooltipController_) {
+        tooltipController_->Clear();
+    }
     ClearInner();
     this->geoms_.clear();
     this->geomShapeFactory_->Clear();
@@ -358,14 +372,15 @@ void XChart::Clear() {
     this->data_ = {};
     this->rendered_ = false;
     requestFrameHandleId_ = "";
+    this->geomAnimate_->Clear();
 }
 
 std::size_t XChart::RequestAnimationFrame(func::Command *c, long delay) {
-    GetLogTracer()->trace("#RequestAnimationFrame handleID: %s", requestFrameHandleId_.data());
-    if(this->requestFrameHandleId_.empty()) {
+    if(!canvasContext_ || !canvasContext_->IsValid() || this->requestFrameHandleId_.empty()) {
         delete c;
         return 0;
     }
+    GetLogTracer()->trace("#RequestAnimationFrame handleID: %s", requestFrameHandleId_.data());
     func::F2Function *method = func::FunctionManager::GetInstance().Find(requestFrameHandleId_);
     GetLogTracer()->trace("#RequestAnimationFrame method: %p", method);
     if(method != nullptr) {
@@ -393,6 +408,7 @@ std::string XChart::GetRenderInfo() const {
     }
 
     info["duration"] = renderDurationMM_;
+    info["name"] = chartName_;
     return info.dump();
 }
 
@@ -433,7 +449,7 @@ void XChart::InitCoord() {
 }
 
 const util::Point XChart::GetPosition(const nlohmann::json &item) {
-    if(scaleController_->empty() || !item.is_object() || item.size() < 2) {
+    if(!canvasContext_ || !canvasContext_->IsValid() || scaleController_->Empty() || !item.is_object() || item.size() < 2) {
         return util::Point{0, 0};
     }
 
@@ -448,6 +464,14 @@ const util::Point XChart::GetPosition(const nlohmann::json &item) {
     double y = this->GetScale(yField).Scale(item[yField]);
     util::Point ret = this->GetCoord().ConvertPoint(util::Point{x, y});
     return ret;
+}
+
+const std::string XChart::GetTooltipInfos(float touchX, float touchY, int geomIndex) {
+    if (this->tooltipController_ != nullptr) {
+        return this->tooltipController_->GetTooltipInfos(touchX, touchY, geomIndex);
+    } else {
+        return "";
+    }
 }
 
 void XChart::ClearInner() {
@@ -474,6 +498,9 @@ void XChart::ClearInner() {
 }
 
 void XChart::Redraw() {
+    if(!canvasContext_->IsValid()) {
+        return;
+    }
     auto startTimeStamp = xg::CurrentTimestampAtMM();
 
     // 7.-1 beforeDraw
@@ -485,7 +512,7 @@ void XChart::Redraw() {
     // 6. canvas draw
     this->logTracer_->trace("%s", "canvas#start Redraw");
     this->canvasContext_->Reset();
-    this->canvas_->Draw();
+    this->canvas_->Draw(GetCanvasContext());
 
     renderDurationMM_ = xg::CurrentTimestampAtMM() - startTimeStamp;
 

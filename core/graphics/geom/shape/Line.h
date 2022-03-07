@@ -41,7 +41,7 @@ class Line : public GeomShapeBase {
         if(size <= 0)
             return;
 
-        util::CanvasFillStrokeStyle colorStyle = util::ColorParser(data[start], "_color");
+        canvas::CanvasFillStrokeStyle colorStyle = util::ColorParser(data[start], "_color");
 
         float lineWidth = 1.0;
         if(data[start].contains("_size")) {
@@ -75,7 +75,7 @@ class Line : public GeomShapeBase {
                 topLine->SetDashLine(json::ParseDashArray(data[start]["_style"]["dash"], canvasContext.GetDevicePixelRatio()));
             }
 
-            topLine->strokeStyle_ = colorStyle;
+            topLine->SetStorkStyle(colorStyle);
             container.AddElement(std::move(topLine));
 
             // auto bottomLine =
@@ -101,12 +101,17 @@ class Line : public GeomShapeBase {
                 points.push_back(util::Point(item["_x"], item["_y"]));
             }
         }
+        
+        //雷达图 闭合折线
+        if (coord.GetType() == CoordType::Polar) {
+            points.push_back(points[0]);
+        }
 
         auto l = xg::make_unique<xg::shape::Polyline>(lineWidth * canvasContext.GetDevicePixelRatio(), points, smooth);
         if(data[start].contains("_style") && data[start]["_style"].contains("dash")) {
             l->SetDashLine(json::ParseDashArray(data[start]["_style"]["dash"], canvasContext.GetDevicePixelRatio()));
         }
-        l->strokeStyle_ = colorStyle;
+        l->SetStorkStyle(colorStyle);
         container.AddElement(std::move(l));
     }
 };

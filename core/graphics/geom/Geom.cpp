@@ -26,7 +26,10 @@ static vector<string> ParseFields(const string &field) {
 } // namespace geom
 } // namespace xg
 
-xg::geom::AbstractGeom::~AbstractGeom() { container_ = nullptr; }
+xg::geom::AbstractGeom::~AbstractGeom() {
+    container_ = nullptr;
+    attrs_.clear();
+}
 
 #pragma mark public
 xg::geom::AbstractGeom &xg::geom::AbstractGeom::Position(const string &field) {
@@ -330,12 +333,11 @@ nlohmann::json xg::geom::AbstractGeom::GetSnapRecords(XChart *chart, util::Point
             end = fmin(end, xScale.max);
         }
 
+        auto &xField = GetXScaleField();
         for(size_t index = start; index <= end; index++) {
             nlohmann::json &item = groupData[index];
-            if(item.contains(GetXScaleField())) {
-                if(item[GetXScaleField()] == xValue) {
-                    tmp.push_back(item);
-                }
+            if(item.contains(xField) && item[xField] == xValue) {
+                tmp.push_back(item);
             }
         }
     }
@@ -343,6 +345,38 @@ nlohmann::json xg::geom::AbstractGeom::GetSnapRecords(XChart *chart, util::Point
     // TODO speical for pie chart.
 
     return tmp;
+}
+
+nlohmann::json xg::geom::AbstractGeom::GetSnapRecord(XChart *chart, size_t index) {
+    auto &xScale = chart->GetScale(GetXScaleField());
+    nlohmann::json tmp;
+    for(std::size_t num = 0; num < dataArray_.size(); ++num) {
+        nlohmann::json &groupData = dataArray_[num];
+        std::size_t start = 0, end = groupData.size() - 1;
+        if(scale::IsCategory(xScale.GetType())) {
+            start = fmax(start, xScale.min);
+            end = fmin(end, xScale.max);
+        }
+        if (index >= start && index <= end) {
+            tmp.push_back(groupData[index]);
+        }
+    }
+    XG_ASSERT(tmp.size() > 0);
+    return tmp;
+}
+
+nlohmann::json xg::geom::AbstractGeom::GetLastSnapRecord(XChart *chart) {
+    size_t end = 0;
+    for(std::size_t num = 0; num < dataArray_.size(); ++num) {
+        nlohmann::json &groupData = dataArray_[num];
+        //多个分组中取最大的
+        end =  fmax(end ,groupData.size() - 1);
+    }
+    return GetSnapRecord(chart, end);
+}
+
+nlohmann::json xg::geom::AbstractGeom::GetFirstSnapRecord(XChart *chart) {
+    return GetSnapRecord(chart, 0);
 }
 
 void xg::geom::AbstractGeom::Clear() {

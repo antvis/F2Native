@@ -14,7 +14,7 @@
     self.chart.axis(@"time", @{@"grid": @(NO), @"label": @{@"textAlign": @"start"}});
     self.chart.line().position(@"time*tem").fixedSize(2).fixedShape(@"smooth");
     self.chart.area().position(@"time*tem").fixedShape(@"smooth").fixedColor([F2Utils toJsonString:@{
-        @"colorStops": @[@{@"offset": @(0.f), @"color": @"red"}, @{@"offset": @(1.f), @"color": @"white"}],
+        @"colorStops": @[@{@"offset": @(0.f), @"color": @"#ff0000"}, @{@"offset": @(1.f), @"color": @"#ffffff"}],
         @"position": @[@(0), @(0), @(0), @(self.chartSize.height * [UIScreen mainScreen].scale)]
     }]);
     self.chart.point().position(@"time*tem").fixedColor(@"#000000").style(@{
@@ -27,7 +27,7 @@
             return @{};
         }]
     });
-
+    self.chart.animate(@YES);
     self.chart.render();
 }
 

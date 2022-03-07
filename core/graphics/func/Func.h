@@ -18,7 +18,7 @@ struct F2Function {
 
     F2Function() { functionId = MakeFunctionId(); }
 
-    virtual nlohmann::json Execute(nlohmann::json t) = 0;
+    virtual nlohmann::json Execute(nlohmann::json t) { return nlohmann::json(); }
 
     virtual ~F2Function() {}
     std::string functionId;
@@ -46,6 +46,7 @@ class FunctionManager {
     }
 
     F2Function *Find(std::string functionId) {
+        std::unique_lock<std::mutex> lock(mutex_);
         auto it = this->functions_.find(functionId);
         if(it == this->functions_.end()) {
             return nullptr;

@@ -13,10 +13,10 @@ void guide::Text::Render(XChart &chart, shape::Group *container, canvas::CanvasC
 
     util::Point position = this->GetPosition(chart, json::Get(this->config_, "position"), xField, yField);
 
-    std::string textColor = config_["textColor"];
-    std::string content = config_["content"];
-    std::string textAlign = config_["textAlign"];
-    std::string textBaseLine = config_["textBaseline"];
+    std::string textColor = json::GetString(config_, "textColor");
+    std::string content = json::GetString(config_, "content");
+    std::string textAlign = json::GetString(config_, "textAlign");
+    std::string textBaseLine = json::GetString(config_, "textBaseline");
 
     float textSize = config_["textSize"];
     textSize *= context.GetDevicePixelRatio();

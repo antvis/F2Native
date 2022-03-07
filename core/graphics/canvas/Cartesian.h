@@ -58,16 +58,22 @@ class Cartesian : public AbstractCoord {
 
     virtual CoordType GetType() const noexcept override { return CoordType::Cartesian; }
 
-    float GetWidth() const noexcept override { return xAxis_.y - xAxis_.x; }
+    double GetWidth() const noexcept override { return xAxis_.y - xAxis_.x; }
 
     double GetRadius() const noexcept override { return 0; }
 
-    util::Point GetXAxis() noexcept override { return xAxis_; }
+    util::Point GetXAxis() const noexcept override { return xAxis_; }
 
-    util::Point GetYAxis() noexcept override { return yAxis_; }
+    util::Point GetYAxis() const noexcept override { return yAxis_; }
+    
+    //坐标系左下角的点
+    inline util::Point GetStart() noexcept override { return util::Point(xAxis_.x, yAxis_.x);}
+    
+    //坐标系右上角的点
+    inline util::Point GetEnd() noexcept override { return util::Point(xAxis_.y, yAxis_.y);}
 
     bool IsContains(double x, double y) noexcept override {
-        return (x >= xAxis_.x && x <= xAxis_.y && y <= yAxis_.x && y >= yAxis_.y);
+        return (x >= GetStart().x && x <= GetEnd().x && y >= GetEnd().y && y <= GetStart().y);
     }
 
   private:

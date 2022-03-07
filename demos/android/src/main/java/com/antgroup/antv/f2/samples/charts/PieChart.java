@@ -30,7 +30,7 @@ public class PieChart implements F2CanvasView.Adapter {
 
         mChart.setAxis("a", new F2Chart.AxisConfigBuilder().labelHidden().lineHidden().gridHidden());
         mChart.setCoord(new F2Chart.CoordConfigBuilder().type("polar").transposed(true));
-        mChart.interval().position("a*percent").style(new F2Config.Builder().setOption("lineWidth", 3).build()).color("name").adjust("stack");
+        mChart.interval().position("a*percent").fixedSize(1).style(new F2Config.Builder().setOption("lineWidth", 3).build()).color("name").adjust("stack");
         mChart.render();
 }
 

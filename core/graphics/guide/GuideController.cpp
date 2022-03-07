@@ -5,12 +5,13 @@
 #include "graphics/guide/Flag.h"
 #include "graphics/guide/Line.h"
 #include "graphics/guide/Text.h"
+#include "graphics/guide/Image.h"
 #include "graphics/util/BBox.h"
 #include "graphics/util/json.h"
 
 void xg::guide::GuideController::Render(xg::XChart &chart, canvas::CanvasContext &context) {
     std::for_each(guides.begin(), guides.end(), [&](const std::unique_ptr<xg::guide::GuideBase> &guide) -> void {
-        if(guide->GetType() == "background") {
+        if(guide->GetType() == "background" || !guide->isTop()) {
             guide->Render(chart, backContainer_, context, this->dangerRects);
         } else {
             guide->Render(chart, container_, context, this->dangerRects);
@@ -53,4 +54,12 @@ void xg::guide::GuideController::Background(const std::string &json) {
         return;
     auto bg = xg::make_unique<xg::guide::Background>(cfg);
     this->guides.push_back(std::move(bg));
+}
+
+void xg::guide::GuideController::Image(const std::string &json) {
+    nlohmann::json cfg = xg::json::ParseString(json);
+    if(!cfg.is_object())
+        return;
+    auto image = xg::make_unique<xg::guide::Image>(cfg);
+    this->guides.push_back(std::move(image));
 }

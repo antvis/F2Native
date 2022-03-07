@@ -73,6 +73,9 @@ void Flag::PreDrawFlagContent(XChart &chart,
 
     //分配泳道
     std::size_t pointInLaneIndex = static_cast<std::size_t>(floor(position.y - coordStart.y) / laneHeight);
+    //泳道是从上到下0开始，范围：0～4，超出此范围，取相应的最值
+    pointInLaneIndex = std::min(pointInLaneIndex, (size_t) 4);
+    pointInLaneIndex = std::max(pointInLaneIndex, (size_t) 0);
     std::vector<std::size_t> laneErgodic;
     for(std::size_t index = 1; index < swammingLaneCount; ++index) {
         std::size_t _index =
@@ -81,25 +84,32 @@ void Flag::PreDrawFlagContent(XChart &chart,
         //        chart.GetLogTracer()->trace("Flag#PreDrawFlagContent ergodic: %lu", _index);
     }
 
+    //水平防碰撞padding，避免水平的两个flag靠的太近
+    int paddingX = 2;
     for(std::size_t index = 0; index < laneErgodic.size(); ++index) {
         std::size_t laneIndex = laneErgodic[index];
         util::Rect &laneRect = swammingLane[laneIndex];
 
         double rectX = horizon ? position.x : position.x - padding[0] - padding[2] - labelWidth;
-        double rectY = laneRect.y + laneRect.height / 2 - labelHeight - padding[1] - padding[3];
 
-        this->contentRect_ = {rectX, rectY, padding[0] + padding[2] + labelWidth, padding[1] + padding[3] + labelHeight};
+        //flag起始绘制点
+        double rectY = laneRect.y + (laneRect.height - labelHeight - padding[1] - padding[3]) / 2;
 
+        //碰撞rect加上padding，然后去与真实的flag判断碰撞
+        util::Rect dangerRect = {rectX - paddingX, rectY, padding[0] + padding[2] + labelWidth + paddingX, padding[1] + padding[3] + labelHeight};
+        
+        //真实的flag绘制大小
+        contentRect_ =  {rectX, rectY, padding[0] + padding[2] + labelWidth, padding[1] + padding[3] + labelHeight};
+        
         bool coincide = false;
         for(std::size_t j = 0; j < dangerRects.size(); ++j) {
-            if(collide(contentRect_, dangerRects[j])) {
+            if(collide(dangerRect, dangerRects[j])) {
                 coincide = true;
                 break;
             }
         }
 
         if(coincide == false) {
-            contentRect_.y = laneRect.y + laneRect.height / 2 - contentRect_.height / 2;
             break;
         }
     }

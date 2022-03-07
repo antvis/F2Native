@@ -15,10 +15,9 @@
     self.chart.interval().position(@"year*sales").style(@{
         @"radius": @[@(15), @(15), @(0), @(0)] // [tl, tr, bl, br]
     });
+    self.chart.tooltip(@{});
+    self.chart.animate(@(YES));
     self.chart.render();
-
-    // get item position.
-    //    NSArray<NSNumber *> *position = self.chart.getPosition(@{@"year": @"1958 年", @"sales": @(48)});
 }
 
 @end

@@ -1,6 +1,7 @@
 #include "graphics/util/Vector2d.h"
 #include <array>
 #include <math.h>
+#include <string>
 
 #ifndef XG_GRAPHICS_UTIL_MATRIX_H
 #define XG_GRAPHICS_UTIL_MATRIX_H

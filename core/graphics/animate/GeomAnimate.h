@@ -60,6 +60,7 @@ class GeomAnimate {
 
     void OnBeforeCanvasDraw();
 
+    void Clear();
   private:
     TimeLine *timeLine_ = nullptr;
     XChart *chart_ = nullptr;

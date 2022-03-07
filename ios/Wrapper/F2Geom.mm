@@ -28,7 +28,7 @@
 
 - (F2Geom * (^)(NSString *attr))position {
     return ^id(NSString *attr) {
-        self->_geom->Position([XGSafeString(attr) UTF8String]);
+        self->_geom->Position([F2SafeString(attr) UTF8String]);
         return self;
     };
 }
@@ -39,14 +39,14 @@
         for(NSString *color in colors) {
             c.emplace_back([color UTF8String]);
         }
-        self->_geom->Color([XGSafeString(attr) UTF8String], c);
+        self->_geom->Color([F2SafeString(attr) UTF8String], c);
         return self;
     };
 }
 
 - (F2Geom * (^)(NSString *color))fixedColor {
     return ^id(NSString *color) {
-        self->_geom->Color([XGSafeString(color) UTF8String]);
+        self->_geom->Color([F2SafeString(color) UTF8String]);
         return self;
     };
 }
@@ -57,7 +57,7 @@
         for(NSNumber *size in sizes) {
             s.emplace_back([size floatValue]);
         }
-        self->_geom->Size([XGSafeString(field) UTF8String], s);
+        self->_geom->Size([F2SafeString(field) UTF8String], s);
         return self;
     };
 }
@@ -75,35 +75,35 @@
         for(NSString *color in shapes) {
             s.emplace_back([color UTF8String]);
         }
-        self->_geom->Shape([XGSafeString(field) UTF8String], s);
+        self->_geom->Shape([F2SafeString(field) UTF8String], s);
         return self;
     };
 }
 
 - (F2Geom * (^)(NSString *shape))fixedShape {
     return ^id(NSString *shape) {
-        self->_geom->Shape([XGSafeString(shape) UTF8String]);
+        self->_geom->Shape([F2SafeString(shape) UTF8String]);
         return self;
     };
 }
 
 - (F2Geom * (^)(NSString *adjust))adjust {
     return ^id(NSString *adjust) {
-        self->_geom->Adjust([XGSafeString(adjust) UTF8String]);
+        self->_geom->Adjust([F2SafeString(adjust) UTF8String]);
         return self;
     };
 }
 
 - (F2Geom * (^)(NSDictionary *config))style {
     return ^id(NSDictionary *config) {
-        self->_geom->Style([XGSafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self.chart]]) UTF8String]);
+        self->_geom->Style([F2SafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self.chart]]) UTF8String]);
         return self;
     };
 }
 
 - (F2Geom * (^)(NSDictionary *config))attrs {
     return ^id(NSDictionary *config) {
-        self->_geom->SetAttrs([XGSafeString([F2Utils toJsonString:config]) UTF8String]);
+        self->_geom->SetAttrs([F2SafeString([F2Utils toJsonString:config]) UTF8String]);
         return self;
     };
 }
@@ -118,7 +118,7 @@
 - (F2Interval * (^)(NSDictionary *config))tag {
     return ^id(NSDictionary *config) {
         xg::geom::Interval *interval = (xg::geom::Interval *)[super getGeom];
-        interval->Tag([XGSafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self.chart]]) UTF8String]);
+        interval->Tag([F2SafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self.chart]]) UTF8String]);
         return self;
     };
 }

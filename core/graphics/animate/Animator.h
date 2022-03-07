@@ -96,8 +96,8 @@ struct AnimInfo {
     Interpolator interpolate;
     bool hasStarted = false;
     bool hasEnded = false;
-    long startTime = 0;
-    long endTime = 0;
+    long long startTime = 0;
+    long long endTime = 0;
     std::function<void()> onEnd = nullptr;
 };
 

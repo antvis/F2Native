@@ -20,11 +20,11 @@ namespace xg {
 class XChart;
 namespace axis {
 
-class Axis final {
+class Axis {
   public:
     Axis() {}
     Axis(const Axis &) = delete;
-    ~Axis() {}
+    virtual ~Axis() {}
     std::string key;
     std::string type;
     std::string dimType;
@@ -42,6 +42,34 @@ class Axis final {
     std::string field;
     std::string verticalField; // 相对垂直边 field
     std::vector<scale::Tick> ticks;
+    
+    virtual util::Point GetOffsetPoint(double value, double offset) const {
+        util::Point point;
+        point.x = start.x + (end.x - start.x) * value;
+        point.y = start.y + (end.y - start.y) * value;
+        return point;
+    }
+};
+
+
+class Circle : public Axis {
+public:
+    double startAngle;
+    double endAngle;
+    double radius;
+    util::Point center;
+    
+    util::Point GetOffsetPoint(double value, double offset) const override {
+        double angle = startAngle + (endAngle - startAngle) * value;
+        return GetCirclePoint(angle, offset);
+    }
+    
+    util::Point GetCirclePoint(double angle, double offset) const {
+        return util::Point (
+            center.x + std::cos(angle) * (radius + offset),
+            center.y + std::sin(angle) * (radius + offset)
+        );
+    }
 };
 
 class AxisController {
@@ -52,7 +80,7 @@ class AxisController {
 
     void DrawAxes(XChart *chart, canvas::CanvasContext &context);
 
-    void SetFieldConfig(std::string field, nlohmann::json config = {}) { axisConfig_[field] = MergeDefaultConfig(config); }
+    void SetFieldConfig(const std::string &field, const nlohmann::json &config = {}) { axisConfig_[field] = MergeDefaultConfig(config); }
 
     void Clear();
 
@@ -61,10 +89,10 @@ class AxisController {
         nlohmann::json gridCfg = {{"type", "line"},      // 网格线类型
                                   {"lineWidth", .6f},    // 网格线线宽
                                   {"stroke", "#E8E8E8"}, // 网格线颜色
-                                  {"dash", {10, 10}}};
+                                  {"dash", {10, 10}}}; 
 
         nlohmann::json line = {// 轴线配置
-                               {"color", "#999"},
+                               {"color", "#999999"},
                                {"lineWidth", .6f},
                                {"type", "line"}, // 线类型
                                {"dash", {10, 10}}};
@@ -75,7 +103,7 @@ class AxisController {
             {"textSize", 10.f},       // 标签文字字号
             {"labelMargin", 0.f},     // 轴上标签的外边距. x 轴为左右外边距， y 轴为上下外边距
             {"labelOffset", 0.f}, // 轴上标签的垂直方向偏移量。x 轴为上下的整体偏移量， y 轴为左右的整体偏移量
-            {"textAlign", "end"},     {"textBaseline", "bottom"},
+            {"textAlign", "center"},     {"textBaseline", "bottom"},
         };
 
         nlohmann::json cfg = {{"label", label},  // 标签
@@ -97,13 +125,6 @@ class AxisController {
     void DrawLabel(XChart &chart, std::unique_ptr<Axis> &axis, canvas::CanvasContext &context);
 
     void DrawLine(XChart &chart, std::array<util::Point, 2> &&line, const nlohmann::json &lineCfg);
-
-    util::Point GetOffsetPoint(std::unique_ptr<Axis> &axis, double value) {
-        util::Point point;
-        point.x = axis->start.x + (axis->end.x - axis->start.x) * value;
-        point.y = axis->start.y + (axis->end.y - axis->start.y) * value;
-        return point;
-    }
 
     void GetSidePoint(util::Point &point, double labelOffset, std::string type) {
         util::Point offset = GetOffsetVector(point, labelOffset, type);

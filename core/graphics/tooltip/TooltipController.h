@@ -1,6 +1,7 @@
 #include "ToolTip.h"
 #include "graphics/event/EventController.h"
 #include "graphics/shape/Group.h"
+#include "graphics/scale/Scale.h"
 #include <nlohmann/json.hpp>
 
 #ifndef XG_GRAPHICS_TOOLTIP_CONTROLLER_H
@@ -20,6 +21,10 @@ class ToolTipController {
 
     void AddMonitor(ToolTipMarkerItemsCallback callback) { actionListeners_.push_back(callback); }
 
+    void Clear() { toolTip_ = nullptr;}
+
+    // 该函数并不是一个常规的实现，而是用简单地协议把结果拼接成字符串。谨慎使用
+    const std::string GetTooltipInfos(float touchX, float touchY, int geomIndex);
   protected:
     void OnRender();
     void OnClearInner();
@@ -33,7 +38,7 @@ class ToolTipController {
 
     bool HideToolTip();
 
-    std::string InvertYTip(const util::Point &p);
+    std::string InvertYTip(const util::Point &p, xg::scale::AbstractScale &yScale);
 
   private:
     XChart *chart_;

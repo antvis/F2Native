@@ -13,25 +13,21 @@ class Rect : public Shape {
 
     Rect(const util::Point &point, const util::Size &size, const std::string &fillColor) : Shape(), size_(size) {
         this->point_ = point;
-        fillStyle_ = util::CanvasFillStrokeStyle(fillColor);
+        SetFillStyle(fillColor);
     }
 
     Rect(const util::Point &point, const util::Size &size, const std::string &strokeColor, float lineWidth)
         : Shape(), size_(size) {
         this->point_ = point;
-        strokeStyle_ = util::CanvasFillStrokeStyle(strokeColor);
+        SetStorkColor(strokeColor);
         lineWidth_ = lineWidth;
     }
 
     Rect(const util::Point &point, const util::Size &size, const std::string &fillColor, const std::string &strokeColor, float lineWidth)
         : Shape(), size_(size) {
         this->point_ = point;
-        if(!fillColor.empty()) {
-            fillStyle_ = util::CanvasFillStrokeStyle(fillColor);
-        }
-        if(!strokeColor.empty()) {
-            strokeStyle_ = util::CanvasFillStrokeStyle(strokeColor);
-        }
+      
+        SetFillStrokeStyle(strokeColor, fillColor);
         lineWidth_ = lineWidth;
     }
 
@@ -52,19 +48,17 @@ class Rect : public Shape {
          const std::string &strokeColor)
         : Shape(), radius_(radius), radius0_(radius0), startAngle_(startAngle), endAngle_(endAngle) {
         this->point_ = point;
-
-        if(!fillColor.empty()) {
-            fillStyle_ = util::CanvasFillStrokeStyle(fillColor);
-        }
-        if(!strokeColor.empty()) {
-            strokeStyle_ = util::CanvasFillStrokeStyle(strokeColor);
-        }
         lineWidth_ = lineWidth;
+        SetFillStrokeStyle(strokeColor, fillColor);
     }
 
     util::BBox CalculateBox(canvas::CanvasContext &context) const override;
 
     virtual void UpdateAttribute(std::string attrName, double val) override;
+    
+    void SetRoundings(float (&roundings)[4]);
+    
+    void SetDashLine(const std::vector<float> &params) { this->dash_ = params; }
 
   protected:
     void CreatePath(canvas::CanvasContext &context) const override;
@@ -89,6 +83,8 @@ class Rect : public Shape {
     double radius0_ = 0.f;
     // 圆角 [ tl, tr, bl, br ]
     float roundings[4] = {0, 0, 0, 0};
+
+    std::vector<float> dash_;
 };
 
 } // namespace shape

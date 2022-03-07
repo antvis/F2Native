@@ -23,7 +23,9 @@ template <typename T, typename... Args> std::unique_ptr<T> make_unique(Args &&..
 }
 
 static bool IsZero(double val) noexcept { return (fabs(val) < XG_EPS); }
-static bool IsEqual(double v1, double v2) noexcept { return fabs(v1 - v2) < XG_EPS; }
+static bool IsEqualDeviation (double v1, double v2, double deviation) noexcept { return fabs(v1 - v2) < deviation; }
+static bool IsEqual(double v1, double v2) noexcept { return IsEqualDeviation(v1, v2, XG_EPS); }
+
 } // namespace xg
 
 #endif /* XG_UTIL_COMMON */

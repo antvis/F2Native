@@ -18,7 +18,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// @{ @"position": @[@"min", @"max"], @"orientation": @"horizontal", @"color": @"#808080",  @"lineWdith": @(1), @"dash": @[...]
 - (F2Guide * (^)(NSDictionary *config))line;
 
+///创建背景，config格式如下
+///@{@"color":@"#FF00001D",@"leftBottom":@[@"min", @"min"], @"rightTop":@[@"max", @(80)]}
 - (F2Guide * (^)(NSDictionary *config))background;
+
+///创建图片
+///@{@"position":@[@"median", @"median"], @"margin":@[top, right])}
+- (F2Guide * (^)(NSDictionary *config))image;
 
 @end
 

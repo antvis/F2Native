@@ -46,7 +46,7 @@ class Interval : public GeomShapeBase {
             points.push_back(std::move(p));
         }
 
-        util::CanvasFillStrokeStyle colorStyle = util::ColorParser(data, "_color");
+        canvas::CanvasFillStrokeStyle colorStyle = util::ColorParser(data, "_color");
 
         bool isFill = true;
         if(data.contains("_shape") && data["_shape"].is_string()) {
@@ -78,13 +78,13 @@ class Interval : public GeomShapeBase {
             }
 
             auto fillRect = xg::make_unique<xg::shape::Rect>(coord.GetCenter(), r, r0, startAngle, endAngle, lineWidth);
-            fillRect->fillStyle_ = colorStyle;
+            fillRect->SetFillStyle(colorStyle);
             container.AddElement(std::move(fillRect));
 
             if(lineWidth > 0) {
-                util::CanvasFillStrokeStyle strokeColor = util::CanvasFillStrokeStyle(_style["stroke"]);
+                canvas::CanvasFillStrokeStyle strokeColor = canvas::CanvasFillStrokeStyle(_style["stroke"]);
                 auto strokeRect = xg::make_unique<xg::shape::Rect>(coord.GetCenter(), r, r0, startAngle, endAngle, lineWidth);
-                strokeRect->strokeStyle_ = strokeColor;
+                strokeRect->SetStorkStyle(strokeColor);
                 container.AddElement(std::move(strokeRect));
             }
         } else {
@@ -92,15 +92,15 @@ class Interval : public GeomShapeBase {
 
             auto rect = xg::make_unique<xg::shape::Rect>(points[0], size);
             if(isFill) {
-                rect->fillStyle_ = colorStyle;
+                rect->SetFillStyle(colorStyle);
             } else {
-                rect->strokeStyle_ = colorStyle;
-                rect->lineWidth_ = lineWidth;
+                rect->SetStorkStyle(colorStyle);
+                rect->SetLineWidth(lineWidth);
             }
             if(_style.contains("radius")) {
                 float roundings[4] = {0, 0, 0, 0};
                 json::ParseRoundings(_style["radius"], &roundings[0], context.GetDevicePixelRatio());
-                memcpy(rect->roundings, roundings, sizeof(float) * 4);
+                rect->SetRoundings(roundings);
             }
 
             container.AddElement(std::move(rect));

@@ -10,7 +10,7 @@ xg::shape::Line::Line(const Point &pt1, const Point &pt2, const float lineWidth,
     p1_ = pt1;
     p2_ = pt2;
     lineWidth_ = lineWidth;
-    strokeStyle_ = util::CanvasFillStrokeStyle(strokeColor);
+    strokeStyle_ = canvas::CanvasFillStrokeStyle(strokeColor);
     type_ = "line";
 }
 

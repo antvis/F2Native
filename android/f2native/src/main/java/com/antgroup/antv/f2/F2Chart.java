@@ -1,8 +1,10 @@
 package com.antgroup.antv.f2;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * @author qingyuan.yl
@@ -14,6 +16,7 @@ public class F2Chart {
     private String mName;
     private F2CanvasView mCanvasView;
     private volatile boolean hasDestroyed = false;
+    private boolean mLogCmdCount = true;
 
     private RequestAnimationFrameHandle mRequestFrameHandle = null;
 
@@ -32,7 +35,7 @@ public class F2Chart {
     }
 
     public void setCanvas(F2CanvasView canvasView) {
-        innerLog("#bind canvas: " + canvasView);
+        innerLog("#bind canvas: " + canvasView.getNativeCanvas());
         mCanvasView = canvasView;
         if (hasDestroyed) return;
         assertRenderThread();
@@ -40,7 +43,7 @@ public class F2Chart {
             mRequestFrameHandle.clear();
         }
         mRequestFrameHandle = new RequestAnimationFrameHandle(this, canvasView);
-        mChartProxy.setCanvas(mCanvasView.getNativeCanvas(), mRequestFrameHandle.functionId);
+        mChartProxy.setCanvas(mCanvasView.getNativeCanvas(), mRequestFrameHandle.functionId, mCanvasView.isAndroidCanvas());
     }
 
     public F2Chart padding(final double left, final double top, final double right, final double bottom) {
@@ -223,22 +226,61 @@ public class F2Chart {
         return new F2Guide(this);
     }
 
-    public boolean render() {
+    public boolean render(boolean swapBuffer) {
         if (hasDestroyed) return false;
         assertRenderThread();
         int code = mChartProxy.render();
-        if (F2Constants.isSuccessCode(code)) {
+        if (F2Constants.isSuccessCode(code) && swapBuffer) {
             mCanvasView.swapBuffer();
         }
         String dumpInfo = getRenderDumpInfo();
         innerLog("#render ret: " + code + ", dumpInfo: " + dumpInfo);
+        if (mLogCmdCount) {
+            mCanvasView.appendRenderCmdCount(mName, getRenderCmdCount(dumpInfo));
+        }
         return F2Constants.isSuccessCode(code);
     }
+
+    public boolean render() {
+        return render(true);
+    }
+
+    public void setLogCmdCount(boolean logCmdCount) {
+        mLogCmdCount = logCmdCount;
+    }
+
+    private int getRenderCmdCount(String renderDumpInfo) {
+        if (TextUtils.isEmpty(renderDumpInfo)) {
+            return 0;
+        }
+        try {
+            JSONObject renderInfo = new JSONObject(renderDumpInfo);
+            if (renderInfo != null) {
+                Integer count = renderInfo.getInt("cmdCount");
+                if (count != null) {
+                    innerLog("#getRenderCmdCount:" + count);
+                    return count.intValue();
+                }
+            }
+        } catch (org.json.JSONException e) {
+            innerLog("#getRenderCmdCount:got " + e);
+        }
+        return 0;
+    }
+
+
 
     public double[] getPosition(String itemJsonData) {
         if (hasDestroyed) return new double[]{0, 0};
         assertRenderThread();
         return mChartProxy.getPosition(itemJsonData);
+    }
+
+    // this method is unsafe, it allows calling from main thread without throwing
+    // exception. Caller should make sure that this API is not called during rendering
+    public String getTooltipInfos(float touchX, float touchY, int geomIndex) {
+        if (hasDestroyed) return null;
+        return mChartProxy.getTooltipInfos(touchX, touchY, geomIndex);
     }
 
     public void clear() {
@@ -279,6 +321,7 @@ public class F2Chart {
             innerLog("#finalize..");
             destroy();
         } catch (Exception e) {
+            F2Log.e("F2Chart", "#finalize exception " + e.toString());
         } finally {
             super.finalize();
         }
@@ -324,6 +367,10 @@ public class F2Chart {
             return setOption(KEY_TEXT_ALIGN, textAlign);
         }
 
+        public T textAlign(JSONArray textAlign) {
+            return setOption(KEY_TEXT_ALIGN, textAlign);
+        }
+
         public T textBaseline(String textBaseline) {
             return setOption(KEY_BASE_LINE, textBaseline);
         }
@@ -355,6 +402,7 @@ public class F2Chart {
                     array.put(range[i]);
                 }
             } catch (Exception e) {
+                F2Log.e("F2Chart", "#range exception " + e.toString());
             }
             return setOption(KEY_RANGE, array);
         }

@@ -8,7 +8,9 @@
 #include "graphics/scale/TimeCategory.h"
 #include "graphics/scale/continuous/Linear.h"
 #include "graphics/scale/continuous/TimeSharingLinear.h"
+#include "graphics/util/json.h"
 #include "graphics/util/json_util.h"
+#include "utils/Tracer.h"
 #include <algorithm>
 #include <nlohmann/json.hpp>
 #include <unordered_map>
@@ -24,7 +26,7 @@ static nlohmann::json AdjustRange(const nlohmann::json &fieldColumn, std::unique
     if(size <= 1) {
         cfg["range"] = {0.5, 1.0};
     } else {
-        if(coord->GetType() == coord::CoordType::Polar) {
+        if(coord->GetType() == canvas::coord::CoordType::Polar) {
             if(!coord->IsTransposed()) {
                 cfg["range"] = {0, 1.0 - 1.0 / static_cast<float>(size)};
             } else {
@@ -35,6 +37,42 @@ static nlohmann::json AdjustRange(const nlohmann::json &fieldColumn, std::unique
     }
     return cfg;
 }
+
+static std::unique_ptr<AbstractScale> MakeCategory(const std::string &field_,
+                                                const nlohmann::json &data,
+                                                nlohmann::json &config,
+                                                utils::Tracer *tracer,
+                                                std::unique_ptr<canvas::coord::AbstractCoord> &coord,
+                                                nlohmann::json &fieldColumn) {
+    nlohmann::json a_config = AdjustRange(fieldColumn, coord);
+    if(a_config.is_object()) {
+        config.merge_patch(a_config);
+    }
+    tracer->trace("MakeScale: %s, return Category. ", field_.c_str());
+    return xg::make_unique<Category>(field_, fieldColumn, config);
+}
+
+static std::unique_ptr<AbstractScale> MakeLinear(const std::string &field_,
+                                                const nlohmann::json &data,
+                                                nlohmann::json &config,
+                                                utils::Tracer *tracer,
+                                                std::unique_ptr<canvas::coord::AbstractCoord> &coord,
+                                                nlohmann::json &fieldColumn) {
+    if(!config.contains("max") || !config.contains("min")) {
+        std::array<double, 2> range = util::JsonArrayRange(fieldColumn);
+        if(!config.contains("max")) {
+            config["max"] = range[1];
+        }
+
+        if(!config.contains("min")) {
+            config["min"] = range[0];
+        }
+    }
+
+    tracer->trace("MakeScale: %s, return Linear. ", field_.c_str());
+    return xg::make_unique<Linear>(field_, fieldColumn, config);
+}
+
 
 static std::unique_ptr<AbstractScale> MakeScale(const std::string &field_,
                                                 const nlohmann::json &data,
@@ -63,30 +101,19 @@ static std::unique_ptr<AbstractScale> MakeScale(const std::string &field_,
             tracer->trace("MakeScale: %s, return KlineCat. ", field_.c_str());
             config["klineType"] = type;
             return xg::make_unique<KLineCat>(field_, fieldColumn, config);
+        } else if(type == "cat") {
+            return MakeCategory(field_, data, config, tracer, coord, fieldColumn);
         }
+        //历史资金卡片写了个错误的度量 实际为cat,但写了linear 待其优化后再进
+//        else if(type == "linear") {
+//            return MakeLinear(field_, data, config, tracer, coord, fieldColumn);
+//        }
     }
 
     if(firstVal.is_string()) {
-        tracer->trace("MakeScale: %s, return Category. ", field_.c_str());
-        nlohmann::json a_config = AdjustRange(fieldColumn, coord);
-        if(a_config.is_object()) {
-            config.merge_patch(a_config);
-        }
-        return xg::make_unique<Category>(field_, fieldColumn, config);
+        return MakeCategory(field_, data, config, tracer, coord, fieldColumn);
     } else if(firstVal.is_number() || firstVal.is_array()) {
-        if(!config.contains("max") || !config.contains("min")) {
-            std::array<double, 2> range = util::JsonArrayRange(fieldColumn);
-            if(!config.contains("max")) {
-                config["max"] = range[1];
-            }
-
-            if(!config.contains("min")) {
-                config["min"] = range[0];
-            }
-        }
-
-        tracer->trace("MakeScale: %s, return Linear. ", field_.c_str());
-        return xg::make_unique<Linear>(field_, fieldColumn, config);
+        return MakeLinear(field_, data, config, tracer, coord, fieldColumn);
     }
 
     tracer->trace("MakeScale: %s, return default Identity. ", field_.c_str());
@@ -99,7 +126,7 @@ class ScaleController {
                                                       const nlohmann::json &data,
                                                       utils::Tracer *tracer,
                                                       std::unique_ptr<canvas::coord::AbstractCoord> &coord) {
-        nlohmann::json &fieldConfig = colConfigs[field_];
+        nlohmann::json fieldConfig = json::Get(colConfigs, field_);
         if(!scales_.empty()) {
             std::string _key = field_;
             if(fieldConfig.contains("assign")) {
@@ -122,12 +149,16 @@ class ScaleController {
 
     void UpdateColConfig(const std::string &field, nlohmann::json cfg) { colConfigs[field] = cfg; }
 
-    bool empty() { return scales_.empty(); }
+    bool Empty() { return scales_.empty(); }
 
     void Clear() {
         scales_.clear();
         colConfigs = {};
     };
+    
+    size_t ScaleCount() {
+        return scales_.size();
+    }
 
   private:
     std::vector<std::unique_ptr<AbstractScale>> scales_{};

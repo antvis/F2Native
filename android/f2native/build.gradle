@@ -11,6 +11,18 @@ android {
         targetSdkVersion rootProject.extensions.sdks.TargetSDK
         versionCode 1
         versionName "1.0"
+
+        externalNativeBuild {
+            cmake {
+                cppFlags "-DTARGET_ALIPAY"
+                cFlags "-ffunction-sections -fdata-sections"
+                arguments "-DANDROID_STL=c++_shared", '-DTARGET_ALIPAY=1'
+            }
+        }
+        ndk {
+            abiFilters = []
+            abiFilters.addAll(rootProject.extensions.sdks.ABIs)
+        }
     }
 
     buildTypes {
@@ -23,39 +35,6 @@ android {
     externalNativeBuild {
         cmake {
             path "../../CMakeLists.txt"
-        }
-    }
-
-    flavorDimensions "target_app"
-    productFlavors {
-        standalone {
-            dimension "target_app"
-            externalNativeBuild {
-                cmake {
-                    cppFlags "-DTARGET_STANDALONE"
-                    cFlags "-ffunction-sections -fdata-sections"
-                    arguments "-DANDROID_STL=c++_shared", '-DTARGET_STANDALONE=1'
-                }
-            }
-            ndk {
-                abiFilters = []
-                abiFilters.addAll(rootProject.extensions.sdks.ABIs)
-            }
-        }
-
-        aliPay {
-            dimension "target_app"
-            externalNativeBuild {
-                cmake {
-                    cppFlags "-DTARGET_ALIPAY"
-                    cFlags "-ffunction-sections -fdata-sections"
-                    arguments "-DANDROID_STL=c++_shared", '-DTARGET_ALIPAY=1'
-                }
-            }
-            ndk {
-                abiFilters = []
-                abiFilters.addAll(rootProject.extensions.sdks.ABIs)
-            }
         }
     }
 
@@ -73,10 +52,6 @@ repositories {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    standaloneImplementation(name: 'gcanvas_library-1.2.0', ext: 'aar')
-
-    aliPayImplementation 'com.alibaba:fastjson:1.2.73'
-//    aliPayImplementation 'com.alipay.android.phone.wallet:antgraphic-standalone:0.1.4-SNAPSHOT'
-    aliPayImplementation (name: 'antg-build-android-release', ext:'aar')
-
+    implementation 'com.alibaba:fastjson:1.2.73'
+    implementation (name: 'antg-build-android-debug', ext:'aar')
 }

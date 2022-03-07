@@ -17,6 +17,7 @@ import com.antgroup.antv.f2.samples.charts.MultiIntervalChart;
 import com.antgroup.antv.f2.samples.charts.MultiIntervalChart_under_zero;
 import com.antgroup.antv.f2.samples.charts.MultiLinesChart_1;
 import com.antgroup.antv.f2.samples.charts.PieChart;
+import com.antgroup.antv.f2.samples.charts.RadarAreaChart;
 import com.antgroup.antv.f2.samples.charts.SectionIntervalChart;
 import com.antgroup.antv.f2.samples.charts.SingleAreaChart_1;
 import com.antgroup.antv.f2.samples.charts.SingleAreaChart_2;
@@ -129,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
                 new ChartModel("基础面积图", SingleAreaChart_1.class),
                 new ChartModel("基础面积图_2(带负值)", SingleAreaChart_2.class),
                 new ChartModel("层叠面积图", MultiAreasChart.class),
+                new ChartModel("雷达面积图", RadarAreaChart.class),
 
                 new ChartModel("基础柱状图", SingleIntervalChart_1.class),
                 new ChartModel("基础柱状图2", SingleIntervalChart_2.class),

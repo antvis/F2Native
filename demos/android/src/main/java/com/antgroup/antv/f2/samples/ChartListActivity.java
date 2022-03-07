@@ -12,7 +12,7 @@ import com.antgroup.antv.f2.F2Config;
 import com.antgroup.antv.f2.F2Log;
 import com.antgroup.antv.f2.F2RenderThread;
 import com.antgroup.antv.f2.F2RenderThreadFactory;
-import com.antgroup.antv.f2.F2StandaloneRenderThread;
+//import com.antgroup.antv.f2.F2StandaloneRenderThread;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -27,18 +27,18 @@ public class ChartListActivity extends AppCompatActivity {
 
     private RecyclerView listView;
 
-    private F2RenderThreadFactory mThreadFactory = new F2RenderThreadFactory() {
-        private F2StandaloneRenderThread.Worker mSharedThread = null;
-        @Override
-        public F2RenderThread createRenderThread(F2Config canvasOptions) {
-            // 所有图表共享同一个线程
-            if (mSharedThread == null) {
-                String sessionId = canvasOptions.getStringField("session_id");
-                mSharedThread = new F2StandaloneRenderThread.Worker(sessionId == null ? "t-ChartListActivityThread" : sessionId);
-            }
-            return mSharedThread.assign();
-        }
-    };
+//    private F2RenderThreadFactory mThreadFactory = new F2RenderThreadFactory() {
+//        private F2StandaloneRenderThread.Worker mSharedThread = null;
+//        @Override
+//        public F2RenderThread createRenderThread(F2Config canvasOptions) {
+//            // 所有图表共享同一个线程
+//            if (mSharedThread == null) {
+//                String sessionId = canvasOptions.getStringField("session_id");
+//                mSharedThread = new F2StandaloneRenderThread.Worker(sessionId == null ? "t-ChartListActivityThread" : sessionId);
+//            }
+//            return mSharedThread.assign();
+//        }
+//    };
 
     private List<WeakReference<F2CanvasView>> canvasViews = new ArrayList<>();
 
@@ -53,7 +53,7 @@ public class ChartListActivity extends AppCompatActivity {
         listView = findViewById(R.id.listView);
 
         listView.setLayoutManager(new LinearLayoutManager(this));
-        listView.setAdapter(new CanvasViewAdapter(MainActivity.getChartModels(), mThreadFactory, canvasViews));
+        listView.setAdapter(new CanvasViewAdapter(MainActivity.getChartModels(), null, canvasViews));
     }
 
     @Override

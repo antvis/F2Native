@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <cmath>
 
 #define GLOBAL_SIZES                                                                                                           \
     std::vector<float> { 4.f, 10.f }

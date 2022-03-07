@@ -1,6 +1,0 @@
-[submodule "third_party/GCanvas"]
-	path = third_party/GCanvas
-	url = https://github.com/alibaba/GCanvas.git
-[submodule "third_party/json"]
-	path = third_party/json
-	url = https://github.com/nlohmann/json.git

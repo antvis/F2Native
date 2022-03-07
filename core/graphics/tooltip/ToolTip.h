@@ -65,7 +65,9 @@ class ToolTip {
         double fontSize = xTipCfg["fontSize"];
         bool inner = xTipCfg["inner"];
         fontSize *= canvasContext.GetDevicePixelRatio();
-        float width = canvasContext.MeasureTextWidth(content);
+        // 先创建一个text对象
+        std::unique_ptr<shape::Text> xTip = std::make_unique<shape::Text>(content, util::Point{0, 0}, fontSize, color, color);
+        float width = xTip->GetTextWidth(canvasContext);
         float rectY = inner ? point.y - fontSize - paddingV * 2 : point.y;
         float textY = inner ? point.y - paddingV: point.y + fontSize + paddingV;
         float rectOffsetX = GetXTipRectOffsetX(textAlign, width);
@@ -82,13 +84,10 @@ class ToolTip {
         std::unique_ptr<shape::Rect> backRect =
             std::make_unique<shape::Rect>(util::Point{limitX, rectY + rectOffsetY},
                                           util::Size{width + paddingH * 2, fontSize + paddingV * 2}, backColor);
-        //        if(radius > 0) {
-        //            backRect->radius_ = radius;
-        //        }
         container_->AddElement(std::move(backRect));
 
         limitX +=  width / 2 + paddingH - rectOffsetX;
-        std::unique_ptr<shape::Text> xTip = std::make_unique<shape::Text>(content, util::Point{limitX, textY}, fontSize, color, color);
+        xTip->SetPoint(util::Point{limitX, textY});
         xTip->SetTextAlign(textAlign);
         xTip->SetTextBaseline(textBaseline);
         container_->AddElement(std::move(xTip));
@@ -115,7 +114,9 @@ class ToolTip {
         double fontSize = yTipCfg["fontSize"];
         bool inner = yTipCfg["inner"];
         fontSize *= canvasContext.GetDevicePixelRatio();
-        float width = canvasContext.MeasureTextWidth(content);
+        std::unique_ptr<shape::Text> yTip =
+                std::make_unique<shape::Text>(content, util::Point{0, 0}, fontSize, color, color);
+        float width = yTip->GetTextWidth(canvasContext);
         float rectX = inner ? coord.GetXAxis().x : coord.GetXAxis().x - width - paddingH * 2;
         float textX = inner ? coord.GetXAxis().x + width / 2 + paddingH : coord.GetXAxis().x - width / 2 - paddingH;
         float rectOffsetX = GetXTipRectOffsetX(textAlign, width);
@@ -126,8 +127,7 @@ class ToolTip {
                                           util::Size{width + paddingH * 2, fontSize + paddingV * 2}, backColor);
         container_->AddElement(std::move(backRect));
 
-        std::unique_ptr<shape::Text> yTip =
-            std::make_unique<shape::Text>(content, util::Point{textX, point.y + fontSize / 2}, fontSize, color, color);
+        yTip->SetPoint(util::Point{textX, point.y + fontSize / 2});
         yTip->SetTextAlign(textAlign);
         yTip->SetTextBaseline(textBaseline);
         container_->AddElement(std::move(yTip));
@@ -167,7 +167,7 @@ class ToolTip {
 
         container_->AddElement(std::move(xLine));
 
-        if(showY && config_["yTip"].is_object()) {
+        if(showY) {
             vector<xg::util::Point> yPoints;
             yPoints.push_back(util::Point{coord.GetXAxis().x, point.y});
             yPoints.push_back(util::Point{coord.GetXAxis().y, point.y});

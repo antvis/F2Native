@@ -85,7 +85,7 @@ void *cexecute(void *caller, const char *parameter) { return [(__bridge id)calle
     NSString *paramStr = [NSString stringWithUTF8String:param];
     if(paramStr && self.callback) {
         NSDictionary *resultDic = self.callback(paramStr);
-        _result = xg::json::ParseString([XGSafeJson([F2Utils toJsonString:resultDic]) UTF8String]);
+        _result = xg::json::ParseString([F2SafeJson([F2Utils toJsonString:resultDic]) UTF8String]);
         return &_result;
     }
     return nil;
@@ -116,31 +116,29 @@ void *cexecute(void *caller, const char *parameter) { return [(__bridge id)calle
     if(!paramStr) {
         return &_result;
     }
-    NSData *data = [paramStr dataUsingEncoding:NSUTF8StringEncoding];
-    NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-    NSTimeInterval delay = [dic[@"delay"] doubleValue];
+    NSDictionary *dic = [F2Utils toJsonObject:paramStr];
+    NSTimeInterval delay =  [dic[@"delay"] doubleValue];
     long commandPointer = [dic[@"command"] longValue];
     if(delay <= 0) {
         delay = 16;
     }
-
-    NSTimeInterval start = [[NSDate date] timeIntervalSince1970];
-
-    WeakSelf;
-    [[self.canvasView canvasThread]
-        runBlockASyncOnExecuteThread:^(void) {
-            NSLog(@"command receive  execute %@", @([[NSDate date] timeIntervalSince1970] - start));
-
-            StrongSelf;
-            xg::func::Command *command = reinterpret_cast<xg::func::Command *>(commandPointer);
-            if(strongSelf.canvasView.gcanvas) {
-                command->run();
-                [strongSelf.canvasView drawFrame];
-            }
-            delete command;
-        }
-                               delay:delay];
+    
+    F2WeakSelf;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
+        F2StrongSelf;
+        [strongSelf runCommand:commandPointer];
+    });
+  
     return &_result;
+}
+
+-(void)runCommand:(long)commandPointer {
+    xg::func::Command *command = reinterpret_cast<xg::func::Command *>(commandPointer);
+    if (self.canvasView && self.canvasView.canvasContext) {
+        command->run();
+        [self.canvasView drawFrame];
+    }
+    delete command;
 }
 
 @end

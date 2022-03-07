@@ -16,14 +16,15 @@ public class SampleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_sample);
-
         mCanvasView = findViewById(R.id.canvasView);
+
         mCanvasView.initCanvasContext(new F2CanvasView.ConfigBuilder()
                 .canvasId("F2AntCanvas")
 //                .backgroundColor("#000000")
                 .asyncRender(true)
                 .setOption("canvasBizId", "F2NativeDemo")
                 .setOption("appId", "1000")
+                .useNativeDraw(true)
                 .build());
 
         ChartModel chartModel = (ChartModel) getIntent().getSerializableExtra("ChartModel");

@@ -11,7 +11,7 @@ void legend::Legend::CreateShape(XChart &chart, shape::Group *container, const u
     // draw
     util::Point currPoint = Point(originPoint.x, originPoint.y);
     nlohmann::json &nameStyle = cfg_["nameStyle"];
-    float ratio = chart.GetRatio();
+    float ratio = chart.GetCanvasContext().GetDevicePixelRatio();
     float wordSpace = cfg_["wordSpace"];
     float itemGap = cfg_["itemGap"];
     float textSize = nameStyle["textSize"];
@@ -58,7 +58,7 @@ util::Point legend::Legend::AlignLegend(XChart &chart, const string &position, c
     if(position == "left" || position == "right") {
         x = (position == "left") ?
                 chart.GetMargin()[0] + chart.GetPadding()[0] :
-                chart.GetWidth() - legendWidth - chart.GetMargin()[2] - chart.GetPadding()[2] + itemMarginBottom * chart.GetRatio();
+                chart.GetWidth() - legendWidth - chart.GetMargin()[2] - chart.GetPadding()[2] + itemMarginBottom * chart.GetCanvasContext().GetDevicePixelRatio();
         y = (chart.GetHeight() - legendHeight) / 2;
         if(verticalAlign == "top") {
             y = chart.GetMargin()[1] + chart.GetPadding()[1];
@@ -75,7 +75,7 @@ util::Point legend::Legend::AlignLegend(XChart &chart, const string &position, c
 float legend::Legend::CalLegendWidth(XChart &chart) {
 
     float width = 0;
-    float ratio = chart.GetRatio();
+    float ratio = chart.GetCanvasContext().GetDevicePixelRatio();
     nlohmann::json &nameStyle = cfg_["nameStyle"];
     float wordSpace = cfg_["wordSpace"];
     float textSize = nameStyle["textSize"];
@@ -101,7 +101,7 @@ float legend::Legend::CalLegendWidth(XChart &chart) {
 
 float legend::Legend::CalLegendHeight(XChart &chart) {
     float height = 0.f;
-    float ratio = chart.GetRatio();
+    float ratio = chart.GetCanvasContext().GetDevicePixelRatio();
     nlohmann::json &nameStyle = cfg_["nameStyle"];
     float wordSpace = cfg_["wordSpace"];
     float textSize = nameStyle["textSize"];
@@ -224,7 +224,7 @@ void legend::LegendController::Render(XChart &chart) {
     }
 
     // calculate legend range
-    float ratio = chart.GetRatio();
+    float ratio = chart.GetCanvasContext().GetDevicePixelRatio();
     float left = 0;
     float top = 0;
     float right = 0;

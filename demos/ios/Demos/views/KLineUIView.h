@@ -6,16 +6,11 @@
 //  Copyright © 2021 com.alipay.xgraph. All rights reserved.
 //
 
-#import <F2/F2.h>
-#import <UIKit/UIKit.h>
+#import "BaseLineUIView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface KLineUIView : UIView <F2GestureDelegate>
-
-@property (nonatomic, strong, readonly) F2CanvasView *canvasView;
-@property (nonatomic, strong, readonly) F2Chart *candleChart;
-@property (nonatomic, strong, readonly) F2Chart *subChart;
+@interface KLineUIView : BaseLineUIView <F2GestureDelegate>
 
 @end
 

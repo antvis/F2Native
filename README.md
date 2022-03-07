@@ -31,8 +31,8 @@ F2Native 支持 Android、iOS、MacOS。使用跨平台语言 C++ 来生成底�
 
 ## 快速开始
 <p>
-<img width = "100" src = "docs/images/ios_barchart.jpg"/> 
-<img width = "100" src = "docs/images/android_barchart.jpg"/>
+<img width = "220" src = "docs/images/ios_barchart.jpg"/> 
+<img width = "220" src = "docs/images/android_barchart.jpg"/>
 </p>
 ### iOS
 

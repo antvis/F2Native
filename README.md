@@ -30,10 +30,11 @@ F2Native 支持 Android、iOS、MacOS。使用跨平台语言 C++ 来生成底�
 * 中文文档: https://f2native.antv.vision/zh
 
 ## 快速开始
-<p>
-<img width = "220" src = "docs/images/ios_barchart.jpg"/> 
-<img width = "220" src = "docs/images/android_barchart.jpg"/>
+<p style = "display:block;margin:0 auto;">
+<img width = "260" src = "docs/images/ios_barchart.jpg"/> 
+<img width = "260" src = "docs/images/android_barchart.jpg"/>
 </p>
+
 ### iOS
 
 ```obj-c

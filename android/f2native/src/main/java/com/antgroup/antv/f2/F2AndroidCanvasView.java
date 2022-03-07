@@ -149,11 +149,6 @@ class F2AndroidCanvasView extends View implements F2BaseCanvasView {
 
     @Override
     public void initCanvasContext(F2Config config) {
-        initCanvasContext(config, null);
-    }
-
-    @Override
-    public void initCanvasContext(F2Config config, F2RenderThreadFactory threadFactory) {
         innerLog("#initCanvasContext F2Config threadFactory");
         if (config != null) {
             mAppId = config.getStringField(F2CanvasView.ConfigBuilder.KEY_APP_ID);
@@ -200,11 +195,6 @@ class F2AndroidCanvasView extends View implements F2BaseCanvasView {
     @Override
     public final boolean isOnCanvasThread() {
         return true;
-    }
-
-    @Override
-    public final F2RenderThread getRenderThread() {
-        return null;
     }
 
     @Override

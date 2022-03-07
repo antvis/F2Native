@@ -26,16 +26,7 @@ public class F2CanvasView extends FrameLayout {
     }
 
     private void init(Context context, AttributeSet attrs) {
-        // cs：kF2NativeCanvasBackendKey 为true，或者使用的是开源版本，则使用native canvas版本
-        if (isAndroidCanvas()) {
-            mF2BaseCanvasView = new F2AndroidCanvasView(context, attrs, this);
-            // 显示用于测试的toast
-            F2CSUtils.showUseNativeCanvasToast();
-            innerLog("#init use native canvas cs:" + isAndroidCanvas());
-        } else {
-            mF2BaseCanvasView = new F2AntGCanvasView(context, attrs, this);
-            innerLog( "#init use antg");
-        }
+        mF2BaseCanvasView = new F2AndroidCanvasView(context, attrs, this);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         addView(mF2BaseCanvasView.getView(), params);
     }
@@ -53,12 +44,6 @@ public class F2CanvasView extends FrameLayout {
     public void initCanvasContext(F2Config config) {
         if (mF2BaseCanvasView != null) {
             mF2BaseCanvasView.initCanvasContext(config);
-        }
-    }
-
-    public void initCanvasContext(F2Config config, F2RenderThreadFactory threadFactory) {
-        if (mF2BaseCanvasView != null) {
-            mF2BaseCanvasView.initCanvasContext(config, threadFactory);
         }
     }
 
@@ -86,13 +71,6 @@ public class F2CanvasView extends FrameLayout {
             return mF2BaseCanvasView.isOnCanvasThread();
         }
         return false;
-    }
-
-    public F2RenderThread getRenderThread() {
-        if (mF2BaseCanvasView != null) {
-            return mF2BaseCanvasView.getRenderThread();
-        }
-        return null;
     }
 
     public void setAdapter(final F2CanvasView.Adapter adapter) {

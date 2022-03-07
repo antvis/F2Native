@@ -44,14 +44,7 @@ android {
     }
 }
 
-repositories {
-    flatDir {
-        dirs '../../third_party/GCanvas/android/gcanvas_library/build/outputs/aar', '../../third_party/AntGraphic'
-    }
-}
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.alibaba:fastjson:1.2.73'
-    implementation (name: 'antg-build-android-debug', ext:'aar')
 }

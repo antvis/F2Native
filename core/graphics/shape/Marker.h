@@ -12,7 +12,7 @@ class Marker : public Shape {
         : radius_(radius), symbol_(symbol) {
         type_ = "marker";
         point_ = center;
-        fillStyle_ = util::CanvasFillStrokeStyle(fill);
+        SetFillColor(fill);
     }
 
     BBox CalculateBox(canvas::CanvasContext &context) const override;

@@ -9,41 +9,18 @@
 #import "TimeSharingUIView.h"
 
 @interface TimeSharingUIView()<F2GestureDelegate>
-@property (nonatomic, strong) F2CanvasView *canvasView;
 @property (nonatomic, strong) F2Chart *priceChart;
 @property (nonatomic, strong) F2Chart *subChart;
 @end
 
 @implementation TimeSharingUIView
 
--(instancetype)initWithFrame:(CGRect)frame {
-    CGRect chartFrame = CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width, 280);
-    if (self = [super initWithFrame:chartFrame]) {
-        [self createCanvasView];
-        [self chartRender];
-    }
-    return self;
-}
-
-
--(void)createCanvasView {
-    F2CanvasView *view = [F2CanvasView canvasWithFrame:self.frame
-                                              andBizId:self.name
-                                             andThread:nil
-                                              complete:nil
-    ];
-
-    self.canvasView = view;
-    self.canvasView.delegate = self;
-    [self addSubview:self.canvasView];
-}
-
 - (void)chartRender {
     NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"Res/mockData_timeSharing" ofType:@"json"];
     NSString *jsonData = [NSString stringWithContentsOfFile:jsonPath encoding:NSUTF8StringEncoding error:nil];
     self.priceChart.canvas(self.canvasView).padding(15, 10, 15, 0.f).source(jsonData);
-    self.priceChart.line().position(@"date*price").fixedColor(@"#528EFF");
-    self.priceChart.area().position(@"date*price").fixedColor(@"#108EE9");
+    self.priceChart.line().position(@"date*price").fixedColor(@"#528EFF").attrs(@{@"connectNulls": @(YES)});
+    self.priceChart.area().position(@"date*price").fixedColor(@"#108EE9").attrs(@{@"connectNulls": @(YES)});
 
     self.priceChart.scale(@"date", @{
         @"type": @"timeSharing",

@@ -3,6 +3,15 @@
 
 #include "graphics/util/Point.h"
 
+/*
+  |-----------------------------------end
+  |                                     |
+  |                                     |
+  |                                     |
+  |                                     |
+  start----------------------------------
+ */
+
 namespace xg {
 namespace canvas {
 namespace coord {
@@ -33,16 +42,24 @@ class AbstractCoord {
     virtual void Reset(util::Point start, util::Point end) noexcept = 0;
 
     /// 返回轴的宽度
-    virtual float GetWidth() const noexcept = 0;
+    virtual double GetWidth() const noexcept = 0;
 
-    virtual float GetHeight() noexcept { return this->GetYAxis().x - this->GetYAxis().y; }
+    virtual double GetHeight() const noexcept { return abs(this->GetYAxis().x - this->GetYAxis().y); };
 
     /// 返回半径
     virtual double GetRadius() const noexcept { return 0.f; };
 
-    virtual util::Point GetXAxis() noexcept = 0;
+    virtual util::Point GetXAxis() const noexcept = 0;
 
-    virtual util::Point GetYAxis() noexcept = 0;
+    virtual util::Point GetYAxis() const noexcept = 0;
+    
+    
+    
+    //坐标系左下角的点
+    virtual inline util::Point GetStart() noexcept = 0;
+    
+    //坐标系右上角的点
+    virtual inline util::Point GetEnd() noexcept = 0;
 
     virtual bool IsContains(double x, double y) noexcept = 0;
 

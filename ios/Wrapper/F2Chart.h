@@ -2,7 +2,9 @@
 #import "F2CanvasView.h"
 #import "F2Geom.h"
 #import "F2Guide.h"
+#import "F2Coordinate.h"
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,41 +22,53 @@ NS_ASSUME_NONNULL_BEGIN
 /// 设置chart的padding
 - (F2Chart * (^)(CGFloat left, CGFloat top, CGFloat right, CGFloat bottom))padding;
 
+/// 设置chart的margin
 - (F2Chart * (^)(CGFloat left, CGFloat top, CGFloat right, CGFloat bottom))margin;
 
 /// 设置chart的元数据
-/// @param json JSON格式的数据
+/// json JSON格式的数据
 - (F2Chart * (^)(NSString *json))source;
 
 /// 设置度量，
-/// @param field 需要设置度量的字段
-/// @param config config的具体字段待补充
+/// field 需要设置度量的字段
+/// config config的具体字段待补充
 - (F2Chart * (^)(NSString *field, NSDictionary *config))scale;
 
 /// 设置轴
-/// @param field 需要设置度量的字段
-/// @param config config的具体字段待补充
+/// field 需要设置的轴
+/// config配置如下
+/// @{
+/// @"label":@{@"labelOffset":@(10)},
+/// @"grid":@{@"type":@"line", @"fill":@[@"#E8E8E82A", @"white"], @"stroke" :@"#E8E8E82A", @"dash": @[@(4), @(2)]},
+/// @"line":@{@"type":@"line", @"lineWidth":@(0.6}, @"stroke":"#E8E8E8"}
+/// label为轴上文字的配置信息
+/// grid为网格线的配置信息
+/// line为轴线的配置
 - (F2Chart * (^)(NSString *field, NSDictionary *config))axis;
 
 /// 设置图例
-/// @param field 需要设置度量的字段
-/// @param config config的具体字段待补充
+/// field 需要设置度量的字段
+/// config config的具体字段待补充
 - (F2Chart * (^)(NSString *field, NSDictionary *config))legend;
 
 /// 设置坐标
-/// @param config  坐标轴配置信息
+/// config  坐标轴配置信息
 - (F2Chart * (^)(NSDictionary *config))coord;
 
 /// 指定交互类型
-/// @param type --  pinch 缩放 | pan 平移
+/// type --  pinch 缩放 | pan 平移
 - (F2Chart * (^)(NSString *type, NSDictionary *config))interaction;
 
 /// 开启 ToolTIp 功能
-/// @param confg    具体字段待补充
+/// confg    具体字段待补充
 - (F2Chart * (^)(NSDictionary *config))tooltip;
 
 /// 配置动画功能
-/// @param confg    具体字段待补充
+/// config    @(false) 为关闭动画
+///       @{@"type":@"GroupWaveIn", @"duration": @(800), @"erasing":@"linear"}
+///       type 动画类型  GroupWaveIn GroupScaleInXY GroupScaleInX GroupScaleInY
+///       duration 时间 毫秒
+///       earsing 动画效果 linear quadraticIn quadraticOut quadraticInOut cubicIn cubicOut elasticIn elasticOut elasticInOut backIn backOut backInOut bounceOut bounceIn bounceInOut
 - (F2Chart * (^)(id config))animate;
 
 /// 开始渲染
@@ -75,7 +89,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 计算某一项数据对应的在坐标系中的绝对坐标
 /// @return [x, y]
-- (NSArray<NSNumber *> * (^)(NSDictionary *itemData))getPosition;
+- (CGPoint (^)(NSDictionary *itemData))getPosition;
 
 /// 创建直线或折线
 - (F2Line * (^)(void))line;
@@ -95,9 +109,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// 创建辅助对象
 - (F2Guide * (^)(void))guide;
 
+/// 获取坐标系, 需要在render后才会生成F2Coordinate对象
+- (F2Coordinate * (^)(void))getCoord;
+
 ///  发送手势信息
 - (F2Chart * (^)(NSDictionary *config))postTouchEvent;
 
+/// 把callback缓存到chart中
 - (void)bindF2CallbackObj:(F2CallbackObj *)callback;
 
 @end

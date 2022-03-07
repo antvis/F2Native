@@ -1,6 +1,6 @@
 #include <jni.h>
 #include <string>
-
+#include <vector>
 #include "JavaRef.h"
 
 #ifndef XG_F2_NATIVE_ANDROID_JNI_UTILS_H
@@ -21,6 +21,10 @@ JNIEnv *AttachCurrentThread();
 void DetachFromVM();
 
 ScopedJavaLocalRef<jstring> StringToJavaString(JNIEnv *env, const std::string &str);
+
+ScopedJavaLocalRef<jfloatArray> VectorToJFloatArray(JNIEnv *env, const std::vector<float> &params);
+
+ScopedJavaLocalRef<jintArray> VectorToJIntArray(JNIEnv *env, const std::vector<int> &params);
 
 bool HasException(JNIEnv *env);
 

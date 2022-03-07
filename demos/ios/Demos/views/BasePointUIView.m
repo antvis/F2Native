@@ -18,6 +18,7 @@
     //    self.chart.axis(@"x", @{@"grid": @(NO), @"label": @{@"textAlign": @"start"}});
 
     self.chart.point().position(@"x*y").size(@"z", @[@(3), @(10)]).fixedShape(@"circle");
+    self.chart.animate(@YES);
     self.chart.render();
 }
 

@@ -31,6 +31,9 @@ class GuideController {
 
     // 背景色
     void Background(const std::string &json = "");
+    
+    // 图片
+    void Image(const std::string &json = "");
 
     void Clear() {
         this->container_->Clear();

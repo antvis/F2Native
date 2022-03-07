@@ -19,7 +19,6 @@
 		3F594C0A259B10990023A4E7 /* SetionIntervalUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F594C09259B10990023A4E7 /* SetionIntervalUIView.m */; };
 		3F5D90912535C5320091D8F7 /* CyclicPieUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D90902535C5320091D8F7 /* CyclicPieUIView.m */; };
 		3F5DD47D2553A34D00FD60B3 /* BaseInterval2UIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F5DD47C2553A34D00FD60B3 /* BaseInterval2UIView.m */; };
-		3FB8F5B825C93BBE0010E9E6 /* ListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB8F5B725C93BBE0010E9E6 /* ListViewController.m */; };
 		3FD08FB025B0764A002F14AC /* KLineUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD08FAF25B0764A002F14AC /* KLineUIView.m */; };
 		9500DF9F2689F4A500025EF1 /* TimeSharingUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9500DF9E2689F4A500025EF1 /* TimeSharingUIView.m */; };
 		95127745264CF5400011EE7A /* ChartListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 95127744264CF5400011EE7A /* ChartListViewController.m */; };
@@ -35,6 +34,12 @@
 		CC612BCE250A28AF00315124 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CC612BCD250A28AF00315124 /* main.m */; };
 		CC612BFD250B54E600315124 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC612BFC250B54E600315124 /* libc++.tbd */; };
 		CC612C04250B5C5A00315124 /* Res in Resources */ = {isa = PBXBuildFile; fileRef = CC612C03250B5C5A00315124 /* Res */; };
+		CC76557B26C5220100061FCF /* MultiIntervalUIView3.m in Sources */ = {isa = PBXBuildFile; fileRef = CC76557826C5220100061FCF /* MultiIntervalUIView3.m */; };
+		CC85823C2756070900C4D435 /* MarketMovingUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85823B2756070900C4D435 /* MarketMovingUIView.m */; };
+		CC8BE29E26F2EE9C00F52359 /* RadarAreaUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = CC8BE29D26F2EE9C00F52359 /* RadarAreaUIView.m */; };
+		CC8C61E92795770300F540D7 /* BaseGuideUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = CC8C61E62795770300F540D7 /* BaseGuideUIView.m */; };
+		CCE9E3E927B12AF400D8A030 /* BugFixViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE9E3E727B12AF400D8A030 /* BugFixViewController.m */; };
+		CCE9E3ED27B12BB000D8A030 /* TimeSharingBugFix1UIView.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE9E3EB27B12BB000D8A030 /* TimeSharingBugFix1UIView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +56,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = CC793C3A2509FBAA00E9D913;
 			remoteInfo = F2;
+		};
+		CCCDF03C274E35890060D768 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3F5DD4E1255AB42C00FD60B3 /* F2.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CCCDE9CB2744D9740060D768;
+			remoteInfo = F2Tests;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -80,8 +92,6 @@
 		3F5DD47B2553A34D00FD60B3 /* BaseInterval2UIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseInterval2UIView.h; sourceTree = "<group>"; };
 		3F5DD47C2553A34D00FD60B3 /* BaseInterval2UIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseInterval2UIView.m; sourceTree = "<group>"; };
 		3F5DD4E1255AB42C00FD60B3 /* F2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = F2.xcodeproj; path = ../../../ios/F2.xcodeproj; sourceTree = "<group>"; };
-		3FB8F5B625C93BBE0010E9E6 /* ListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ListViewController.h; sourceTree = "<group>"; };
-		3FB8F5B725C93BBE0010E9E6 /* ListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ListViewController.m; sourceTree = "<group>"; };
 		3FD08FAE25B0764A002F14AC /* KLineUIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KLineUIView.h; sourceTree = "<group>"; };
 		3FD08FAF25B0764A002F14AC /* KLineUIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KLineUIView.m; sourceTree = "<group>"; };
 		9500DF9D2689F4A500025EF1 /* TimeSharingUIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TimeSharingUIView.h; sourceTree = "<group>"; };
@@ -109,6 +119,18 @@
 		CC612BCD250A28AF00315124 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		CC612BFC250B54E600315124 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		CC612C03250B5C5A00315124 /* Res */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Res; sourceTree = "<group>"; };
+		CC76557826C5220100061FCF /* MultiIntervalUIView3.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultiIntervalUIView3.m; sourceTree = "<group>"; };
+		CC76557A26C5220100061FCF /* MultiIntervalUIView3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiIntervalUIView3.h; sourceTree = "<group>"; };
+		CC8582392756070900C4D435 /* MarketMovingUIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarketMovingUIView.h; sourceTree = "<group>"; };
+		CC85823B2756070900C4D435 /* MarketMovingUIView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MarketMovingUIView.m; sourceTree = "<group>"; };
+		CC8BE29C26F2EE9C00F52359 /* RadarAreaUIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RadarAreaUIView.h; sourceTree = "<group>"; };
+		CC8BE29D26F2EE9C00F52359 /* RadarAreaUIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RadarAreaUIView.m; sourceTree = "<group>"; };
+		CC8C61E62795770300F540D7 /* BaseGuideUIView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseGuideUIView.m; sourceTree = "<group>"; };
+		CC8C61E82795770300F540D7 /* BaseGuideUIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseGuideUIView.h; sourceTree = "<group>"; };
+		CCE9E3E727B12AF400D8A030 /* BugFixViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BugFixViewController.m; sourceTree = "<group>"; };
+		CCE9E3E827B12AF400D8A030 /* BugFixViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BugFixViewController.h; sourceTree = "<group>"; };
+		CCE9E3EB27B12BB000D8A030 /* TimeSharingBugFix1UIView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeSharingBugFix1UIView.m; sourceTree = "<group>"; };
+		CCE9E3EC27B12BB000D8A030 /* TimeSharingBugFix1UIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeSharingBugFix1UIView.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +148,13 @@
 		3F56A04125232939002AA2D2 /* views */ = {
 			isa = PBXGroup;
 			children = (
+				CCE9E3EA27B12B9600D8A030 /* bugfix */,
+				CC8C61E82795770300F540D7 /* BaseGuideUIView.h */,
+				CC8C61E62795770300F540D7 /* BaseGuideUIView.m */,
+				CC8582392756070900C4D435 /* MarketMovingUIView.h */,
+				CC85823B2756070900C4D435 /* MarketMovingUIView.m */,
+				CC76557A26C5220100061FCF /* MultiIntervalUIView3.h */,
+				CC76557826C5220100061FCF /* MultiIntervalUIView3.m */,
 				3FD08FAE25B0764A002F14AC /* KLineUIView.h */,
 				3FD08FAF25B0764A002F14AC /* KLineUIView.m */,
 				3F56A0422523296F002AA2D2 /* BaseLineUIView.h */,
@@ -162,6 +191,8 @@
 				95982AF725CA8D3D0066F875 /* MultiAxiesLineUIView.m */,
 				9500DF9D2689F4A500025EF1 /* TimeSharingUIView.h */,
 				9500DF9E2689F4A500025EF1 /* TimeSharingUIView.m */,
+				CC8BE29C26F2EE9C00F52359 /* RadarAreaUIView.h */,
+				CC8BE29D26F2EE9C00F52359 /* RadarAreaUIView.m */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -170,6 +201,7 @@
 			isa = PBXGroup;
 			children = (
 				3F5DD4E7255AB42C00FD60B3 /* F2.framework */,
+				CCCDF03D274E35890060D768 /* F2Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -197,20 +229,20 @@
 				3F5DD4E1255AB42C00FD60B3 /* F2.xcodeproj */,
 				CC612BBB250A28AE00315124 /* AppDelegate.h */,
 				CC612BBC250A28AE00315124 /* AppDelegate.m */,
-				3FB8F5B625C93BBE0010E9E6 /* ListViewController.h */,
-				3FB8F5B725C93BBE0010E9E6 /* ListViewController.m */,
 				CC612BC1250A28AE00315124 /* ViewController.h */,
 				CC612BC2250A28AE00315124 /* ViewController.m */,
 				3F56A03E2523233E002AA2D2 /* DemoViewController.h */,
 				3F56A03F2523233E002AA2D2 /* DemoViewController.m */,
+				95127743264CF5400011EE7A /* ChartListViewController.h */,
+				95127744264CF5400011EE7A /* ChartListViewController.m */,
+				CCE9E3E827B12AF400D8A030 /* BugFixViewController.h */,
+				CCE9E3E727B12AF400D8A030 /* BugFixViewController.m */,
 				CC612BC7250A28AF00315124 /* Assets.xcassets */,
 				CC612BC9250A28AF00315124 /* LaunchScreen.storyboard */,
 				CC612BCC250A28AF00315124 /* Info.plist */,
 				CC612BCD250A28AF00315124 /* main.m */,
 				3F56A04125232939002AA2D2 /* views */,
 				CC612C03250B5C5A00315124 /* Res */,
-				95127743264CF5400011EE7A /* ChartListViewController.h */,
-				95127744264CF5400011EE7A /* ChartListViewController.m */,
 			);
 			path = Demos;
 			sourceTree = "<group>";
@@ -221,6 +253,15 @@
 				CC612BFC250B54E600315124 /* libc++.tbd */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CCE9E3EA27B12B9600D8A030 /* bugfix */ = {
+			isa = PBXGroup;
+			children = (
+				CCE9E3EC27B12BB000D8A030 /* TimeSharingBugFix1UIView.h */,
+				CCE9E3EB27B12BB000D8A030 /* TimeSharingBugFix1UIView.m */,
+			);
+			path = bugfix;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -290,6 +331,13 @@
 			remoteRef = 3F5DD4E6255AB42C00FD60B3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		CCCDF03D274E35890060D768 /* F2Tests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = F2Tests.xctest;
+			remoteRef = CCCDF03C274E35890060D768 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -314,22 +362,27 @@
 				95127745264CF5400011EE7A /* ChartListViewController.m in Sources */,
 				9500DF9F2689F4A500025EF1 /* TimeSharingUIView.m in Sources */,
 				3F56A05125236ACE002AA2D2 /* BaseIntervalUIView.m in Sources */,
+				CC8BE29E26F2EE9C00F52359 /* RadarAreaUIView.m in Sources */,
 				CC31D1762637BE0C008F6422 /* BaseAreaUIView3.m in Sources */,
 				3F5D90912535C5320091D8F7 /* CyclicPieUIView.m in Sources */,
+				CC76557B26C5220100061FCF /* MultiIntervalUIView3.m in Sources */,
 				3F594C0A259B10990023A4E7 /* SetionIntervalUIView.m in Sources */,
 				3F5DD47D2553A34D00FD60B3 /* BaseInterval2UIView.m in Sources */,
 				CC612BC3250A28AE00315124 /* ViewController.m in Sources */,
 				3F56A04E25235F1E002AA2D2 /* MultiAreaUIView.m in Sources */,
 				957056B92591F88F00D26E0A /* MultiIntervalUIView2.m in Sources */,
+				CC85823C2756070900C4D435 /* MarketMovingUIView.m in Sources */,
 				3F56A05425236C64002AA2D2 /* StripUIView.m in Sources */,
 				3F56A06025248B53002AA2D2 /* MultintervalUIView.m in Sources */,
-				3FB8F5B825C93BBE0010E9E6 /* ListViewController.m in Sources */,
 				3F56A0442523296F002AA2D2 /* BaseLineUIView.m in Sources */,
+				CC8C61E92795770300F540D7 /* BaseGuideUIView.m in Sources */,
 				95982AF825CA8D3D0066F875 /* MultiAxiesLineUIView.m in Sources */,
 				CC612BBD250A28AE00315124 /* AppDelegate.m in Sources */,
 				957056C925931B0900D26E0A /* BaseAreaUIView2.m in Sources */,
+				CCE9E3ED27B12BB000D8A030 /* TimeSharingBugFix1UIView.m in Sources */,
 				3FD08FB025B0764A002F14AC /* KLineUIView.m in Sources */,
 				CC612BCE250A28AF00315124 /* main.m in Sources */,
+				CCE9E3E927B12AF400D8A030 /* BugFixViewController.m in Sources */,
 				3F56A0482523599D002AA2D2 /* MultiLineUIView.m in Sources */,
 				95A7D80A25A3035800CA8B9F /* BasePointUIView.m in Sources */,
 				3F56A04B25235B6E002AA2D2 /* BaseAreaUIView.m in Sources */,
@@ -473,19 +526,25 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = F2Native.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.0;
 				DEVELOPMENT_TEAM = A663235EQ2;
 				INFOPLIST_FILE = Demos/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.alipay.f2.demos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -494,12 +553,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = F2Native.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.0;
 				DEVELOPMENT_TEAM = A663235EQ2;
 				INFOPLIST_FILE = Demos/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -507,6 +569,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.alipay.f2.demos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

@@ -15,11 +15,15 @@ final class NativeChartProxy {
         }
     }
 
-    int setCanvas(long nativeCanvas, String functionId) {
+    int setCanvas(long nativeCanvas, String functionId, boolean isAndroidCanvas) {
         if (mNativeChartHandler == 0 || nativeCanvas == 0) {
             return F2Constants.CODE_FAIL_UNKNOWN;
         }
-        return nSetCanvasView(mNativeChartHandler, nativeCanvas, functionId);
+        try {
+            return nSetCanvasView(mNativeChartHandler, nativeCanvas, functionId, isAndroidCanvas);
+        } catch (Error error) {
+            return 0;
+        }
     }
 
     int source(String json) {
@@ -106,6 +110,13 @@ final class NativeChartProxy {
         return nGetPosition(mNativeChartHandler, itemData);
     }
 
+    String getTooltipInfos(float touchX, float touchY, int geomIndex) {
+        if (mNativeChartHandler == 0) {
+            return null;
+        }
+        return nGetTooltipInfos(mNativeChartHandler, touchX, touchY, geomIndex);
+    }
+
     int clear() {
         if (mNativeChartHandler == 0) {
             return F2Constants.CODE_FAIL_UNKNOWN;
@@ -117,7 +128,7 @@ final class NativeChartProxy {
         long handle;
         if (mNativeChartHandler == 0) {
             handle = 0;
-        } else{
+        } else {
             handle = nCreateGeom(mNativeChartHandler, type);
         }
         switch (type) {
@@ -230,7 +241,7 @@ final class NativeChartProxy {
 
     private native static long nCreateNativeChart(String name, double width, double height, double ratio);
 
-    private native static int nSetCanvasView(long nativeChartHandler, long nativeViewHandle, String functionId);
+    private native static int nSetCanvasView(long nativeChartHandler, long nativeViewHandle, String functionId, boolean isAndroidCanvas);
 
     private native static int nSetSource(long nativeChartHandler, String json);
 
@@ -243,6 +254,7 @@ final class NativeChartProxy {
     private native static int nSetAxis(long nativeChartHandler, String field, String json);
 
     private native static int nSetCoord(long nativeChartHandler, String json);
+
     private native static int nSetAnimate(long nativeChartHandler, String json);
 
     private native static int nSetInteraction(long nativeChartHandler, String type, String config);
@@ -258,6 +270,7 @@ final class NativeChartProxy {
     private native static long nCreateGeom(long nativeChartHandler, String geomType);
 
     private native static String nGetRenderDumpInfo(long nativeChartHandler);
+
     private native static String nGetScaleTicks(long nativeChartHandler, String field);
 
     private native static int nDestroy(long nativeChartHandler);
@@ -265,6 +278,8 @@ final class NativeChartProxy {
     private native static int nRender(long nativeChartHandler);
 
     private native static double[] nGetPosition(long nativeChartHandler, String itemData);
+
+    private native static String nGetTooltipInfos(long nativeChartHandler, float touchX, float touchY, int geomIndex);
 
     private native static int nClear(long nativeChartHandler);
 
@@ -287,8 +302,10 @@ final class NativeChartProxy {
     private native static int nGeomIntervalTag(long geomHandle, String type, String config);
 
     private native static int nGeomStyle(long geomHandle, String config);
+
     private native static int nGeomAttrs(long geomHandle, String config);
 
     private native static int nExecuteCommand(long commandHandle);
+
     private native static int nDeallocCommand(long commandHandle);
 }

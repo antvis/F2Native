@@ -1,5 +1,7 @@
 #import "F2GLESEnv.h"
 
+#if defined(TARGET_STANDALONE) && (TARGET_OS_MACCATALYST != 1)
+
 static EAGLContext *_staticFirstContext;
 
 @interface F2GLESEnv () {
@@ -151,3 +153,5 @@ static EAGLContext *_staticFirstContext;
 }
 
 @end
+
+#endif

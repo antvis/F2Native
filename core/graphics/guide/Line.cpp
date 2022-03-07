@@ -12,7 +12,7 @@ void guide::Line::Render(XChart &chart, shape::Group *container, canvas::CanvasC
     util::Point position = this->GetPosition(chart, json::Get(this->config_, "position"), xField, yField);
 
     std::string orientation = config_["orientation"];
-    util::CanvasFillStrokeStyle colorStyle = util::ColorParser(config_["color"]);
+    canvas::CanvasFillStrokeStyle colorStyle = util::ColorParser(config_["color"]);
     float lineWidth = config_["lineWidth"].get<float>() * context.GetDevicePixelRatio();
 
     util::Point xAxis = chart.GetCoord().GetXAxis();
@@ -24,7 +24,7 @@ void guide::Line::Render(XChart &chart, shape::Group *container, canvas::CanvasC
         if(config_.contains("dash")) {
             l->SetDashLine(json::ParseDashArray(config_["dash"], context.GetDevicePixelRatio()));
         }
-        l->strokeStyle_ = colorStyle;
+        l->SetStorkStyle(colorStyle);
         container->AddElement(std::move(l));
     };
 

@@ -13,10 +13,6 @@ void xg::guide::Background::Render(XChart &chart, shape::Group *container, canva
     util::Point p = {leftBottom.x, rightTop.y};
 
     auto rect = xg::make_unique<xg::shape::Rect>(p, util::Size{fabs(rightTop.x - leftBottom.x), fabs(rightTop.y - leftBottom.y)});
-    rect->fillStyle_ = util::ColorParser(color);
-    auto opacity = util::OpacityParser(color);
-    if(!isnan(opacity)) {
-        rect->fillOpacity_ = opacity;
-    }
+    rect->SetFillColor(color);
     container->AddElement(std::move(rect));
 }

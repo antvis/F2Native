@@ -2,6 +2,7 @@
 #define XG_GRAPHICS_UTIL_POINT_H
 
 #include <math.h>
+#include "utils/common.h"
 
 namespace xg {
 namespace util {
@@ -49,6 +50,10 @@ class Point {
         double x = p2.x - p1.x;
         double y = p2.y - p1.y;
         return hypot(x, y);
+    }
+    
+    static bool IsEqual(const Point &p1, const Point &p2) {
+        return xg::IsEqual(p1.x, p2.x) && xg::IsEqual(p1.y, p2.y);
     }
 };
 class BezierPoint {

@@ -176,6 +176,18 @@ ScopedJavaLocalRef<jstring> StringToJavaString(JNIEnv *env, const std::string &d
     }
 }
 
+ScopedJavaLocalRef<jfloatArray> VectorToJFloatArray(JNIEnv *env, const std::vector<float> &params) {
+    auto jArray = ScopedJavaLocalRef<jfloatArray>(env, env->NewFloatArray(params.size()));
+    env->SetFloatArrayRegion(jArray.obj(), 0, params.size(), params.data());
+    return jArray;
+}
+
+ScopedJavaLocalRef<jintArray> VectorToJIntArray(JNIEnv *env, const std::vector<int> &params) {
+    auto jArray = ScopedJavaLocalRef<jintArray>(env, env->NewIntArray(params.size()));
+    env->SetIntArrayRegion(jArray.obj(), 0, params.size(), params.data());
+    return jArray;
+}
+
 void native_clog(int level, const char *tag, const char *msg) { __android_log_write(level, tag, msg); }
 
 /*

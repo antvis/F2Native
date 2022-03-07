@@ -63,13 +63,6 @@ static tm DateParserAtTM(std::string date, std::string format = "%Y-%m-%d %H:%M:
     return std::move(tm_);
 }
 
-static long DateGetLocalTimeZoneOffset() {
-    time_t t = time(NULL);
-    struct tm lt = {0};
-    localtime_r(&t, &lt);
-    return lt.tm_gmtoff;
-}
-
 static tm DateParserTimeStamp(long long timestamp, bool timeZone = false) {
     time_t t = timestamp / 1000;
 

@@ -3,15 +3,19 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define XGSafeString(str) (str.length > 0 ? str : @"")
-#define XGSafeJson(json) (json.length > 0 ? json : @"[]")
+#define F2SafeString(str) (str.length > 0 ? str : @"")
+#define F2SafeJson(json) (json.length > 0 ? json : @"[]")
 
-#define WeakSelf __weak __typeof(self) weakSelf = self;
-#define StrongSelf __strong __typeof(weakSelf) strongSelf = weakSelf;
+#define F2WeakSelf __weak __typeof(self) weakSelf = self;
+#define F2StrongSelf __strong __typeof(weakSelf) strongSelf = weakSelf;
+#define F2SafeBlockRun(block, ...) block ? block(__VA_ARGS__) : nil
+
+#define F2NativeScale UIScreen.mainScreen.nativeScale
 
 @interface F2Utils : NSObject
 
-+ (NSString *)toJsonString:(NSDictionary *)jsonDict;
+/// jsonDict可能是NSDictionary or NSArray
++ (NSString *)toJsonString:(id)jsonDict;
 
 + (id)toJsonObject:(NSString *)jsonString;
 

@@ -20,13 +20,7 @@ shape::Polyline::Polyline(const float lineWidth,
     lineWidth_ = lineWidth;
     points_ = points;
 
-    if(!strokeColor.empty()) {
-        strokeStyle_ = util::CanvasFillStrokeStyle(strokeColor);
-    }
-
-    if(!fillColor.empty()) {
-        fillStyle_ = util::CanvasFillStrokeStyle(fillColor);
-    }
+    SetFillStrokeStyle(strokeColor, fillColor);
     smooth_ = smooth;
 }
 

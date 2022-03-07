@@ -1,3 +1,6 @@
+#ifndef XG_GRAPHICS_FUNC_COMMAND_H
+#define XG_GRAPHICS_FUNC_COMMAND_H
+
 namespace xg {
 namespace func {
 struct Command {
@@ -16,3 +19,5 @@ template <typename Function, typename... ArgTypes> Command *CreateCommand(Functi
 
 } // namespace func
 } // namespace xg
+
+#endif // XG_GRAPHICS_FUNC_COMMAND_H

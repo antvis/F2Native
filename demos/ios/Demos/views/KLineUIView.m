@@ -10,21 +10,12 @@
 
 @interface KLineUIView () <F2GestureDelegate>
 
-@property (nonatomic, strong) F2CanvasView *canvasView;
 @property (nonatomic, strong) F2Chart *candleChart;
 @property (nonatomic, strong) F2Chart *subChart;
 
 @end
 
 @implementation KLineUIView
-
-- (instancetype)init {
-    if(self = [super initWithFrame:CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width, 280)]) {
-        [self addSubview:self.canvasView];
-        [self chartRender];
-    }
-    return self;
-}
 
 - (void)chartRender {
 
@@ -69,14 +60,6 @@
     self.subChart.interaction(@"pinch", @{});
     self.subChart.tooltip(@{});
     self.subChart.render();
-}
-
-- (F2CanvasView *)canvasView {
-    if(!_canvasView) {
-        _canvasView = [F2CanvasView canvasWithFrame:self.frame andBizId:@"KLineUIView" complete:nil];
-        _canvasView.delegate = self;
-    }
-    return _canvasView;
 }
 
 - (F2Chart *)candleChart {

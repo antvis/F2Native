@@ -10,6 +10,7 @@
 #include <math.h>
 #include <sstream>
 #include <unordered_map>
+#include <iostream>
 
 namespace xg {
 namespace scale {
@@ -52,26 +53,25 @@ class Linear : public AbstractScale {
         if(reCalcTicks) {
             this->ticks = this->CalculateTicks();
         }
-        scaledCache_.clear();
     }
 
     double Scale(const nlohmann::json &key) override {
         if(!key.is_number()) {
             return std::nan("0.0");
         }
+        
+        //这个情况永远走不到 max==min的时候会走nice算法，算出来的max和min必然不相等
         if(xg::IsEqual(this->max, this->min)) {
             return this->rangeMin;
-        }
-        std::size_t keyHash = nlohmann::detail::hash(key);
-
-        if(scaledCache_.find(keyHash) != scaledCache_.end()) {
-            return scaledCache_.at(keyHash);
         }
 
         double percent = GetScalePercent(key);
         double value = rangeMin + percent * (rangeMax - rangeMin);
+        
+        //tick范围的代码保护，限制在0~1
+        value = fmin(value, 1.0);
+        value = fmax(value, 0);
 
-        scaledCache_[keyHash] = value;
         return value;
     }
 
@@ -123,10 +123,12 @@ class Linear : public AbstractScale {
             }
 
             double interval = (this->max - this->min) / (this->tickCount - 1);
+            
             nlohmann::json rst;
-            for(double index = this->min; index <= this->max; index += interval) {
-                rst.push_back(index);
+            for(int i = 0; i < tickCount; ++i) {                
+                rst.push_back(this->min + i * interval);
             }
+         
             return rst;
         }
     }
@@ -138,6 +140,12 @@ class Linear : public AbstractScale {
 
         // 计算interval， 优先取tickInterval
         const double interval = GetBestInterval(count, max, min);
+        //tick为-0.1, 0.1, 0.2的时候算出来inf,保护下
+        if(std::isnan(interval) || std::isinf(interval)) {
+            rst.push_back(min);
+            rst.push_back(max);
+            return rst;
+        }
         tickInterval = interval;
 
         // 通过interval计算最小tick
@@ -273,9 +281,10 @@ class Linear : public AbstractScale {
         tickCount = fmax(2, tickCount);
 
         precision = config_["precision"];
-
-        min = config_["min"];
-        max = config_["max"];
+        if (config_.contains("min") && config_.contains("max")) {
+            min = config_["min"];
+            max = config_["max"];
+        }
         nlohmann::json &range = config_["range"];
         rangeMin = range[0];
         rangeMax = range[1];
@@ -289,9 +298,7 @@ class Linear : public AbstractScale {
     int precision = 0; // tickText 小数点精度
 
     nlohmann::json config_ = {{"tickCount", DEFAULT_COUNT}, {"precision", 0}, {"range", {0.0, 1.0}}, {"nice", false}};
-
-  private:
-    std::unordered_map<std::size_t, double> scaledCache_;
+    
 };
 } // namespace scale
 } // namespace xg

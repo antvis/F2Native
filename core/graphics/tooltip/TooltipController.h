@@ -22,6 +22,9 @@ class ToolTipController {
     void AddMonitor(ToolTipMarkerItemsCallback callback) { actionListeners_.push_back(callback); }
 
     void Clear() { toolTip_ = nullptr;}
+
+    // 该函数并不是一个常规的实现，而是用简单地协议把结果拼接成字符串。谨慎使用
+    const std::string GetTooltipInfos(float touchX, float touchY, int geomIndex);
   protected:
     void OnRender();
     void OnClearInner();

@@ -2,14 +2,14 @@
 
 @implementation F2Utils
 
-+ (NSString *)toJsonString:(NSDictionary *)jsonDict {
++ (NSString *)toJsonString:(id)jsonDict {
     NSString *jsonString = nil;
     @try {
         NSError *err;
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonDict options:0 error:&err];
         jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
     } @catch(NSException *exception) {
-        NSLog(@"Not Valid Json, Error %@", [exception description]);
+        NSLog(@"Json Invalid, Error %@", [exception description]);
     }
     return jsonString;
 }
@@ -20,7 +20,7 @@
         NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
         jsonObj = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
     }@catch (NSException *exception) {
-        NSLog(@"Not Valid Json, Error %@", [exception description]);
+        NSLog(@"Json Invalid , Error %@", [exception description]);
     }
     return jsonObj;
 }
@@ -46,4 +46,5 @@
     }];
     return newDic;
 }
+
 @end

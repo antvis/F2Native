@@ -3,11 +3,7 @@
 #include <android/log.h>
 #include <jni.h>
 
-#if defined(TARGET_STANDALONE)
-#include "F2CanvasView.h"
-#elif defined(TARGET_ALIPAY)
 #include <AntGraphic.h>
-#endif
 
 #include "F2NativeJNI.h"
 #include "JavaRef.h"
@@ -30,555 +26,6 @@ template <typename T, size_t N> char (&_xg_ArraySizeHelper(T (&array)[N]))[N];
 namespace xg {
 namespace jni {
 
-#ifdef TARGET_STANDALONE
-static jlong CreateNativeCanvasView(JNIEnv *env, jclass clazz, jstring stringOptions) {
-    std::string _options = JavaStringToString(env, stringOptions);
-    F2CanvasView *view = new F2CanvasView(std::move(_options));
-    return reinterpret_cast<jlong>(view);
-}
-
-static jint OnSurfaceAvailable(JNIEnv *env, jclass clazz, jlong view, jobject surface) {
-    F2_LOG_I("F2ChartView", "%s", "#OnSurfaceAvailable");
-    if(surface != nullptr) {
-        ANativeWindow *window = ANativeWindow_fromSurface(env, surface);
-        F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-        F2_LOG_I(chartView->GetCanvasId(), "%s", "#OnSurfaceAvailable");
-        return chartView->OnSurfaceCreated(window);
-    }
-    return 0;
-}
-
-static jint InitCanvasContext(JNIEnv *env, jclass clazz, jlong view) {
-    return reinterpret_cast<F2CanvasView *>(view)->InitCanvasContext();
-}
-
-static jboolean IsCanvasContextInitted(JNIEnv *env, jclass clazz, jlong view) {
-    return reinterpret_cast<F2CanvasView *>(view)->IsInitCanvasContext();
-}
-
-static jint OnSurfaceSizeChanged(JNIEnv *env, jclass clazz, jlong view, jint width, jint height) {
-    return reinterpret_cast<F2CanvasView *>(view)->OnSurfaceChanged(width, height);
-}
-
-static jint OnSurfaceDestroy(JNIEnv *env, jclass clazz, jlong view) {
-    return reinterpret_cast<F2CanvasView *>(view)->OnSurfaceDestroyed();
-}
-
-static jint OnViewDestroy(JNIEnv *env, jclass clazz, jlong view) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    delete chartView;
-    return 0;
-}
-
-static jint PerformSwapBuffer(JNIEnv *env, jclass clazz, jlong view) {
-    return reinterpret_cast<F2CanvasView *>(view)->PerformSwapFrame();
-}
-
-// ########################## graphic canvas apis #########################################
-static void CanvasSetFillStyle(JNIEnv *env, jclass clazz, jlong view, jstring style) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    std::string _style = JavaStringToString(env, style);
-    chartView->SetFillStyle(std::move(_style));
-}
-
-static void CanvasSetStrokeStyle(JNIEnv *env, jclass clazz, jlong view, jstring style) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    std::string _style = JavaStringToString(env, style);
-    chartView->SetStrokeStyle(std::move(_style));
-}
-
-static void CanvasRect(JNIEnv *env, jclass clazz, jlong view, jint x, jint y, jint w, jint h) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->Rect(static_cast<float>(x), static_cast<float>(y), static_cast<float>(w), static_cast<float>(h));
-}
-
-static void CanvasFillRect(JNIEnv *env, jclass clazz, jlong view, jint x, jint y, jint w, jint h) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->FillRect(static_cast<float>(x), static_cast<float>(y), static_cast<float>(w), static_cast<float>(h));
-}
-static void CanvasStrokeRect(JNIEnv *env, jclass clazz, jlong view, jint x, jint y, jint w, jint h) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->StrokeRect(static_cast<float>(x), static_cast<float>(y), static_cast<float>(w), static_cast<float>(h));
-}
-static void CanvasClearRect(JNIEnv *env, jclass clazz, jlong view, jint x, jint y, jint w, jint h) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->ClearRect(static_cast<float>(x), static_cast<float>(y), static_cast<float>(w), static_cast<float>(h));
-}
-static void CanvasFill(JNIEnv *env, jclass clazz, jlong view) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->Fill();
-}
-static void CanvasStroke(JNIEnv *env, jclass clazz, jlong view) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->Stroke();
-}
-static void CanvasBeginPath(JNIEnv *env, jclass clazz, jlong view) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->BeginPath();
-}
-static void CanvasMoveTo(JNIEnv *env, jclass clazz, jlong view, jfloat x, jfloat y) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->MoveTo(x, y);
-}
-static void CanvasClosePath(JNIEnv *env, jclass clazz, jlong view) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->ClosePath();
-}
-static void CanvasLineTo(JNIEnv *env, jclass clazz, jlong view, jfloat x, jfloat y) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->LineTo(x, y);
-}
-static void CanvasClip(JNIEnv *env, jclass clazz, jlong view) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->Clip();
-}
-static void CanvasQuadraticCurveTo(JNIEnv *env, jclass clazz, jlong view, jfloat cpx, jfloat cpy, jfloat x, jfloat y) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->QuadraticCurveTo(cpx, cpy, x, y);
-}
-static void CanvasBezierCurveTo(JNIEnv *env, jclass clazz, jlong view, jfloat cp1x, jfloat cp1y, jfloat cp2x, jfloat cp2y, jfloat x, jfloat y) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->BezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
-}
-static void CanvasArc(JNIEnv *env, jclass clazz, jlong view, jfloat x, jfloat y, jfloat r, jfloat sAngle, jfloat eAngle, bool antiClockwise) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->Arc(x, y, r, sAngle, eAngle, antiClockwise);
-}
-static void CanvasArcTo(JNIEnv *env, jclass clazz, jlong view, jfloat x1, jfloat y1, jfloat x2, jfloat y2, jfloat r) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->ArcTo(x1, y1, x2, y2, r);
-}
-static void CanvasScale(JNIEnv *env, jclass clazz, jlong view, jfloat sw, jfloat sh) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->Scale(sw, sh);
-}
-static void CanvasRotate(JNIEnv *env, jclass clazz, jlong view, jfloat r) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->Rotate(r);
-}
-static void CanvasTranslate(JNIEnv *env, jclass clazz, jlong view, jfloat x, jfloat y) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->Translate(x, y);
-}
-static void CanvasTransform(JNIEnv *env, jclass clazz, jlong view, jfloat a, jfloat b, jfloat c, jfloat d, jfloat e, jfloat f) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->Transform(a, b, c, d, e, f);
-}
-static void CanvasSetTransform(JNIEnv *env, jclass clazz, jlong view, jfloat a, jfloat b, jfloat c, jfloat d, jfloat e, jfloat f) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->SetTransform(a, b, c, d, e, f);
-}
-static void CanvasSetLineCap(JNIEnv *env, jclass clazz, jlong view, jstring lineCap) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    std::string _lineCap = JavaStringToString(env, lineCap);
-    chartView->SetLineCap(std::move(_lineCap));
-}
-static void CanvasSetLineJoin(JNIEnv *env, jclass clazz, jlong view, jstring lineJoin) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    std::string _lineJoin = JavaStringToString(env, lineJoin);
-    chartView->SetLineCap(std::move(_lineJoin));
-}
-static void CanvasSetLineWidth(JNIEnv *env, jclass clazz, jlong view, jfloat lineWidth) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->SetLineWidth(lineWidth);
-}
-static void CanvasSetLineDashOffset(JNIEnv *env, jclass clazz, jlong view, jfloat offset) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->SetLineDashOffset(offset);
-}
-static void CanvasSetLineDash(JNIEnv *env, jclass clazz, jlong view, jfloatArray dash) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    // std::vector<float> _dash = JFloatArrayToVector(env, dash);
-    chartView->SetLineDash(std::vector<float>{});
-}
-static jfloatArray CanvasGetLineDash(JNIEnv *env, jclass clazz, jlong view) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    std::vector<float> dash = chartView->GetLineDash();
-    jfloatArray rst = env->NewFloatArray(dash.size());
-    env->SetFloatArrayRegion(rst, 0, dash.size(), &dash[0]);
-    return rst;
-}
-
-static void CanvasSetMiterLimit(JNIEnv *env, jclass clazz, jlong view, jfloat limit) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->SetMiterLimit(limit);
-}
-static void CanvasSetFont(JNIEnv *env, jclass clazz, jlong view, jstring font) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    std::string _font = JavaStringToString(env, font);
-    chartView->SetFont(std::move(_font));
-}
-static void CanvasSetTextAlign(JNIEnv *env, jclass clazz, jlong view, jstring textAlign) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    std::string _textAlign = JavaStringToString(env, textAlign);
-    chartView->SetTextAlign(std::move(_textAlign));
-}
-static jstring CanvasGetTextAlign(JNIEnv *env, jclass clazz, jlong view) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    GTextAlign textAlign = chartView->TextAlign();
-    return StringToJString(env, "start");
-}
-static void CanvasSetTextBaseline(JNIEnv *env, jclass clazz, jlong view, jstring textBaseline) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    std::string _textBaseline = JavaStringToString(env, textBaseline);
-    chartView->SetTextBaseline(std::move(_textBaseline));
-}
-static jstring CanvasGetTextBaseline(JNIEnv *env, jclass clazz, jlong view) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    GTextBaseline textAlign = chartView->TextBaseline();
-    return StringToJString(env, "bottom");
-}
-static void CanvasFillText(JNIEnv *env, jclass clazz, jlong view, jstring text, jfloat x, jfloat y) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    std::string _text = JavaStringToString(env, text);
-    chartView->FillText(std::move(_text), x, y, SHRT_MAX);
-}
-static void CanvasFillTextMaxWdith(JNIEnv *env, jclass clazz, jlong view, jstring text, jfloat x, jfloat y, jfloat maxWidth) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    std::string _text = JavaStringToString(env, text);
-    chartView->FillText(std::move(_text), x, y, maxWidth);
-}
-static void CanvasStrokeText(JNIEnv *env, jclass clazz, jlong view, jstring text, jfloat x, jfloat y) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    std::string _text = JavaStringToString(env, text);
-    chartView->StrokeText(std::move(_text), x, y, SHRT_MAX);
-}
-static void CanvasStrokeTextMaxWdith(JNIEnv *env, jclass clazz, jlong view, jstring text, jfloat x, jfloat y, jfloat maxWidth) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    std::string _text = JavaStringToString(env, text);
-    chartView->StrokeText(std::move(_text), x, y, maxWidth);
-}
-static jfloat CanvasMeasureTExt(JNIEnv *env, jclass clazz, jlong view, jstring text) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    std::string _text = JavaStringToString(env, text);
-    return chartView->MeasureText(std::move(_text));
-}
-static void CanvasSetGlobalAlpha(JNIEnv *env, jclass clazz, jlong view, jfloat globalAlpha) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->SetGlobalAlpha(globalAlpha);
-}
-static jfloat CanvasGetGlobalAlpha(JNIEnv *env, jclass clazz, jlong view) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    return chartView->GlobalAlpha();
-}
-static void CanvasSetGlobalCompositeOperation(JNIEnv *env, jclass clazz, jlong view, jstring op) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    std::string _op = JavaStringToString(env, op);
-    chartView->SetGlobalCompositeOp(std::move(_op));
-}
-static void CanvasSave(JNIEnv *env, jclass clazz, jlong view) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->Save();
-}
-static void CanvasRestore(JNIEnv *env, jclass clazz, jlong view) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->Restore();
-}
-static void CanvasSetShadowColor(JNIEnv *env, jclass clazz, jlong view, jstring color) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    std::string _color = JavaStringToString(env, color);
-    chartView->SetShadowColor(_color.data());
-}
-static void CanvasSetShadowBlur(JNIEnv *env, jclass clazz, jlong view, jint blur) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->SetShadowBlur(static_cast<float>(blur));
-}
-static void CanvasSetShadowOffsetX(JNIEnv *env, jclass clazz, jlong view, jfloat offsetX) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->SetShadowOffsetX(offsetX);
-}
-static void CanvasSetShadowOffsetY(JNIEnv *env, jclass clazz, jlong view, jfloat offsetY) {
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-    chartView->SetShadowOffsetY(offsetY);
-}
-
-static const JNINativeMethod native_canvas_methods[] = {{
-                                                            .name = "nCreateNativeChartView",
-                                                            .signature = "(Ljava/lang/String;)J",
-                                                            .fnPtr = reinterpret_cast<void *>(CreateNativeCanvasView),
-                                                        },
-                                                        {
-                                                            .name = "nSurfaceAvailable",
-                                                            .signature = "(JLandroid/view/Surface;)I",
-                                                            .fnPtr = reinterpret_cast<void *>(OnSurfaceAvailable),
-                                                        },
-                                                        {
-                                                            .name = "nInitCanvasContext",
-                                                            .signature = "(J)I",
-                                                            .fnPtr = reinterpret_cast<void *>(InitCanvasContext),
-                                                        },
-                                                        {
-                                                            .name = "nIsCanvasContextInitted",
-                                                            .signature = "(J)Z",
-                                                            .fnPtr = reinterpret_cast<void *>(IsCanvasContextInitted),
-                                                        },
-                                                        {
-                                                            .name = "nSurfaceSizeChanged",
-                                                            .signature = "(JII)I",
-                                                            .fnPtr = reinterpret_cast<void *>(OnSurfaceSizeChanged),
-                                                        },
-                                                        {
-                                                            .name = "nSurfaceDestroyed",
-                                                            .signature = "(J)I",
-                                                            .fnPtr = reinterpret_cast<void *>(OnSurfaceDestroy),
-                                                        },
-                                                        {
-                                                            .name = "nDestroyNativeChartView",
-                                                            .signature = "(J)I",
-                                                            .fnPtr = reinterpret_cast<void *>(OnViewDestroy),
-                                                        },
-                                                        {
-                                                            .name = "nPerformSwapFrame",
-                                                            .signature = "(J)I",
-                                                            .fnPtr = reinterpret_cast<void *>(PerformSwapBuffer),
-                                                        },
-                                                        {
-                                                            .name = "nSetFillStyle",
-                                                            .signature = "(JLjava/lang/String;)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasSetFillStyle),
-                                                        },
-                                                        {
-                                                            .name = "nSetStrokeStyle",
-                                                            .signature = "(JLjava/lang/String;)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasSetStrokeStyle),
-                                                        },
-                                                        {
-                                                            .name = "nRect",
-                                                            .signature = "(JIIII)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasRect),
-                                                        },
-                                                        {
-                                                            .name = "nFillRect",
-                                                            .signature = "(JIIII)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasFillRect),
-                                                        },
-                                                        {
-                                                            .name = "nStrokeRect",
-                                                            .signature = "(JIIII)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasStrokeRect),
-                                                        },
-                                                        {
-                                                            .name = "nClearRect",
-                                                            .signature = "(JIIII)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasClearRect),
-                                                        },
-                                                        {
-                                                            .name = "nFill",
-                                                            .signature = "(J)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasFill),
-                                                        },
-                                                        {
-                                                            .name = "nStroke",
-                                                            .signature = "(J)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasStroke),
-                                                        },
-                                                        {
-                                                            .name = "nBeginPath",
-                                                            .signature = "(J)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasBeginPath),
-                                                        },
-                                                        {
-                                                            .name = "nMoveTo",
-                                                            .signature = "(JFF)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasMoveTo),
-                                                        },
-                                                        {
-                                                            .name = "nClosePath",
-                                                            .signature = "(J)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasClosePath),
-                                                        },
-                                                        {
-                                                            .name = "nLineTo",
-                                                            .signature = "(JFF)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasLineTo),
-                                                        },
-                                                        {
-                                                            .name = "nClip",
-                                                            .signature = "(J)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasClip),
-                                                        },
-                                                        {
-                                                            .name = "nQuadraticCurveTo",
-                                                            .signature = "(JFFFF)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasQuadraticCurveTo),
-                                                        },
-                                                        {
-                                                            .name = "nBezierCurveTo",
-                                                            .signature = "(JFFFFFF)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasBezierCurveTo),
-                                                        },
-                                                        {
-                                                            .name = "nArc",
-                                                            .signature = "(JFFFFFZ)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasArc),
-                                                        },
-                                                        {
-                                                            .name = "nArcTo",
-                                                            .signature = "(JFFFFF)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasArcTo),
-                                                        },
-                                                        {
-                                                            .name = "nScale",
-                                                            .signature = "(JFF)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasScale),
-                                                        },
-                                                        {
-                                                            .name = "nRotate",
-                                                            .signature = "(JF)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasRotate),
-                                                        },
-                                                        {
-                                                            .name = "nTranslate",
-                                                            .signature = "(JFF)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasTranslate),
-                                                        },
-                                                        {
-                                                            .name = "nTransform",
-                                                            .signature = "(JFFFFFF)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasTransform),
-                                                        },
-                                                        {
-                                                            .name = "nSetTransform",
-                                                            .signature = "(JFFFFFF)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasSetTransform),
-                                                        },
-                                                        {
-                                                            .name = "nSetLineCap",
-                                                            .signature = "(JLjava/lang/String;)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasSetLineCap),
-                                                        },
-                                                        {
-                                                            .name = "nSetLineJoin",
-                                                            .signature = "(JLjava/lang/String;)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasSetLineJoin),
-                                                        },
-                                                        {
-                                                            .name = "nSetLineWidth",
-                                                            .signature = "(JF)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasSetLineWidth),
-                                                        },
-                                                        {
-                                                            .name = "nSetLineDashOffset",
-                                                            .signature = "(JF)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasSetLineDashOffset),
-                                                        },
-                                                        {
-                                                            .name = "nSetLineDash",
-                                                            .signature = "(J[F)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasSetLineDash),
-                                                        },
-                                                        {
-                                                            .name = "nGetLineDash",
-                                                            .signature = "(J)[F",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasGetLineDash),
-                                                        },
-                                                        {
-                                                            .name = "nSetMiterLimit",
-                                                            .signature = "(JF)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasSetMiterLimit),
-                                                        },
-                                                        {
-                                                            .name = "nSetFont",
-                                                            .signature = "(JLjava/lang/String;)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasSetFont),
-                                                        },
-                                                        {
-                                                            .name = "nSetTextAlign",
-                                                            .signature = "(JLjava/lang/String;)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasSetTextAlign),
-                                                        },
-                                                        {
-                                                            .name = "nGetTextAlign",
-                                                            .signature = "(J)Ljava/lang/String;",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasGetTextAlign),
-                                                        },
-                                                        {
-                                                            .name = "nSetTextBaseline",
-                                                            .signature = "(JLjava/lang/String;)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasSetTextBaseline),
-                                                        },
-                                                        {
-                                                            .name = "nGetTextBaseline",
-                                                            .signature = "(J)Ljava/lang/String;",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasGetTextBaseline),
-                                                        },
-                                                        {
-                                                            .name = "nGetTextBaseline",
-                                                            .signature = "(J)Ljava/lang/String;",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasGetTextBaseline),
-                                                        },
-                                                        {
-                                                            .name = "nFillText",
-                                                            .signature = "(JLjava/lang/String;FF)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasFillText),
-                                                        },
-                                                        {
-                                                            .name = "nFillText",
-                                                            .signature = "(JLjava/lang/String;FFF)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasFillTextMaxWdith),
-                                                        },
-                                                        {
-                                                            .name = "nStrokeText",
-                                                            .signature = "(JLjava/lang/String;FF)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasStrokeText),
-                                                        },
-                                                        {
-                                                            .name = "nStrokeText",
-                                                            .signature = "(JLjava/lang/String;FFF)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasStrokeTextMaxWdith),
-                                                        },
-                                                        {
-                                                            .name = "nMeasureText",
-                                                            .signature = "(JLjava/lang/String;)F",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasMeasureTExt),
-                                                        },
-                                                        {
-                                                            .name = "nSetGlobalAlpha",
-                                                            .signature = "(JF)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasSetGlobalAlpha),
-                                                        },
-                                                        {
-                                                            .name = "nGetGlobalAlpha",
-                                                            .signature = "(J)F",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasGetGlobalAlpha),
-                                                        },
-                                                        {
-                                                            .name = "nSetGlobalCompositeOperation",
-                                                            .signature = "(JLjava/lang/String;)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasSetGlobalCompositeOperation),
-                                                        },
-                                                        {
-                                                            .name = "nSave",
-                                                            .signature = "(J)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasSave),
-                                                        },
-                                                        {
-                                                            .name = "nRestore",
-                                                            .signature = "(J)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasRestore),
-                                                        },
-                                                        {
-                                                            .name = "nSetShadowColor",
-                                                            .signature = "(JLjava/lang/String;)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasSetShadowColor),
-                                                        },
-                                                        {
-                                                            .name = "nSetShadowBlur",
-                                                            .signature = "(JI)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasSetShadowBlur),
-                                                        },
-                                                        {
-                                                            .name = "nSetShadowOffsetX",
-                                                            .signature = "(JF)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasSetShadowOffsetX),
-                                                        },
-                                                        {
-                                                            .name = "nSetShadowOffsetY",
-                                                            .signature = "(JF)V",
-                                                            .fnPtr = reinterpret_cast<void *>(CanvasSetShadowOffsetY),
-                                                        }};
-#endif // TARGET_STANDALONE
-
 #if defined(TARGET_ALIPAY)
 
 // static void NativeCanvasSwap(JNIEnv *env, jclass clazz, jlong view) {
@@ -598,6 +45,7 @@ static const JNINativeMethod native_canvas_methods[] = {{
 static ScopedJavaGlobalRef<jclass> *gNativeCanvasProxyClass = nullptr;
 static ScopedJavaGlobalRef<jclass> *gNativeChartProxyClass = nullptr;
 static ScopedJavaGlobalRef<jclass> *gNativeFunctionProxyClass = nullptr;
+static ScopedJavaGlobalRef<jclass> *gNativeF2CanvasViewProxyClass = nullptr;
 
 //###################### F2Chart Begin ###################################
 static jlong CreateNativeChart(JNIEnv *env, jclass clazz, jstring name, jdouble width, jdouble height, jdouble ratio) {
@@ -607,23 +55,22 @@ static jlong CreateNativeChart(JNIEnv *env, jclass clazz, jstring name, jdouble 
     return reinterpret_cast<jlong>(chart);
 }
 
-static jint SetChartCanvas(JNIEnv *env, jclass clazz, jlong chart, jlong view, jstring requestFrameHandleId) {
+static jint SetChartCanvas(JNIEnv *env, jclass clazz, jlong chart, jlong view, jstring requestFrameHandleId, jboolean isAndroidCanvas) {
     xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
     std::string _requestFrameHandleId = JavaStringToString(env, requestFrameHandleId);
     F2_LOG_I("#SetChartCanvas", "bind canvas requestFrameHandleId: %s", _requestFrameHandleId.data());
     _chart->SetRequestFrameFuncId(_requestFrameHandleId);
-
-#if defined(TARGET_STANDALONE)
-    F2CanvasView *chartView = reinterpret_cast<F2CanvasView *>(view);
-
-    _chart->SetCanvasContext(chartView);
-#elif defined(TARGET_ALIPAY)
-    ag::Canvas *canvas = reinterpret_cast<ag::Canvas *>(view);
-    auto ctx = (ag::CanvasRenderingContext2D *)canvas->getContext("2d");
-    F2_LOG_I("#SetChartCanvas", "bind canvas ctx: %p", ctx);
-    _chart->SetCanvasContext(ctx);
-#endif
-
+    F2_LOG_I("#CreateNativeChart", "isAndroidCanvas:%d",isAndroidCanvas);
+    // 区分使用的CanvasContext
+    if (isAndroidCanvas == JNI_TRUE){
+        ScopedJavaGlobalRef<jobject> *handle = reinterpret_cast<ScopedJavaGlobalRef<jobject> *>(view);
+        _chart->SetAndroidCanvasContext(handle->obj());
+    } else {
+      ag::Canvas *canvas = reinterpret_cast<ag::Canvas *>(view);
+      auto ctx = (ag::CanvasRenderingContext2D *)canvas->getContext("2d");
+      F2_LOG_I("#SetChartCanvas", "bind canvas ctx: %p", ctx);
+      _chart->SetCanvasContext(ctx);
+    }
     return 0;
 }
 
@@ -808,6 +255,13 @@ static jdoubleArray ChartGetPosition(JNIEnv *env, jclass clazz, jlong chart, jst
     return rst;
 }
 
+static jstring ChartGetTooltipInfos(JNIEnv *env, jclass clazz, jlong chart, jfloat touchX, jfloat touchY, jint geomIndex) {
+    xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
+    std::string tooltipInfo = _chart->GetTooltipInfos(touchX, touchY, geomIndex);
+    F2_LOG_I(_chart->GetChartName(), "#:ChartGetTooltipInfos:got %s", tooltipInfo.c_str());
+    return env->NewStringUTF(tooltipInfo.data());
+}
+
 static jint ChartClear(JNIEnv *env, jclass clazz, jlong chart) {
     xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
     F2_LOG_I(_chart->GetChartName(), "%s", "#clear");
@@ -942,7 +396,7 @@ static const JNINativeMethod native_chart_methods[] = {{
                                                        },
                                                        {
                                                            .name = "nSetCanvasView",
-                                                           .signature = "(JJLjava/lang/String;)I",
+                                                           .signature = "(JJLjava/lang/String;Z)I",
                                                            .fnPtr = reinterpret_cast<void *>(SetChartCanvas),
                                                        },
                                                        {
@@ -1034,6 +488,11 @@ static const JNINativeMethod native_chart_methods[] = {{
                                                            .name = "nGetPosition",
                                                            .signature = "(JLjava/lang/String;)[D",
                                                            .fnPtr = reinterpret_cast<void *>(ChartGetPosition),
+                                                       },
+                                                       {
+                                                           .name = "nGetTooltipInfos",
+                                                           .signature = "(JFFI)Ljava/lang/String;",
+                                                           .fnPtr = reinterpret_cast<void *>(ChartGetTooltipInfos),
                                                        },
                                                        {
                                                            .name = "nClear",
@@ -1168,6 +627,33 @@ static const JNINativeMethod native_function_methods[] = {{
                                                           }};
 
 //###################### F2Function End ###################################
+
+//###################### F2CanvasView Start ###################################
+static jlong nCreateCanvasContextHandle(JNIEnv *env, jclass clazz, jobject canvasConext) {
+    //因为canvasConext是个临时对象，使用ScopedJavaGlobalRef包裹，确保canvasConext不被释放
+    ScopedJavaGlobalRef<jobject> *handle = new ScopedJavaGlobalRef<jobject>(env, canvasConext);
+    return reinterpret_cast<jlong>(handle);
+}
+
+static void nDestroyCanvasContextHandle(JNIEnv *env, jclass clazz, jlong scopedGlobalJavaRef) {
+    //释放scopedGlobalJavaRef对象
+    ScopedJavaGlobalRef<jobject> *handle = reinterpret_cast<ScopedJavaGlobalRef<jobject> *>(scopedGlobalJavaRef);
+    delete handle;
+    handle = nullptr;
+}
+
+static const JNINativeMethod native_canvascontext_methods[] = {{
+                                                                   .name = "nCreateCanvasContextHandle",
+                                                                   .signature = "(Ljava/lang/Object;)J",
+                                                                   .fnPtr = reinterpret_cast<void *>(nCreateCanvasContextHandle),
+                                                               },
+                                                               {
+                                                                   .name = "nDestroyCanvasContextHandle",
+                                                                   .signature = "(J)V",
+                                                                   .fnPtr = reinterpret_cast<void *>(nDestroyCanvasContextHandle),
+                                                               }};
+//###################### F2CanvasView End ###################################
+
 static bool
 RegisterJNIInterface(JNIEnv *env, ScopedJavaGlobalRef<jclass> **holder, const char *class_path, const JNINativeMethod *methods, int array_size) {
     jclass clazz = env->FindClass(class_path);
@@ -1221,17 +707,10 @@ static bool OnJniLoad(JNIEnv *env) {
 
     F2_LOG_I("#OnJniLoad", "%s", "init log success");
 
-#if defined(TARGET_STANDALONE)
-    if(!RegisterJNIInterface(env, &gNativeCanvasProxyClass, "com/antgroup/antv/f2/NativeCanvasProxy", native_canvas_methods,
-                             xg_jni_arraysize(native_canvas_methods))) {
+    if(!RegisterJNIInterface(env, &gNativeF2CanvasViewProxyClass, "com/antgroup/antv/f2/F2AndroidCanvasView",
+                             native_canvascontext_methods, xg_jni_arraysize(native_canvascontext_methods))) {
         return false;
     }
-#elif defined(TARGET_ALIPAY)
-//    if(!RegisterJNIInterface(env, &gNativeCanvasProxyClass, "com/antgroup/antv/f2/F2CanvasView", native_canvas_methods,
-//                             xg_jni_arraysize(native_canvas_methods))) {
-//        return false;
-//    }
-#endif
     F2_LOG_I("#OnJniLoad", "%s", "register canvas view success");
 
     if(!RegisterJNIInterface(env, &gNativeChartProxyClass, "com/antgroup/antv/f2/NativeChartProxy", native_chart_methods,
@@ -1245,7 +724,6 @@ static bool OnJniLoad(JNIEnv *env) {
         return false;
     }
     F2_LOG_I("#OnJniLoad", "%s", "register f2function success");
-
     return true;
 }
 

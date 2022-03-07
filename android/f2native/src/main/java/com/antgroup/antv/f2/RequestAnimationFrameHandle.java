@@ -1,5 +1,8 @@
 package com.antgroup.antv.f2;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import org.json.JSONObject;
 
 import java.util.LinkedHashSet;
@@ -14,8 +17,10 @@ final class RequestAnimationFrameHandle extends F2Function {
     private F2RenderThread mCurrThread;
     private F2CanvasView mCanvasView;
     private String mChartName;
+    private Handler mHandler;
 
     private Set<Long> mCommands = new LinkedHashSet<>();
+
     RequestAnimationFrameHandle(F2Chart chart, F2CanvasView canvasView) {
         super();
         mChart = chart;
@@ -30,17 +35,18 @@ final class RequestAnimationFrameHandle extends F2Function {
             NativeChartProxy.deallocCommand(command);
         }
         mCommands.clear();
+        removeHandlerCallbacks();
     }
 
     @Override
     protected void finalize() throws Throwable {
-        F2Log.i(mChartName+"", "RequestAnimationFrameHandle finalize .. " + functionId);
+        F2Log.i(mChartName + "", "RequestAnimationFrameHandle finalize .. " + functionId);
         super.finalize();
     }
 
     @Override
     public F2Config execute(String param) {
-        if (mChart == null || mChart.isDestroyed() || mCurrThread == null) {
+        if (mChart == null || mChart.isDestroyed()) {
             return null;
         }
         long pointer = 0;
@@ -59,17 +65,40 @@ final class RequestAnimationFrameHandle extends F2Function {
 
         final long command = pointer;
         mCommands.add(command);
-        mCurrThread.forcePost(new Runnable() {
-            @Override
-            public void run() {
-                if (mChart == null || mChart.isDestroyed() || mCurrThread == null ||!mCommands.contains(command)) {
-                    return;
+        if (mCurrThread != null) {
+            mCurrThread.forcePost(new Runnable() {
+                @Override
+                public void run() {
+                    if (mChart == null || mChart.isDestroyed() || mCurrThread == null || !mCommands.contains(command)) {
+                        return;
+                    }
+                    NativeChartProxy.executeCommand(command);
+                    mCanvasView.swapBuffer();
+                    mCommands.remove(command);
                 }
-                NativeChartProxy.executeCommand(command);
-                mCanvasView.swapBuffer();
-                mCommands.remove(command);
-            }
-        }, delay);
+            }, delay);
+        } else {
+            removeHandlerCallbacks();
+            mHandler = new Handler(Looper.getMainLooper());
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (mChart == null || mChart.isDestroyed() || !mCommands.contains(command)) {
+                        return;
+                    }
+                    NativeChartProxy.executeCommand(command);
+                    mCanvasView.swapBuffer();
+                    mCommands.remove(command);
+                }
+            }, delay);
+        }
         return null;
+    }
+
+    private void removeHandlerCallbacks() {
+        if (mHandler != null) {
+            mHandler.removeCallbacks(null);
+            mHandler = null;
+        }
     }
 }

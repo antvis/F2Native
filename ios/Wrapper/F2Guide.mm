@@ -19,28 +19,35 @@
 
 - (F2Guide * (^)(NSDictionary *config))flag {
     return ^id(NSDictionary *config) {
-        self->_guide->Flag([XGSafeJson([F2Utils toJsonString:config]) UTF8String]);
+        self->_guide->Flag([F2SafeJson([F2Utils toJsonString:config]) UTF8String]);
         return self;
     };
 }
 
 - (F2Guide * (^)(NSDictionary *config))text {
     return ^id(NSDictionary *config) {
-        self->_guide->Text([XGSafeJson([F2Utils toJsonString:config]) UTF8String]);
+        self->_guide->Text([F2SafeJson([F2Utils toJsonString:config]) UTF8String]);
         return self;
     };
 }
 
 - (F2Guide * (^)(NSDictionary *config))line {
     return ^id(NSDictionary *config) {
-        self->_guide->Line([XGSafeJson([F2Utils toJsonString:config]) UTF8String]);
+        self->_guide->Line([F2SafeJson([F2Utils toJsonString:config]) UTF8String]);
         return self;
     };
 }
 
 - (F2Guide * (^)(NSDictionary *config))background {
     return ^id(NSDictionary *config) {
-        self->_guide->Background([XGSafeJson([F2Utils toJsonString:config]) UTF8String]);
+        self->_guide->Background([F2SafeJson([F2Utils toJsonString:config]) UTF8String]);
+        return self;
+    };
+}
+
+- (F2Guide * (^)(NSDictionary *config))image {
+    return ^id(NSDictionary *config) {
+        self->_guide->Image([F2SafeJson([F2Utils toJsonString:config]) UTF8String]);
         return self;
     };
 }

@@ -51,7 +51,7 @@ void interaction::InteractionContext::Start() {
 }
 
 bool interaction::InteractionContext::DoMove(double deltaX, double deltaY) {
-    chart_->GetLogTracer()->trace("DoMove deltaX %lf ", deltaX);
+//    chart_->GetLogTracer()->trace("DoMove deltaX %lf ", deltaX);
     // long timestamp = xg::CurrentTimestampAtMM();
     double ratio = deltaX / chart_->GetCoord().GetWidth();
 
@@ -112,7 +112,6 @@ bool interaction::InteractionContext::UpdateRange(std::array<double, 2> newRange
     if((valueEnd - valueStart) < minCount_ || (valueEnd - valueStart) > maxCount_) {
         return false;
     }
-
     range_ = {rangeStart, rangeEnd};
     // 从原始数据里截取需要显示的数据
     auto newValue = JsonArraySlice(values_, valueStart, valueEnd);

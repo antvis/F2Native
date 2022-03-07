@@ -22,6 +22,10 @@ NS_ASSUME_NONNULL_BEGIN
 ///@{@"color":@"#FF00001D",@"leftBottom":@[@"min", @"min"], @"rightTop":@[@"max", @(80)]}
 - (F2Guide * (^)(NSDictionary *config))background;
 
+///创建图片
+///@{@"position":@[@"median", @"median"], @"margin":@[top, right])}
+- (F2Guide * (^)(NSDictionary *config))image;
+
 @end
 
 NS_ASSUME_NONNULL_END

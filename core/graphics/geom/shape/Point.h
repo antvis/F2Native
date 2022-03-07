@@ -36,11 +36,11 @@ class Point : public GeomShapeBase {
             }
         }
 
-        util::CanvasFillStrokeStyle colorStyle = util::CanvasFillStrokeStyle(GLOBAL_COLORS[0]);
+        std::string colorStyle = GLOBAL_COLORS[0];
         if(style.contains("color")) {
-            colorStyle = util::ColorParser(style["color"]);
+            colorStyle = style["color"];
         } else if(data.contains("_color")) {
-            colorStyle = util::ColorParser(data["_color"]);
+            colorStyle = data["_color"];
         }
 
         if(shape == "circle") {
@@ -54,7 +54,7 @@ class Point : public GeomShapeBase {
 
             auto circle = std::make_unique<xg::shape::Circle>(center, radius);
             // TODO 兼容 stroke 模式 & linear or radial 模式
-            circle->fillStyle_ = colorStyle;
+            circle->SetFillColor(colorStyle);
             container.AddElement(std::move(circle));
         }
     }

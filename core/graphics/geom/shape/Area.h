@@ -51,6 +51,11 @@ class Area : public GeomShapeBase {
             }
         }
         std::reverse(bottomPoints.begin(), bottomPoints.end());
+        //雷达图 闭合区域
+       if (coord.GetType() == CoordType::Polar) {
+           topPoints.push_back(topPoints[0]);
+           bottomPoints.push_back(bottomPoints[0]);
+       }
 
         std::size_t size = end - start + 1;
         if(size > 0 && data[start].contains("_shape")) {
@@ -60,13 +65,9 @@ class Area : public GeomShapeBase {
         auto area = xg::make_unique<xg::shape::Area>(topPoints, bottomPoints, smooth);
 
         if(size <= 0) {
-            area->fillStyle_ = util::CanvasFillStrokeStyle(GLOBAL_COLORS[0]);
+            area->SetFillColor(GLOBAL_COLORS[0]);
         } else {
-            area->fillStyle_ = util::ColorParser(data[start], "_color");
-            auto opacity = util::OpacityParser(data[start], "_color");
-            if(!isnan(opacity)) {
-                area->fillOpacity_ = opacity;
-            }
+            area->SetFillColor(json::GetString(data[start], "_color"));
         }
         container.AddElement(std::move(area));
     }

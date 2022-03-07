@@ -361,6 +361,7 @@ nlohmann::json xg::geom::AbstractGeom::GetSnapRecord(XChart *chart, size_t index
             tmp.push_back(groupData[index]);
         }
     }
+    XG_ASSERT(tmp.size() > 0);
     return tmp;
 }
 

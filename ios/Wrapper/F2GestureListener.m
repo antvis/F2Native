@@ -67,9 +67,9 @@ const double LONG_GESTURE_MINI_DURATION = 0.25f;
 //F2 PRESS_DELAY = 250ms
 -(void)supplementAction:(NSDictionary *)event sender:(id)sender  {
     self.event = event;
-    WeakSelf;
+    F2WeakSelf;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(250 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
-        StrongSelf;
+        F2StrongSelf;
         NSString *eventType = [strongSelf.event objectForKey:@"eventType"];
         if ([eventType isEqualToString:@"touchstart"]) {
             NSArray *points = [strongSelf.event objectForKey:@"points"];

@@ -13,28 +13,33 @@ void animate::action::GroupScaleIn(animate::TimeLine *timeLine,
                                    canvas::coord::AbstractCoord *coord,
                                    util::Point zeroY,
                                    std::string type) {
-    float width = coord->GetWidth();
-    float height = coord->GetHeight();
-    util::Point start = coord->GetXAxis();
-    util::Point end = coord->GetYAxis();
+ 
+    util::Point start = coord->GetStart();
+    util::Point end = coord->GetEnd();
+    
+    //极坐标系的GetWidth是角度，所以这里用start和end单独计算下
+    float width = abs(start.x - end.x);
+    float height = abs(start.y - end.y);
 
-    float x;
-    float y;
+    float x = 0;
+    float y = 0;
 
     auto clip = std::make_unique<shape::Rect>(util::Point{start.x, end.y}, util::Size{width, height});
 
     if(type == "y") {
-        x = x + width / 2;
+        x = start.x + width / 2;
         y = fmin(zeroY.y, start.y);
     } else if(type == "x") {
         x = fmax(zeroY.x, start.x);
-        y = end.y + height / 2;
+        y = start.y + height / 2;
     } else if(type == "xy") {
-        // if(coord->GetType() == coord::CoordType::Polar) {
-        x = coord->GetCenter().x;
-        y = coord->GetCenter().y;
-        // } else {
-        // }
+        if(coord->GetType() == coord::CoordType::Polar) {
+            x = coord->GetCenter().x;
+            y = coord->GetCenter().y;
+        } else {
+            x = (start.x + end.x) / 2;
+            y = (start.y + end.y) / 2;
+        }
     }
 
     util::Vector2D v{x, y};
@@ -207,23 +212,25 @@ void animate::GeomAnimate::OnBeforeCanvasDraw() {
     }
 
     for(std::vector<std::unique_ptr<geom::AbstractGeom>>::iterator it = chart_->geoms_.begin(); it != chart_->geoms_.end(); ++it) {
-        std::string type = (*it)->GetType();
+        const std::string &geomType = (*it)->GetType();
 
-        std::string animateType = animate::GeomAnimate::GetGeomAnimateDefaultCfg(type, chart_->coord_.get());
+        std::string animateType = animate::GeomAnimate::GetGeomAnimateDefaultCfg(geomType, chart_->coord_.get());
         nlohmann::json cfg = {
             {"animate", animateType}, //
             {"erasing", "linear"},    //
             {"delay", 16},            //
             {"duration", 450}         //
         };
-        if(chart_->animateCfg_.is_object() && chart_->animateCfg_.contains(type)) {
-            cfg.merge_patch(chart_->animateCfg_[type]);
-        }
+        
+        //todo merge传入的动画配置 需要区分每一类geom的动画 
+//        if(chart_->animateCfg_.is_object()) {
+//            cfg.merge_patch(chart_->animateCfg_);
+//        }
 
         // geomCfg
         auto &yScale = chart_->GetScale((*it)->GetYScaleField());
         util::Point zeroY = chart_->GetCoord().ConvertPoint(util::Point{0, yScale.Scale((*it)->GetYMinValue(*chart_))});
-        animate::action::DoGroupAnimate(cfg["animate"], timeLine_, (*it)->container_, cfg, chart_->coord_.get(), zeroY);
+        animate::action::DoGroupAnimate(animateType, timeLine_, (*it)->container_, cfg, chart_->coord_.get(), zeroY);
     }
 }
 

@@ -17,7 +17,7 @@ class Circle : public Shape {
         type_ = "circle";
         point_ = center;
 
-        fillStyle_ = util::CanvasFillStrokeStyle(fill);
+        SetFillColor(fill);
     }
 
     BBox CalculateBox(canvas::CanvasContext &context) const override;

@@ -110,6 +110,7 @@ public class F2Guide {
         private static final String KEY_COLOR = "color";
         private static final String KEY_ORIENTATION = "orientation";
         private static final String KEY_DASH = "dash";
+        private static final String KEY_TOP = "top";
 
         public GuideLineConfigBuilder position(String[] position ) {
             return setOption(KEY_POSITION, position);
@@ -137,6 +138,10 @@ public class F2Guide {
 
         public GuideLineConfigBuilder dash(double[] dash) {
             return setOption(KEY_DASH, dash);
+        }
+
+        public GuideLineConfigBuilder top(boolean top) {
+            return setOption(KEY_TOP, top);
         }
     }
 

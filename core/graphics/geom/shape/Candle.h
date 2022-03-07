@@ -56,7 +56,7 @@ class Candle : public GeomShapeBase {
             colors = {"#1CAA3D", "#808080", "#F4333C"};
         }
 
-        util::CanvasFillStrokeStyle colorStyle = util::ColorParser(colors[state + 1]);
+        canvas::CanvasFillStrokeStyle colorStyle = util::ColorParser(colors[state + 1]);
 
         float lineWidth = 1.0;
         if(data.contains("_size")) {
@@ -69,30 +69,30 @@ class Candle : public GeomShapeBase {
         if(fill) {
             auto line = xg::make_unique<xg::shape::Line>(util::Point{points[0].x + size.width / 2, lineYs[0]},
                                                          util::Point{points[0].x + size.width / 2, lineYs[1]});
-            line->strokeStyle_ = colorStyle;
-            line->lineWidth_ = lineWidth;
+            line->SetStorkStyle(colorStyle);
+            line->SetLineWidth(lineWidth);
 
             container.AddElement(std::move(line));
 
             auto rect = xg::make_unique<xg::shape::Rect>(points[0], size);
-            rect->fillStyle_ = colorStyle;
+            rect->SetFillStyle(colorStyle);
             container.AddElement(std::move(rect));
         } else {
             auto line1 = xg::make_unique<xg::shape::Line>(util::Point{points[0].x + size.width / 2, lineYs[0]},
                                                           util::Point{points[0].x + size.width / 2, points[0].y});
-            line1->strokeStyle_ = colorStyle;
-            line1->lineWidth_ = lineWidth;
+            line1->SetStorkStyle(colorStyle);
+            line1->SetLineWidth(lineWidth);
             container.AddElement(std::move(line1));
 
             auto line2 = xg::make_unique<xg::shape::Line>(util::Point{points[0].x + size.width / 2, lineYs[1]},
                                                           util::Point{points[0].x + size.width / 2, points[0].y + size.height});
-            line2->strokeStyle_ = colorStyle;
-            line2->lineWidth_ = lineWidth;
+            line2->SetStorkStyle(colorStyle);
+            line2->SetLineWidth(lineWidth);
             container.AddElement(std::move(line2));
 
             auto rect = xg::make_unique<xg::shape::Rect>(points[0], size);
-            rect->lineWidth_ = lineWidth;
-            rect->strokeStyle_ = colorStyle;
+            rect->SetStorkStyle(colorStyle);
+            rect->SetLineWidth(lineWidth);
             container.AddElement(std::move(rect));
         }
     }

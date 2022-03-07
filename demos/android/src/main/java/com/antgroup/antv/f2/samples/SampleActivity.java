@@ -16,8 +16,8 @@ public class SampleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_sample);
-
         mCanvasView = findViewById(R.id.canvasView);
+
         mCanvasView.initCanvasContext(new F2CanvasView.ConfigBuilder()
                 .canvasId("F2AntCanvas")
 //                .backgroundColor("#000000")

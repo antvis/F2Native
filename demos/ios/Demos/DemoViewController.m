@@ -39,7 +39,12 @@
 
 - (UIView *)demoView {
     Class class = NSClassFromString(_viewName);
-    UIView *demoView = [[class alloc] init];
+    UIView *demoView = [class alloc];
+#if (TARGET_OS_MACCATALYST == 1)
+    demoView = [demoView initWithFrame:CGRectMake(0, 0, UIScreen.mainScreen.bounds.size.width, UIScreen.mainScreen.bounds.size.height)];
+#else
+    demoView = [demoView initWithFrame:CGRectMake(0, 0, UIScreen.mainScreen.bounds.size.width, 280)];
+#endif
     return demoView;
 }
 

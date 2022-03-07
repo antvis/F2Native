@@ -3,7 +3,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface TimeSharingUIView : UIView
+@interface TimeSharingUIView : BaseLineUIView
 
 @end
 

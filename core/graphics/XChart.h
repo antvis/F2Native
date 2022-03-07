@@ -29,14 +29,16 @@
 #include <utils/Tracer.h>
 #include <vector>
 
-#if defined(TARGET_STANDALONE)
-#include "graphics/canvas/StandaloneCanvasContext.h"
-#if defined(ANDROID)
-#include "android/F2CanvasView.h"
-#else
+#if defined(__APPLE__)
+#include <TargetConditionals.h>
+#include "ios/CoreGraphicsContext.h"
 #endif
 
-#elif defined(TARGET_ALIPAY)
+#if defined(ANDROID)
+#include "android/BitmapCanvasContext.h"
+#endif
+
+#if defined(TARGET_ALIPAY)
 #include "graphics/canvas/AlipayCanvasContext.h"
 #include <AntGraphic/AntGraphic.h>
 #endif
@@ -89,21 +91,14 @@ class XChart {
 
     XChart &Source(const std::string &json);
 
-#if defined(TARGET_STANDALONE)
 #if defined(ANDROID)
-    XChart &SetCanvasContext(F2CanvasView *context) {
+    ///方便降级 稳定后改回SetCanvasContext
+    XChart &SetAndroidCanvasContext(jobject context) {
         XG_RELEASE_POINTER(canvasContext_);
-        canvasContext_ = new canvas::StandaloneCanvasContext(context, static_cast<float>(ratio_), nullptr);
-        return *this;
-    }
-#else
-    XChart &SetCanvasContext(GCanvasContext *context) {
-        XG_RELEASE_POINTER(canvasContext_);
-        canvasContext_ = new canvas::StandaloneCanvasContext(context, static_cast<float>(ratio_), nullptr);
+        canvasContext_ = new canvas::BitmapCanvasContext(context, static_cast<float>(ratio_));
         return *this;
     }
 #endif
-#endif // TARGET_STANDALONE
 
 #if defined(TARGET_ALIPAY)
     XChart &SetCanvasContext(ag::CanvasRenderingContext2D *context) {
@@ -112,6 +107,16 @@ class XChart {
         return *this;
     }
 #endif // TARGET_ALIPAY
+    
+#if defined(__APPLE__)
+    ///方便降级 稳定后改回SetCanvasContext
+    ///context == CGContextRef
+    XChart &SetCoreGraphicsContext(void *context) {
+        XG_RELEASE_POINTER(canvasContext_);
+        canvasContext_ = new canvas::CoreGraphicsContext(context, width_, height_, static_cast<float>(ratio_), nullptr);
+        return *this;
+    }
+#endif
 
     XChart &Padding(double left = 0.f, double top = 0.f, double right = 0.0, double bottom = 0.);
     XChart &Margin(double left = 0.f, double top = 0.f, double right = 0.0, double bottom = 0.);
@@ -159,13 +164,11 @@ class XChart {
 
     std::vector<std::string> getYScaleFields();
 
-    inline const std::string GetChartName() { return this->chartName_; }
+    inline const std::string &GetChartName() { return this->chartName_; }
 
-    inline const std::string GetChartId() { return chartId_; }
+    inline const std::string &GetChartId() { return chartId_; }
 
     inline utils::Tracer *GetLogTracer() const { return this->logTracer_; }
-
-    inline const float GetRatio() { return ratio_; }
 
     inline const double GetWidth() const noexcept { return width_; }
     inline const double GetHeight() const noexcept { return height_; }
@@ -174,6 +177,9 @@ class XChart {
 
     // 计算某一项数据对应的坐标位置
     const util::Point GetPosition(const nlohmann::json &item);
+
+    // 计算某个位置对应的数据信息
+    const std::string GetTooltipInfos(float touchX, float touchY, int geomIndex);
 
     std::string GetRenderInfo() const;
 
@@ -191,8 +197,14 @@ class XChart {
     inline const std::array<double, 4> GetMargin() { return margin_; }
 
     inline void SetRequestFrameFuncId(std::string funcId) noexcept { this->requestFrameHandleId_ = funcId; }
-
+    inline long long GetRenderDurationMM() const { return renderDurationMM_;}
+    long GetRenderCount() const { return canvasContext_->GetRenderCount();}
   private:
+    static long long CreateChartId() {
+        static std::atomic<long long> id(1);
+        return id.fetch_add(+1);
+    }
+
     // 初始化布局边界和三层视图容器
     void InitLayout();
     // 初始化轴管理器

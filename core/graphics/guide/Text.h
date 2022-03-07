@@ -16,7 +16,7 @@ class Text : public GuideBase {
   protected:
     static nlohmann::json MergeDefaultCfg(const nlohmann::json &config) {
         nlohmann::json defaultCfg = {
-            {"textColor", "#000"},  {"textSize", 10.f},         {"content", ""}, {"margin", {0, 0}}, // margin: top & right
+            {"textColor", "#808080"},  {"textSize", 10.f},         {"content", ""}, {"margin", {0, 0}}, // margin: left & top
             {"textAlign", "start"}, {"textBaseline", "bottom"},
         };
         if(config.is_object()) {

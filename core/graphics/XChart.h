@@ -38,11 +38,6 @@
 #include "android/BitmapCanvasContext.h"
 #endif
 
-#if defined(TARGET_ALIPAY)
-#include "graphics/canvas/AlipayCanvasContext.h"
-#include <AntGraphic/AntGraphic.h>
-#endif
-
 #ifndef XG_GRAPHICS_XCHART_H
 #define XG_GRAPHICS_XCHART_H
 
@@ -99,14 +94,6 @@ class XChart {
         return *this;
     }
 #endif
-
-#if defined(TARGET_ALIPAY)
-    XChart &SetCanvasContext(ag::CanvasRenderingContext2D *context) {
-        XG_RELEASE_POINTER(canvasContext_);
-        canvasContext_ = new canvas::AliPayCanvasContext(context, static_cast<float>(ratio_), nullptr);
-        return *this;
-    }
-#endif // TARGET_ALIPAY
     
 #if defined(__APPLE__)
     ///方便降级 稳定后改回SetCanvasContext

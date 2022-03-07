@@ -14,7 +14,6 @@ import java.util.Set;
  */
 final class RequestAnimationFrameHandle extends F2Function {
     private F2Chart mChart;
-    private F2RenderThread mCurrThread;
     private F2CanvasView mCanvasView;
     private String mChartName;
     private Handler mHandler;
@@ -26,7 +25,6 @@ final class RequestAnimationFrameHandle extends F2Function {
         mChart = chart;
         mChartName = mChart.getName();
         mCanvasView = canvasView;
-        mCurrThread = canvasView.getRenderThread();
         bindChart(chart);
     }
 
@@ -65,33 +63,19 @@ final class RequestAnimationFrameHandle extends F2Function {
 
         final long command = pointer;
         mCommands.add(command);
-        if (mCurrThread != null) {
-            mCurrThread.forcePost(new Runnable() {
-                @Override
-                public void run() {
-                    if (mChart == null || mChart.isDestroyed() || mCurrThread == null || !mCommands.contains(command)) {
-                        return;
-                    }
-                    NativeChartProxy.executeCommand(command);
-                    mCanvasView.swapBuffer();
-                    mCommands.remove(command);
+        removeHandlerCallbacks();
+        mHandler = new Handler(Looper.getMainLooper());
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mChart == null || mChart.isDestroyed() || !mCommands.contains(command)) {
+                    return;
                 }
-            }, delay);
-        } else {
-            removeHandlerCallbacks();
-            mHandler = new Handler(Looper.getMainLooper());
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (mChart == null || mChart.isDestroyed() || !mCommands.contains(command)) {
-                        return;
-                    }
-                    NativeChartProxy.executeCommand(command);
-                    mCanvasView.swapBuffer();
-                    mCommands.remove(command);
-                }
-            }, delay);
-        }
+                NativeChartProxy.executeCommand(command);
+                mCanvasView.swapBuffer();
+                mCommands.remove(command);
+            }
+        }, delay);
         return null;
     }
 

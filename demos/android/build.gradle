@@ -35,7 +35,6 @@ dependencies {
     implementation "androidx.appcompat:appcompat:1.2.0"
 
     implementation project(':android:f2native')
-    implementation(name: 'antg-build-android-debug', ext: 'aar')
     implementation 'com.alibaba:fastjson:1.2.73'
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'

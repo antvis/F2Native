@@ -3,8 +3,6 @@
 #include <android/log.h>
 #include <jni.h>
 
-#include <AntGraphic.h>
-
 #include "F2NativeJNI.h"
 #include "JavaRef.h"
 
@@ -62,15 +60,8 @@ static jint SetChartCanvas(JNIEnv *env, jclass clazz, jlong chart, jlong view, j
     _chart->SetRequestFrameFuncId(_requestFrameHandleId);
     F2_LOG_I("#CreateNativeChart", "isAndroidCanvas:%d",isAndroidCanvas);
     // 区分使用的CanvasContext
-    if (isAndroidCanvas == JNI_TRUE){
-        ScopedJavaGlobalRef<jobject> *handle = reinterpret_cast<ScopedJavaGlobalRef<jobject> *>(view);
-        _chart->SetAndroidCanvasContext(handle->obj());
-    } else {
-      ag::Canvas *canvas = reinterpret_cast<ag::Canvas *>(view);
-      auto ctx = (ag::CanvasRenderingContext2D *)canvas->getContext("2d");
-      F2_LOG_I("#SetChartCanvas", "bind canvas ctx: %p", ctx);
-      _chart->SetCanvasContext(ctx);
-    }
+    ScopedJavaGlobalRef<jobject> *handle = reinterpret_cast<ScopedJavaGlobalRef<jobject> *>(view);
+    _chart->SetAndroidCanvasContext(handle->obj());
     return 0;
 }
 

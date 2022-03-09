@@ -3,7 +3,7 @@
 
 [English README](./README_en.md)
 
-F2Native，专注于移动 Native 可视化开发，开箱即用的跨平台高性能的可视化解决方案。完美支持 Android, iOS, 和MacOS 平台、并在中低端机型具备高性能体验。完备的图形语法理论，满足你的各种可视化需求。专业的移动设计指引为你带来最佳的移动端图表体验。
+F2Native，专注于移动 Native 可视化开发，开箱即用的跨平台高性能的可视化解决方案。完美支持 Android, iOS, 和MacOS 平台，并在中低端机型具备高性能体验。完备的图形语法理论，满足你的各种可视化需求。专业的移动设计指引为你带来最佳的移动端图表体验。
 
 ![](https://gw.alipayobjects.com/mdn/rms_04a9e5/afts/img/A*kWF0TYboysoAAAAAAAAAAAAAARQnAQ)
 > 在此衷心感谢[《The Grammar of Graphics》](https://www.cs.uic.edu/~wilkinson/TheGrammarOfGraphics/GOG.html)的作者 [Leland Wilkinson](https://en.wikipedia.org/wiki/Leland_Wilkinson)，为 F2 的图形语法提供了理论基础！
@@ -13,7 +13,7 @@ F2Native，专注于移动 Native 可视化开发，开箱即用的跨平台高�
 
 ### 专注客户端，极致体验
 
-F2Native 支持 Android、iOS、MacOS。使用跨平台语言 C++ 来生成底层绘制指令,可以做到 **跨平台，多端体验统一，高性能体验**。
+F2Native 支持 Android，iOS，MacOS 平台。使用跨平台语言 C++ 来生成底层绘制指令, 可以做到 **跨平台，多端体验统一，高性能体验**。
 
 ### 轻量化植入，自然呈现
 在设计上我们以人为本，追求自然简单易懂。可视化展现和人的自然行为特征有机融合，使图表展示更为自然，并且引入灵活、成本低。

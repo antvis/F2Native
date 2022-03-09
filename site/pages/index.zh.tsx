@@ -83,12 +83,12 @@ const IndexPage = () => {
         }
         title={t('F2Native 移动端可视化方案')}
         description={t(
-          'F2Native 是一个专注于客户端，开箱即用、高性能的可视化解决方案，完备的图形语法理论，满足你的各种需求，专业的移动设计指引为你带来最佳的移动端图表体验。',
+          'F2Native 是一个专注于客户端，开箱即用、高性能的可视化解决方案，支持 Android，iOS和MacOS 平台，完备的图形语法理论，满足你的各种需求，专业的移动设计指引为你带来最佳的移动端图表体验。',
         )}
         className="banner"
         buttons={bannerButtons}
       />
-       <Features
+      <Features
         features={features}
         style={{ width: '100%' }}
       />

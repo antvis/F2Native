@@ -1,8 +1,8 @@
-#include "graphics/canvas/CanvasContext.h"
-#include "graphics/shape/Group.h"
-
 #ifndef XG_GRAPHICS_CANVAS_H
 #define XG_GRAPHICS_CANVAS_H
+
+#include "CanvasContext.h"
+#include "../shape/Group.h"
 
 namespace xg {
 namespace canvas {

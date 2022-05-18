@@ -1,14 +1,15 @@
-#include "graphics/animate/GeomAnimate.h"
-#include "graphics/canvas/Container.h"
-#include "graphics/canvas/Coord.h"
-#include "graphics/geom/attr/AttrBase.h"
-#include "graphics/shape/Group.h"
-#include <map>
-#include <set>
-#include <utils/Tracer.h>
-
 #ifndef GRAPHICS_GEOM_GEOM_H
 #define GRAPHICS_GEOM_GEOM_H
+
+#include <map>
+#include <set>
+#include "attr/AttrBase.h"
+#include "../animate/GeomAnimate.h"
+#include "../canvas/Container.h"
+#include "../canvas/Coord.h"
+#include "../shape/Group.h"
+#include "../../utils/Tracer.h"
+
 
 #define GROUP_ATTRS                                                                                                            \
     vector<xg::attr::AttrType> { xg::attr::AttrType::Color, xg::attr::AttrType::Size, xg::attr::AttrType::Shape }
@@ -35,7 +36,8 @@ class AbstractGeom {
 
   public:
     virtual ~AbstractGeom();
-    AbstractGeom(const AbstractGeom &) = delete;
+    // emscript编译需要
+    AbstractGeom(const AbstractGeom &){};
 
     AbstractGeom &operator=(const AbstractGeom &) = delete;
 
@@ -64,9 +66,8 @@ class AbstractGeom {
     bool ContainsAttr(attr::AttrType type);
 
     nlohmann::json GetSnapRecords(XChart *chart, util::Point point);
-    nlohmann::json GetSnapRecord(XChart *chart, size_t index);
-    nlohmann::json GetLastSnapRecord(XChart *chart);
-    nlohmann::json GetFirstSnapRecord(XChart *chart);
+    const nlohmann::json &GetLastSnapRecord(XChart *chart);
+    const nlohmann::json &GetFirstSnapRecord(XChart *chart);
 
     const std::unique_ptr<AttrBase> &GetAttr(AttrType type) { return attrs_[type]; }
 
@@ -75,7 +76,18 @@ class AbstractGeom {
     const nlohmann::json &GetDataArray() { return dataArray_; }
 
     virtual void SetAttrs(const std::string &_attrs) noexcept;
-
+#if defined(EMSCRIPTEN)
+    // wasm 返回引用有问题，单独开接口返回指针
+    AbstractGeom *PositionWasm(const string &field) { return &Position(field); }
+    AbstractGeom *ColorWasm(const string &field, const vector<string> &colors) { return &Color(field, colors); }
+    AbstractGeom *ColorWasm(const string &color) { return &Color(color); }
+    AbstractGeom *SizeWasm(const string &field, const vector<float> &sizes) { return &Size(field, sizes); }
+    AbstractGeom *SizeWasm(const float size) { return &Size(size); }
+    AbstractGeom *ShapeWasm(const string &field, const vector<string> &shapes) { return &Shape(field, shapes); }
+    AbstractGeom *ShapeWasm(const string &shape) { return &Shape(shape); }
+    AbstractGeom *AdjustWasm(const string &adjust) { return &Adjust(adjust); }
+    AbstractGeom *StyleWasm(const std::string &json) { return &Style(json); }
+#endif //EMSCRIPTEN
   protected:
     AbstractGeom(Group *_container, utils::Tracer *tracer) : container_(_container), tracker_(tracer){};
     // 数据分组

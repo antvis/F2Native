@@ -1,11 +1,11 @@
-#include "graphics/canvas/Coord.h"
-#include "graphics/util/Matrix.h"
-#include "graphics/util/Point.h"
-#include "graphics/util/Vector2d.h"
-#include <math.h>
-
 #ifndef XG_GRAPHICS_COORD_POLAR_H
 #define XG_GRAPHICS_COORD_POLAR_H
+
+#include <math.h>
+#include "Coord.h"
+#include "../util/Matrix.h"
+#include "../util/Point.h"
+#include "../util/Vector2d.h"
 
 namespace xg {
 namespace canvas {

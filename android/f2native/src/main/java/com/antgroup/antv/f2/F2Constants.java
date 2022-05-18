@@ -5,7 +5,6 @@ package com.antgroup.antv.f2;
  * @date 2020-09-22
  */
 class F2Constants {
-    public static final String CANVAS_ID = "canvas_id";
 
     public static final int CODE_SUCCESS = 0;
     public static final int CODE_FAIL_UNKNOWN = -1;

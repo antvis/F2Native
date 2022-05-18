@@ -19,12 +19,8 @@ public class SampleActivity extends AppCompatActivity {
         mCanvasView = findViewById(R.id.canvasView);
 
         mCanvasView.initCanvasContext(new F2CanvasView.ConfigBuilder()
-                .canvasId("F2AntCanvas")
-//                .backgroundColor("#000000")
-                .asyncRender(true)
                 .setOption("canvasBizId", "F2NativeDemo")
                 .setOption("appId", "1000")
-                .useNativeDraw(true)
                 .build());
 
         ChartModel chartModel = (ChartModel) getIntent().getSerializableExtra("ChartModel");

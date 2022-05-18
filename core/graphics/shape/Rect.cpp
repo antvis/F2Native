@@ -1,6 +1,6 @@
-#include "graphics/shape/Rect.h"
-#include "utils/common.h"
 #include <math.h>
+#include "Rect.h"
+#include "../../utils/common.h"
 
 BBox xg::shape::Rect::CalculateBox(canvas::CanvasContext &context) const {
     return {static_cast<float>(point_.x), static_cast<float>(point_.x + size_.width), static_cast<float>(point_.y),

@@ -1,12 +1,13 @@
-#include "graphics/util/Point.h"
-#include "utils/xtime.h"
-#include <map>
-#include <nlohmann/json.hpp>
-#include <string>
-#include <vector>
-
 #ifndef XG_GRAPHICS_EVENT_CONTROLLER_H
 #define XG_GRAPHICS_EVENT_CONTROLLER_H
+
+#include <map>
+#include <string>
+#include <vector>
+#include "../util/Point.h"
+#include "../../utils/xtime.h"
+#include "../../nlohmann/json.hpp"
+
 
 #define PRESS_DELAY 250
 

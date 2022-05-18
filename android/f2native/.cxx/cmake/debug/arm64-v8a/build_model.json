@@ -1,0 +1,79 @@
+{
+  "variant": {
+    "module": {
+      "rootBuildGradleFolder": "/Users/weiqing.twq/Desktop/F2Native",
+      "sdkFolder": "/Users/weiqing.twq/Library/Android/sdk",
+      "isNativeCompilerSettingsCacheEnabled": false,
+      "isBuildOnlyTargetAbiEnabled": true,
+      "ideBuildTargetAbi": "arm64-v8a,armeabi-v7a,armeabi",
+      "splitsAbiFilterSet": [],
+      "intermediatesFolder": "/Users/weiqing.twq/Desktop/F2Native/android/f2native/build/intermediates",
+      "gradleModulePathName": ":android:f2native",
+      "moduleRootFolder": "/Users/weiqing.twq/Desktop/F2Native/android/f2native",
+      "makeFile": "/Users/weiqing.twq/Desktop/F2Native/CMakeLists.txt",
+      "buildSystem": "CMAKE",
+      "compilerSettingsCacheFolder": "/Users/weiqing.twq/Desktop/F2Native/.cxx",
+      "cxxFolder": "/Users/weiqing.twq/Desktop/F2Native/android/f2native/.cxx",
+      "ndkFolder": "/Users/weiqing.twq/Library/Android/sdk/ndk/16.1.4479499",
+      "ndkVersion": "16.1.4479499",
+      "ndkSupportedAbiList": [
+        "ARMEABI",
+        "ARMEABI_V7A",
+        "ARM64_V8A",
+        "MIPS",
+        "MIPS64",
+        "X86",
+        "X86_64"
+      ],
+      "ndkDefaultAbiList": [
+        "ARMEABI_V7A",
+        "ARM64_V8A",
+        "X86",
+        "X86_64"
+      ],
+      "cmakeToolchainFile": "."
+    },
+    "buildSystemArgumentList": [
+      "-DANDROID_STL\u003dc++_shared",
+      "-DTARGET_ALIPAY\u003d1"
+    ],
+    "cFlagList": [
+      "-ffunction-sections -fdata-sections"
+    ],
+    "cppFlagsList": [
+      "-DTARGET_ALIPAY"
+    ],
+    "variantName": "debug",
+    "soFolder": "/Users/weiqing.twq/Desktop/F2Native/android/f2native/build/intermediates/cmake/debug/lib",
+    "objFolder": "/Users/weiqing.twq/Desktop/F2Native/android/f2native/build/intermediates/cmake/debug/obj",
+    "jsonFolder": "/Users/weiqing.twq/Desktop/F2Native/android/f2native/.cxx/cmake/debug",
+    "gradleBuildOutputFolder": "/Users/weiqing.twq/Desktop/F2Native/android/f2native/.cxx/cxx/debug",
+    "isDebuggableEnabled": true,
+    "validAbiList": [
+      "ARM64_V8A",
+      "ARMEABI_V7A"
+    ],
+    "buildTargetSet": []
+  },
+  "abi": "ARM64_V8A",
+  "abiPlatformVersion": 21,
+  "cxxBuildFolder": "/Users/weiqing.twq/Desktop/F2Native/android/f2native/.cxx/cmake/debug/arm64-v8a",
+  "jsonFile": "/Users/weiqing.twq/Desktop/F2Native/android/f2native/.cxx/cmake/debug/arm64-v8a/android_gradle_build.json",
+  "gradleBuildOutputFolder": "/Users/weiqing.twq/Desktop/F2Native/android/f2native/.cxx/cxx/debug/arm64-v8a",
+  "objFolder": "/Users/weiqing.twq/Desktop/F2Native/android/f2native/build/intermediates/cmake/debug/obj/arm64-v8a",
+  "buildCommandFile": "/Users/weiqing.twq/Desktop/F2Native/android/f2native/.cxx/cmake/debug/arm64-v8a/build_command.txt",
+  "buildOutputFile": "/Users/weiqing.twq/Desktop/F2Native/android/f2native/.cxx/cmake/debug/arm64-v8a/build_output.txt",
+  "modelOutputFile": "/Users/weiqing.twq/Desktop/F2Native/android/f2native/.cxx/cmake/debug/arm64-v8a/build_model.json",
+  "cmake": {
+    "cmakeListsWrapperFile": "/Users/weiqing.twq/Desktop/F2Native/android/f2native/.cxx/cxx/debug/arm64-v8a/CMakeLists.txt",
+    "toolchainWrapperFile": "/Users/weiqing.twq/Desktop/F2Native/android/f2native/.cxx/cxx/debug/arm64-v8a/android_gradle_build.toolchain.cmake",
+    "buildGenerationStateFile": "/Users/weiqing.twq/Desktop/F2Native/android/f2native/.cxx/cxx/debug/arm64-v8a/build_generation_state.json",
+    "cacheKeyFile": "/Users/weiqing.twq/Desktop/F2Native/android/f2native/.cxx/cxx/debug/arm64-v8a/compiler_cache_key.json",
+    "compilerCacheUseFile": "/Users/weiqing.twq/Desktop/F2Native/android/f2native/.cxx/cxx/debug/arm64-v8a/compiler_cache_use.json",
+    "compilerCacheWriteFile": "/Users/weiqing.twq/Desktop/F2Native/android/f2native/.cxx/cxx/debug/arm64-v8a/compiler_cache_write.json",
+    "toolchainSettingsFromCacheFile": "/Users/weiqing.twq/Desktop/F2Native/android/f2native/.cxx/cxx/debug/arm64-v8a/compiler_settings_cache.cmake",
+    "cmakeWrappingBaseFolder": "."
+  },
+  "jsonGenerationLoggingRecordFile": "/Users/weiqing.twq/Desktop/F2Native/android/f2native/.cxx/cmake/debug/arm64-v8a/json_generation_record.json",
+  "compileCommandsJsonFile": "/Users/weiqing.twq/Desktop/F2Native/android/f2native/.cxx/cmake/debug/arm64-v8a/compile_commands.json"
+}

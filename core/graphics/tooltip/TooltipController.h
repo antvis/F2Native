@@ -1,11 +1,10 @@
-#include "ToolTip.h"
-#include "graphics/event/EventController.h"
-#include "graphics/shape/Group.h"
-#include "graphics/scale/Scale.h"
-#include <nlohmann/json.hpp>
-
 #ifndef XG_GRAPHICS_TOOLTIP_CONTROLLER_H
 #define XG_GRAPHICS_TOOLTIP_CONTROLLER_H
+
+#include "ToolTip.h"
+#include "../event/EventController.h"
+#include "../shape/Group.h"
+#include "../scale/Scale.h"
 
 namespace xg {
 class XChart;

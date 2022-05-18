@@ -1,8 +1,8 @@
-#include "graphics/shape/Shape.h"
-#include <math.h>
-
 #ifndef XG_GRAPHICS_ANIMATE_ANIMATOR_H
 #define XG_GRAPHICS_ANIMATE_ANIMATOR_H
+
+#include <math.h>
+#include "../shape/Shape.h"
 
 namespace xg {
 namespace animate {

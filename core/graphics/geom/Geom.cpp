@@ -10,22 +10,6 @@
 
 using namespace std;
 
-namespace xg {
-namespace geom {
-
-static vector<string> ParseFields(const string &field) {
-    if(field.find('*') != field.npos) {
-        vector<string> v;
-        StringUtil::Split(field, v, '*');
-        return v;
-    } else {
-        return {field};
-    }
-}
-
-} // namespace geom
-} // namespace xg
-
 xg::geom::AbstractGeom::~AbstractGeom() {
     container_ = nullptr;
     attrs_.clear();
@@ -34,7 +18,7 @@ xg::geom::AbstractGeom::~AbstractGeom() {
 #pragma mark public
 xg::geom::AbstractGeom &xg::geom::AbstractGeom::Position(const string &field) {
     this->tracker_->trace("geom#%s  Position: %s", type_.c_str(), field.c_str());
-    vector<string> fields(ParseFields(field));
+    vector<string> fields(StringUtil::ParseFields(field));
     std::unique_ptr<attr::AttrBase> attr = xg::make_unique<attr::Position>(fields);
     attrs_[AttrType::Position] = std::move(attr);
     return *this;
@@ -42,7 +26,7 @@ xg::geom::AbstractGeom &xg::geom::AbstractGeom::Position(const string &field) {
 
 xg::geom::AbstractGeom &xg::geom::AbstractGeom::Color(const string &field, const vector<string> &colors) {
     this->tracker_->trace("geom#%s  Color: %s colors: %lu", type_.c_str(), field.c_str(), colors.size());
-    vector<string> fields(ParseFields(field));
+    vector<string> fields(StringUtil::ParseFields(field));
     std::unique_ptr<attr::AttrBase> attr = xg::make_unique<attr::Color>(fields, colors.empty() ? COLORS : colors);
     attrs_[AttrType::Color] = std::move(attr);
     return *this;
@@ -347,36 +331,16 @@ nlohmann::json xg::geom::AbstractGeom::GetSnapRecords(XChart *chart, util::Point
     return tmp;
 }
 
-nlohmann::json xg::geom::AbstractGeom::GetSnapRecord(XChart *chart, size_t index) {
+const nlohmann::json &xg::geom::AbstractGeom::GetLastSnapRecord(XChart *chart) {
     auto &xScale = chart->GetScale(GetXScaleField());
-    nlohmann::json tmp;
-    for(std::size_t num = 0; num < dataArray_.size(); ++num) {
-        nlohmann::json &groupData = dataArray_[num];
-        std::size_t start = 0, end = groupData.size() - 1;
-        if(scale::IsCategory(xScale.GetType())) {
-            start = fmax(start, xScale.min);
-            end = fmin(end, xScale.max);
-        }
-        if (index >= start && index <= end) {
-            tmp.push_back(groupData[index]);
-        }
-    }
-    XG_ASSERT(tmp.size() > 0);
-    return tmp;
+    std::size_t end = scale::IsCategory(xScale.GetType()) ? fmax(0 , xScale.max): (dataArray_[0].size() - 1);
+    return dataArray_[0][end];
 }
 
-nlohmann::json xg::geom::AbstractGeom::GetLastSnapRecord(XChart *chart) {
-    size_t end = 0;
-    for(std::size_t num = 0; num < dataArray_.size(); ++num) {
-        nlohmann::json &groupData = dataArray_[num];
-        //多个分组中取最大的
-        end =  fmax(end ,groupData.size() - 1);
-    }
-    return GetSnapRecord(chart, end);
-}
-
-nlohmann::json xg::geom::AbstractGeom::GetFirstSnapRecord(XChart *chart) {
-    return GetSnapRecord(chart, 0);
+const nlohmann::json &xg::geom::AbstractGeom::GetFirstSnapRecord(XChart *chart) {
+    auto &xScale = chart->GetScale(GetXScaleField());
+    std::size_t start = scale::IsCategory(xScale.GetType()) ? fmax(0, xScale.min) : 0;
+    return dataArray_[0][start];
 }
 
 void xg::geom::AbstractGeom::Clear() {

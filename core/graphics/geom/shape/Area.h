@@ -1,10 +1,10 @@
 #ifndef GRAPHICS_GEOM_SHAPE_AREA_H
 #define GRAPHICS_GEOM_SHAPE_AREA_H
 
-#include "graphics/geom/shape/GeomShapeBase.h"
-#include "graphics/global.h"
-#include "graphics/shape/Area.h"
 #include <vector>
+#include "GeomShapeBase.h"
+#include "../../global.h"
+#include "../../shape/Area.h"
 
 using namespace xg::util;
 

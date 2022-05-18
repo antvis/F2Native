@@ -1,11 +1,12 @@
-#include "utils/xtime.h"
-#include <nlohmann/json.hpp>
+#ifndef XG_GRAPHICS_FUNC_H
+#define XG_GRAPHICS_FUNC_H
+
 #include <stdlib.h>
 #include <string>
 #include <unordered_map>
+#include "../../utils/xtime.h"
+#include "../../nlohmann/json.hpp"
 
-#ifndef XG_GRAPHICS_FUNC_H
-#define XG_GRAPHICS_FUNC_H
 
 namespace xg {
 

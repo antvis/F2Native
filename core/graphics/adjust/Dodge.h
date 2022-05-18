@@ -1,7 +1,7 @@
-#include <nlohmann/json.hpp>
-
 #ifndef XG_GRAPHICS_ADJUST_DODGE_H
 #define XG_GRAPHICS_ADJUST_DODGE_H
+
+#include "../../nlohmann/json.hpp"
 
 #define ADJUST_DODGE_RATIO 0.5
 #define ADJUST_MARGIN_RATIO 0.05

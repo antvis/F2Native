@@ -1,11 +1,11 @@
 #ifndef XG_GRAPHICS_ELEMENT_H
 #define XG_GRAPHICS_ELEMENT_H
 
-#include "graphics/canvas/CanvasContext.h"
-#include "graphics/util/BBox.h"
-#include "graphics/util/Color.h"
-#include "graphics/util/Matrix.h"
-#include "graphics/util/Point.h"
+#include "../canvas/CanvasContext.h"
+#include "../util/BBox.h"
+#include "../util/Color.h"
+#include "../util/Matrix.h"
+#include "../util/Point.h"
 
 using namespace std;
 using namespace xg::util;

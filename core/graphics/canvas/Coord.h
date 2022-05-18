@@ -1,7 +1,7 @@
 #ifndef XG_GRAPHICS_CANVAS_COORD_H
 #define XG_GRAPHICS_CANVAS_COORD_H
 
-#include "graphics/util/Point.h"
+#include "../util/Point.h"
 
 /*
   |-----------------------------------end

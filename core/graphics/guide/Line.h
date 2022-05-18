@@ -1,8 +1,7 @@
-
-#include "GuideBase.h"
-
 #ifndef XG_GRAPHICS_GUIDE_LINE_H
 #define XG_GRAPHICS_GUIDE_LINE_H
+
+#include "GuideBase.h"
 
 namespace xg {
 namespace guide {

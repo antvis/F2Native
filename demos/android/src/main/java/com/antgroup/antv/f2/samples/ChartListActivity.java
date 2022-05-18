@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.antgroup.antv.f2.F2CanvasView;
-import com.antgroup.antv.f2.F2Config;
 import com.antgroup.antv.f2.F2Log;
 
 import java.lang.ref.WeakReference;
@@ -23,19 +22,6 @@ import androidx.recyclerview.widget.RecyclerView;
 public class ChartListActivity extends AppCompatActivity {
 
     private RecyclerView listView;
-
-//    private F2RenderThreadFactory mThreadFactory = new F2RenderThreadFactory() {
-//        private F2StandaloneRenderThread.Worker mSharedThread = null;
-//        @Override
-//        public F2RenderThread createRenderThread(F2Config canvasOptions) {
-//            // 所有图表共享同一个线程
-//            if (mSharedThread == null) {
-//                String sessionId = canvasOptions.getStringField("session_id");
-//                mSharedThread = new F2StandaloneRenderThread.Worker(sessionId == null ? "t-ChartListActivityThread" : sessionId);
-//            }
-//            return mSharedThread.assign();
-//        }
-//    };
 
     private List<WeakReference<F2CanvasView>> canvasViews = new ArrayList<>();
 
@@ -76,13 +62,12 @@ public class ChartListActivity extends AppCompatActivity {
 
         TextView chartName;
         F2CanvasView canvasView;
-        public CanvasViewHolder(@NonNull View itemView,  List<WeakReference<F2CanvasView>> canvasViews) {
+
+        public CanvasViewHolder(@NonNull View itemView, List<WeakReference<F2CanvasView>> canvasViews) {
             super(itemView);
             chartName = itemView.findViewById(R.id.chart_name);
             canvasView = itemView.findViewById(R.id.canvasView);
             canvasView.initCanvasContext(new F2CanvasView.ConfigBuilder()
-                    .canvasId("F2AntCanvas")
-                    .asyncRender(true)
                     .setOption("canvasBizId", "ChartListActivity")
                     .setOption("appId", "1000")
                     .build());

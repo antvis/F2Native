@@ -1,8 +1,7 @@
-#include "graphics/shape/Element.h"
-#include "graphics/shape/Shape.h"
-
 #ifndef XG_GRAPHICS_SHAPE_GROUP_H
 #define XG_GRAPHICS_SHAPE_GROUP_H
+
+#include "Shape.h"
 
 using namespace std;
 

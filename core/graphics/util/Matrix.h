@@ -1,10 +1,10 @@
-#include "graphics/util/Vector2d.h"
+#ifndef XG_GRAPHICS_UTIL_MATRIX_H
+#define XG_GRAPHICS_UTIL_MATRIX_H
+
 #include <array>
 #include <math.h>
 #include <string>
-
-#ifndef XG_GRAPHICS_UTIL_MATRIX_H
-#define XG_GRAPHICS_UTIL_MATRIX_H
+#include "Vector2d.h"
 
 namespace xg {
 namespace util {

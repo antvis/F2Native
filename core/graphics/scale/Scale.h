@@ -1,11 +1,11 @@
-#include "graphics/func/Func.h"
-#include <map>
-#include <nlohmann/json.hpp>
-#include <string>
-#include <vector>
-
 #ifndef XG_GRAPHICS_SCALE_H
 #define XG_GRAPHICS_SCALE_H
+
+#include <string>
+#include <vector>
+#include <map>
+#include "../func/Func.h"
+#include "../../nlohmann/json.hpp"
 
 namespace xg {
 namespace scale {

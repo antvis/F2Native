@@ -1,11 +1,11 @@
-#include "graphics/canvas/CanvasContext.h"
-#include "graphics/shape/Group.h"
-#include "graphics/util/BBox.h"
-#include "graphics/util/Point.h"
-#include <nlohmann/json.hpp>
-
 #ifndef XG_GRAPHICS_GUIDE_BASE_H
 #define XG_GRAPHICS_GUIDE_BASE_H
+
+#include "../canvas/CanvasContext.h"
+#include "../shape/Group.h"
+#include "../util/BBox.h"
+#include "../util/Point.h"
+#include "../../nlohmann/json.hpp"
 
 namespace xg {
 class XChart;

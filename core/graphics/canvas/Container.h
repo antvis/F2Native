@@ -1,8 +1,8 @@
-#include "graphics/util/Point.h"
-#include <math.h>
-
 #ifndef XG_GRAPHICS_CANVAS_CONTAINER_H
 #define XG_GRAPHICS_CANVAS_CONTAINER_H
+
+#include <math.h>
+#include "../util/Point.h"
 
 namespace xg {
 namespace canvas {

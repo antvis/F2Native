@@ -9,7 +9,7 @@
 #ifndef XG_GRAPHICS_GUIDE_IMAGE_H
 #define XG_GRAPHICS_GUIDE_IMAGE_H
 
-#include "graphics/guide/GuideBase.h"
+#include "GuideBase.h"
 
 namespace xg {
 namespace guide {

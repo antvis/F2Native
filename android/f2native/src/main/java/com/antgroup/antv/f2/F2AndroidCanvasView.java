@@ -1,11 +1,9 @@
 package com.antgroup.antv.f2;
 
-import java.util.ArrayList;
-
-import android.graphics.Canvas;
-import android.content.Context;
-
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
 import android.os.Build;
@@ -15,18 +13,13 @@ import android.view.View;
 
 import com.antgroup.antv.f2.base.F2BaseCanvasView;
 
-
 /**
  * android native canvas需要的CanvasView
+ *
  * @author ruize
  */
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 class F2AndroidCanvasView extends View implements F2BaseCanvasView {
-
-
-    static {
-        System.loadLibrary("f2");
-    }
 
     private PaintFlagsDrawFilter paintFlagsDrawFilter = new PaintFlagsDrawFilter(0, Paint.FILTER_BITMAP_FLAG | Paint.ANTI_ALIAS_FLAG);
 
@@ -45,8 +38,8 @@ class F2AndroidCanvasView extends View implements F2BaseCanvasView {
     private F2CanvasView mF2CanvasView;
     private String mAppId = "";
     private String mCanvasBizId = "";
-    private ArrayList<Integer> mRenderCmdCountList = new ArrayList<>();
-    private int mDrawIndex = 0;
+    private F2DetectManager mF2DetectManager;
+    private boolean mNeedAdapter = true;
 
     public F2AndroidCanvasView(Context context) {
         this(context, null);
@@ -60,9 +53,18 @@ class F2AndroidCanvasView extends View implements F2BaseCanvasView {
         super(context, attrs);
         this.mF2CanvasView = f2CanvasView;
         mRatio = context.getResources().getDisplayMetrics().density;
+        mF2DetectManager = new F2DetectManager();
     }
 
-    public boolean setCanvasSize(int width, int height) {
+    public void init(int width, int height, F2Config config) {
+        initCanvasContext(config);
+        if (setCanvasSize(width, height)) {
+            mNeedAdapter = false;
+            postCanvasDraw();
+        }
+    }
+
+    private boolean setCanvasSize(int width, int height) {
         if (0 == width || 0 == height) {
             innerLog("#setCanvasSize width or height is 0");
             return false;
@@ -76,7 +78,9 @@ class F2AndroidCanvasView extends View implements F2BaseCanvasView {
         long startTime = System.currentTimeMillis();
         mCanvasContext = new F2AndroidCanvasContext(width, height, mRatio);
         try {
-            mCanvasHolder = nCreateCanvasContextHandle(mCanvasContext);
+            if (mCanvasContext != null) {
+                mCanvasHolder = F2CanvasView.nCreateCanvasContextHandle(mCanvasContext);
+            }
         } catch (Exception e) {
             innerLog("#setCanvasSize catch exception:" + e);
             return false;
@@ -101,26 +105,31 @@ class F2AndroidCanvasView extends View implements F2BaseCanvasView {
         }
     }
 
-    private void clearRenderCmdCount() {
-        mRenderCmdCountList.clear();
+    @Override
+    public void sendRenderDetectEvent(final long renderDuration, final boolean renderSuccess, final int renderCmdCount,
+                                      final boolean drawSuccess, final String chartId) {
+        // 开关打开 && 上屏成功，才进行白屏检测
+        if (F2CSUtils.isDetectEnable() && drawSuccess && mCanvasContext != null && mCanvasContext.bitmap != null && mCanvasHolder != 0) {
+            F2CSUtils.showUseNativeCanvasToast("F2Native白屏检测开启");
+            mF2DetectManager.sendRenderDetectEvent(mCanvasContext.bitmap.copy(Bitmap.Config.ARGB_8888, false),
+                    mAppId, mCanvasBizId, renderDuration, renderSuccess,
+                    renderCmdCount, drawSuccess, mWidth, mHeight, mRatio, chartId);
+        } else {
+            // 说明开关关闭 || 上屏失败
+            String desc = chartId + (mCanvasContext != null && mCanvasContext.mHadOOM ? "_OOM" : "");
+            F2Event.eventDetectRender(mAppId, mCanvasBizId, renderDuration, renderSuccess,
+                    renderCmdCount, drawSuccess, null, 0, mWidth, mHeight, mRatio, desc);
+        }
     }
 
     @Override
-    public void appendRenderCmdCount(String chartName, int renderCmdCount) {
-        mRenderCmdCountList.add(renderCmdCount);
+    public boolean isDrawSuccess() {
+        return mCanvasContext != null && mCanvasContext.bitmap != null && mCanvasHolder != 0;
     }
 
-    private int getTotalRenderCmdCount() {
-        int totalCount = 0;
-        for (int i = 0; i < mRenderCmdCountList.size(); ++i) {
-            int renderCmdCount = mRenderCmdCountList.get(i);
-            if (renderCmdCount == 0) {
-                innerLog("getTotalRenderCmdCount:ZERO at " + i);
-                return 0;
-            }
-            totalCount += renderCmdCount;
-        }
-        return totalCount;
+    @Override
+    public boolean hadOOM() {
+        return mCanvasContext != null && mCanvasContext.mHadOOM;
     }
 
     @Override
@@ -133,6 +142,7 @@ class F2AndroidCanvasView extends View implements F2BaseCanvasView {
         if (mAdapter != null && mAdapter != adapter) {
             mAdapter.onDestroy();
         }
+        mNeedAdapter = true;
         mAdapter = adapter;
         postCanvasDraw();
     }
@@ -154,7 +164,7 @@ class F2AndroidCanvasView extends View implements F2BaseCanvasView {
             mAppId = config.getStringField(F2CanvasView.ConfigBuilder.KEY_APP_ID);
             mCanvasBizId = config.getStringField(F2CanvasView.ConfigBuilder.KEY_CANVAS_BIZ_ID);
         }
-        F2Event.eventPage(mAppId, mCanvasBizId, "init", true);
+        F2Event.eventPage(mAppId, mCanvasBizId, "init");
     }
 
     @Override
@@ -178,23 +188,15 @@ class F2AndroidCanvasView extends View implements F2BaseCanvasView {
 
     @Override
     public void postCanvasDraw() {
-        if (hasAdapter() == true && mCanvasContext != null) {
-            clearRenderCmdCount();
-            long startTime = System.currentTimeMillis();
-            mCanvasContext.resetContext();
-            mAdapter.onCanvasDraw(mF2CanvasView);
-            long duration = System.currentTimeMillis() - startTime;
-            if (BuildConfig.DEBUG) {
-                innerLog("#onDraw onCanvasDraw cost = " + duration + "ms");
+        if (mCanvasContext != null) {
+            // 不需要adapter或者需要adapter并且有adapter有值
+            if (!mNeedAdapter) {
+                mCanvasContext.resetContext();
+            } else if (mNeedAdapter && hasAdapter()) {
+                mCanvasContext.resetContext();
+                mAdapter.onCanvasDraw(mF2CanvasView);
             }
-            mDrawIndex++;
-            F2Event.eventRender(mAppId, mCanvasBizId, mDrawIndex, getTotalRenderCmdCount(), duration, mWidth, mHeight, mRatio, true);
         }
-    }
-
-    @Override
-    public final boolean isOnCanvasThread() {
-        return true;
     }
 
     @Override
@@ -207,14 +209,16 @@ class F2AndroidCanvasView extends View implements F2BaseCanvasView {
         innerLog("#destroy");
         innerDestroy();
         mOnCanvasTouchListener = null;
-        mCanvasContext = null;
+        if (mCanvasContext != null && mCanvasContext.bitmap != null) {
+            mCanvasContext.bitmap.recycle();
+            mCanvasContext.bitmap = null;
+            mCanvasContext = null;
+        }
         //销毁对应的JNI对象
         if (mCanvasHolder != 0) {
-            nDestroyCanvasContextHandle(mCanvasHolder);
+            F2CanvasView.nDestroyCanvasContextHandle(mCanvasHolder);
             mCanvasHolder = 0;
         }
-        clearRenderCmdCount();
-        mDrawIndex = 0;
     }
 
     private void innerDestroy() {
@@ -224,13 +228,9 @@ class F2AndroidCanvasView extends View implements F2BaseCanvasView {
     }
 
     @Override
-    public void swapBuffer() {
-        postInvalidate();
-    }
-
-    @Override
-    public F2AndroidCanvasContext getCanvasHandle() {
-        return mCanvasContext;
+    public boolean swapBuffer() {
+        invalidate();
+        return null != mCanvasContext && null != mCanvasContext.bitmap && mCanvasHolder != 0;
     }
 
     @Override
@@ -253,9 +253,5 @@ class F2AndroidCanvasView extends View implements F2BaseCanvasView {
             super.finalize();
         }
     }
-
-    private native static long nCreateCanvasContextHandle(Object thisObj);
-
-    private native static void nDestroyCanvasContextHandle(long canvasHolder);
 
 }

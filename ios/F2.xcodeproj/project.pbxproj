@@ -82,7 +82,6 @@
 		9557243025ECBF7200D2FC07 /* Cartesian.h in Headers */ = {isa = PBXBuildFile; fileRef = 955723BE25ECBF7200D2FC07 /* Cartesian.h */; };
 		9557243125ECBF7200D2FC07 /* Container.h in Headers */ = {isa = PBXBuildFile; fileRef = 955723BF25ECBF7200D2FC07 /* Container.h */; };
 		9557243325ECBF7200D2FC07 /* Coord.h in Headers */ = {isa = PBXBuildFile; fileRef = 955723C125ECBF7200D2FC07 /* Coord.h */; };
-		9557243425ECBF7200D2FC07 /* AlipayCanvasContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 955723C225ECBF7200D2FC07 /* AlipayCanvasContext.h */; };
 		9557243525ECBF7200D2FC07 /* Canvas.h in Headers */ = {isa = PBXBuildFile; fileRef = 955723C325ECBF7200D2FC07 /* Canvas.h */; };
 		9557243625ECBF7200D2FC07 /* CanvasContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 955723C425ECBF7200D2FC07 /* CanvasContext.h */; };
 		9557243725ECBF7200D2FC07 /* Polar.h in Headers */ = {isa = PBXBuildFile; fileRef = 955723C525ECBF7200D2FC07 /* Polar.h */; };
@@ -134,9 +133,6 @@
 		CC6124DD250A1D0C00315124 /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = CC611D18250A1D0800315124 /* common.h */; };
 		CC6124DF250A1D0C00315124 /* Tracer.h in Headers */ = {isa = PBXBuildFile; fileRef = CC611D1A250A1D0800315124 /* Tracer.h */; };
 		CC6124E0250A1D0C00315124 /* xtime.h in Headers */ = {isa = PBXBuildFile; fileRef = CC611D1B250A1D0800315124 /* xtime.h */; };
-		CC6127BA250A1D0D00315124 /* WilkinsonExtended.c in Sources */ = {isa = PBXBuildFile; fileRef = CC612098250A1D0900315124 /* WilkinsonExtended.c */; };
-		CC6127BD250A1D0D00315124 /* WilkinsonExtended.h in Headers */ = {isa = PBXBuildFile; fileRef = CC61209B250A1D0900315124 /* WilkinsonExtended.h */; };
-		CC612BA5250A1D0F00315124 /* json.hpp in Headers */ = {isa = PBXBuildFile; fileRef = CC6124D4250A1D0C00315124 /* json.hpp */; };
 		CC612BF3250B2EF700315124 /* F2Utils.h in Headers */ = {isa = PBXBuildFile; fileRef = CC612BEB250B2EF600315124 /* F2Utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC612BF4250B2EF700315124 /* F2Chart.h in Headers */ = {isa = PBXBuildFile; fileRef = CC612BEC250B2EF600315124 /* F2Chart.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC612BF5250B2EF700315124 /* F2Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = CC612BED250B2EF600315124 /* F2Utils.m */; };
@@ -145,6 +141,93 @@
 		CC612BF8250B2EF700315124 /* F2Geom.h in Headers */ = {isa = PBXBuildFile; fileRef = CC612BF0250B2EF700315124 /* F2Geom.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC612BF9250B2EF700315124 /* F2Geom.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC612BF1250B2EF700315124 /* F2Geom.mm */; };
 		CC612BFA250B2EF700315124 /* F2Guide.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC612BF2250B2EF700315124 /* F2Guide.mm */; };
+		CC8B56982817D9E0006B2E45 /* StringUtil.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CC611D17250A1D0800315124 /* StringUtil.h */; };
+		CC8B56992817D9E1006B2E45 /* common.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CC611D18250A1D0800315124 /* common.h */; };
+		CC8B569A2817D9E3006B2E45 /* Tracer.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CC611D1A250A1D0800315124 /* Tracer.h */; };
+		CC8B569B2817D9E5006B2E45 /* xtime.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CC611D1B250A1D0800315124 /* xtime.h */; };
+		CC8B569D2817DA16006B2E45 /* F2Logger.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CC3C01E326A00E9300335A1C /* F2Logger.h */; };
+		CC8B569E2817DA18006B2E45 /* CoreGraphicsContext.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCB5B598279A995E00835806 /* CoreGraphicsContext.h */; };
+		CC8B56A02817DA77006B2E45 /* global.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723BA25ECBF7200D2FC07 /* global.h */; };
+		CC8B56A12817DA80006B2E45 /* XChart.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557238825ECBF7200D2FC07 /* XChart.h */; };
+		CC8B56A32817DAAA006B2E45 /* Image.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CC8C620127968E3D00F540D7 /* Image.h */; };
+		CC8B56A42817DAAA006B2E45 /* Background.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9500DF982689D74A00025EF1 /* Background.h */; };
+		CC8B56A52817DAAA006B2E45 /* Text.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557237825ECBF7200D2FC07 /* Text.h */; };
+		CC8B56A62817DAAA006B2E45 /* Flag.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557237925ECBF7200D2FC07 /* Flag.h */; };
+		CC8B56A72817DAAA006B2E45 /* GuideController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557237A25ECBF7200D2FC07 /* GuideController.h */; };
+		CC8B56A82817DAAA006B2E45 /* Line.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557237C25ECBF7200D2FC07 /* Line.h */; };
+		CC8B56A92817DAAA006B2E45 /* GuideBase.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557237E25ECBF7200D2FC07 /* GuideBase.h */; };
+		CC8B56AB2817DABA006B2E45 /* LegendController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557238125ECBF7200D2FC07 /* LegendController.h */; };
+		CC8B56AD2817DAD1006B2E45 /* GeomAnimate.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557238325ECBF7200D2FC07 /* GeomAnimate.h */; };
+		CC8B56AE2817DAD1006B2E45 /* Animator.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557238625ECBF7200D2FC07 /* Animator.h */; };
+		CC8B56AF2817DAD1006B2E45 /* TimeLine.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557238725ECBF7200D2FC07 /* TimeLine.h */; };
+		CC8B56B12817DAE7006B2E45 /* TooltipController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557238B25ECBF7200D2FC07 /* TooltipController.h */; };
+		CC8B56B22817DAE7006B2E45 /* ToolTip.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557238C25ECBF7200D2FC07 /* ToolTip.h */; };
+		CC8B56B42817DAF7006B2E45 /* Stack.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557238E25ECBF7200D2FC07 /* Stack.h */; };
+		CC8B56B52817DAF9006B2E45 /* Dodge.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557238F25ECBF7200D2FC07 /* Dodge.h */; };
+		CC8B56B72817DB13006B2E45 /* Image.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CC8C620527968E4700F540D7 /* Image.h */; };
+		CC8B56B82817DB13006B2E45 /* Text.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557239425ECBF7200D2FC07 /* Text.h */; };
+		CC8B56B92817DB13006B2E45 /* Circle.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557239525ECBF7200D2FC07 /* Circle.h */; };
+		CC8B56BA2817DB13006B2E45 /* Marker.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557239625ECBF7200D2FC07 /* Marker.h */; };
+		CC8B56BB2817DB13006B2E45 /* Shape.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557239725ECBF7200D2FC07 /* Shape.h */; };
+		CC8B56BC2817DB13006B2E45 /* Area.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557239825ECBF7200D2FC07 /* Area.h */; };
+		CC8B56BD2817DB13006B2E45 /* Polyline.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557239925ECBF7200D2FC07 /* Polyline.h */; };
+		CC8B56BE2817DB13006B2E45 /* Element.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557239A25ECBF7200D2FC07 /* Element.h */; };
+		CC8B56BF2817DB13006B2E45 /* Rect.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557239B25ECBF7200D2FC07 /* Rect.h */; };
+		CC8B56C02817DB13006B2E45 /* Group.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9557239C25ECBF7200D2FC07 /* Group.h */; };
+		CC8B56C12817DB13006B2E45 /* Line.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723A025ECBF7200D2FC07 /* Line.h */; };
+		CC8B56C22817DB13006B2E45 /* Polygon.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CC5F25E3273E5E360016F3A8 /* Polygon.h */; };
+		CC8B56C42817DB26006B2E45 /* Scale.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723A625ECBF7200D2FC07 /* Scale.h */; };
+		CC8B56C52817DB26006B2E45 /* TimeCategory.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723A725ECBF7200D2FC07 /* TimeCategory.h */; };
+		CC8B56C62817DB26006B2E45 /* ScaleController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723A825ECBF7200D2FC07 /* ScaleController.h */; };
+		CC8B56C72817DB26006B2E45 /* Identity.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723A925ECBF7200D2FC07 /* Identity.h */; };
+		CC8B56C82817DB26006B2E45 /* KLineCat.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723AA25ECBF7200D2FC07 /* KLineCat.h */; };
+		CC8B56C92817DB26006B2E45 /* Category.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723AB25ECBF7200D2FC07 /* Category.h */; };
+		CC8B56CB2817DB3A006B2E45 /* Linear.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723AD25ECBF7200D2FC07 /* Linear.h */; };
+		CC8B56CC2817DB3B006B2E45 /* TimeSharingLinear.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723AE25ECBF7200D2FC07 /* TimeSharingLinear.h */; };
+		CC8B56CE2817DB75006B2E45 /* BBox.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723B125ECBF7200D2FC07 /* BBox.h */; };
+		CC8B56CF2817DB75006B2E45 /* Point.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723B225ECBF7200D2FC07 /* Point.h */; };
+		CC8B56D02817DB75006B2E45 /* Path.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723B325ECBF7200D2FC07 /* Path.h */; };
+		CC8B56D12817DB75006B2E45 /* Matrix.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723B425ECBF7200D2FC07 /* Matrix.h */; };
+		CC8B56D22817DB75006B2E45 /* Color.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723B525ECBF7200D2FC07 /* Color.h */; };
+		CC8B56D32817DB75006B2E45 /* json_util.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723B625ECBF7200D2FC07 /* json_util.h */; };
+		CC8B56D42817DB75006B2E45 /* json.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723B725ECBF7200D2FC07 /* json.h */; };
+		CC8B56D52817DB75006B2E45 /* Vector2d.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723B825ECBF7200D2FC07 /* Vector2d.h */; };
+		CC8B56D72817DBAE006B2E45 /* CanvasImage.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CC8C620827968E5700F540D7 /* CanvasImage.h */; };
+		CC8B56D82817DBAE006B2E45 /* CanvasColorParser.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCCEC0D927883043008E217E /* CanvasColorParser.h */; };
+		CC8B56D92817DBAE006B2E45 /* CanvasFontParser.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CC8FC7BE275DDC28001A5CA6 /* CanvasFontParser.h */; };
+		CC8B56DA2817DBAE006B2E45 /* Cartesian.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723BE25ECBF7200D2FC07 /* Cartesian.h */; };
+		CC8B56DB2817DBAE006B2E45 /* Container.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723BF25ECBF7200D2FC07 /* Container.h */; };
+		CC8B56DC2817DBAE006B2E45 /* Coord.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723C125ECBF7200D2FC07 /* Coord.h */; };
+		CC8B56DD2817DBAE006B2E45 /* Canvas.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723C325ECBF7200D2FC07 /* Canvas.h */; };
+		CC8B56DE2817DBAE006B2E45 /* CanvasContext.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723C425ECBF7200D2FC07 /* CanvasContext.h */; };
+		CC8B56DF2817DBAE006B2E45 /* Polar.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723C525ECBF7200D2FC07 /* Polar.h */; };
+		CC8B56E02817DBAE006B2E45 /* CanvasFillStrokeStyle.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CC8C62102797E96700F540D7 /* CanvasFillStrokeStyle.h */; };
+		CC8B56E22817DBCA006B2E45 /* Point.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723D125ECBF7200D2FC07 /* Point.h */; };
+		CC8B56E32817DBCA006B2E45 /* Path.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723D225ECBF7200D2FC07 /* Path.h */; };
+		CC8B56E42817DBCA006B2E45 /* Candle.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723D325ECBF7200D2FC07 /* Candle.h */; };
+		CC8B56E52817DBCA006B2E45 /* Area.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723D425ECBF7200D2FC07 /* Area.h */; };
+		CC8B56E62817DBCA006B2E45 /* Line.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723D925ECBF7200D2FC07 /* Line.h */; };
+		CC8B56E72817DBCA006B2E45 /* Geom.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723DD25ECBF7200D2FC07 /* Geom.h */; };
+		CC8B56E82817DBCA006B2E45 /* Interval.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723DE25ECBF7200D2FC07 /* Interval.h */; };
+		CC8B56EA2817DBF5006B2E45 /* Point.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723C925ECBF7200D2FC07 /* Point.h */; };
+		CC8B56EB2817DBF5006B2E45 /* GeomShapeFactory.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723CA25ECBF7200D2FC07 /* GeomShapeFactory.h */; };
+		CC8B56EC2817DBF5006B2E45 /* Candle.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723CC25ECBF7200D2FC07 /* Candle.h */; };
+		CC8B56ED2817DBF5006B2E45 /* Area.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723CD25ECBF7200D2FC07 /* Area.h */; };
+		CC8B56EE2817DBF5006B2E45 /* Line.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723CE25ECBF7200D2FC07 /* Line.h */; };
+		CC8B56EF2817DBF5006B2E45 /* GeomShapeBase.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723CF25ECBF7200D2FC07 /* GeomShapeBase.h */; };
+		CC8B56F02817DBF5006B2E45 /* Interval.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723D025ECBF7200D2FC07 /* Interval.h */; };
+		CC8B56F22817DC01006B2E45 /* AttrBase.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723D725ECBF7200D2FC07 /* AttrBase.h */; };
+		CC8B56F42817DC12006B2E45 /* AxisController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723E025ECBF7200D2FC07 /* AxisController.h */; };
+		CC8B56F62817DC1E006B2E45 /* EventController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723E425ECBF7200D2FC07 /* EventController.h */; };
+		CC8B56F82817DC34006B2E45 /* InteractionBase.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723E625ECBF7200D2FC07 /* InteractionBase.h */; };
+		CC8B56F92817DC34006B2E45 /* Pan.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723E725ECBF7200D2FC07 /* Pan.h */; };
+		CC8B56FA2817DC34006B2E45 /* InteractionContext.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723EA25ECBF7200D2FC07 /* InteractionContext.h */; };
+		CC8B56FB2817DC34006B2E45 /* Pinch.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723EB25ECBF7200D2FC07 /* Pinch.h */; };
+		CC8B56FD2817DC50006B2E45 /* Command.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723EE25ECBF7200D2FC07 /* Command.h */; };
+		CC8B56FE2817DC50006B2E45 /* Func.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723EF25ECBF7200D2FC07 /* Func.h */; };
+		CC8B57332817F9A6006B2E45 /* Core.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CC8B572F2817F0B3006B2E45 /* Core.h */; };
+		CC8B74E02818F83A006B2E45 /* json.hpp in Headers */ = {isa = PBXBuildFile; fileRef = CC8B74DF2818F83A006B2E45 /* json.hpp */; };
+		CC8B74E228196AB1006B2E45 /* json.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = CC8B74DF2818F83A006B2E45 /* json.hpp */; };
 		CC8C6196278FE54300F540D7 /* res in Resources */ = {isa = PBXBuildFile; fileRef = CC8C6195278FE54300F540D7 /* res */; };
 		CC8C619A278FF92B00F540D7 /* F2PixelMatch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC8C6199278FF92B00F540D7 /* F2PixelMatch.mm */; };
 		CC8C61F027965A0000F540D7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC8C61EF27965A0000F540D7 /* UIKit.framework */; };
@@ -167,7 +250,7 @@
 		CCB5B59D279A995E00835806 /* CanvasImage.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCB5B59A279A995E00835806 /* CanvasImage.mm */; };
 		CCC3F3AD275F118D008D3F06 /* Tracer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC3F3AB275F118D008D3F06 /* Tracer.cpp */; };
 		CCC3F4422760808A008D3F06 /* F2CoreGraphicsCanvasContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCC3F44027608089008D3F06 /* F2CoreGraphicsCanvasContext.mm */; };
-		CCC3F4432760808A008D3F06 /* F2CoreGraphicsCanvasContext.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC3F4412760808A008D3F06 /* F2CoreGraphicsCanvasContext.h */; };
+		CCC3F4432760808A008D3F06 /* F2CoreGraphicsCanvasContext.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC3F4412760808A008D3F06 /* F2CoreGraphicsCanvasContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CCCDE9CF2744D9740060D768 /* F2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC793C3B2509FBAA00E9D913 /* F2.framework */; };
 		CCCDE9D72744D9D70060D768 /* F2ScalesTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCCDE9D62744D9D70060D768 /* F2ScalesTests.mm */; };
 		CCCDE9ED2744E2E30060D768 /* F2UtilsTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCCDE9EC2744E2E30060D768 /* F2UtilsTests.mm */; };
@@ -185,6 +268,293 @@
 			remoteInfo = F2;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CC8B56972817D9B5006B2E45 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/utils;
+			dstSubfolderSpec = 7;
+			files = (
+				CC8B56982817D9E0006B2E45 /* StringUtil.h in CopyFiles */,
+				CC8B56992817D9E1006B2E45 /* common.h in CopyFiles */,
+				CC8B569B2817D9E5006B2E45 /* xtime.h in CopyFiles */,
+				CC8B569A2817D9E3006B2E45 /* Tracer.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC8B569C2817DA05006B2E45 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/ios;
+			dstSubfolderSpec = 7;
+			files = (
+				CC8B569D2817DA16006B2E45 /* F2Logger.h in CopyFiles */,
+				CC8B569E2817DA18006B2E45 /* CoreGraphicsContext.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC8B569F2817DA61006B2E45 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/graphics;
+			dstSubfolderSpec = 7;
+			files = (
+				CC8B56A02817DA77006B2E45 /* global.h in CopyFiles */,
+				CC8B56A12817DA80006B2E45 /* XChart.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC8B56A22817DA96006B2E45 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/graphics/guide;
+			dstSubfolderSpec = 7;
+			files = (
+				CC8B56A32817DAAA006B2E45 /* Image.h in CopyFiles */,
+				CC8B56A42817DAAA006B2E45 /* Background.h in CopyFiles */,
+				CC8B56A52817DAAA006B2E45 /* Text.h in CopyFiles */,
+				CC8B56A62817DAAA006B2E45 /* Flag.h in CopyFiles */,
+				CC8B56A72817DAAA006B2E45 /* GuideController.h in CopyFiles */,
+				CC8B56A82817DAAA006B2E45 /* Line.h in CopyFiles */,
+				CC8B56A92817DAAA006B2E45 /* GuideBase.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC8B56AA2817DAAF006B2E45 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/graphics/legend;
+			dstSubfolderSpec = 7;
+			files = (
+				CC8B56AB2817DABA006B2E45 /* LegendController.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC8B56AC2817DABE006B2E45 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/graphics/animate;
+			dstSubfolderSpec = 7;
+			files = (
+				CC8B56AD2817DAD1006B2E45 /* GeomAnimate.h in CopyFiles */,
+				CC8B56AE2817DAD1006B2E45 /* Animator.h in CopyFiles */,
+				CC8B56AF2817DAD1006B2E45 /* TimeLine.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC8B56B02817DADE006B2E45 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/graphics/tooltip;
+			dstSubfolderSpec = 7;
+			files = (
+				CC8B56B12817DAE7006B2E45 /* TooltipController.h in CopyFiles */,
+				CC8B56B22817DAE7006B2E45 /* ToolTip.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC8B56B32817DAEA006B2E45 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/graphics/adjust;
+			dstSubfolderSpec = 7;
+			files = (
+				CC8B56B42817DAF7006B2E45 /* Stack.h in CopyFiles */,
+				CC8B56B52817DAF9006B2E45 /* Dodge.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC8B56B62817DAFB006B2E45 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/graphics/shape;
+			dstSubfolderSpec = 7;
+			files = (
+				CC8B56B72817DB13006B2E45 /* Image.h in CopyFiles */,
+				CC8B56B82817DB13006B2E45 /* Text.h in CopyFiles */,
+				CC8B56B92817DB13006B2E45 /* Circle.h in CopyFiles */,
+				CC8B56BA2817DB13006B2E45 /* Marker.h in CopyFiles */,
+				CC8B56BB2817DB13006B2E45 /* Shape.h in CopyFiles */,
+				CC8B56BC2817DB13006B2E45 /* Area.h in CopyFiles */,
+				CC8B56BD2817DB13006B2E45 /* Polyline.h in CopyFiles */,
+				CC8B56BE2817DB13006B2E45 /* Element.h in CopyFiles */,
+				CC8B56BF2817DB13006B2E45 /* Rect.h in CopyFiles */,
+				CC8B56C02817DB13006B2E45 /* Group.h in CopyFiles */,
+				CC8B56C12817DB13006B2E45 /* Line.h in CopyFiles */,
+				CC8B56C22817DB13006B2E45 /* Polygon.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC8B56C32817DB1B006B2E45 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/graphics/scale;
+			dstSubfolderSpec = 7;
+			files = (
+				CC8B56C42817DB26006B2E45 /* Scale.h in CopyFiles */,
+				CC8B56C52817DB26006B2E45 /* TimeCategory.h in CopyFiles */,
+				CC8B56C62817DB26006B2E45 /* ScaleController.h in CopyFiles */,
+				CC8B56C72817DB26006B2E45 /* Identity.h in CopyFiles */,
+				CC8B56C82817DB26006B2E45 /* KLineCat.h in CopyFiles */,
+				CC8B56C92817DB26006B2E45 /* Category.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC8B56CA2817DB2E006B2E45 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/graphics/scale/continuous;
+			dstSubfolderSpec = 7;
+			files = (
+				CC8B56CC2817DB3B006B2E45 /* TimeSharingLinear.h in CopyFiles */,
+				CC8B56CB2817DB3A006B2E45 /* Linear.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC8B56CD2817DB63006B2E45 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/graphics/util;
+			dstSubfolderSpec = 7;
+			files = (
+				CC8B56CE2817DB75006B2E45 /* BBox.h in CopyFiles */,
+				CC8B56CF2817DB75006B2E45 /* Point.h in CopyFiles */,
+				CC8B56D02817DB75006B2E45 /* Path.h in CopyFiles */,
+				CC8B56D12817DB75006B2E45 /* Matrix.h in CopyFiles */,
+				CC8B56D22817DB75006B2E45 /* Color.h in CopyFiles */,
+				CC8B56D32817DB75006B2E45 /* json_util.h in CopyFiles */,
+				CC8B56D42817DB75006B2E45 /* json.h in CopyFiles */,
+				CC8B56D52817DB75006B2E45 /* Vector2d.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC8B56D62817DB7A006B2E45 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/graphics/canvas;
+			dstSubfolderSpec = 7;
+			files = (
+				CC8B56D72817DBAE006B2E45 /* CanvasImage.h in CopyFiles */,
+				CC8B56D82817DBAE006B2E45 /* CanvasColorParser.h in CopyFiles */,
+				CC8B56D92817DBAE006B2E45 /* CanvasFontParser.h in CopyFiles */,
+				CC8B56DA2817DBAE006B2E45 /* Cartesian.h in CopyFiles */,
+				CC8B56DB2817DBAE006B2E45 /* Container.h in CopyFiles */,
+				CC8B56DC2817DBAE006B2E45 /* Coord.h in CopyFiles */,
+				CC8B56DD2817DBAE006B2E45 /* Canvas.h in CopyFiles */,
+				CC8B56DE2817DBAE006B2E45 /* CanvasContext.h in CopyFiles */,
+				CC8B56DF2817DBAE006B2E45 /* Polar.h in CopyFiles */,
+				CC8B56E02817DBAE006B2E45 /* CanvasFillStrokeStyle.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC8B56E12817DBB6006B2E45 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/graphics/geom;
+			dstSubfolderSpec = 7;
+			files = (
+				CC8B56E22817DBCA006B2E45 /* Point.h in CopyFiles */,
+				CC8B56E32817DBCA006B2E45 /* Path.h in CopyFiles */,
+				CC8B56E42817DBCA006B2E45 /* Candle.h in CopyFiles */,
+				CC8B56E52817DBCA006B2E45 /* Area.h in CopyFiles */,
+				CC8B56E62817DBCA006B2E45 /* Line.h in CopyFiles */,
+				CC8B56E72817DBCA006B2E45 /* Geom.h in CopyFiles */,
+				CC8B56E82817DBCA006B2E45 /* Interval.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC8B56E92817DBE3006B2E45 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/graphics/geom/shape;
+			dstSubfolderSpec = 7;
+			files = (
+				CC8B56EA2817DBF5006B2E45 /* Point.h in CopyFiles */,
+				CC8B56EB2817DBF5006B2E45 /* GeomShapeFactory.h in CopyFiles */,
+				CC8B56EC2817DBF5006B2E45 /* Candle.h in CopyFiles */,
+				CC8B56ED2817DBF5006B2E45 /* Area.h in CopyFiles */,
+				CC8B56EE2817DBF5006B2E45 /* Line.h in CopyFiles */,
+				CC8B56EF2817DBF5006B2E45 /* GeomShapeBase.h in CopyFiles */,
+				CC8B56F02817DBF5006B2E45 /* Interval.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC8B56F12817DBF7006B2E45 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/graphics/geom/attr;
+			dstSubfolderSpec = 7;
+			files = (
+				CC8B56F22817DC01006B2E45 /* AttrBase.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC8B56F32817DC09006B2E45 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/graphics/axis;
+			dstSubfolderSpec = 7;
+			files = (
+				CC8B56F42817DC12006B2E45 /* AxisController.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC8B56F52817DC16006B2E45 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/graphics/event;
+			dstSubfolderSpec = 7;
+			files = (
+				CC8B56F62817DC1E006B2E45 /* EventController.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC8B56F72817DC20006B2E45 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/graphics/interaction;
+			dstSubfolderSpec = 7;
+			files = (
+				CC8B56F82817DC34006B2E45 /* InteractionBase.h in CopyFiles */,
+				CC8B56F92817DC34006B2E45 /* Pan.h in CopyFiles */,
+				CC8B56FA2817DC34006B2E45 /* InteractionContext.h in CopyFiles */,
+				CC8B56FB2817DC34006B2E45 /* Pinch.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC8B56FC2817DC3C006B2E45 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/graphics/func;
+			dstSubfolderSpec = 7;
+			files = (
+				CC8B56FD2817DC50006B2E45 /* Command.h in CopyFiles */,
+				CC8B56FE2817DC50006B2E45 /* Func.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC8B56FF2817DC58006B2E45 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/nlohmann;
+			dstSubfolderSpec = 7;
+			files = (
+				CC8B74E228196AB1006B2E45 /* json.hpp in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC8B57322817F993006B2E45 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers;
+			dstSubfolderSpec = 7;
+			files = (
+				CC8B57332817F9A6006B2E45 /* Core.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		3F56A02C25218EE5002AA2D2 /* F2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F2.h; sourceTree = "<group>"; };
@@ -262,7 +632,6 @@
 		955723BE25ECBF7200D2FC07 /* Cartesian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cartesian.h; sourceTree = "<group>"; };
 		955723BF25ECBF7200D2FC07 /* Container.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Container.h; sourceTree = "<group>"; };
 		955723C125ECBF7200D2FC07 /* Coord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Coord.h; sourceTree = "<group>"; };
-		955723C225ECBF7200D2FC07 /* AlipayCanvasContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlipayCanvasContext.h; sourceTree = "<group>"; };
 		955723C325ECBF7200D2FC07 /* Canvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Canvas.h; sourceTree = "<group>"; };
 		955723C425ECBF7200D2FC07 /* CanvasContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasContext.h; sourceTree = "<group>"; };
 		955723C525ECBF7200D2FC07 /* Polar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Polar.h; sourceTree = "<group>"; };
@@ -314,9 +683,6 @@
 		CC611D18250A1D0800315124 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		CC611D1A250A1D0800315124 /* Tracer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tracer.h; sourceTree = "<group>"; };
 		CC611D1B250A1D0800315124 /* xtime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xtime.h; sourceTree = "<group>"; };
-		CC612098250A1D0900315124 /* WilkinsonExtended.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = WilkinsonExtended.c; sourceTree = "<group>"; };
-		CC61209B250A1D0900315124 /* WilkinsonExtended.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WilkinsonExtended.h; sourceTree = "<group>"; };
-		CC6124D4250A1D0C00315124 /* json.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = json.hpp; sourceTree = "<group>"; };
 		CC612BEB250B2EF600315124 /* F2Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F2Utils.h; sourceTree = "<group>"; };
 		CC612BEC250B2EF600315124 /* F2Chart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F2Chart.h; sourceTree = "<group>"; };
 		CC612BED250B2EF600315124 /* F2Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = F2Utils.m; sourceTree = "<group>"; };
@@ -326,6 +692,8 @@
 		CC612BF1250B2EF700315124 /* F2Geom.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = F2Geom.mm; sourceTree = "<group>"; };
 		CC612BF2250B2EF700315124 /* F2Guide.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = F2Guide.mm; sourceTree = "<group>"; };
 		CC793C3B2509FBAA00E9D913 /* F2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = F2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC8B572F2817F0B3006B2E45 /* Core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Core.h; sourceTree = "<group>"; };
+		CC8B74DF2818F83A006B2E45 /* json.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = json.hpp; sourceTree = "<group>"; };
 		CC8C6180278FDEA500F540D7 /* Point.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Point.h; sourceTree = "<group>"; };
 		CC8C6181278FDEA500F540D7 /* StringUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringUtils.h; sourceTree = "<group>"; };
 		CC8C6182278FDEA500F540D7 /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json.h; sourceTree = "<group>"; };
@@ -566,7 +934,6 @@
 				955723BE25ECBF7200D2FC07 /* Cartesian.h */,
 				955723BF25ECBF7200D2FC07 /* Container.h */,
 				955723C125ECBF7200D2FC07 /* Coord.h */,
-				955723C225ECBF7200D2FC07 /* AlipayCanvasContext.h */,
 				955723C325ECBF7200D2FC07 /* Canvas.h */,
 				955723C425ECBF7200D2FC07 /* CanvasContext.h */,
 				955723C525ECBF7200D2FC07 /* Polar.h */,
@@ -675,6 +1042,8 @@
 		CC611D11250A1D0800315124 /* core */ = {
 			isa = PBXGroup;
 			children = (
+				CC8B572F2817F0B3006B2E45 /* Core.h */,
+				CC8B74DE2818F83A006B2E45 /* nlohmann */,
 				CC3C01E126A00E6700335A1C /* ios */,
 				9557237325ECBF7200D2FC07 /* graphics */,
 				CC611D12250A1D0800315124 /* utils */,
@@ -695,50 +1064,7 @@
 			path = utils;
 			sourceTree = "<group>";
 		};
-		CC611D6B250A1D0800315124 /* third_party */ = {
-			isa = PBXGroup;
-			children = (
-				CC612096250A1D0900315124 /* WilkinsonExtended */,
-				CC61209D250A1D0900315124 /* json */,
-			);
-			name = third_party;
-			path = ../third_party;
-			sourceTree = "<group>";
-		};
-		CC612096250A1D0900315124 /* WilkinsonExtended */ = {
-			isa = PBXGroup;
-			children = (
-				CC612098250A1D0900315124 /* WilkinsonExtended.c */,
-				CC61209B250A1D0900315124 /* WilkinsonExtended.h */,
-			);
-			path = WilkinsonExtended;
-			sourceTree = "<group>";
-		};
-		CC61209D250A1D0900315124 /* json */ = {
-			isa = PBXGroup;
-			children = (
-				CC6124D2250A1D0C00315124 /* single_include */,
-			);
-			path = json;
-			sourceTree = "<group>";
-		};
-		CC6124D2250A1D0C00315124 /* single_include */ = {
-			isa = PBXGroup;
-			children = (
-				CC6124D3250A1D0C00315124 /* nlohmann */,
-			);
-			path = single_include;
-			sourceTree = "<group>";
-		};
-		CC6124D3250A1D0C00315124 /* nlohmann */ = {
-			isa = PBXGroup;
-			children = (
-				CC6124D4250A1D0C00315124 /* json.hpp */,
-			);
-			path = nlohmann;
-			sourceTree = "<group>";
-		};
-		CC612BAE250A1E5800315124 /* Wrapper */ = {
+		CC612BAE250A1E5800315124 /* F2 */ = {
 			isa = PBXGroup;
 			children = (
 				CCC3F4412760808A008D3F06 /* F2CoreGraphicsCanvasContext.h */,
@@ -764,15 +1090,14 @@
 				CC5F25E7273FB3730016F3A8 /* F2Coordinate.h */,
 				CC5F25E8273FB3730016F3A8 /* F2Coordinate.mm */,
 			);
-			path = Wrapper;
+			path = F2;
 			sourceTree = "<group>";
 		};
 		CC793C312509FBAA00E9D913 = {
 			isa = PBXGroup;
 			children = (
-				CC612BAE250A1E5800315124 /* Wrapper */,
+				CC612BAE250A1E5800315124 /* F2 */,
 				CC611D11250A1D0800315124 /* core */,
-				CC611D6B250A1D0800315124 /* third_party */,
 				CCCDE9CC2744D9740060D768 /* F2Tests */,
 				CC793C3C2509FBAA00E9D913 /* Products */,
 				CC794AE52509FD7800E9D913 /* Frameworks */,
@@ -796,6 +1121,14 @@
 				CC8C61EF27965A0000F540D7 /* UIKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CC8B74DE2818F83A006B2E45 /* nlohmann */ = {
+			isa = PBXGroup;
+			children = (
+				CC8B74DF2818F83A006B2E45 /* json.hpp */,
+			);
+			path = nlohmann;
 			sourceTree = "<group>";
 		};
 		CC8C617E278FDEA500F540D7 /* unit */ = {
@@ -879,12 +1212,14 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CCC3F4432760808A008D3F06 /* F2CoreGraphicsCanvasContext.h in Headers */,
 				9557244825ECBF7200D2FC07 /* Line.h in Headers */,
 				955723F825ECBF7200D2FC07 /* Line.h in Headers */,
 				CC019E5F2692EFA800543DB9 /* F2CanvasContext.h in Headers */,
 				CC5F25E9273FB3730016F3A8 /* F2Coordinate.h in Headers */,
 				955723F525ECBF7200D2FC07 /* Flag.h in Headers */,
 				CC612BF4250B2EF700315124 /* F2Chart.h in Headers */,
+				CC8B74E02818F83A006B2E45 /* json.hpp in Headers */,
 				9557245825ECBF7200D2FC07 /* Command.h in Headers */,
 				9557245125ECBF7200D2FC07 /* InteractionBase.h in Headers */,
 				955723F425ECBF7200D2FC07 /* Text.h in Headers */,
@@ -913,7 +1248,6 @@
 				9557245525ECBF7200D2FC07 /* InteractionContext.h in Headers */,
 				9557244425ECBF7200D2FC07 /* Area.h in Headers */,
 				9557243E25ECBF7200D2FC07 /* Line.h in Headers */,
-				9557243425ECBF7200D2FC07 /* AlipayCanvasContext.h in Headers */,
 				9557243C25ECBF7200D2FC07 /* Candle.h in Headers */,
 				9557243A25ECBF7200D2FC07 /* GeomShapeFactory.h in Headers */,
 				9557240725ECBF7200D2FC07 /* Dodge.h in Headers */,
@@ -943,11 +1277,9 @@
 				9557240D25ECBF7200D2FC07 /* Marker.h in Headers */,
 				9557243325ECBF7200D2FC07 /* Coord.h in Headers */,
 				9557243625ECBF7200D2FC07 /* CanvasContext.h in Headers */,
-				CC612BA5250A1D0F00315124 /* json.hpp in Headers */,
 				9557244225ECBF7200D2FC07 /* Path.h in Headers */,
 				9557242425ECBF7200D2FC07 /* BBox.h in Headers */,
 				9557242025ECBF7200D2FC07 /* KLineCat.h in Headers */,
-				CCC3F4432760808A008D3F06 /* F2CoreGraphicsCanvasContext.h in Headers */,
 				9557242925ECBF7200D2FC07 /* json_util.h in Headers */,
 				9557241025ECBF7200D2FC07 /* Polyline.h in Headers */,
 				CC8C62112797E96700F540D7 /* CanvasFillStrokeStyle.h in Headers */,
@@ -961,7 +1293,6 @@
 				9557244E25ECBF7200D2FC07 /* AxisController.h in Headers */,
 				9557241C25ECBF7200D2FC07 /* Scale.h in Headers */,
 				955723FD25ECBF7200D2FC07 /* GeomAnimate.h in Headers */,
-				CC6127BD250A1D0D00315124 /* WilkinsonExtended.h in Headers */,
 				9557242725ECBF7200D2FC07 /* Matrix.h in Headers */,
 				9557240025ECBF7200D2FC07 /* Animator.h in Headers */,
 				9557244025ECBF7200D2FC07 /* Interval.h in Headers */,
@@ -992,6 +1323,28 @@
 				CC793C372509FBAA00E9D913 /* Sources */,
 				CC793C382509FBAA00E9D913 /* Frameworks */,
 				CC793C392509FBAA00E9D913 /* Resources */,
+				CC8B56972817D9B5006B2E45 /* CopyFiles */,
+				CC8B569C2817DA05006B2E45 /* CopyFiles */,
+				CC8B569F2817DA61006B2E45 /* CopyFiles */,
+				CC8B56A22817DA96006B2E45 /* CopyFiles */,
+				CC8B56AA2817DAAF006B2E45 /* CopyFiles */,
+				CC8B56AC2817DABE006B2E45 /* CopyFiles */,
+				CC8B56B02817DADE006B2E45 /* CopyFiles */,
+				CC8B56B32817DAEA006B2E45 /* CopyFiles */,
+				CC8B56B62817DAFB006B2E45 /* CopyFiles */,
+				CC8B56C32817DB1B006B2E45 /* CopyFiles */,
+				CC8B56CA2817DB2E006B2E45 /* CopyFiles */,
+				CC8B56CD2817DB63006B2E45 /* CopyFiles */,
+				CC8B56D62817DB7A006B2E45 /* CopyFiles */,
+				CC8B56E12817DBB6006B2E45 /* CopyFiles */,
+				CC8B56E92817DBE3006B2E45 /* CopyFiles */,
+				CC8B56F12817DBF7006B2E45 /* CopyFiles */,
+				CC8B56F32817DC09006B2E45 /* CopyFiles */,
+				CC8B56F52817DC16006B2E45 /* CopyFiles */,
+				CC8B56F72817DC20006B2E45 /* CopyFiles */,
+				CC8B56FC2817DC3C006B2E45 /* CopyFiles */,
+				CC8B56FF2817DC58006B2E45 /* CopyFiles */,
+				CC8B57322817F993006B2E45 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -1083,7 +1436,6 @@
 				CC1E0EE2275798A400C76359 /* Color.cpp in Sources */,
 				CC612BF5250B2EF700315124 /* F2Utils.m in Sources */,
 				9557243825ECBF7200D2FC07 /* Line.cpp in Sources */,
-				CC6127BA250A1D0D00315124 /* WilkinsonExtended.c in Sources */,
 				955723F225ECBF7200D2FC07 /* GuideBase.cpp in Sources */,
 				9557242E25ECBF7200D2FC07 /* XChart.cpp in Sources */,
 				955723F925ECBF7200D2FC07 /* Flag.cpp in Sources */,
@@ -1288,20 +1640,22 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Wrapper/F2-Prefix.pch";
+				GCC_PREFIX_HEADER = "F2/F2-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					IOS,
 					GLES_SILENCE_DEPRECATION,
 				);
 				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
 					"\"$(SRCROOT)/../core\"",
 					"\"$(SRCROOT)/../third_party\"",
 					"\"$(SRCROOT)/../third_party/json/single_include\"",
+					"\"$(SRCROOT)/../finance/core\"",
 				);
 				INFOPLIST_FILE = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1332,19 +1686,21 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Wrapper/F2-Prefix.pch";
+				GCC_PREFIX_HEADER = "F2/F2-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					IOS,
 					GLES_SILENCE_DEPRECATION,
 				);
 				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
 					"\"$(SRCROOT)/../core\"",
 					"\"$(SRCROOT)/../third_party\"",
 					"\"$(SRCROOT)/../third_party/json/single_include\"",
+					"\"$(SRCROOT)/../finance/core\"",
 				);
 				INFOPLIST_FILE = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";

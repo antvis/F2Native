@@ -10,25 +10,28 @@
 #define XG_GRAPHICS_CANVAS_CANVASIMAGE_H
 
 #include <string>
-#include <mutex>
+#include <functional>
 
 namespace xg {
 namespace canvas {
 
 class CanvasImage {
-public:
+  public:
     CanvasImage() = delete;
-    CanvasImage(const std::string &url) : url_(url) {};
+    CanvasImage(const std::string &url) : url_(url){};
     ~CanvasImage();
-    
+
     void OnLoad(std::function<void()> finished);
-    
-    inline void *GetImage() { return image_;}
-    
+
+    inline void *GetImage() { return image_; }
+
     float GetWidth();
-    
+
     float GetHeight();
-private:
+
+    inline const std::string &GetURL() { return url_; }
+
+  private:
     //在ios上是CGImageRef
     void *image_ = nullptr;
     std::string url_;

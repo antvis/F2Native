@@ -1,7 +1,7 @@
-#include "graphics/shape/Shape.h"
-
 #ifndef XG_GRAPHICS_SHAPE_MARKER_H
 #define XG_GRAPHICS_SHAPE_MARKER_H
+
+#include "Shape.h"
 
 namespace xg {
 namespace shape {

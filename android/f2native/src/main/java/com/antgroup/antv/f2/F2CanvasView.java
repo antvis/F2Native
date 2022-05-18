@@ -1,20 +1,27 @@
 package com.antgroup.antv.f2;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.antgroup.antv.f2.base.F2BaseCanvasHandle;
 import com.antgroup.antv.f2.base.F2BaseCanvasView;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class F2CanvasView extends FrameLayout {
 
-    private F2BaseCanvasView mF2BaseCanvasView;
+    protected F2BaseCanvasView mF2BaseCanvasView;
+    public static boolean mLoadedPlotLibrary = false;
+
+    static {
+        if (!mLoadedPlotLibrary) {
+            System.loadLibrary("f2");
+            mLoadedPlotLibrary = true;
+        }
+    }
 
     public F2CanvasView(Context context) {
         this(context, null);
@@ -25,10 +32,16 @@ public class F2CanvasView extends FrameLayout {
         init(context, attrs);
     }
 
-    private void init(Context context, AttributeSet attrs) {
+    protected void init(Context context, AttributeSet attrs) {
         mF2BaseCanvasView = new F2AndroidCanvasView(context, attrs, this);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         addView(mF2BaseCanvasView.getView(), params);
+    }
+
+    protected void init(int width, int height, F2Config config) {
+        if (mF2BaseCanvasView != null) {
+            mF2BaseCanvasView.init(width, height, config);
+        }
     }
 
     private void innerLog(String content) {
@@ -54,21 +67,9 @@ public class F2CanvasView extends FrameLayout {
         return 0;
     }
 
-    public void swapBuffer() {
+    public boolean swapBuffer() {
         if (mF2BaseCanvasView != null) {
-            mF2BaseCanvasView.swapBuffer();
-        }
-    }
-
-    public void appendRenderCmdCount(String name, int renderCmdCount) {
-        if (mF2BaseCanvasView != null) {
-            mF2BaseCanvasView.appendRenderCmdCount(name, renderCmdCount);
-        }
-    }
-
-    public boolean isOnCanvasThread() {
-        if (mF2BaseCanvasView != null) {
-            return mF2BaseCanvasView.isOnCanvasThread();
+            return mF2BaseCanvasView.swapBuffer();
         }
         return false;
     }
@@ -98,13 +99,6 @@ public class F2CanvasView extends FrameLayout {
         }
     }
 
-    public F2BaseCanvasHandle getCanvasHandle() {
-        if (mF2BaseCanvasView != null) {
-            return mF2BaseCanvasView.getCanvasHandle();
-        }
-        return null;
-    }
-
     public boolean hasAdapter() {
         if (mF2BaseCanvasView != null) {
             return mF2BaseCanvasView.hasAdapter();
@@ -112,15 +106,26 @@ public class F2CanvasView extends FrameLayout {
         return false;
     }
 
-    private Boolean mIsAndroidCanvas;
-
-    public Boolean isAndroidCanvas() {
-        if (mIsAndroidCanvas == null) {
-            mIsAndroidCanvas = F2CSUtils.isAndroidCanvas();
+    public void sendRenderDetectEvent(long renderDuration, boolean renderSuccess, int renderCmdCount,
+                                      boolean drawSuccess, String chartId) {
+        if (mF2BaseCanvasView != null) {
+            mF2BaseCanvasView.sendRenderDetectEvent(renderDuration, renderSuccess, renderCmdCount, drawSuccess, chartId);
         }
-        return mIsAndroidCanvas;
     }
 
+    public boolean isDrawSuccess() {
+        if (mF2BaseCanvasView != null) {
+            return mF2BaseCanvasView.isDrawSuccess();
+        }
+        return false;
+    }
+
+    public boolean hadOOM() {
+        if (mF2BaseCanvasView != null) {
+            return mF2BaseCanvasView.hadOOM();
+        }
+        return false;
+    }
 
     public interface Adapter {
         void onCanvasDraw(F2CanvasView canvasView);
@@ -129,24 +134,8 @@ public class F2CanvasView extends FrameLayout {
     }
 
     public static class ConfigBuilder extends F2Config.Builder<ConfigBuilder> {
-        protected static final String KEY_ASYNC_RENDER = "asyncRender";
-        protected static final String KEY_BACKGROUND_COLOR = "backgroundColor";
         protected static final String KEY_CANVAS_BIZ_ID = "canvasBizId";
         protected static final String KEY_APP_ID = "appId";
-        protected static final String KEY_NATIVE_DRAW = "useGLFunctor";
-        protected static final String KEY_CANVAS_TYPE = "canvasType";
-
-        public ConfigBuilder canvasId(String canvasId) {
-            return setOption(F2Constants.CANVAS_ID, canvasId);
-        }
-
-        public ConfigBuilder asyncRender(boolean async) {
-            return setOption(KEY_ASYNC_RENDER, async);
-        }
-
-        public ConfigBuilder backgroundColor(String color) {
-            return setOption(KEY_BACKGROUND_COLOR, color);
-        }
 
         public ConfigBuilder canvasBizId(String canvasBizId) {
             return setOption(KEY_CANVAS_BIZ_ID, canvasBizId);
@@ -156,23 +145,8 @@ public class F2CanvasView extends FrameLayout {
             return setOption(KEY_APP_ID, appId);
         }
 
-        public ConfigBuilder useNativeDraw(boolean b) {
-            return setOption(KEY_NATIVE_DRAW, b);
-        }
-
-        public ConfigBuilder canvasType(String canvasType) {
-            return setOption(KEY_CANVAS_TYPE, canvasType);
-        }
-
         @Override
         public F2Config build() {
-            if (!options.has(F2Constants.CANVAS_ID)) {
-                canvasId(F2Util.generateId());
-            }
-            if (!options.has(KEY_ASYNC_RENDER)) {
-                asyncRender(true);
-            }
-
             if (!options.has(KEY_CANVAS_BIZ_ID)) {
                 throw new NullPointerException("Not found canvasBizId");
             }
@@ -251,6 +225,7 @@ public class F2CanvasView extends FrameLayout {
         }
     }
 
-    private native static long nCreateCanvasContextHandle(Object thisObj);
+    native static long nCreateCanvasContextHandle(Object thisObj);
 
+    native static void nDestroyCanvasContextHandle(long canvasHolder);
 }

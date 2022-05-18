@@ -1,11 +1,11 @@
 #ifndef XG_GRAPHICS_GEOM_SHAPE_LINE_H
 #define XG_GRAPHICS_GEOM_SHAPE_LINE_H
 
-#include "graphics/geom/shape/GeomShapeBase.h"
-#include "graphics/global.h"
-#include "graphics/shape/Polyline.h"
-#include "graphics/util/Point.h"
 #include <vector>
+#include "GeomShapeBase.h"
+#include "../../global.h"
+#include "../../shape/Polyline.h"
+#include "../../util/Point.h"
 
 using namespace xg::util;
 

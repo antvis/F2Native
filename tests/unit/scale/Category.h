@@ -9,12 +9,20 @@ namespace unit {
 
 class Category {
 public:
+    static bool TickCount0() {
+        nlohmann::json values = {"2017", "2018", "2019", "2020", "2021"};
+        nlohmann::json config = {{"tickCount", 0},};
+        scale::Category cat("field", values, config);
+        std::vector<scale::Tick> ticks = cat.GetTicks();
+        return ticks.size() == 0;
+    }
+    
     static bool TickCountLess2() {
         nlohmann::json values = {"2017", "2018", "2019", "2020", "2021"};
         nlohmann::json config = {{"tickCount", 1},};
         scale::Category cat("field", values, config);
         std::vector<scale::Tick> ticks = cat.GetTicks();
-        return ticks.size() == 1 && ticks[0].text == "2021";
+        return ticks.size() == 5 && ticks[0].text == "2017" && ticks[4].text == "2021";
     }
     
     static bool ValueCountLess2() {

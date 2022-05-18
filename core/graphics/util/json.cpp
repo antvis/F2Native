@@ -21,7 +21,7 @@ std::vector<float> ParseDashArray(const nlohmann::json &json, float ratio, const
                 rst.push_back(json[i].get<float>() * ratio);
             }
         }
-        
+
         return rst;
     }
     return defVal;
@@ -55,6 +55,22 @@ const std::string GetString(const nlohmann::json &obj, const std::string &key, c
 const double GetNumber(const nlohmann::json &obj, const std::string &key, const double def) {
     if(obj.is_object() && obj.contains(key) && obj[key].is_number()) {
         return obj[key].get<double>();
+    } else {
+        return def;
+    }
+}
+
+const int GetIntNumber(const nlohmann::json &obj, const std::string &key, const int def) {
+    if(obj.is_object() && obj.contains(key) && obj[key].is_number_integer()) {
+        return obj[key].get<int>();
+    } else {
+        return def;
+    }
+}
+
+const float GetFloatNumber(const nlohmann::json &obj, const std::string &key, const float def) {
+    if(obj.is_object() && obj.contains(key) && obj[key].is_number_float()) {
+        return obj[key].get<float>();
     } else {
         return def;
     }

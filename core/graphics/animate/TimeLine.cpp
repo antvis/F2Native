@@ -1,6 +1,6 @@
 #include "TimeLine.h"
-#include "graphics/XChart.h"
-#include "utils/xtime.h"
+#include "../XChart.h"
+#include "../../utils/xtime.h"
 
 using namespace xg;
 

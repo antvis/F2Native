@@ -1,7 +1,7 @@
-#include "Animator.h"
-
 #ifndef XG_GRAPHICS_ANIMATE_TIMELINE_H
 #define XG_GRAPHICS_ANIMATE_TIMELINE_H
+
+#include "Animator.h"
 
 namespace xg {
 class XChart;

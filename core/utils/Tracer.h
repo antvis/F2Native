@@ -5,7 +5,7 @@
 #endif
 
 #if defined(__APPLE__)
-#include "ios/F2Logger.h"
+#include "../ios/F2Logger.h"
 #endif
 
 #ifndef X_CHART_UTILS_TRACER_H

@@ -1,11 +1,11 @@
-#include "graphics/canvas/CanvasFillStrokeStyle.h"
-#include "graphics/global.h"
-#include <nlohmann/json.hpp>
-#include <string>
-#include <vector>
-
 #ifndef XG_GRAPHICS_UTIL_COLOR_H
 #define XG_GRAPHICS_UTIL_COLOR_H
+
+#include <string>
+#include <vector>
+#include "../../nlohmann/json.hpp"
+#include "../canvas/CanvasFillStrokeStyle.h"
+#include "../global.h"
 
 namespace xg {
 namespace util {

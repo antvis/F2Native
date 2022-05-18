@@ -66,7 +66,9 @@ XChart::~XChart() {
     geoms_.clear();
 
     XG_RELEASE_POINTER(tooltipController_);
-    XG_RELEASE_POINTER(canvasContext_);
+    if (ownCanvasContext_) {
+        XG_RELEASE_POINTER(canvasContext_);
+    }
     XG_RELEASE_POINTER(interactionContext_);
     XG_RELEASE_POINTER(eventController_);
     XG_RELEASE_POINTER(logTracer_);
@@ -123,7 +125,8 @@ XChart &XChart::Axis(const std::string &field, const std::string &json) {
     return *this;
 }
 
-XChart &XChart::Interaction(const std::string &type, nlohmann::json config) {
+XChart &XChart::Interaction(const std::string &type, const std::string &json) {
+    nlohmann::json config = xg::json::ParseString(json);
     if(type == "pinch") {
         std::unique_ptr<interaction::InteractionBase> pinch = std::make_unique<interaction::Pinch>(this);
         interactions_.push_back(std::move(pinch));
@@ -273,21 +276,21 @@ std::string XChart::GetScaleTicks(const std::string &field) noexcept {
     return rst.dump();
 }
 
-void XChart::Render() {
+bool XChart::Render() {
     this->logTracer_->trace("#Render %s", "start render");
     if(canvasContext_ == nullptr) {
         this->logTracer_->trace("error: %s", "canvasContext is nullptr, render end.");
-        return;
+        return false;
     }
 
     if(!canvasContext_->IsValid()) {
         this->logTracer_->trace("error: %s", "canvasContext is not valid, render end.");
-        return;
+        return false;
     }
 
     if(!this->data_.is_array() || this->data_.size() == 0) {
         this->logTracer_->trace("error: %s", "data is not array or size is zero, render end.");
-        return;
+        return false;
     }
 
     auto startTimeStamp = xg::CurrentTimestampAtMM();
@@ -346,6 +349,7 @@ void XChart::Render() {
 
     long count = this->canvasContext_->GetRenderCount();
     this->logTracer_->trace("%s %s renderCount: %ld, duration: %lums", chartId_.c_str(), "canvas#endDraw", count, renderDurationMM_);
+    return true;
 }
 
 void XChart::Repaint() {

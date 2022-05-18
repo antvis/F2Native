@@ -1,9 +1,9 @@
-#include "graphics/scale/Scale.h"
-#include <array>
-#include <nlohmann/json.hpp>
-
 #ifndef XG_GRAPHICS_EVENT_INTERACTION_CTX_H
 #define XG_GRAPHICS_EVENT_INTERACTION_CTX_H
+
+#include <array>
+#include "../scale/Scale.h"
+#include "../../nlohmann/json.hpp"
 
 namespace xg {
 class XChart;

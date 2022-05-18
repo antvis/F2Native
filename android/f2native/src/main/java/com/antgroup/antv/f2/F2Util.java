@@ -70,8 +70,4 @@ public final class F2Util {
         return targetField;
     }
 
-    final static String generateId() {
-        return String.valueOf(System.currentTimeMillis() + "-" + new Random().nextInt(100000));
-    }
-
 }

@@ -5,33 +5,18 @@ add_definitions(-DGL_GLEXT_PROTOTYPES)
 # 头文件搜索目录
 include_directories(core)
 
-## third_party
-include_directories(third_party)
-
-#if (TARGET_STANDALONE)
-#    include_directories(third_party/GCanvas/core/src)
-#    include_directories(third_party/GCanvas/core/src/gcanvas)
-#    include_directories(third_party/GCanvas/core/src/gcanvas/GL)
-#    include_directories(third_party/GCanvas/core/src/platform)
-#    include_directories(third_party/GCanvas/core/src/platform/Android)
-#    include_directories(third_party/GCanvas/core/src/support)
-#    include_directories(third_party/GCanvas/core/android)
-#    include_directories(third_party/GCanvas/node/third_party/font/freetype2)
-#elseif (TARGET_ALIPAY)
-    include_directories(third_party/)
-    include_directories(third_party/AntGraphic)
-#endif ()
-
-include_directories(third_party/json/single_include)
-
 # g++
 add_definitions(-ffunction-sections)
 add_definitions(-fdata-sections)
+add_definitions(-Wno-deprecated)
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fno-rtti -fno-exceptions -funwind-tables")
 
 # 添加 core 下所有源文件
+aux_source_directory(core/Core.h DIR_SRC_CORE)
 aux_source_directory(core/graphics DIR_SRC_GRAPHICS)
 aux_source_directory(core/utils DIR_SRC_UTILS)
+aux_source_directory(core/nlohmann DIR_SRC_NLOHMANN)
 
 aux_source_directory(core/graphics/axis DIR_SRC_GRAPHICS_AXIS)
 aux_source_directory(core/graphics/animate DIR_SRC_GRAPHICS_ANIMATE)
@@ -70,11 +55,10 @@ list(APPEND DIR_SRC_GRAPHICS ${DIR_SRC_GRAPHICS_INTERACTION})
 list(APPEND DIR_SRC_GRAPHICS ${DIR_SRC_GRAPHICS_LEGEND})
 list(APPEND DIR_SRC_GRAPHICS ${DIR_SRC_GRAPHICS_FUNC})
 
-
+list(APPEND DIR_SRC ${DIR_SRC_CORE})
 list(APPEND DIR_SRC ${DIR_SRC_UTILS})
 list(APPEND DIR_SRC ${DIR_SRC_GRAPHICS})
-
-#list(APPEND CMAKE_MODULE_PATH "../../cmake")
+list(APPEND DIR_SRC ${DIR_SRC_NLOHMANN})
 
 if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
     add_definitions(-D DEBUG)
@@ -82,28 +66,11 @@ endif ()
 
 aux_source_directory(core/android DIR_SRC_ANDROID)
 
-if (TARGET_ALIPAY)
-    list(REMOVE_ITEM DIR_SRC_ANDROID "core/android/F2CanvasView.cpp")
-endif ()
-
-
-aux_source_directory(third_party/WilkinsonExtended WilkinsonExtended)
-
 add_library(f2
         SHARED
-        ${DIR_SRC} ${DIR_SRC_ANDROID} ${WilkinsonExtended})
+        ${DIR_SRC} ${DIR_SRC_ANDROID})
 
 find_library(log-lib log)
 
 target_link_libraries(f2 ${log-lib})
 target_link_libraries(f2 android -Wl,--gc-sections)
-target_link_libraries(f2 GLESv2 -Wl,--gc-sections)
-target_link_libraries(f2 EGL -Wl,--gc-sections)
-
-#if (TARGET_STANDALONE)
-#    target_link_libraries(f2 ${CMAKE_SOURCE_DIR}/third_party/GCanvas/core/android/freetype-prebuilt/libs/${ANDROID_ABI}/libfreetype.so)
-#    target_link_libraries(f2 ${CMAKE_SOURCE_DIR}/third_party/GCanvas/android/gcanvas_library/build/intermediates/cmake/standalone/release/obj/${ANDROID_ABI}/libgcanvas.so)
-#elseif (TARGET_ALIPAY)
-#    target_link_libraries(f2 ${CMAKE_SOURCE_DIR}/third_party/AntGraphic/jniLibs/${ANDROID_ABI}/libfreetype.so)
-#    target_link_libraries(f2 ${CMAKE_SOURCE_DIR}/third_party/AntGraphic/jniLibs/${ANDROID_ABI}/libantgraphic.so)
-#endif ()

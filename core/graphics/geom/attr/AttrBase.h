@@ -1,13 +1,13 @@
 #ifndef XG_GRAPHICS_GEOM_ATTR_H
 #define XG_GRAPHICS_GEOM_ATTR_H
 
-#include "graphics/canvas/Coord.h"
-#include "graphics/scale/Category.h"
-#include "graphics/scale/Scale.h"
 #include <map>
 #include <math.h>
 #include <string>
 #include <vector>
+#include "../../canvas/Coord.h"
+#include "../../scale/Category.h"
+#include "../../scale/Scale.h"
 
 using namespace xg::canvas::coord;
 using namespace xg::scale;

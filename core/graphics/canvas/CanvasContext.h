@@ -1,10 +1,10 @@
-#include <utils/Tracer.h>
+#ifndef XG_GRAPHICS_CANVAS_CONTEXT_H
+#define XG_GRAPHICS_CANVAS_CONTEXT_H
+
 #include <vector>
 #include "CanvasImage.h"
 #include "CanvasFillStrokeStyle.h"
-
-#ifndef XG_GRAPHICS_CANVAS_CONTEXT_H
-#define XG_GRAPHICS_CANVAS_CONTEXT_H
+#include "../../utils/Tracer.h"
 
 /// release版本提升性能，减少日志中std::to_string的消耗
 /// debug的时候可以输出绘制指令

@@ -157,6 +157,8 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
 
         const auto &textAlign = axis->labelCfg["textAlign"];
         const auto &textBaseline = axis->labelCfg["textBaseline"];
+        
+        bool inner = json::GetBool(axis->labelCfg, "inner");
 
         func::F2Function *labelItemFunc = nullptr;
         if(axis->labelCfg.contains("item")) {
@@ -205,8 +207,8 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
                     }                    
                     xg::util::BBox bbox = text->GetBBox(chart.GetCanvasContext());
 
-                    axis->maxWidth = fmax(axis->maxWidth, static_cast<double>(bbox.width));
-                    axis->maxHeight = fmax(axis->maxHeight, static_cast<double>(bbox.height));
+                    axis->maxWidth = inner ? 0 : fmax(axis->maxWidth, static_cast<double>(bbox.width));
+                    axis->maxHeight = inner ? 0 : fmax(axis->maxHeight, static_cast<double>(bbox.height));
 
                     axis->labels.push_back(std::move(text));
                 } else {
@@ -227,8 +229,8 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
                         
                     xg::util::BBox bbox = text->GetBBox(chart.GetCanvasContext());
 
-                    axis->maxWidth = fmax(axis->maxWidth, static_cast<double>(bbox.width));
-                    axis->maxHeight = fmax(axis->maxHeight, static_cast<double>(bbox.height));
+                    axis->maxWidth = inner ? 0 : fmax(axis->maxWidth, static_cast<double>(bbox.width));
+                    axis->maxHeight = inner ? 0 : fmax(axis->maxHeight, static_cast<double>(bbox.height));
 
                     axis->labels.push_back(std::move(text));
                 }
@@ -489,9 +491,11 @@ void xg::axis::AxisController::DrawLabel(XChart &chart, std::unique_ptr<xg::axis
             dimType = axis->dimType == "x" ? "y" : "x";
         }
         
-        //等于把pt.y轴下移了5个dp，textbaseline变成了center
-        //这时候textAlign是center textBaseline是center，等于pt对应了字体中心的锚点
-        GetSidePoint(pt, 5 * chart.GetCanvasContext().GetDevicePixelRatio(), dimType);
+        bool inner = json::GetBool(axis->labelCfg, "inner");
+        
+        //等于把pt.y轴下移了5个dp，textbaseline变成了middle
+        //这时候textAlign是center textBaseline是middle，等于pt对应了字体中心的锚点
+        GetSidePoint(pt, inner ? 0 : 5 * chart.GetCanvasContext().GetDevicePixelRatio(), dimType);
         auto txtPoint = text->GetPoint();
         pt.x += txtPoint.x;
         pt.y += txtPoint.y;

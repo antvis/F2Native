@@ -1,8 +1,7 @@
-
-#include "Geom.h"
-
 #ifndef XG_GRAPHICS_GEOM_POINT_H
 #define XG_GRAPHICS_GEOM_POINT_H
+
+#include "Geom.h"
 
 namespace xg {
 class XChart;

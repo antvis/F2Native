@@ -1,13 +1,11 @@
+#ifndef XG_GRAPHICS_ADJUST_STACK_H
+#define XG_GRAPHICS_ADJUST_STACK_H
 
-
-#include "utils/common.h"
 #include <array>
 #include <limits>
 #include <math.h>
-#include <nlohmann/json.hpp>
-
-#ifndef XG_GRAPHICS_ADJUST_STACK_H
-#define XG_GRAPHICS_ADJUST_STACK_H
+#include "../../utils/common.h"
+#include "../../nlohmann/json.hpp"
 
 namespace xg {
 namespace adjust {

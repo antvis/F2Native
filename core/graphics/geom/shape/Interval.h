@@ -1,12 +1,11 @@
-
 #ifndef XG_GRAPHICS_GEOM_SHAPE_INTERVAL_H
 #define XG_GRAPHICS_GEOM_SHAPE_INTERVAL_H
 
-#include "graphics/geom/shape/GeomShapeBase.h"
-#include "graphics/global.h"
-#include "graphics/shape/Rect.h"
-#include "graphics/shape/Text.h"
-#include <utils/common.h>
+#include "GeomShapeBase.h"
+#include "../../global.h"
+#include "../../shape/Rect.h"
+#include "../../shape/Text.h"
+#include "../../../utils/common.h"
 
 namespace xg {
 namespace geom {

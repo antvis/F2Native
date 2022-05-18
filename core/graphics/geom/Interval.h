@@ -1,8 +1,8 @@
 #ifndef XG_GRAPHICS_GEOM_INTERVAL_H
 #define XG_GRAPHICS_GEOM_INTERVAL_H
 
-#include "graphics/geom/Geom.h"
-#include "graphics/util/json.h"
+#include "Geom.h"
+#include "../util/json.h"
 
 namespace xg {
 namespace geom {

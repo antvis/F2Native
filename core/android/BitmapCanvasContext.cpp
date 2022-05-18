@@ -92,7 +92,7 @@ BitmapCanvasContext::BitmapCanvasContext(jobject canvasContext, float devicePixe
     F2ASSERT(save_, "save_ method is null");
     if(env_->ExceptionCheck()) {return;}
     restore_ = env_->GetMethodID(contextCls, "restore", "()V");
-    F2ASSERT(restore_, "restore method is null");
+    F2ASSERT(restore_, "restore_ method is null");
     if(env_->ExceptionCheck()) {return;}
     measureTextWidth_ = env_->GetMethodID(contextCls, "measureText", "(Ljava/lang/String;)F");
     F2ASSERT(measureTextWidth_, "measureTextWidth_ method is null");
@@ -160,18 +160,22 @@ BitmapCanvasContext::~BitmapCanvasContext() {
 bool BitmapCanvasContext::IsValid() { return canvasContext_->obj() != nullptr; };
 
 void BitmapCanvasContext::SetFillStyle(const std::string &color) {
+    TraceCommand("SetFillStyle: " + color);
     if(color != fillColorCache_ && CanvasColorParser::Parse(color, fillColor_)) {
         fillColorCache_ = color;
     }
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethod(env_, canvasContext_->obj(), setFillStyle_, CanvasColorParser::RGBAToHex(fillColor_));
 }
 
 void BitmapCanvasContext::SetFillStyle(const CanvasFillStrokeStyle &style) {
+    env_ = GetJniEnvSafe();
     switch(style.type) {
         case CanvasFillStrokeStyleType::kColor: {
             this->SetFillStyle(style.color);
         } break;
         case CanvasFillStrokeStyleType::kLinearGradient: {
+            TraceCommand("SetFillStyle setLinearGradient_");
             F2SafeCallVoidMethod(env_, canvasContext_->obj(), setLinearGradient_, std::get<0>(style.linearGradient.start),
                                  std::get<1>(style.linearGradient.start), std::get<0>(style.linearGradient.end),
                                  std::get<1>(style.linearGradient.end), GetGradientColors(env_, style.linearGradient).obj(),
@@ -179,6 +183,7 @@ void BitmapCanvasContext::SetFillStyle(const CanvasFillStrokeStyle &style) {
             break;
         }
         case CanvasFillStrokeStyleType::kRadialGradient: {
+            TraceCommand("SetFillStyle setRadialGradient_");
             F2SafeCallVoidMethod(env_, canvasContext_->obj(), setRadialGradient_, std::get<0>(style.radialGradient.start),
                                  std::get<1>(style.radialGradient.start), std::get<2>(style.radialGradient.start),
                                  std::get<0>(style.radialGradient.end), std::get<1>(style.radialGradient.end),
@@ -192,19 +197,24 @@ void BitmapCanvasContext::SetFillStyle(const CanvasFillStrokeStyle &style) {
 }
 
 void BitmapCanvasContext::SetStrokeStyle(const std::string &color) {
+    TraceCommand("SetStrokeStyle: " + color);
     if(color != strokeColorCache_ && CanvasColorParser::Parse(color, strokeColor_)) {
         strokeColorCache_ = color;
     }
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethod(env_, canvasContext_->obj(), setStrokeStyle_, CanvasColorParser::RGBAToHex(strokeColor_));
 }
 
 void BitmapCanvasContext::SetStrokeStyle(const CanvasFillStrokeStyle &style) {
+    TraceCommand("SetStrokeStyle style");
+    env_ = GetJniEnvSafe();
     switch(style.type) {
         case CanvasFillStrokeStyleType::kColor: {
 
             this->SetStrokeStyle(style.color);
         } break;
         case CanvasFillStrokeStyleType::kLinearGradient: {
+            TraceCommand("SetStrokeStyle setLinearGradient_");
             F2SafeCallVoidMethod(env_, canvasContext_->obj(), setLinearGradient_, std::get<0>(style.linearGradient.start),
                                  std::get<1>(style.linearGradient.start), std::get<0>(style.linearGradient.end),
                                  std::get<1>(style.linearGradient.end), GetGradientColors(env_, style.linearGradient).obj(),
@@ -212,6 +222,7 @@ void BitmapCanvasContext::SetStrokeStyle(const CanvasFillStrokeStyle &style) {
             break;
         }
         case CanvasFillStrokeStyleType::kRadialGradient: {
+            TraceCommand("SetStrokeStyle setRadialGradient_");
             F2SafeCallVoidMethod(env_, canvasContext_->obj(), setRadialGradient_, std::get<0>(style.radialGradient.start),
                                  std::get<1>(style.radialGradient.start), std::get<2>(style.radialGradient.start),
                                  std::get<0>(style.radialGradient.end), std::get<1>(style.radialGradient.end),
@@ -230,27 +241,35 @@ void BitmapCanvasContext::SetLineCap(const std::string &lineCap) {}
 void BitmapCanvasContext::SetLineJoin(const std::string &lineJoin) {}
 
 void BitmapCanvasContext::SetLineWidth(float lineWidth) {
+    TraceCommand("SetLineWidth: " + std::to_string(lineWidth));
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethod(env_, canvasContext_->obj(), setLineWidth_, lineWidth);
 }
 
 void BitmapCanvasContext::SetLineDashOffset(float v) {}
 
 void BitmapCanvasContext::SetLineDash(const std::vector<float> &params) {
+    TraceCommand("SetLineDash ");
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethod(env_, canvasContext_->obj(), setLineDash_, VectorToJFloatArray(env_, params).obj());
 }
 
 void BitmapCanvasContext::SetMiterLimit(float limit) {}
 
 void BitmapCanvasContext::SetGlobalAlpha(float globalAlpha) {
+    TraceCommand("SetGlobalAlpha: " + std::to_string(globalAlpha));
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethod(env_, canvasContext_->obj(), setGlobalAlpha_, globalAlpha);
 }
 
 float BitmapCanvasContext::GlobalAlpha() { return globalAlpha_; }
 
 void BitmapCanvasContext::SetFont(const std::string &font) {
+    TraceCommand("SetFont: " + font);
     if(font != fontStyleCache_ && CanvasFontParser::Parse(font, fontStyle_)) {
         fontStyleCache_ = font;
     }
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethod(env_, canvasContext_->obj(), setFont_, fontStyle_.fontStyle, fontStyle_.fontVariant,
                          fontStyle_.fontWeight, jni::StringToJavaString(env_, fontStyle_.fontFamily).obj(), fontStyle_.fontSize);
 
@@ -258,36 +277,52 @@ void BitmapCanvasContext::SetFont(const std::string &font) {
 }
 
 void BitmapCanvasContext::FillText(const std::string &text, float x, float y, float maxWidth) {
+    TraceCommand("FillText: " + text);
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethod(env_, canvasContext_->obj(), fillText_, jni::StringToJavaString(env_, text).obj(), x, y);
 }
 
 void BitmapCanvasContext::StrokeText(const std::string &text, float x, float y, float maxWidth) {
+    TraceCommand("StrokeText: " + text);
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethod(env_, canvasContext_->obj(), strokeText_, jni::StringToJavaString(env_, text).obj(), x, y);
 }
 
 std::string BitmapCanvasContext::TextAlign() const { return textAlign_; }
 
 void BitmapCanvasContext::SetTextAlign(const std::string &textAlign) {
+    TraceCommand("SetTextAlign " + textAlign);
     textAlign_ = textAlign;
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethod(env_, canvasContext_->obj(), setTextAlign_, jni::StringToJavaString(env_, textAlign_).obj());
 }
 
 std::string BitmapCanvasContext::TextBaseline() const { return textBaseline_; }
 
 void BitmapCanvasContext::SetTextBaseline(const std::string &textBaseline) {
+    TraceCommand("SetTextBaseline " + textBaseline);
     textBaseline_ = textBaseline;
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethod(env_, canvasContext_->obj(), setTextBaseline_, jni::StringToJavaString(env_, textBaseline_).obj());
 }
 
 void BitmapCanvasContext::StrokeRect(float x, float y, float width, float height) {
+    TraceCommand("StrokeRect");
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethod(env_, canvasContext_->obj(), strokeRect_, x, y, width, height);
 }
 
 void BitmapCanvasContext::Save() {
+    TraceCommand("Save");
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethodNoArg(env_, canvasContext_->obj(), save_);
 }
 
-void BitmapCanvasContext::Restore() { F2SafeCallVoidMethodNoArg(env_, canvasContext_->obj(), restore_); }
+void BitmapCanvasContext::Restore() {
+    TraceCommand("Restore");
+    env_ = GetJniEnvSafe();
+    F2SafeCallVoidMethodNoArg(env_, canvasContext_->obj(), restore_);
+}
 
 bool BitmapCanvasContext::HasClip() { return hasClip_; }
 
@@ -300,69 +335,125 @@ void BitmapCanvasContext::SetShadowColor(const char *v) {}
 void BitmapCanvasContext::SetShadowBlur(float v) {}
 
 float BitmapCanvasContext::MeasureTextWidth(const std::string &text) {
+    TraceCommand("MeasureTextWidth: " + text);
+    env_ = GetJniEnvSafe();
     F2SafeCallFloatMethod(env_, canvasContext_->obj(), measureTextWidth_, jni::StringToJavaString(env_, text).obj());
 }
 
 void BitmapCanvasContext::Transform(float a, float b, float c, float d, float e, float f) {
+    TraceCommand("Transform " );
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethod(env_, canvasContext_->obj(), transform_, a, b, c, d, e, f);
 }
 
 void BitmapCanvasContext::SetTransform(float a, float b, float c, float d, float e, float f) {
+    TraceCommand("SetTransform " );
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethod(env_, canvasContext_->obj(), setTransform_, a, b, c, d, e, f);
 }
 
 void BitmapCanvasContext::Rect(float x, float y, float width, float height) {
+    TraceCommand("Rect " );
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethod(env_, canvasContext_->obj(), rect_, x, y, width, height);
 }
 
 void BitmapCanvasContext::ClearRect(float x, float y, float width, float height) {
+    TraceCommand("ClearRect " );
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethod(env_, canvasContext_->obj(), clearRect_, x, y, width, height);
 }
 
 void BitmapCanvasContext::FillRect(float x, float y, float width, float height) {
+    TraceCommand("FillRect " );
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethod(env_, canvasContext_->obj(), fillRect_, x, y, width, height);
 }
 
-void BitmapCanvasContext::Fill(const std::string &fillRule) { F2SafeCallVoidMethodNoArg(env_, canvasContext_->obj(), fill_); }
+void BitmapCanvasContext::Fill(const std::string &fillRule) {
+    TraceCommand("Fill");
+    env_ = GetJniEnvSafe();
+    F2SafeCallVoidMethodNoArg(env_, canvasContext_->obj(), fill_);
+}
 
-void BitmapCanvasContext::Stroke() { F2SafeCallVoidMethodNoArg(env_, canvasContext_->obj(), stroke_); }
+void BitmapCanvasContext::Stroke() {
+    TraceCommand("Stroke");
+    env_ = GetJniEnvSafe();
+    F2SafeCallVoidMethodNoArg(env_, canvasContext_->obj(), stroke_);
+}
 
-void BitmapCanvasContext::BeginPath() { F2SafeCallVoidMethodNoArg(env_, canvasContext_->obj(), beginPath_); }
+void BitmapCanvasContext::BeginPath() {
+    TraceCommand("BeginPath");
+    env_ = GetJniEnvSafe();
+    F2SafeCallVoidMethodNoArg(env_, canvasContext_->obj(), beginPath_);
+}
 
-void BitmapCanvasContext::MoveTo(float x, float y) { F2SafeCallVoidMethod(env_, canvasContext_->obj(), moveTo_, x, y); }
+void BitmapCanvasContext::MoveTo(float x, float y) {
+    TraceCommand("MoveTo x: " + std::to_string(x) + ", " + std::to_string(y));
+    env_ = GetJniEnvSafe();
+    F2SafeCallVoidMethod(env_, canvasContext_->obj(), moveTo_, x, y);
+}
 
-void BitmapCanvasContext::ClosePath() { F2SafeCallVoidMethodNoArg(env_, canvasContext_->obj(), closePath_); }
+void BitmapCanvasContext::ClosePath() {
+    TraceCommand("ClosePath");
+    env_ = GetJniEnvSafe();
+    F2SafeCallVoidMethodNoArg(env_, canvasContext_->obj(), closePath_);
+}
 
-void BitmapCanvasContext::LineTo(float x, float y) { F2SafeCallVoidMethod(env_, canvasContext_->obj(), lineTo_, x, y); }
+void BitmapCanvasContext::LineTo(float x, float y) {
+    TraceCommand("LienTo x: " + std::to_string(x) + ", " + std::to_string(y));
+    env_ = GetJniEnvSafe();
+    F2SafeCallVoidMethod(env_, canvasContext_->obj(), lineTo_, x, y);
+}
 
 void BitmapCanvasContext::Clip(const std::string &fillRule) {
+    TraceCommand("Clip ");
     hasClip_ = true;
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethodNoArg(env_, canvasContext_->obj(), clip_);
 }
 
 void BitmapCanvasContext::QuadraticCurveTo(float cpx, float cpy, float x, float y) {
+    TraceCommand("QuadraticCurveTo");
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethod(env_, canvasContext_->obj(), quadraticCurveTo_, cpx, cpy, x, y);
 }
 
 void BitmapCanvasContext::BezierCurveTo(float cp1x, float cp1y, float cp2x, float cp2y, float x, float y) {
+    TraceCommand("BezierCurveTo");
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethod(env_, canvasContext_->obj(), bezierCurveTo_, cp1x, cp1y, cp2x, cp2y, x, y);
 }
 
 void BitmapCanvasContext::Arc(float x, float y, float r, float sAngle, float eAngle, bool antiClockwise) {
+    TraceCommand("Arc");
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethod(env_, canvasContext_->obj(), arc_, x, y, r, sAngle, eAngle, antiClockwise);
 }
 
 void BitmapCanvasContext::ArcTo(float x1, float y1, float x2, float y2, float r) {
+    TraceCommand("ArcTo");
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethod(env_, canvasContext_->obj(), arcTo_, x1, y1, x2, y2, r);
 }
 
 void BitmapCanvasContext::Scale(float scale_width, float scale_height) {
+    TraceCommand("Scale");
+    env_ = GetJniEnvSafe();
     F2SafeCallVoidMethod(env_, canvasContext_->obj(), scale_, scale_width);
 }
 
-void BitmapCanvasContext::Rotate(float angle) { F2SafeCallVoidMethod(env_, canvasContext_->obj(), rotate_, angle); }
+void BitmapCanvasContext::Rotate(float angle) {
+    TraceCommand("Rotate");
+    env_ = GetJniEnvSafe();
+    F2SafeCallVoidMethod(env_, canvasContext_->obj(), rotate_, angle);
+}
 
-void BitmapCanvasContext::Translate(float x, float y) { F2SafeCallVoidMethod(env_, canvasContext_->obj(), translate_, x, y); }
+void BitmapCanvasContext::Translate(float x, float y) {
+    TraceCommand("Translate");
+    env_ = GetJniEnvSafe();
+    F2SafeCallVoidMethod(env_, canvasContext_->obj(), translate_, x, y);
+}
 
 void BitmapCanvasContext::DrawImage(CanvasImage *image, float dx, float dy) {}
 

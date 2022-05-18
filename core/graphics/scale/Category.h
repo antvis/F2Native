@@ -1,13 +1,12 @@
 #ifndef XG_GRAPHICS_SCALE_CAT_H
 #define XG_GRAPHICS_SCALE_CAT_H
 
-#include "graphics/scale/Scale.h"
-#include "utils/common.h"
-#include <WilkinsonExtended/WilkinsonExtended.h>
 #include <iterator>
 #include <math.h>
 #include <string>
 #include <unordered_map>
+#include "Scale.h"
+#include "../../utils/common.h"
 
 using namespace std;
 
@@ -128,22 +127,10 @@ class Category : public AbstractScale {
             if (this->tickCount == 0) {
                 return {};
             }else if(this->tickCount == 1) {
-                double Q[] = {1, 2, 5, 3, 4, 7, 6, 8, 9};
-                double w[] = {0.25, 0.2, 0.5, 0.05};
-                double outlmin, outlmax, outlstep;
-                wilk_ext(min, max, this->tickCount, -1, Q, 6, w, &outlmin, &outlmax, &outlstep);
-
-                int step = static_cast<int>(outlstep);
-                //因为tickCount为1，算出来的step必然为0，这个分支不会进入
-                if(step > 0) {
-                    std::size_t _max = static_cast<std::size_t>(max);
-                    for(std::size_t index = static_cast<std::size_t>(min); index <= _max; index += step) {
-                        nlohmann::json &_item = values[index];
-                        rst.push_back(_item);
-                    }
-                }
-                if(rst.size() < tickCount) {
-                    rst.push_back(values[valueSize - 1]);
+                //对齐f2的展示 tickCount为1的时候 = tickCount为values.size()
+                for (size_t index = 0; index < values.size(); ++index) {
+                    const nlohmann::json &_item = values[index];
+                    rst.push_back(_item);
                 }
                 return rst;
             }

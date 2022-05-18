@@ -135,24 +135,21 @@ bool tooltip::ToolTipController::ShowToolTip(const util::Point &point) {
     //限制point.x的坐标为数据点的最后一个坐标
     double maxPointX = FLT_MIN;
     double minPointX = FLT_MAX;
-    std::for_each(chart_->geoms_.begin(), chart_->geoms_.end(), [&](auto &geom) -> void {
-        const nlohmann::json &lastRecords = geom->GetLastSnapRecord(chart_);
-        const nlohmann::json &firstRecords = geom->GetFirstSnapRecord(chart_);
-        for(std::size_t index = 0; index < lastRecords.size(); ++index) {
-            const nlohmann::json &lastRecord = lastRecords[index];
-            const nlohmann::json &firstRecord = firstRecords[index];
-            //在各分组中取最大的
-            if (lastRecord.contains("_x")) {
-                maxPointX = fmax(maxPointX, lastRecord["_x"].get<double>());
-                minPointX = fmin(minPointX, lastRecord["_x"].get<double>());
-            }
-            
-            if (firstRecord.contains("_x")) {
-                maxPointX = fmax(maxPointX, firstRecord["_x"].get<double>());
-                minPointX = fmin(minPointX, firstRecord["_x"].get<double>());
-            }
-        }
-    });
+    auto &geom = chart_->geoms_.front();
+    const nlohmann::json &firstRecord = geom->GetFirstSnapRecord(chart_);
+    const nlohmann::json &lastRecord = geom->GetLastSnapRecord(chart_);
+    //在各分组中取最大的 当scale为timesharing的时候，first和last可能对调，所以min和max判断都需要
+    if (lastRecord.contains("_x")) {
+        double lastX = json::GetNumber(lastRecord, "_x");
+        minPointX = fmin(minPointX, lastX);
+        maxPointX = fmax(maxPointX, lastX);
+    }
+    
+    if (firstRecord.contains("_x")) {
+        double firstX = json::GetNumber(firstRecord, "_x");
+        minPointX = fmin(minPointX, firstX);
+        maxPointX = fmax(maxPointX, firstX);
+    }
     _point.x = fmax(fmin(_point.x, maxPointX), minPointX);
     
     auto timestampStart = xg::CurrentTimestampAtMM();

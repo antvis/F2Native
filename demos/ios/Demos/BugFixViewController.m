@@ -64,12 +64,13 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 300.f;
+    return 280;
 }
 
 - (NSArray *)buglist {
     return @[
-        @{@"type": @"baseLine", @"name": @"顶部折线被裁", @"view": @"TimeSharingBugFix1UIView"},
+        @{@"type": @"TimeSharingBugFix1", @"name": @"顶部折线被裁", @"view": @"TimeSharingBugFix1"},
+        @{@"type": @"MarketMovingBugFix1", @"name": @"大盘异动旗子布局", @"view": @"MarketMovingBugFix1"},
     ];
 }
 

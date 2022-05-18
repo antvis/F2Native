@@ -1,8 +1,9 @@
-#include "graphics/guide/GuideBase.h"
-#include "graphics/shape/Group.h"
-
 #ifndef XG_GRAPHICS_GUIDE_CONTROLLER_H
 #define XG_GRAPHICS_GUIDE_CONTROLLER_H
+
+#include "GuideBase.h"
+#include "../shape/Group.h"
+
 
 namespace xg {
 class XChart;

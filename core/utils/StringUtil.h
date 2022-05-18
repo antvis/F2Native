@@ -18,6 +18,16 @@ class StringUtil final {
         }
         return;
     }
+    
+    static std::vector<std::string> ParseFields(const std::string &field) {
+        if(field.find('*') != field.npos) {
+            std::vector<std::string> v;
+            StringUtil::Split(field, v, '*');
+            return v;
+        } else {
+            return {field};
+        }
+    }
 };
 
 #endif /* XG_UTILS_STRING_H */

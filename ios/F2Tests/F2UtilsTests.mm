@@ -11,6 +11,7 @@
 #import "unit/utils/XTime.h"
 #import "unit/utils/json.h"
 #import "unit/utils/Point.h"
+#import "F2Utils.h"
 
 
 @interface F2UtilsTests : XCTestCase
@@ -66,6 +67,4 @@
 -(void)testVector2d {
     
 }
-
-
 @end

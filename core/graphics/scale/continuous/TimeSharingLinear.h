@@ -1,9 +1,9 @@
-#include "graphics/scale/Scale.h"
-#include <utils/xtime.h>
-#include <graphics/util/json.h>
-
 #ifndef XG_GRAPHICS_SCALE_TIMESHARINGLINEAR_H
 #define XG_GRAPHICS_SCALE_TIMESHARINGLINEAR_H
+
+#include "../Scale.h"
+#include "../../util/json.h"
+#include "../../../utils/xtime.h"
 
 namespace xg {
 namespace scale {

@@ -1,9 +1,9 @@
-#include "GeomShapeBase.h"
-#include "graphics/func/Func.h"
-#include "graphics/shape/Circle.h"
-
 #ifndef XG_GRAPHICS_GEOM_SHAPE_POINT_H
 #define XG_GRAPHICS_GEOM_SHAPE_POINT_H
+
+#include "GeomShapeBase.h"
+#include "../../func/Func.h"
+#include "../../shape/Circle.h"
 
 namespace xg {
 namespace geom {

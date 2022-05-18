@@ -37,80 +37,102 @@ public class F2Chart {
     public void setCanvas(F2CanvasView canvasView) {
         innerLog("#bind canvas: " + canvasView.getNativeCanvas());
         mCanvasView = canvasView;
-        if (hasDestroyed) return;
+        if (hasDestroyed) {
+            return;
+        }
         assertRenderThread();
         if (mRequestFrameHandle != null) {
             mRequestFrameHandle.clear();
         }
         mRequestFrameHandle = new RequestAnimationFrameHandle(this, canvasView);
-        mChartProxy.setCanvas(mCanvasView.getNativeCanvas(), mRequestFrameHandle.functionId, mCanvasView.isAndroidCanvas());
+        mChartProxy.setCanvas(mCanvasView.getNativeCanvas(), mRequestFrameHandle.functionId);
     }
 
     public F2Chart padding(final double left, final double top, final double right, final double bottom) {
-        if (hasDestroyed) return this;
+        if (hasDestroyed) {
+            return this;
+        }
         assertRenderThread();
         mChartProxy.setPadding(left, top, right, bottom);
         return this;
     }
 
     public F2Chart margin(final double left, final double top, final double right, final double bottom) {
-        if (hasDestroyed) return this;
+        if (hasDestroyed) {
+            return this;
+        }
         assertRenderThread();
         mChartProxy.setMargin(left, top, right, bottom);
         return this;
     }
 
     public F2Chart source(final String jsonData) {
-        if (hasDestroyed) return this;
+        if (hasDestroyed) {
+            return this;
+        }
         assertRenderThread();
         mChartProxy.source(jsonData);
         return this;
     }
 
     public F2Chart setScale(final String field, final ScaleConfigBuilder builder) {
-        if (hasDestroyed) return this;
+        if (hasDestroyed) {
+            return this;
+        }
         assertRenderThread();
         mChartProxy.setScale(field, builder.build().toJsonString());
         return this;
     }
 
     public F2Chart setScale(final String field, final String scaleJsonConfig) {
-        if (hasDestroyed) return this;
+        if (hasDestroyed) {
+            return this;
+        }
         assertRenderThread();
         mChartProxy.setScale(field, scaleJsonConfig);
         return this;
     }
 
     public F2Chart setAxis(final String field, final AxisConfigBuilder builder) {
-        if (hasDestroyed) return this;
+        if (hasDestroyed) {
+            return this;
+        }
         assertRenderThread();
         mChartProxy.setAxis(field, builder.build().toJsonString());
         return this;
     }
 
     public F2Chart setAxis(final String field, final String axisJsonConfig) {
-        if (hasDestroyed) return this;
+        if (hasDestroyed) {
+            return this;
+        }
         assertRenderThread();
         mChartProxy.setAxis(field, axisJsonConfig);
         return this;
     }
 
     public F2Chart setCoord(CoordConfigBuilder builder) {
-        if (hasDestroyed) return this;
+        if (hasDestroyed) {
+            return this;
+        }
         assertRenderThread();
         mChartProxy.setCoord(builder.build().toJsonString());
         return this;
     }
 
     public F2Chart setCoord(String coordJsonConfig) {
-        if (hasDestroyed) return this;
+        if (hasDestroyed) {
+            return this;
+        }
         assertRenderThread();
         mChartProxy.setCoord(coordJsonConfig);
         return this;
     }
 
     public boolean postTouchEvent(F2CanvasView.TouchEvent event) {
-        if (hasDestroyed) return false;
+        if (hasDestroyed) {
+            return false;
+        }
         assertRenderThread();
         // long ts = System.currentTimeMillis();
         int ret = mChartProxy.sendTouchEvent(event.getData().toJsonString());
@@ -124,31 +146,41 @@ public class F2Chart {
     }
 
     public F2Geom.Line line() {
-        if (hasDestroyed) return null;
+        if (hasDestroyed) {
+            return null;
+        }
         assertRenderThread();
         return (F2Geom.Line) mChartProxy.createGeom(this, "line");
     }
 
     public F2Geom.Area area() {
-        if (hasDestroyed) return null;
+        if (hasDestroyed) {
+            return null;
+        }
         assertRenderThread();
         return (F2Geom.Area) mChartProxy.createGeom(this, "area");
     }
 
     public F2Geom.Point point() {
-        if (hasDestroyed) return null;
+        if (hasDestroyed) {
+            return null;
+        }
         assertRenderThread();
         return (F2Geom.Point) mChartProxy.createGeom(this, "point");
     }
 
     public F2Geom.Interval interval() {
-        if (hasDestroyed) return null;
+        if (hasDestroyed) {
+            return null;
+        }
         assertRenderThread();
         return (F2Geom.Interval) mChartProxy.createGeom(this, "interval");
     }
 
     public F2Geom.Candle candle() {
-        if (hasDestroyed) return null;
+        if (hasDestroyed) {
+            return null;
+        }
         assertRenderThread();
         return (F2Geom.Candle) mChartProxy.createGeom(this, "candle");
     }
@@ -159,63 +191,81 @@ public class F2Chart {
     }
 
     public F2Chart interaction(String type, F2Config config) {
-        if (hasDestroyed) return null;
+        if (hasDestroyed) {
+            return null;
+        }
         assertRenderThread();
         mChartProxy.setInteraction(type, config.toJsonString());
         return this;
     }
 
     public F2Chart interaction(String type, String interactionConfig) {
-        if (hasDestroyed) return null;
+        if (hasDestroyed) {
+            return null;
+        }
         assertRenderThread();
         mChartProxy.setInteraction(type, interactionConfig);
         return this;
     }
 
     public F2Chart tooltip(ToolTipConfigBuilder builder) {
-        if (hasDestroyed) return null;
+        if (hasDestroyed) {
+            return null;
+        }
         assertRenderThread();
         mChartProxy.setToolTip(builder.build().toJsonString());
         return this;
     }
 
     public F2Chart tooltip(String tooltipJsonConfig) {
-        if (hasDestroyed) return null;
+        if (hasDestroyed) {
+            return null;
+        }
         assertRenderThread();
         mChartProxy.setToolTip(tooltipJsonConfig);
         return this;
     }
 
     public F2Chart legend(String field, LegendConfigBuild builder) {
-        if (hasDestroyed) return null;
+        if (hasDestroyed) {
+            return null;
+        }
         assertRenderThread();
         mChartProxy.setLegend(field, builder.build().toJsonString());
         return this;
     }
 
     public F2Chart legend(String field, String legendJsonConfig) {
-        if (hasDestroyed) return null;
+        if (hasDestroyed) {
+            return null;
+        }
         assertRenderThread();
         mChartProxy.setLegend(field, legendJsonConfig);
         return this;
     }
 
     public F2Chart animate(boolean enable) {
-        if (hasDestroyed) return null;
+        if (hasDestroyed) {
+            return null;
+        }
         assertRenderThread();
         mChartProxy.setAnimate("" + enable);
         return this;
     }
 
     public F2Chart animate(ChartAnimateConfigBuild animateConfigBuild) {
-        if (hasDestroyed) return null;
+        if (hasDestroyed) {
+            return null;
+        }
         assertRenderThread();
         mChartProxy.setAnimate(animateConfigBuild.build().toJsonString());
         return this;
     }
 
     public F2Chart animate(String animateJsonConfig) {
-        if (hasDestroyed) return null;
+        if (hasDestroyed) {
+            return null;
+        }
         assertRenderThread();
         mChartProxy.setAnimate(animateJsonConfig);
         return this;
@@ -227,18 +277,48 @@ public class F2Chart {
     }
 
     public boolean render(boolean swapBuffer) {
-        if (hasDestroyed) return false;
+        if (hasDestroyed) {
+            return false;
+        }
         assertRenderThread();
-        int code = mChartProxy.render();
-        if (F2Constants.isSuccessCode(code) && swapBuffer) {
-            mCanvasView.swapBuffer();
+        // 渲染是否成功
+        boolean isRenderSuccess = mChartProxy.render();
+        // 获取渲染指令的个数
+        int renderCount = getRenderCmdCount();
+        // 获取渲染指令耗时
+        int renderDuration = getRenderDuration();
+        // 上屏是否成功
+        boolean isDrawSuccess = false;
+        if (isRenderSuccess && swapBuffer) {
+            isDrawSuccess = mCanvasView.swapBuffer();
         }
-        String dumpInfo = getRenderDumpInfo();
-        innerLog("#render ret: " + code + ", dumpInfo: " + dumpInfo);
-        if (mLogCmdCount) {
-            mCanvasView.appendRenderCmdCount(mName, getRenderCmdCount(dumpInfo));
+        // 上报绘制检测，包含白屏检测
+        mCanvasView.sendRenderDetectEvent(renderDuration, isRenderSuccess, renderCount, isDrawSuccess, getChartId());
+        return isRenderSuccess;
+    }
+
+    private int getRenderDuration() {
+        if (hasDestroyed) {
+            return 0;
         }
-        return F2Constants.isSuccessCode(code);
+        assertRenderThread();
+        return mChartProxy.getRenderDuration();
+    }
+
+    private int getRenderCmdCount() {
+        if (hasDestroyed) {
+            return 0;
+        }
+        assertRenderThread();
+        return mChartProxy.getRenderCmdCount();
+    }
+
+    private String getChartId() {
+        if (hasDestroyed) {
+            return "";
+        }
+        assertRenderThread();
+        return mChartProxy.getChartId();
     }
 
     public boolean render() {
@@ -249,29 +329,10 @@ public class F2Chart {
         mLogCmdCount = logCmdCount;
     }
 
-    private int getRenderCmdCount(String renderDumpInfo) {
-        if (TextUtils.isEmpty(renderDumpInfo)) {
-            return 0;
-        }
-        try {
-            JSONObject renderInfo = new JSONObject(renderDumpInfo);
-            if (renderInfo != null) {
-                Integer count = renderInfo.getInt("cmdCount");
-                if (count != null) {
-                    innerLog("#getRenderCmdCount:" + count);
-                    return count.intValue();
-                }
-            }
-        } catch (org.json.JSONException e) {
-            innerLog("#getRenderCmdCount:got " + e);
-        }
-        return 0;
-    }
-
-
-
     public double[] getPosition(String itemJsonData) {
-        if (hasDestroyed) return new double[]{0, 0};
+        if (hasDestroyed) {
+            return new double[]{0, 0};
+        }
         assertRenderThread();
         return mChartProxy.getPosition(itemJsonData);
     }
@@ -279,30 +340,40 @@ public class F2Chart {
     // this method is unsafe, it allows calling from main thread without throwing
     // exception. Caller should make sure that this API is not called during rendering
     public String getTooltipInfos(float touchX, float touchY, int geomIndex) {
-        if (hasDestroyed) return null;
+        if (hasDestroyed) {
+            return null;
+        }
         return mChartProxy.getTooltipInfos(touchX, touchY, geomIndex);
     }
 
     public void clear() {
-        if (hasDestroyed) return;
+        if (hasDestroyed) {
+            return;
+        }
         assertRenderThread();
         mChartProxy.clear();
     }
 
     public String getRenderDumpInfo() {
-        if (hasDestroyed) return null;
+        if (hasDestroyed) {
+            return null;
+        }
         assertRenderThread();
         return mChartProxy.getRenderDumpInfo();
     }
 
     public String getScaleTicks(String field) {
-        if (hasDestroyed) return null;
+        if (hasDestroyed) {
+            return null;
+        }
         assertRenderThread();
         return mChartProxy.getScaleTicks(field);
     }
 
     public void destroy() {
-        if (hasDestroyed) return;
+        if (hasDestroyed) {
+            return;
+        }
         innerLog("#destroy");
         if (mRequestFrameHandle != null) {
             mRequestFrameHandle.clear();
@@ -344,9 +415,6 @@ public class F2Chart {
             F2Log.e("F2Chart-" + mName, "#runOnRenderThread chartView is null.");
             return;
         }
-        if (!mCanvasView.isOnCanvasThread()) {
-            throw new RuntimeException("F2Chart operations must on render thread.");
-        }
     }
 
     public static class TextConfigBuilder<T extends TextConfigBuilder> extends F2Config.Builder<T> {
@@ -380,7 +448,7 @@ public class F2Chart {
         private static final String KEY_TYPE = "type";
         private static final String KEY_PRECISION = "precision";
         private static final String KEY_RANGE = "range";
-//        private static final String KEY_SCALE_RANGE = "scaleRange";
+        //        private static final String KEY_SCALE_RANGE = "scaleRange";
         private static final String KEY_TICK_COUNT = "tickCount";
         private static final String KEY_MAX = "max";
         private static final String KEY_MIN = "min";
@@ -617,4 +685,4 @@ public class F2Chart {
     }
 
 
-    }
+}

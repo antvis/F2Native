@@ -1,9 +1,9 @@
-#include "utils/common.h"
-#include <array>
-#include <math.h>
-
 #ifndef XG_GRAPHICS_UTIL_VECTOR2D_H
 #define XG_GRAPHICS_UTIL_VECTOR2D_H
+
+#include <array>
+#include <math.h>
+#include "../../utils/common.h"
 
 namespace xg {
 namespace util {

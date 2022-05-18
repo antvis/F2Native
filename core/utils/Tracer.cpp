@@ -1,4 +1,9 @@
 #include "Tracer.h"
+#include <stdarg.h>
+
+#if defined(__APPLE__)
+#include <TargetConditionals.h>
+#endif
 
 void utils::Tracer::trace(const char *fmt, ...) {
     char buffer[4096] = {0};

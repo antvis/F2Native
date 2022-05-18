@@ -1,8 +1,8 @@
 #ifndef XG_GRAPHICS_SCALE_TIME_CAT_H
 #define XG_GRAPHICS_SCALE_TIME_CAT_H
 
-#include "graphics/scale/Category.h"
 #include <time.h>
+#include "../scale/Category.h"
 
 namespace xg {
 namespace scale {

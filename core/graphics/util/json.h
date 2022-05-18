@@ -6,11 +6,11 @@
 //  Copyright © 2020 Alipay. All rights reserved.
 //
 
-#include <nlohmann/json.hpp>
-#include <vector>
-
 #ifndef XG_GRAPHICS_JSON_H
 #define XG_GRAPHICS_JSON_H
+
+#include <vector>
+#include "../../nlohmann/json.hpp"
 
 namespace xg {
 namespace json {
@@ -27,6 +27,8 @@ const std::string GetString(const nlohmann::json &obj, const std::string &key, c
 
 //默认值defVal给NAN更合理
 const double GetNumber(const nlohmann::json &obj, const std::string &key, const double defVal = 0);
+const int GetIntNumber(const nlohmann::json &obj, const std::string &key, const int def = NAN) ;
+const float GetFloatNumber(const nlohmann::json &obj, const std::string &key, const float def = NAN);
 
 //使用&会地址不正确
 const nlohmann::json GetArray(const nlohmann::json &obj, const std::string &key, const nlohmann::json &defVal = nlohmann::json::array());

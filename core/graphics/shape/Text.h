@@ -1,8 +1,7 @@
 #ifndef XG_GRAPHICS_SHAPE_TEXT_H
 #define XG_GRAPHICS_SHAPE_TEXT_H
 
-#include "graphics/shape/Shape.h"
-#include <nlohmann/json.hpp>
+#include "Shape.h"
 
 namespace xg {
 namespace shape {

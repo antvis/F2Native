@@ -15,12 +15,10 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.Typeface;
 
-import com.antgroup.antv.f2.base.F2BaseCanvasHandle;
-
 /**
  * android native canvas需要的CanvasContext
  */
-class F2AndroidCanvasContext implements F2BaseCanvasHandle {
+class F2AndroidCanvasContext  {
     public Bitmap bitmap = null;
     private Canvas bitmapCanvas = null;
     private Paint paint = null;
@@ -35,17 +33,33 @@ class F2AndroidCanvasContext implements F2BaseCanvasHandle {
     private int strokeStyle;
     private float globalAlpha = 1;
     private static float M_DEGREE = 57.295776F;//180.0F/(float)Math.PI;
+    public boolean mHadOOM;
 
     F2AndroidCanvasContext(int width, int height, float ratio) {
         height = Math.max(height, 1);
         width = Math.max(width, 1);
         this.ratio = ratio;
-        this.bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        this.bitmapCanvas = new Canvas(this.bitmap);
+        try {
+            this.bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            this.bitmapCanvas = new Canvas(this.bitmap);
+        } catch (OutOfMemoryError e) {
+            mHadOOM = true;
+            F2Log.e("F2AndroidCanvasContext", "createBitmap OutOfMemoryError");
+        }
+    }
+
+    private void innerLog(String content) {
+        if (BuildConfig.DEBUG) {
+            F2Log.i("F2AndroidCanvasContext", content);
+        }
     }
 
     //set
     public void setStrokeStyle(String style) {
+        innerLog("setStrokeStyle style:" + style);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         try {
             int color = Color.parseColor(style);
             setStrokeStyle(color);
@@ -55,11 +69,16 @@ class F2AndroidCanvasContext implements F2BaseCanvasHandle {
     }
 
     public void setStrokeStyle(int color) {
+        innerLog("setStrokeStyle color:");
         this.strokeStyle = color;
     }
 
     //线性渐变
     public void setLinearGradient(float sx, float sy, float ex, float ey, int[] colors, float[] positions) {
+        innerLog("setLinearGradient sx:" + sx + " sy:" + sy + " ex:" + ex + " ey:" + ey);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         if (colors.length != positions.length && colors.length < 2) {
             return;
         }
@@ -69,6 +88,10 @@ class F2AndroidCanvasContext implements F2BaseCanvasHandle {
 
     //雷达渐变
     public void setRadialGradient(float sx, float sy, float sr, float ex, float ey, float er, int[] colors, float[] positions) {
+        innerLog("setRadialGradient sx:" + sx + " sy:" + sy + " sr:" + sr + " ex:" + ex + " ey:" + ey + " er:" + er);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         if (colors.length != positions.length && colors.length < 2) {
             return;
         }
@@ -76,8 +99,11 @@ class F2AndroidCanvasContext implements F2BaseCanvasHandle {
         this.paint.setShader(gradient);
     }
 
-    @Override
     public void setFillStyle(String style) {
+        innerLog("setFillStyle style:" + style);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         try {
             int color = Color.parseColor(style);
             setFillStyle(color);
@@ -87,31 +113,51 @@ class F2AndroidCanvasContext implements F2BaseCanvasHandle {
     }
 
     public void setFillStyle(int color) {
+        innerLog("setFillStyle color:");
         this.fillStyle = color;
     }
 
     public void rect(float x, float y, float width, float height) {
+        innerLog("rect x:" + x + " y:" + y + " width:" + width + " height:" + height);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         //cw?
         this.path.addRect(x, y, x + width, y + height, Path.Direction.CW);
     }
 
     public void fillRect(float x, float y, float width, float height) {
+        innerLog("fillRect float x:" + x + " y:" + y + " width:" + width + " height:" + height);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         setFillPaint();
         this.bitmapCanvas.drawRect(x, y, x + width, y + height, this.paint);
     }
 
-    @Override
     public void fillRect(int x, int y, int width, int height) {
+        innerLog("fillRect int x:" + x + " y:" + y + " width:" + width + " height:" + height);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         setFillPaint();
         this.bitmapCanvas.drawRect(x, y, x + width, y + height, this.paint);
     }
 
     public void strokeRect(float x, float y, float width, float height) {
+        innerLog("strokeRect x:" + x + " y:" + y + " width:" + width + " height:" + height);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         setStrokePaint();
         this.bitmapCanvas.drawRect(x, y, x + width, y + height, this.paint);
     }
 
     public void clearRect(float x, float y, float width, float height) {
+        innerLog("clearRect x:" + x + " y:" + y + " width:" + width + " height:" + height);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         this.bitmapCanvas.save();
         RectF rectF = new RectF(x, y, x + width, y + height);
         this.bitmapCanvas.clipRect(rectF);
@@ -120,49 +166,86 @@ class F2AndroidCanvasContext implements F2BaseCanvasHandle {
     }
 
     public void stroke() {
+        innerLog("stroke");
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         setStrokePaint();
         this.bitmapCanvas.drawPath(this.path, this.paint);
     }
 
-    @Override
     public void fill() {
+        innerLog("fill");
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         setFillPaint();
         this.bitmapCanvas.drawPath(this.path, this.paint);
     }
 
-    @Override
     public void beginPath() {
+        innerLog("beginPath");
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         this.path = new Path();
     }
 
     public void closePath() {
+        innerLog("closePath");
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         this.path.close();
     }
 
     public void lineTo(float x, float y) {
+        innerLog("lineTo x:" + x + " y:" + y);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         this.path.lineTo(x, y);
     }
 
     public void moveTo(float x, float y) {
+        innerLog("moveTo x:" + x + " y:" + y);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         this.path.moveTo(x, y);
     }
 
     public void clip() {
+        innerLog("clip");
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         this.bitmapCanvas.clipPath(this.path);
         //新开启一个路径
         beginPath();
     }
 
     public void quadraticCurveTo(float cpx, float cpy, float x, float y) {
+        innerLog("quadraticCurveTo cpx:" + cpx + " cpy:" + cpy + " x:" + x + " y:" + y);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         this.path.quadTo(cpx, cpy, x, y);
     }
 
     public void bezierCurveTo(float cp1x, float cp1y, float cp2x, float cp2y, float x, float y) {
+        innerLog("bezierCurveTo cp1x:" + cp1x + " cp1y:" + cp1y + "cp2x:" + cp2x + " cp2y:" + cp2y + " x:" + x + " y:" + y);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         this.path.cubicTo(cp1x, cp1y, cp2x, cp2y, x, y);
     }
 
-    @Override
     public void arc(float x, float y, float r, float sAngle, float eAngle, boolean antiClockwise) {
+        innerLog("arc x:" + x + " y:" + y);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         float s = sAngle * M_DEGREE;
         //扫过的角度 eAngele - sAngle
         float d = eAngle * M_DEGREE - s;
@@ -175,22 +258,42 @@ class F2AndroidCanvasContext implements F2BaseCanvasHandle {
     }
 
     public void arcTo(float x1, float y1, float x2, float y2, float r) {
+        innerLog("arcTo x1:" + x1 + " y1:" + y1 + " x2:" + x2 + " y2:" + y2);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         this.path.arcTo(new RectF(x1 - 2 * r, y1, x2, y2 + r), -90, 90, false);
     }
 
     public void scale(float sw, float sh) {
+        innerLog("scale sw:" + sw + " sh:" + sh);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         this.bitmapCanvas.scale(sw, sh);
     }
 
     public void rotate(float angle) {
+        innerLog("rotate angle:" + angle);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         this.bitmapCanvas.rotate(angle);
     }
 
     public void translate(float x, float y) {
+        innerLog("translate x:" + x + " y:" + y);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         this.bitmapCanvas.translate(x, y);
     }
 
     public void transform(float a, float b, float c, float d, float e, float f) {
+        innerLog("transform a:" + a + " b:" + b + " c:" + c + " d:" + d);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         Matrix m = new Matrix();
         m.reset();
         m.preTranslate(e, f);
@@ -202,6 +305,10 @@ class F2AndroidCanvasContext implements F2BaseCanvasHandle {
     }
 
     public void setTransform(float a, float b, float c, float d, float e, float f) {
+        innerLog("setTransform a:" + a + " b:" + b + " c:" + c + " d:" + d);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         Matrix m = new Matrix();
         m.reset();
         m.preTranslate(e, f);
@@ -220,12 +327,19 @@ class F2AndroidCanvasContext implements F2BaseCanvasHandle {
         throw new AssertionError("setLineJoin not support");
     }
 
-    @Override
     public void setLineWidth(float lineWidth) {
+        innerLog("setLineWidth lineWidth:" + lineWidth);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         this.paint.setStrokeWidth(lineWidth);
     }
 
     public void setLineDash(float[] dashes) {
+        innerLog("setLineWidth dashes:");
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         if (dashes.length == 0) {
             //clear path effect
             this.paint.setPathEffect(new PathEffect());
@@ -243,6 +357,10 @@ class F2AndroidCanvasContext implements F2BaseCanvasHandle {
     }
 
     public void setMiterLimit(float miterLimit) {
+        innerLog("setMiterLimit miterLimit:" + miterLimit);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         this.paint.setStrokeMiter(miterLimit);
     }
 
@@ -252,6 +370,10 @@ class F2AndroidCanvasContext implements F2BaseCanvasHandle {
     }
 
     public void setFont(int style, int variant, int weight, String name, float size) {
+        innerLog("setFont style:" + style + " name:" + name + " size:" + size);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         //todo support variant weight
 
         if (name == null) {
@@ -263,8 +385,11 @@ class F2AndroidCanvasContext implements F2BaseCanvasHandle {
         this.paint.setTextSize(size);
     }
 
-    @Override
     public void setTextAlign(String textAlign) {
+        innerLog("setTextAlign textAlign:" + textAlign);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         if (textAlign == null) {
             return;
         }
@@ -281,10 +406,12 @@ class F2AndroidCanvasContext implements F2BaseCanvasHandle {
     }
 
     public String getTextAlign() {
+        innerLog("getTextAlign ");
         return textAlign;
     }
 
     public void setTextBaseline(String textBaseline) {
+        innerLog("setTextBaseline textBaseline:" + textBaseline);
         if (textBaseline == null) {
             return;
         }
@@ -292,10 +419,15 @@ class F2AndroidCanvasContext implements F2BaseCanvasHandle {
     }
 
     public String getTextBaseline() {
+        innerLog("getTextBaseline");
         return textBaseline;
     }
 
     public void drawText(String text, float x, float y) {
+        innerLog("drawText text:" + text + " x:" + x + " y:" + y);
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         if (text == null) {
             return;
         }
@@ -313,8 +445,8 @@ class F2AndroidCanvasContext implements F2BaseCanvasHandle {
         this.bitmapCanvas.drawText(text, x, y, this.paint);
     }
 
-    @Override
     public void fillText(String text, float x, float y) {
+        innerLog("fillText text:" + text + " x:" + x + " y:" + y);
         if (text == null) {
             return;
         }
@@ -323,6 +455,7 @@ class F2AndroidCanvasContext implements F2BaseCanvasHandle {
     }
 
     public void strokeText(String text, float x, float y) {
+        innerLog("strokeText text:" + text + " x:" + x + " y:" + y);
         if (text == null) {
             return;
         }
@@ -331,6 +464,10 @@ class F2AndroidCanvasContext implements F2BaseCanvasHandle {
     }
 
     public float measureText(String text) {
+        innerLog("measureText text:" + text);
+        if (this.bitmapCanvas == null) {
+            return 0;
+        }
         if (text == null) {
             return 0;
         }
@@ -338,22 +475,30 @@ class F2AndroidCanvasContext implements F2BaseCanvasHandle {
     }
 
     public void setGlobalAlpha(float alpha) {
+        innerLog("setGlobalAlpha alpha:" + alpha);
         alpha = Math.max(alpha, 0);
         alpha = Math.min(alpha, 1);
         this.globalAlpha = alpha;
     }
 
     public float getGlobalAlpha() {
+        innerLog("getGlobalAlpha");
         return this.globalAlpha;
     }
 
-    @Override
     public void save() {
+        innerLog("save");
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         this.bitmapCanvas.save();
     }
 
-    @Override
     public void restore() {
+        innerLog("restore ");
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         this.bitmapCanvas.restore();
     }
 
@@ -378,21 +523,34 @@ class F2AndroidCanvasContext implements F2BaseCanvasHandle {
     }
 
     public void drawImage(Bitmap bitmap, float dx, float dy) {
-        bitmapCanvas.drawBitmap(bitmap, dx, dy, this.paint);
+        innerLog("drawImage ");
+        if (this.bitmapCanvas == null) {
+            return;
+        }
+        this.bitmapCanvas.drawBitmap(bitmap, dx, dy, this.paint);
     }
 
     public void drawImage(Bitmap bitmap, float dx, float dy, float sw, float sh) {
+        innerLog("drawImage ");
 //        bitmapCanvas.drawBitmap(bitmap, new Rect);
         throw new AssertionError("drawImage not support");
     }
 
     private void setFillPaint() {
+        innerLog("setFillPaint");
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         this.paint.setColor(this.fillStyle);
         this.paint.setAlpha((int) (this.globalAlpha * 255));
         this.paint.setStyle(Paint.Style.FILL);
     }
 
     private void setStrokePaint() {
+        innerLog("setStrokePaint");
+        if (this.bitmapCanvas == null) {
+            return;
+        }
         this.paint.setColor(this.strokeStyle);
         this.paint.setAlpha((int) (this.globalAlpha * 255));
         this.paint.setStyle(Paint.Style.STROKE);

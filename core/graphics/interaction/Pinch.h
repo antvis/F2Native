@@ -1,8 +1,8 @@
-#include "InteractionBase.h"
-#include "graphics/event/EventController.h"
-
 #ifndef XG_GRAPHICS_EVENT_INTERACTION_PINCH_H
 #define XG_GRAPHICS_EVENT_INTERACTION_PINCH_H
+
+#include "InteractionBase.h"
+#include "../event/EventController.h"
 
 namespace xg {
 class XChart;

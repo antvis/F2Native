@@ -1,9 +1,9 @@
 #ifndef XG_GRAPHICS_UTIL_BBOX_H
 #define XG_GRAPHICS_UTIL_BBOX_H
 
-#include "graphics/util/Point.h"
 #include <math.h>
 #include <vector>
+#include "Point.h"
 
 using namespace std;
 

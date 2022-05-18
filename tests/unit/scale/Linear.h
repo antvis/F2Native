@@ -10,6 +10,16 @@ namespace unit {
 
 class Linear {
   public:
+    static bool TickCount0() {
+        nlohmann::json values = {10, 20, 30, 40, 50};
+        //tickCount为0 返回min和max
+        nlohmann::json config = {{"tickCount", 0}, {"min", 5}, {"max", 55}};
+        scale::Linear linear("field", values, config);
+        std::vector<scale::Tick> ticks = linear.GetTicks();
+        return ticks.size() == 2 && ticks[0].tickValue == 5 && ticks[1].tickValue == 55;
+    };
+    
+    
     static bool TickCountLess2() {
         nlohmann::json values = {10, 20, 30, 40, 50};
         nlohmann::json config = {{"tickCount", 1}, {"min", 5}, {"max", 55}};

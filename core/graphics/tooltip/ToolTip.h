@@ -1,18 +1,17 @@
-
-#include "graphics/canvas/CanvasContext.h"
-#include "graphics/canvas/Coord.h"
-#include "graphics/global.h"
-#include "graphics/shape/Group.h"
-#include "graphics/shape/Line.h"
-#include "graphics/shape/Polyline.h"
-#include "graphics/shape/Rect.h"
-#include "graphics/shape/Text.h"
-#include "graphics/util/Point.h"
-#include "graphics/util/json.h"
-#include <nlohmann/json.hpp>
-
 #ifndef XG_GRAPHICS_TOOLTIP_H
 #define XG_GRAPHICS_TOOLTIP_H
+
+#include "../canvas/CanvasContext.h"
+#include "../canvas/Coord.h"
+#include "../global.h"
+#include "../shape/Group.h"
+#include "../shape/Line.h"
+#include "../shape/Polyline.h"
+#include "../shape/Rect.h"
+#include "../shape/Text.h"
+#include "../util/Point.h"
+#include "../util/json.h"
+#include "../../nlohmann/json.hpp"
 
 namespace xg {
 namespace tooltip {

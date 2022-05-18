@@ -6,9 +6,10 @@
 //  Copyright © 2021 com.alipay.xgraph. All rights reserved.
 //
 
-#include "graphics/shape/Shape.h"
 #ifndef XG_GRAPHICS_SHAPE_POLYGON_H
 #define XG_GRAPHICS_SHAPE_POLYGON_H
+
+#include "Shape.h"
 
 using namespace xg::util;
 

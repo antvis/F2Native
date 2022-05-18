@@ -1,14 +1,12 @@
-
-#include <nlohmann/json.hpp>
-#include <string>
-#include <unordered_map>
-
-#include "../shape/Group.h"
-#include "graphics/shape/Marker.h"
-#include "graphics/shape/Text.h"
-
 #ifndef XG_GRAPHICS_LEGEND_CONTROLLER_H
 #define XG_GRAPHICS_LEGEND_CONTROLLER_H
+
+#include <string>
+#include <unordered_map>
+#include "../shape/Group.h"
+#include "../shape/Marker.h"
+#include "../shape/Text.h"
+#include "../../nlohmann/json.hpp"
 
 namespace xg {
 class XChart;

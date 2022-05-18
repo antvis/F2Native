@@ -1,13 +1,13 @@
 #ifndef XG_GRAPHICS_UTIL_PATH_H
 #define XG_GRAPHICS_UTIL_PATH_H
 
-#include "graphics/util/Point.h"
-#include "graphics/util/Vector2d.h"
-#include "utils/common.h"
 #include <array>
 #include <limits>
 #include <math.h>
 #include <vector>
+#include "Point.h"
+#include "Vector2d.h"
+#include "../../utils/common.h"
 
 namespace xg {
 namespace util {

@@ -1,45 +1,49 @@
-
-#include "graphics/animate/GeomAnimate.h"
-#include "graphics/animate/TimeLine.h"
-#include "graphics/axis/AxisController.h"
-#include "graphics/canvas/Canvas.h"
-#include "graphics/canvas/CanvasContext.h"
-#include "graphics/canvas/Coord.h"
-#include "graphics/event/EventController.h"
-#include "graphics/func/Command.h"
-#include "graphics/geom/Area.h"
-#include "graphics/geom/Candle.h"
-#include "graphics/geom/Interval.h"
-#include "graphics/geom/Line.h"
-#include "graphics/geom/Point.h"
-#include "graphics/geom/shape/GeomShapeFactory.h"
-#include "graphics/guide/GuideController.h"
-#include "graphics/interaction/InteractionBase.h"
-#include "graphics/interaction/InteractionContext.h"
-#include "graphics/interaction/Pan.h"
-#include "graphics/interaction/Pinch.h"
-#include "graphics/legend/LegendController.h"
-#include "graphics/scale/ScaleController.h"
-#include "graphics/tooltip/TooltipController.h"
-#include <algorithm>
-#include <map>
-#include <nlohmann/json.hpp>
-#include <string>
-#include <unordered_map>
-#include <utils/Tracer.h>
-#include <vector>
+#ifndef XG_GRAPHICS_XCHART_H
+#define XG_GRAPHICS_XCHART_H
 
 #if defined(__APPLE__)
+#include "../ios/CoreGraphicsContext.h"
 #include <TargetConditionals.h>
-#include "ios/CoreGraphicsContext.h"
 #endif
 
 #if defined(ANDROID)
 #include "android/BitmapCanvasContext.h"
 #endif
 
-#ifndef XG_GRAPHICS_XCHART_H
-#define XG_GRAPHICS_XCHART_H
+#if defined(__EMSCRIPTEN__)
+#include "webassembly/WebCanvasContext.h"
+#endif
+
+#include <algorithm>
+#include <map>
+#include <string>
+#include <unordered_map>
+#include <vector>
+#include "../utils/Tracer.h"
+#include "animate/GeomAnimate.h"
+#include "animate/TimeLine.h"
+#include "axis/AxisController.h"
+#include "canvas/Canvas.h"
+#include "canvas/CanvasContext.h"
+#include "canvas/Coord.h"
+#include "event/EventController.h"
+#include "func/Command.h"
+#include "geom/Area.h"
+#include "geom/Candle.h"
+#include "geom/Interval.h"
+#include "geom/Line.h"
+#include "geom/Point.h"
+#include "geom/shape/GeomShapeFactory.h"
+#include "guide/GuideController.h"
+#include "interaction/InteractionBase.h"
+#include "interaction/InteractionContext.h"
+#include "interaction/Pan.h"
+#include "interaction/Pinch.h"
+#include "legend/LegendController.h"
+#include "scale/ScaleController.h"
+#include "tooltip/TooltipController.h"
+#include "../nlohmann/json.hpp"
+
 
 #define XG_MEMBER_CALLBACK(funPtr) std::bind(&funPtr, this)
 #define XG_MEMBER_CALLBACK_1(funPtr) std::bind(&funPtr, this, std::placeholders::_1)
@@ -82,7 +86,10 @@ class XChart {
 
   public:
     XChart(const std::string &name, double width, double height, double ratio = 1.0);
-    ~XChart();
+    virtual ~XChart();
+
+    // emscript 编译需要
+    XChart(const XChart &){};
 
     XChart &Source(const std::string &json);
 
@@ -94,16 +101,32 @@ class XChart {
         return *this;
     }
 #endif
-    
+
 #if defined(__APPLE__)
     ///方便降级 稳定后改回SetCanvasContext
-    ///context == CGContextRef
+    /// context == CGContextRef
     XChart &SetCoreGraphicsContext(void *context) {
         XG_RELEASE_POINTER(canvasContext_);
         canvasContext_ = new canvas::CoreGraphicsContext(context, width_, height_, static_cast<float>(ratio_), nullptr);
         return *this;
     }
 #endif
+
+#if defined(__EMSCRIPTEN__)
+    XChart &SetCanvasContext(const std::string &canvasName) {
+        XG_RELEASE_POINTER(canvasContext_);
+        canvasContext_ = new canvas::WebCanvasContext(canvasName, width_, height_, ratio_);
+        return *this;
+    }
+#endif // __EMSCRIPTEN__
+    
+    /// 设置chart的canvasConext，这里和上面的方法增加了一个ownCanvasContext_来区分谁创建的canvasContext
+    /// @param canvasContext 绘制的context
+    XChart &SetCanvasContext(canvas::CanvasContext *canvasContext) {
+        ownCanvasContext_ = false;
+        canvasContext_ = canvasContext;
+        return *this;
+    }
 
     XChart &Padding(double left = 0.f, double top = 0.f, double right = 0.0, double bottom = 0.);
     XChart &Margin(double left = 0.f, double top = 0.f, double right = 0.0, double bottom = 0.);
@@ -116,7 +139,7 @@ class XChart {
 
     guide::GuideController &Guide() { return *this->guideController_; }
 
-    XChart &Interaction(const std::string &type, nlohmann::json config = {});
+    XChart &Interaction(const std::string &type, const std::string &json = "");
 
     XChart &Tooltip(const std::string &json = "");
 
@@ -132,7 +155,12 @@ class XChart {
     geom::Point &Point();
     geom::Candle &Candle();
 
-    void Render();
+    ///渲染是否成功, 渲染失败的原因有
+    ///1.未设置canvasContext
+    ///2.设置了canvasContext， 但canvasContext->isValid 不合法
+    ///3.传进来的source不是array或者数据长度为0
+    ///@return true 渲染成功 false 失败
+    bool Render();
 
     void Repaint();
 
@@ -152,8 +180,9 @@ class XChart {
     std::vector<std::string> getYScaleFields();
 
     inline const std::string &GetChartName() { return this->chartName_; }
-
-    inline const std::string &GetChartId() { return chartId_; }
+    ///chart的唯一id chartName_+ uniqueId
+    ///@return chartId_
+    inline const std::string &GetChartId() { return this->chartId_; }
 
     inline utils::Tracer *GetLogTracer() const { return this->logTracer_; }
 
@@ -184,8 +213,38 @@ class XChart {
     inline const std::array<double, 4> GetMargin() { return margin_; }
 
     inline void SetRequestFrameFuncId(std::string funcId) noexcept { this->requestFrameHandleId_ = funcId; }
-    inline long long GetRenderDurationMM() const { return renderDurationMM_;}
-    long GetRenderCount() const { return canvasContext_->GetRenderCount();}
+
+    /// bind long long to webassembly会报错，所以改成long,渲染时间用long表示也够用了
+    inline long GetRenderDurationMM() const { return renderDurationMM_;}
+    inline long GetRenderCmdCount() const { return canvasContext_->GetRenderCount();}
+    
+    void Redraw();
+
+// webassembly返回指针
+#if defined(__EMSCRIPTEN__)
+    XChart *SetCanvasContextWasm(const std::string &canvasName) { return &SetCanvasContext(canvasName); }
+    XChart *SourceWasm(const std::string &json) { return &Source(json); }
+    canvas::CanvasContext *GetCanvasContextWasm() const { return canvasContext_; }
+    XChart *PaddingWasm(double left = 0.f, double top = 0.f, double right = 0.0, double bottom = 0.) {
+        return &Padding(left, top, right, bottom);
+    }
+    XChart *MarginWasm(double left = 0.f, double top = 0.f, double right = 0.0, double bottom = 0.) {
+        return &Margin(left, top, right, bottom);
+    }
+    XChart *ScaleWasm(const std::string &field, const std::string &json) { return &Scale(field, json); }
+    XChart *AxisWasm(const std::string &field, const std::string &json) { return &Axis(field, json); }
+    XChart *LegendWasm(const std::string &field, const std::string &json) { return &Legend(field, json); }
+    guide::GuideController *GuideWasm() { return &Guide(); }
+    XChart *InteractionWasm(const std::string &type, const std::string &json) { return &Interaction(type, json); }
+    XChart *TooltipWasm(const std::string &json) { return &Tooltip(json); }
+    XChart *CoordWasm(const std::string &json) { return &Coord(json); }
+    XChart *AnimateWasm(const std::string &json) { return &Animate(json); }
+    geom::Line *LineWasm() { return &Line(); }
+    geom::Interval *IntervalWasm() { return &Interval(); }
+    geom::Area *AreaWasm() { return &Area(); }
+    geom::Point *PointWasm() { return &Point(); }
+    geom::Candle *CandleWasm() { return &Candle(); }
+#endif
   private:
     static long long CreateChartId() {
         static std::atomic<long long> id(1);
@@ -208,8 +267,6 @@ class XChart {
 
     void ClearInner();
 
-    void Redraw();
-
     void NotifyAction(const std::string &action) {
         auto &chartCallbacks = chartActionListeners_[action];
         std::for_each(chartCallbacks.begin(), chartCallbacks.end(), [&](ChartActionCallback &callback) -> void { callback(); });
@@ -218,7 +275,7 @@ class XChart {
         std::for_each(renderCallbacks.begin(), renderCallbacks.end(), [&](ChartActionCallback &callback) -> void { callback(); });
     }
 
-  private:
+  protected:
     bool rendered_ = false;
     nlohmann::json data_;
     std::unique_ptr<canvas::coord::AbstractCoord> coord_ = nullptr;
@@ -250,6 +307,7 @@ class XChart {
     shape::Group *frontLayout_;
 
     canvas::CanvasContext *canvasContext_ = nullptr;
+    bool ownCanvasContext_ = true;
 
     utils::Tracer *logTracer_ = nullptr;
     std::unique_ptr<geom::shape::GeomShapeFactory> geomShapeFactory_ = nullptr;

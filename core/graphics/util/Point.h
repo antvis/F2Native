@@ -2,7 +2,7 @@
 #define XG_GRAPHICS_UTIL_POINT_H
 
 #include <math.h>
-#include "utils/common.h"
+#include "../../utils/common.h"
 
 namespace xg {
 namespace util {

@@ -34,12 +34,14 @@
 		CC612BCE250A28AF00315124 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CC612BCD250A28AF00315124 /* main.m */; };
 		CC612BFD250B54E600315124 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC612BFC250B54E600315124 /* libc++.tbd */; };
 		CC612C04250B5C5A00315124 /* Res in Resources */ = {isa = PBXBuildFile; fileRef = CC612C03250B5C5A00315124 /* Res */; };
+		CC66877827C5D73B00DA1B5A /* MarketMovingBugFix1.m in Sources */ = {isa = PBXBuildFile; fileRef = CC66877727C5D73B00DA1B5A /* MarketMovingBugFix1.m */; };
+		CC6E83FE28348B2F00F69380 /* F2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F5DD4E7255AB42C00FD60B3 /* F2.framework */; };
 		CC76557B26C5220100061FCF /* MultiIntervalUIView3.m in Sources */ = {isa = PBXBuildFile; fileRef = CC76557826C5220100061FCF /* MultiIntervalUIView3.m */; };
 		CC85823C2756070900C4D435 /* MarketMovingUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85823B2756070900C4D435 /* MarketMovingUIView.m */; };
 		CC8BE29E26F2EE9C00F52359 /* RadarAreaUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = CC8BE29D26F2EE9C00F52359 /* RadarAreaUIView.m */; };
 		CC8C61E92795770300F540D7 /* BaseGuideUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = CC8C61E62795770300F540D7 /* BaseGuideUIView.m */; };
 		CCE9E3E927B12AF400D8A030 /* BugFixViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE9E3E727B12AF400D8A030 /* BugFixViewController.m */; };
-		CCE9E3ED27B12BB000D8A030 /* TimeSharingBugFix1UIView.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE9E3EB27B12BB000D8A030 /* TimeSharingBugFix1UIView.m */; };
+		CCE9E3ED27B12BB000D8A030 /* TimeSharingBugFix1.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE9E3EB27B12BB000D8A030 /* TimeSharingBugFix1.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -119,6 +121,8 @@
 		CC612BCD250A28AF00315124 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		CC612BFC250B54E600315124 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		CC612C03250B5C5A00315124 /* Res */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Res; sourceTree = "<group>"; };
+		CC66877627C5D73B00DA1B5A /* MarketMovingBugFix1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MarketMovingBugFix1.h; sourceTree = "<group>"; };
+		CC66877727C5D73B00DA1B5A /* MarketMovingBugFix1.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MarketMovingBugFix1.m; sourceTree = "<group>"; };
 		CC76557826C5220100061FCF /* MultiIntervalUIView3.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultiIntervalUIView3.m; sourceTree = "<group>"; };
 		CC76557A26C5220100061FCF /* MultiIntervalUIView3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiIntervalUIView3.h; sourceTree = "<group>"; };
 		CC8582392756070900C4D435 /* MarketMovingUIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarketMovingUIView.h; sourceTree = "<group>"; };
@@ -129,8 +133,8 @@
 		CC8C61E82795770300F540D7 /* BaseGuideUIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseGuideUIView.h; sourceTree = "<group>"; };
 		CCE9E3E727B12AF400D8A030 /* BugFixViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BugFixViewController.m; sourceTree = "<group>"; };
 		CCE9E3E827B12AF400D8A030 /* BugFixViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BugFixViewController.h; sourceTree = "<group>"; };
-		CCE9E3EB27B12BB000D8A030 /* TimeSharingBugFix1UIView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeSharingBugFix1UIView.m; sourceTree = "<group>"; };
-		CCE9E3EC27B12BB000D8A030 /* TimeSharingBugFix1UIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeSharingBugFix1UIView.h; sourceTree = "<group>"; };
+		CCE9E3EB27B12BB000D8A030 /* TimeSharingBugFix1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeSharingBugFix1.m; sourceTree = "<group>"; };
+		CCE9E3EC27B12BB000D8A030 /* TimeSharingBugFix1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeSharingBugFix1.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,6 +142,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC6E83FE28348B2F00F69380 /* F2.framework in Frameworks */,
 				CC612BFD250B54E600315124 /* libc++.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -258,8 +263,10 @@
 		CCE9E3EA27B12B9600D8A030 /* bugfix */ = {
 			isa = PBXGroup;
 			children = (
-				CCE9E3EC27B12BB000D8A030 /* TimeSharingBugFix1UIView.h */,
-				CCE9E3EB27B12BB000D8A030 /* TimeSharingBugFix1UIView.m */,
+				CCE9E3EC27B12BB000D8A030 /* TimeSharingBugFix1.h */,
+				CCE9E3EB27B12BB000D8A030 /* TimeSharingBugFix1.m */,
+				CC66877627C5D73B00DA1B5A /* MarketMovingBugFix1.h */,
+				CC66877727C5D73B00DA1B5A /* MarketMovingBugFix1.m */,
 			);
 			path = bugfix;
 			sourceTree = "<group>";
@@ -379,11 +386,12 @@
 				95982AF825CA8D3D0066F875 /* MultiAxiesLineUIView.m in Sources */,
 				CC612BBD250A28AE00315124 /* AppDelegate.m in Sources */,
 				957056C925931B0900D26E0A /* BaseAreaUIView2.m in Sources */,
-				CCE9E3ED27B12BB000D8A030 /* TimeSharingBugFix1UIView.m in Sources */,
+				CCE9E3ED27B12BB000D8A030 /* TimeSharingBugFix1.m in Sources */,
 				3FD08FB025B0764A002F14AC /* KLineUIView.m in Sources */,
 				CC612BCE250A28AF00315124 /* main.m in Sources */,
 				CCE9E3E927B12AF400D8A030 /* BugFixViewController.m in Sources */,
 				3F56A0482523599D002AA2D2 /* MultiLineUIView.m in Sources */,
+				CC66877827C5D73B00DA1B5A /* MarketMovingBugFix1.m in Sources */,
 				95A7D80A25A3035800CA8B9F /* BasePointUIView.m in Sources */,
 				3F56A04B25235B6E002AA2D2 /* BaseAreaUIView.m in Sources */,
 				3F56A0402523233F002AA2D2 /* DemoViewController.m in Sources */,

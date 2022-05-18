@@ -28,6 +28,7 @@
 }
 
 - (void)testLinear {
+    XCTAssertEqual(unit::Linear::TickCount0(), YES);
     XCTAssertEqual(unit::Linear::TickCountLess2(), YES);
     XCTAssertEqual(unit::Linear::Ticks(), YES);
     XCTAssertEqual(unit::Linear::TicksNice(), YES);
@@ -42,6 +43,7 @@
 }
 
 -(void)testCategory {
+    XCTAssertEqual(unit::Category::TickCount0(), YES);
     XCTAssertEqual(unit::Category::TickCountLess2(), YES);
     XCTAssertEqual(unit::Category::ValueCountLess2(), YES);
     XCTAssertEqual(unit::Category::ValueCountZero(), YES);

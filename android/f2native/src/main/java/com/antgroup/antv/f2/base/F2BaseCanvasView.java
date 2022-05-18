@@ -6,9 +6,10 @@ import com.antgroup.antv.f2.F2CanvasView;
 import com.antgroup.antv.f2.F2Config;
 
 /**
- *  业务层调用F2CanvasView的接口，antg和native canvas子类分别实现
+ * 业务层调用F2CanvasView的接口，antg和native canvas子类分别实现
  */
 public interface F2BaseCanvasView {
+    void init(int width, int height, F2Config config);
 
     View getView();
 
@@ -22,18 +23,19 @@ public interface F2BaseCanvasView {
 
     long getNativeCanvas();
 
-    void swapBuffer();
-
-    void appendRenderCmdCount(String name, int renderCmdCount);
-
-    boolean isOnCanvasThread();
+    boolean swapBuffer();
 
     void destroy();
 
     void postCanvasDraw();
 
-    F2BaseCanvasHandle getCanvasHandle();
-
     boolean hasAdapter();
+
+    void sendRenderDetectEvent(long renderDuration, boolean renderSuccess, int renderCmdCount,
+                               boolean drawSuccess, String chartId);
+
+    boolean isDrawSuccess();
+
+    boolean hadOOM();
 
 }

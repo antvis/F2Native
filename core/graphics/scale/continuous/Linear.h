@@ -1,16 +1,15 @@
 #ifndef XG_GRAPHICS_SCALE_LINEAR_H
 #define XG_GRAPHICS_SCALE_LINEAR_H
 
-#include "graphics/global.h"
-#include "graphics/scale/Scale.h"
-#include "utils/StringUtil.h"
-#include "utils/common.h"
-#include <WilkinsonExtended/WilkinsonExtended.h>
 #include <iomanip>
 #include <math.h>
 #include <sstream>
 #include <unordered_map>
 #include <iostream>
+#include "../Scale.h"
+#include "../../global.h"
+#include "../../../utils/StringUtil.h"
+#include "../../../utils/common.h"
 
 namespace xg {
 namespace scale {

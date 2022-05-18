@@ -1,12 +1,10 @@
-
 #ifndef XG_GRAPHICS_GEOM_SHAPE_CANDLE_H
 #define XG_GRAPHICS_GEOM_SHAPE_CANDLE_H
 
-#include "graphics/geom/shape/GeomShapeBase.h"
-#include "graphics/global.h"
-//#include "graphics/shape/Candle.h"
-#include "graphics/shape/Line.h"
-#include <utils/common.h>
+#include "GeomShapeBase.h"
+#include "../../global.h"
+#include "../../shape/Line.h"
+#include "../../../utils/common.h"
 
 namespace xg {
 namespace geom {

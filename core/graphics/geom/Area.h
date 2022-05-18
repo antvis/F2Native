@@ -1,7 +1,7 @@
 #ifndef XG_GRAPHICS_GEOM_AREA_H
 #define XG_GRAPHICS_GEOM_AREA_H
 
-#include "graphics/geom/Geom.h"
+#include "Geom.h"
 
 namespace xg {
 class XChart;

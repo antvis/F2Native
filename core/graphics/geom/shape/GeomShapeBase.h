@@ -1,13 +1,13 @@
-#include "graphics/canvas/CanvasContext.h"
-#include "graphics/canvas/Coord.h"
-#include "graphics/shape/Group.h"
-#include <math.h>
-#include <nlohmann/json.hpp>
-#include <utils/common.h>
-#include <vector>
-
 #ifndef XG_GRAPHICS_GEOM_SHAPE_GEOMSHAPEBASE_H
 #define XG_GRAPHICS_GEOM_SHAPE_GEOMSHAPEBASE_H
+
+#include <math.h>
+#include <vector>
+#include "../../canvas/CanvasContext.h"
+#include "../../canvas/Coord.h"
+#include "../../shape/Group.h"
+#include "../../../nlohmann/json.hpp"
+#include "../../../utils/common.h"
 
 using namespace std;
 

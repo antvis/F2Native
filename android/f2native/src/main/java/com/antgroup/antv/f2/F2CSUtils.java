@@ -6,11 +6,13 @@ package com.antgroup.antv.f2;
  */
 public class F2CSUtils {
 
-    // kF2NativeCanvasBackendKey true为使用新的canvas。iOS使用CoreGraphics实现的canvas，android使用java实现的canvas，双端共用
-    public static boolean isAndroidCanvas() {
+    public static void showUseNativeCanvasToast(String content) {
+    }
+
+    // 是否开启白屏检测开关
+    public static boolean isDetectEnable() {
+        // kF2NativeReleaseProductDetKey
         return true;
     }
 
-    public static void showUseNativeCanvasToast() {
-    }
 }

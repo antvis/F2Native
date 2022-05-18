@@ -1,9 +1,9 @@
-#include "TimeLine.h"
-#include "graphics/canvas/Coord.h"
-#include "graphics/shape/Group.h"
-
 #ifndef XG_GRAPHICS_ANIMATE_GEOM_H
 #define XG_GRAPHICS_ANIMATE_GEOM_H
+
+#include "TimeLine.h"
+#include "../canvas/Coord.h"
+#include "../shape/Group.h"
 
 namespace xg {
 class XChart;

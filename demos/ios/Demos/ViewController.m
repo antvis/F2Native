@@ -74,7 +74,7 @@
 }
 
 + (NSArray *)demoInfo {
-    return @[
+    return @[    
         @{@"type": @"baseLine", @"name": @"基础折线图", @"view": @"BaseLineUIView"},
         @{@"type": @"multiAxiesLine", @"name": @"基础折线图(双Y轴)", @"view": @"MultiAxiesLineUIView"},
         @{@"type": @"multiLine", @"name": @"对比折线图", @"view": @"MultiLineUIView"},

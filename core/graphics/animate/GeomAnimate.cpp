@@ -1,7 +1,7 @@
 #include "GeomAnimate.h"
-#include "graphics/XChart.h"
-#include "graphics/canvas/Polar.h"
-#include "graphics/shape/Rect.h"
+#include "../XChart.h"
+#include "../canvas/Polar.h"
+#include "../shape/Rect.h"
 
 using namespace xg;
 

@@ -1,10 +1,10 @@
 #ifndef XG_GRAPHICS_GUIDE_FLAG_H
 #define XG_GRAPHICS_GUIDE_FLAG_H
 
-#include "graphics/guide/GuideBase.h"
-#include "graphics/util/BBox.h"
-#include "graphics/util/Point.h"
-#include <nlohmann/json.hpp>
+#include "GuideBase.h"
+#include "../util/BBox.h"
+#include "../util/Point.h"
+#include "../../nlohmann/json.hpp"
 
 namespace xg {
 class XChart;

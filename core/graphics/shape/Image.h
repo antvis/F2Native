@@ -9,8 +9,8 @@
 #ifndef XG_GRAPHICS_SHAPE_IMAGE_H
 #define XG_GRAPHICS_SHAPE_IMAGE_H
 
-#include "graphics/shape/Shape.h"
-#include "graphics/canvas/CanvasImage.h"
+#include "Shape.h"
+#include "../canvas/CanvasImage.h"
 
 namespace xg {
 namespace shape {

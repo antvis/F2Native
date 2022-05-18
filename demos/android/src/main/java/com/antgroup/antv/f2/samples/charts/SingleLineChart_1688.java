@@ -6,16 +6,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.antgroup.antv.f2.F2CanvasView;
 import com.antgroup.antv.f2.F2Chart;
 import com.antgroup.antv.f2.samples.Utils;
 
 import java.io.InputStream;
 
-//import com.alipay.antgraphic.misc.CanvasImageResource;
-//import com.alipay.antgraphic.misc.CanvasIsolateHelper;
 
 /**
  * 基础折线图-1
@@ -68,7 +64,6 @@ public class SingleLineChart_1688 implements F2CanvasView.Adapter, F2CanvasView.
     @Override
     public void onTouch(F2CanvasView canvasView, F2CanvasView.TouchEvent event) {
         if (mChart != null && mChart.postTouchEvent(event)) {
-            drawTag(canvasView);
         }
     }
 
@@ -77,47 +72,6 @@ public class SingleLineChart_1688 implements F2CanvasView.Adapter, F2CanvasView.
         if (mChart != null) {
             mChart.destroy();
         }
-    }
-
-    private void drawTag(F2CanvasView canvasView) {
-        if (mChart == null) return;
-        double[] position = mChart.getPosition("{\"date\":\"2017-06-10\",\"value\":85}");
-        canvasView.getCanvasHandle().save();
-        canvasView.getCanvasHandle().setFillStyle("#DC143C");
-        canvasView.getCanvasHandle().beginPath();
-        canvasView.getCanvasHandle().arc((float) position[0], (float) position[1], 8.f, 0.0f, (float) Math.toRadians(360.f), false);
-        canvasView.getCanvasHandle().fill();
-        canvasView.getCanvasHandle().restore();
-
-
-//        CanvasImageResource imageResource = new CanvasImageResource("10001", getImageFromAssets(canvasView.getContext(), "wallet.png"));
-//        float width = imageResource.getBitmap().getWidth();
-//        float height = imageResource.getBitmap().getHeight();
-//
-//        float x = (float) position[0] - width / 2;
-//        float y = (float) position[1] + 10;
-//
-//        CanvasIsolateHelper.putImage(canvasView.getCanvas().getCanvasSessionId(), imageResource);
-//        canvasView.getCanvasHandle().drawImage("10001", width, height, 0, 0, width, height, x, y, width * 2, height * 2);
-        canvasView.swapBuffer();
-    }
-
-    private void drawToolTipRect(F2CanvasView canvasView, String param) {
-        JSONObject itemData = JSON.parseArray(param).getJSONObject(0);
-        float x = itemData.getFloatValue("x");
-        float y = itemData.getFloatValue("y");
-        String color = itemData.getString("color");
-        canvasView.getCanvasHandle().save();
-        canvasView.getCanvasHandle().setFillStyle(color);
-        canvasView.getCanvasHandle().fillRect((int) x, (int) y, 100, 50);
-        canvasView.getCanvasHandle().restore();
-
-        canvasView.getCanvasHandle().save();
-        canvasView.getCanvasHandle().setFillStyle("#ffffff");
-        String text = itemData.getString("value");
-        canvasView.getCanvasHandle().setTextAlign("center");
-        canvasView.getCanvasHandle().fillText(text, x + 50, y + 40);
-        canvasView.getCanvasHandle().restore();
     }
 
     private static Bitmap getImageFromAssets(Context context, String filePath) {

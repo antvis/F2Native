@@ -35,15 +35,17 @@
     "pretty-quick": "pretty-quick",
     "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1"
   },
-  "devDependencies": {
-    "@antv/gatsby-theme-antv": "^1.0.2",
+  "dependencies": {
     "@types/react": "^16.9.35",
     "@types/react-dom": "^16.9.8",
-    "gatsby": "^2.24.92",
-    "gh-pages": "^3.1.0",
     "ptz-i18n": "^1.0.0",
-    "react-i18next": "^11.7.3",
     "react": "^16.10.2",
     "react-dom": "^16.10.2"
+  },
+  "devDependencies": {
+    "@antv/gatsby-theme-antv": "1.0.2",
+    "gatsby": "^2.24.92",
+    "gh-pages": "^3.1.0",
+    "react-i18next": "^11.7.3"
   }
 }

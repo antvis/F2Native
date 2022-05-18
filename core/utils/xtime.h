@@ -6,7 +6,7 @@
 #include <string>
 #include <time.h>
 
-#if defined(__APPLE__)
+#if defined(__APPLE__) || defined(__EMSCRIPTEN__)
 #include <sys/time.h>
 #elif defined(__ANDROID__) || defined(ANDROID)
 #endif

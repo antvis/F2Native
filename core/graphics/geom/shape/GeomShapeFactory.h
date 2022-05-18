@@ -1,11 +1,11 @@
 #ifndef XG_GRAPHICS_GEOM_SHAPE_GEOMSHAPEFACTORY_H
 #define XG_GRAPHICS_GEOM_SHAPE_GEOMSHAPEFACTORY_H
 
-#include "graphics/geom/shape/GeomShapeBase.h"
-#include "graphics/shape/Group.h"
-#include <nlohmann/json.hpp>
 #include <string>
 #include <unordered_map>
+#include "GeomShapeBase.h"
+#include "../../shape/Group.h"
+#include "../../../nlohmann/json.hpp"
 
 namespace xg {
 class XChart;

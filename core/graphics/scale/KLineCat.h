@@ -1,11 +1,11 @@
-#include "Category.h"
-#include "utils/StringUtil.h"
-#include "utils/xtime.h"
-#include <set>
-#include <string>
-
 #ifndef XG_GRAPHICS_SCALE_CAT_KLINE_H
 #define XG_GRAPHICS_SCALE_CAT_KLINE_H
+
+#include <set>
+#include <string>
+#include "Category.h"
+#include "../../utils/StringUtil.h"
+#include "../../utils/xtime.h"
 
 namespace xg {
 namespace scale {

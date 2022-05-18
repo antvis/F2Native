@@ -1,17 +1,17 @@
-#include "graphics/canvas/CanvasContext.h"
-#include "graphics/canvas/Coord.h"
-#include "graphics/scale/Scale.h"
-#include "graphics/shape/Group.h"
-#include "graphics/shape/Text.h"
-#include "graphics/util/Point.h"
-#include <array>
-#include <nlohmann/json.hpp>
-#include <string>
-#include <utils/common.h>
-#include <vector>
-
 #ifndef XG_GRAPHICS_AXIS_CONTROLLER_H
 #define XG_GRAPHICS_AXIS_CONTROLLER_H
+
+#include <array>
+#include <string>
+#include <vector>
+#include "../canvas/CanvasContext.h"
+#include "../canvas/Coord.h"
+#include "../scale/Scale.h"
+#include "../shape/Group.h"
+#include "../shape/Text.h"
+#include "../util/Point.h"
+#include "../../utils/common.h"
+#include "../../nlohmann/json.hpp"
 
 using namespace xg::util;
 
@@ -102,8 +102,10 @@ class AxisController {
             {"textColor", "#808080"}, // 标签文字颜色
             {"textSize", 10.f},       // 标签文字字号
             {"labelMargin", 0.f},     // 轴上标签的外边距. x 轴为左右外边距， y 轴为上下外边距
-            {"labelOffset", 0.f}, // 轴上标签的垂直方向偏移量。x 轴为上下的整体偏移量， y 轴为左右的整体偏移量
-            {"textAlign", "center"},     {"textBaseline", "bottom"},
+            {"labelOffset", 0.f},     // 轴上标签的垂直方向偏移量。x 轴为上下的整体偏移量， y 轴为左右的整体偏移量
+            {"textAlign", "center"},  //文字水平对齐方式 start center end
+            {"textBaseline", "bottom"},//文字垂直对齐方式 top middle bottom
+            {"inner", false}            //轴上的文字是否在图表内部
         };
 
         nlohmann::json cfg = {{"label", label},  // 标签

@@ -1,7 +1,7 @@
 #ifndef XG_GRAPHICS_SCALE_IDENTITY_H
 #define XG_GRAPHICS_SCALE_IDENTITY_H
 
-#include "graphics/scale/Scale.h"
+#include "Scale.h"
 
 namespace xg {
 namespace scale {

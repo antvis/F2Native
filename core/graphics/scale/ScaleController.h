@@ -1,21 +1,21 @@
 #ifndef XG_GRAPHICS_SCALE_CONTROLLER_H
 #define XG_GRAPHICS_SCALE_CONTROLLER_H
 
-#include "graphics/canvas/Coord.h"
-#include "graphics/scale/Category.h"
-#include "graphics/scale/Identity.h"
-#include "graphics/scale/KLineCat.h"
-#include "graphics/scale/TimeCategory.h"
-#include "graphics/scale/continuous/Linear.h"
-#include "graphics/scale/continuous/TimeSharingLinear.h"
-#include "graphics/util/json.h"
-#include "graphics/util/json_util.h"
-#include "utils/Tracer.h"
 #include <algorithm>
-#include <nlohmann/json.hpp>
 #include <unordered_map>
-#include <utils/common.h>
 #include <vector>
+#include "Category.h"
+#include "Identity.h"
+#include "KLineCat.h"
+#include "TimeCategory.h"
+#include "continuous/Linear.h"
+#include "continuous/TimeSharingLinear.h"
+#include "../canvas/Coord.h"
+#include "../util/json.h"
+#include "../util/json_util.h"
+#include "../../utils/Tracer.h"
+#include "../../utils/common.h"
+#include "../../nlohmann/json.hpp"
 
 namespace xg {
 namespace scale {
@@ -87,6 +87,7 @@ static std::unique_ptr<AbstractScale> MakeScale(const std::string &field_,
 
     nlohmann::json firstObj = data[0];
     nlohmann::json firstVal = firstObj[field_];
+    //如果field_对应的数据是数组的画，会把数组打平
     nlohmann::json fieldColumn = util::JsonArrayByKey(data, field_);
 
     if(config.contains("type")) {

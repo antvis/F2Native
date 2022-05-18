@@ -53,13 +53,11 @@ static jlong CreateNativeChart(JNIEnv *env, jclass clazz, jstring name, jdouble 
     return reinterpret_cast<jlong>(chart);
 }
 
-static jint SetChartCanvas(JNIEnv *env, jclass clazz, jlong chart, jlong view, jstring requestFrameHandleId, jboolean isAndroidCanvas) {
+static jint SetChartCanvas(JNIEnv *env, jclass clazz, jlong chart, jlong view, jstring requestFrameHandleId) {
     xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
     std::string _requestFrameHandleId = JavaStringToString(env, requestFrameHandleId);
     F2_LOG_I("#SetChartCanvas", "bind canvas requestFrameHandleId: %s", _requestFrameHandleId.data());
     _chart->SetRequestFrameFuncId(_requestFrameHandleId);
-    F2_LOG_I("#CreateNativeChart", "isAndroidCanvas:%d",isAndroidCanvas);
-    // 区分使用的CanvasContext
     ScopedJavaGlobalRef<jobject> *handle = reinterpret_cast<ScopedJavaGlobalRef<jobject> *>(view);
     _chart->SetAndroidCanvasContext(handle->obj());
     return 0;
@@ -127,10 +125,10 @@ static jint SetChartAnimate(JNIEnv *env, jclass clazz, jlong chart, jstring conf
 
 static jint SetChartInteraction(JNIEnv *env, jclass clazz, jlong chart, jstring type, jstring config) {
     std::string _type = JavaStringToString(env, type);
-    nlohmann::json cfg = nlohmann::json::parse(JavaStringToString(env, config), nullptr, false);
+    std::string _config = JavaStringToString(env, config);
 
     xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
-    _chart->Interaction(_type, cfg);
+    _chart->Interaction(_type, _config);
     return 0;
 }
 
@@ -212,6 +210,24 @@ static jstring GetChartRenderDumpInfo(JNIEnv *env, jclass clazz, jlong chart) {
     return env->NewStringUTF(dumpInfo.data());
 }
 
+static jint GetRenderDurationMM(JNIEnv *env, jclass clazz, jlong chart) {
+    xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
+    F2_LOG_I(_chart->GetChartName(), "%s", "#:GetRenderDurationMM");
+    return _chart->GetRenderDurationMM();
+}
+
+static jint GetRenderCmdCount(JNIEnv *env, jclass clazz, jlong chart) {
+   xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
+   F2_LOG_I(_chart->GetChartName(), "%s", "#:GetRenderCmdCount");
+   return _chart->GetRenderCmdCount();
+}
+static jstring GetChartId(JNIEnv *env, jclass clazz, jlong chart) {
+    xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
+    F2_LOG_I(_chart->GetChartName(), "%s", "#:GetChartId");
+    std::string chartId = _chart->GetChartId();
+    return env->NewStringUTF(chartId.data());
+}
+
 static jstring GetChartScaleTicks(JNIEnv *env, jclass clazz, jlong chart, jstring field) {
     xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
     std::string _field = JavaStringToString(env, field);
@@ -226,11 +242,10 @@ static jint DestroyChart(JNIEnv *env, jclass clazz, jlong chart) {
     return 0;
 }
 
-static jint ChartRender(JNIEnv *env, jclass clazz, jlong chart) {
+static jboolean ChartRender(JNIEnv *env, jclass clazz, jlong chart) {
     xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
     F2_LOG_I(_chart->GetChartName(), "%s", "#render");
-    _chart->Render();
-    return 0;
+    return _chart->Render() ? JNI_TRUE : JNI_FALSE;
 }
 
 static jdoubleArray ChartGetPosition(JNIEnv *env, jclass clazz, jlong chart, jstring itemData) {
@@ -387,7 +402,7 @@ static const JNINativeMethod native_chart_methods[] = {{
                                                        },
                                                        {
                                                            .name = "nSetCanvasView",
-                                                           .signature = "(JJLjava/lang/String;Z)I",
+                                                           .signature = "(JJLjava/lang/String;)I",
                                                            .fnPtr = reinterpret_cast<void *>(SetChartCanvas),
                                                        },
                                                        {
@@ -461,6 +476,21 @@ static const JNINativeMethod native_chart_methods[] = {{
                                                            .fnPtr = reinterpret_cast<void *>(GetChartRenderDumpInfo),
                                                        },
                                                        {
+                                                           .name = "nGetRenderCmdCount",
+                                                           .signature = "(J)I",
+                                                           .fnPtr = reinterpret_cast<void *>(GetRenderCmdCount),
+                                                       },
+                                                       {
+                                                           .name = "nGetRenderDurationMM",
+                                                           .signature = "(J)I",
+                                                           .fnPtr = reinterpret_cast<void *>(GetRenderDurationMM),
+                                                       },
+                                                       {
+                                                           .name = "nGetChartId",
+                                                           .signature = "(J)Ljava/lang/String;",
+                                                           .fnPtr = reinterpret_cast<void *>(GetChartId),
+                                                       },
+                                                       {
                                                            .name = "nGetScaleTicks",
                                                            .signature = "(JLjava/lang/String;)Ljava/lang/String;",
                                                            .fnPtr = reinterpret_cast<void *>(GetChartScaleTicks),
@@ -472,7 +502,7 @@ static const JNINativeMethod native_chart_methods[] = {{
                                                        },
                                                        {
                                                            .name = "nRender",
-                                                           .signature = "(J)I",
+                                                           .signature = "(J)Z",
                                                            .fnPtr = reinterpret_cast<void *>(ChartRender),
                                                        },
                                                        {
@@ -698,7 +728,7 @@ static bool OnJniLoad(JNIEnv *env) {
 
     F2_LOG_I("#OnJniLoad", "%s", "init log success");
 
-    if(!RegisterJNIInterface(env, &gNativeF2CanvasViewProxyClass, "com/antgroup/antv/f2/F2AndroidCanvasView",
+    if(!RegisterJNIInterface(env, &gNativeF2CanvasViewProxyClass, "com/antgroup/antv/f2/F2CanvasView",
                              native_canvascontext_methods, xg_jni_arraysize(native_canvascontext_methods))) {
         return false;
     }

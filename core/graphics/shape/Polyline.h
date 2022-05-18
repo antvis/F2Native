@@ -1,6 +1,7 @@
-#include "graphics/shape/Shape.h"
 #ifndef XG_GRAPHICS_SHAPE_POLYLINE_H
 #define XG_GRAPHICS_SHAPE_POLYLINE_H
+
+#include "Shape.h"
 
 using namespace xg::util;
 

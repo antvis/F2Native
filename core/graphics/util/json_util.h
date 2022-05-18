@@ -6,10 +6,10 @@
 #include <iostream>
 #include <limits>
 #include <math.h>
-#include <nlohmann/json.hpp>
 #include <set>
 #include <string>
 #include <unordered_map>
+#include "../../nlohmann/json.hpp"
 
 using namespace std;
 

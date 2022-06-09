@@ -2,9 +2,9 @@
 #import "F2Callback.h"
 #import "F2Chart.h"
 #import "F2Utils.h"
-#import <graphics/geom/Area.h>
-#import <graphics/geom/Interval.h>
-#import <graphics/geom/Line.h>
+#import "../../core/graphics/geom/Area.h"
+#import "../../core/graphics/geom/Interval.h"
+#import "../../core/graphics/geom/Line.h"
 
 @interface F2Geom () {
     xg::geom::AbstractGeom *_geom;

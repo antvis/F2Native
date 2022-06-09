@@ -1,8 +1,8 @@
-#include "graphics/guide/Text.h"
-#include "graphics/XChart.h"
-#include "graphics/global.h"
-#include "graphics/shape/Text.h"
-#include <utils/common.h>
+#include "Text.h"
+#include "../XChart.h"
+#include "../global.h"
+#include "../shape/Text.h"
+#include "../../utils/common.h"
 
 using namespace xg;
 

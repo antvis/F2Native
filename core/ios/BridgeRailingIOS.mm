@@ -9,7 +9,7 @@
 #include <UIKit/UIKit.h>
 #include "F2Utils.h"
 #include "BridgeRailingIOS.h"
-#include "graphics/XChart.h"
+#include "../graphics/XChart.h"
 
 using namespace xg;
 using namespace xg::bridge;

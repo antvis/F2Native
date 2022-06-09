@@ -1,11 +1,11 @@
-#include "graphics/guide/Flag.h"
-#include "graphics/XChart.h"
-#include "graphics/shape/Circle.h"
-#include "graphics/shape/Group.h"
-#include "graphics/shape/Line.h"
-#include "graphics/shape/Rect.h"
-#include "graphics/shape/Text.h"
-#include <utils/common.h>
+#include "Flag.h"
+#include "../XChart.h"
+#include "../shape/Circle.h"
+#include "../shape/Group.h"
+#include "../shape/Line.h"
+#include "../shape/Rect.h"
+#include "../shape/Text.h"
+#include "../../utils/common.h"
 
 using namespace xg;
 using namespace xg::guide;

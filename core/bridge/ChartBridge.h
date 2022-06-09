@@ -10,8 +10,8 @@
 #define XG_BRIDGE_BRIGE
 
 #include <string>
-#include "bridge/AbstractBridgeRailing.h"
-#include "graphics/XChart.h"
+#include "AbstractBridgeRailing.h"
+#include "../graphics/XChart.h"
 
 using namespace xg;
 

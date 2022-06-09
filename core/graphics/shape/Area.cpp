@@ -1,5 +1,5 @@
-#include "graphics/shape/Area.h"
-#include "graphics/util/Path.h"
+#include "Area.h"
+#include "../util/Path.h"
 
 xg::shape::Area::Area(const vector<util::Point> &topPoints, const vector<util::Point> &bottomPoints, const bool smooth) {
     type_ = "area";

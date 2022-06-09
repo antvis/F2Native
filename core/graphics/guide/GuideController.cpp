@@ -1,13 +1,11 @@
-
-
-#include "graphics/guide/GuideController.h"
-#include "graphics/guide/Background.h"
-#include "graphics/guide/Flag.h"
-#include "graphics/guide/Line.h"
-#include "graphics/guide/Text.h"
-#include "graphics/guide/Image.h"
-#include "graphics/util/BBox.h"
-#include "graphics/util/json.h"
+#include "GuideController.h"
+#include "Background.h"
+#include "Flag.h"
+#include "Line.h"
+#include "Text.h"
+#include "Image.h"
+#include "../util/BBox.h"
+#include "../util/json.h"
 
 void xg::guide::GuideController::Render(xg::XChart &chart, canvas::CanvasContext &context) {
     std::for_each(guides.begin(), guides.end(), [&](const std::unique_ptr<xg::guide::GuideBase> &guide) -> void {

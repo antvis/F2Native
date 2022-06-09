@@ -1,18 +1,17 @@
-#include "graphics/XChart.h"
-#include "graphics/animate/TimeLine.h"
-#include "graphics/canvas/Cartesian.h"
-#include "graphics/canvas/Polar.h"
-#include "graphics/func/Func.h"
-#include "graphics/geom/shape/Area.h"
-#include "graphics/geom/shape/Candle.h"
-#include "graphics/geom/shape/Interval.h"
-#include "graphics/geom/shape/Line.h"
-#include "graphics/geom/shape/Point.h"
-#include "graphics/util/Point.h"
-#include "graphics/util/json.h"
-#include <cstring>
-#include <utils/common.h>
-#include <utils/xtime.h>
+#include "XChart.h"
+#include "animate/TimeLine.h"
+#include "canvas/Cartesian.h"
+#include "canvas/Polar.h"
+#include "func/Func.h"
+#include "geom/shape/Area.h"
+#include "geom/shape/Candle.h"
+#include "geom/shape/Interval.h"
+#include "geom/shape/Line.h"
+#include "geom/shape/Point.h"
+#include "util/Point.h"
+#include "util/json.h"
+#include "../utils/common.h"
+#include "../utils/xtime.h"
 
 using namespace xg;
 using namespace std;

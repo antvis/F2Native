@@ -1,7 +1,7 @@
 #include "InteractionContext.h"
-#include "graphics/XChart.h"
-#include "graphics/util/json_util.h"
-#include "utils/xtime.h"
+#include "../XChart.h"
+#include "../util/json_util.h"
+#include "../../utils/xtime.h"
 
 using namespace xg;
 

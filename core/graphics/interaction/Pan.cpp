@@ -1,6 +1,5 @@
-
 #include "Pan.h"
-#include "graphics/XChart.h"
+#include "../XChart.h"
 
 using namespace xg;
 

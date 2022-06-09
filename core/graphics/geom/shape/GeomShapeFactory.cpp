@@ -1,5 +1,5 @@
-#include "graphics/geom/shape/GeomShapeFactory.h"
-#include "graphics/XChart.h"
+#include "GeomShapeFactory.h"
+#include "../../XChart.h"
 
 using namespace xg;
 

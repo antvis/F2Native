@@ -1,9 +1,8 @@
 #include "TooltipController.h"
-
-#include "graphics/XChart.h"
-#include "graphics/func/Func.h"
-#include "graphics/global.h"
-#include "utils/xtime.h"
+#include "../XChart.h"
+#include "../func/Func.h"
+#include "../global.h"
+#include "../../utils/xtime.h"
 
 using namespace xg;
 

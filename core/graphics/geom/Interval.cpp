@@ -1,7 +1,7 @@
-#include "graphics/geom/Interval.h"
-#include "graphics/XChart.h"
-#include "graphics/scale/Scale.h"
-#include "graphics/scale/continuous/Linear.h"
+#include "Interval.h"
+#include "../XChart.h"
+#include "../scale/Scale.h"
+#include "../scale/continuous/Linear.h"
 
 using namespace xg;
 

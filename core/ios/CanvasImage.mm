@@ -8,7 +8,7 @@
 
 #if defined(__APPLE__)
 
-#include "graphics/canvas/CanvasImage.h"
+#include "CanvasImage.h"
 #include <UIKit/UIKit.h>
 #include <CoreGraphics/CoreGraphics.h>
 

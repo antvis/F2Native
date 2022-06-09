@@ -1,12 +1,11 @@
-#include "graphics/geom/Geom.h"
-#include "graphics/XChart.h"
-#include "graphics/adjust/Dodge.h"
-#include "graphics/adjust/Stack.h"
-#include "graphics/global.h"
-#include "graphics/util/Point.h"
-#include "graphics/util/json_util.h"
-#include "utils/StringUtil.h"
-#include <nlohmann/json.hpp>
+#include "Geom.h"
+#include "../XChart.h"
+#include "../adjust/Dodge.h"
+#include "../adjust/Stack.h"
+#include "../global.h"
+#include "../util/Point.h"
+#include "../util/json_util.h"
+#include "../../utils/StringUtil.h"
 
 using namespace std;
 

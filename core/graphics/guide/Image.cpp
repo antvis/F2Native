@@ -7,9 +7,9 @@
 //
 
 #include "Image.h"
-#include "graphics/XChart.h"
-#include "graphics/global.h"
-#include "graphics/shape/Image.h"
+#include "../XChart.h"
+#include "../global.h"
+#include "../shape/Image.h"
 
 using namespace xg;
 

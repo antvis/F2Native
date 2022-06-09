@@ -9,7 +9,7 @@
 #import "F2CanvasView.h"
 #import "F2Chart.h"
 #import "F2Utils.h"
-#import <graphics/func/Command.h>
+#import "../../core/graphics/func/Command.h"
 
 @interface F2Callback ()
 @property (nonatomic, copy) NSString *functionId;

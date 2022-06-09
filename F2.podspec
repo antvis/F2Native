@@ -36,7 +36,7 @@ Pod::Spec.new do |spec|
   $core = $dir + "/core "
 
   spec.pod_target_xcconfig = { 
-    'HEADER_SEARCH_PATHS' => $core, 
+    'HEADER_SEARCH_PATHS' => "\"$(PODS_TARGET_SRCROOT)\" \"$(PODS_ROOT)/F2\" \"$(PODS_ROOT)/F2/core\"", 
     'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386'}
 
   spec.libraries = 'c++'

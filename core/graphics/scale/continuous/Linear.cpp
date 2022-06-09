@@ -7,7 +7,7 @@
 //
 
 #include "Linear.h"
-#include "graphics/XChart.h"
+#include "../../XChart.h"
 
 using namespace xg::scale;
 

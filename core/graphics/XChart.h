@@ -14,12 +14,12 @@
 #include "webassembly/WebCanvasContext.h"
 #endif
 
+#include <cstring>
 #include <algorithm>
 #include <map>
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include "../utils/Tracer.h"
 #include "animate/GeomAnimate.h"
 #include "animate/TimeLine.h"
 #include "axis/AxisController.h"
@@ -42,6 +42,7 @@
 #include "legend/LegendController.h"
 #include "scale/ScaleController.h"
 #include "tooltip/TooltipController.h"
+#include "../utils/Tracer.h"
 #include "../nlohmann/json.hpp"
 
 

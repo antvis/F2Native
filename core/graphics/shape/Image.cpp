@@ -6,7 +6,7 @@
 //  Copyright © 2021 com.alipay.xgraph. All rights reserved.
 //
 
-#include "graphics/shape/Image.h"
+#include "Image.h"
 
 using namespace xg;
 

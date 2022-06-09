@@ -1,6 +1,6 @@
 #include "Line.h"
-#include "graphics/XChart.h"
-#include "graphics/shape/Polyline.h"
+#include "../XChart.h"
+#include "../shape/Polyline.h"
 
 using namespace xg;
 

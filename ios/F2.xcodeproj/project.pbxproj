@@ -1710,8 +1710,6 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../core\"",
-					"\"$(SRCROOT)/../third_party/json/single_include\"",
-					"\"$(SRCROOT)/../finance/core\"",
 				);
 				INFOPLIST_FILE = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1754,8 +1752,6 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../core\"",
-					"\"$(SRCROOT)/../third_party/json/single_include\"",
-					"\"$(SRCROOT)/../finance/core\"",
 				);
 				INFOPLIST_FILE = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";

@@ -16,16 +16,15 @@ Pod::Spec.new do |spec|
   spec.homepage     = "https://f2native.antv.vision"
   spec.license      = { :type => "MIT", :file => "LICENSE" }
   spec.author             = { "weiqingtangx" => "razer751@163.com" }
-  spec.platform     = :ios
-  spec.platform     = :ios, "9.0"
   spec.source       = { :git => "https://github.com/antvis/F2Native.git", :tag => "2.0.1" }
-
-
   spec.source_files  =  "ios/F2/*", "core/graphics/**/*", "core/ios/**/*", "core/utils/**/*", "core/bridge/**/*", "core/nlohmann/**/*"
   spec.public_header_files = "ios/F2/*.{h}"
   spec.prefix_header_file = 'ios/F2/F2-prefix.pch'
 
-  spec.libraries = 'c++'
+  spec.ios.frameworks = 'Foundation', 'UIKit'
+
+  spec.ios.deployment_target = '9.0'
+  spec.requires_arc = true
 
   #保护目录结构不变，如果不设置，所有头文件都将被放到同一个目录下 当需要暴露c++头文件后在设置
   # spec.header_mappings_dir = "core/**"

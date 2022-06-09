@@ -35,7 +35,8 @@ void CanvasImage::OnLoad(std::function<void()> finished) {
         UIImage *image = [UIImage imageWithData:imageData];
         
         //回到主线程更新UI 已经释放了锁
-        if(image) {
+        //TODO 判断this对象是否被释放了
+        if(!error && image) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 image_ = image.CGImage;
                 CGImageRetain(CGImageRef(image_));

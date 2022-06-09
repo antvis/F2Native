@@ -21,6 +21,11 @@
             android:label="@string/title_activity_sample"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name=".BridgeActivity"
+            android:label="@string/title_activity_bridge"
+            android:theme="@style/AppTheme" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

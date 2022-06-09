@@ -18,7 +18,7 @@ import com.antgroup.antv.f2.samples.Utils;
 import java.io.InputStream;
 
 /**
- * 基础折线图-1
+ * 基础折线图
  *
  * @author qingyuan.yl
  * @date 2020-09-27
@@ -66,10 +66,24 @@ public class SingleLineChart_1 implements F2CanvasView.Adapter, F2CanvasView.OnC
         mChart.setAxis("date", new F2Chart.AxisConfigBuilder()
                 .label(new F2Chart.AxisLabelConfigBuilder().labelOffset(5.f).item(mChart, new F2Function() {
                     @Override
-                    public F2Config execute(String param) {
+                    public F2Config execute(String paramStr) {
+                        JSONObject jsonObject = JSON.parseObject(paramStr);
+                        String param = jsonObject.getString("content");
+                        String[] arr = param.split("-");
+                        String rst;
+                        if (arr.length == 3) {
+                            rst = arr[1] + "-" + arr[2];
+                        } else {
+                            rst = param;
+                        }
+
                         JSONObject params = JSON.parseObject(param);
                         int index = params.getIntValue("index");
-                        return new F2Config.Builder().setOption("textColor", (index % 2 == 0 ? "#000000" : "#DC143C")).setOption("xOffset", (index % 2 == 0) ? 0 : -30).build();
+                        return new F2Config.Builder()
+                                .setOption("textColor", (index % 2 == 0 ? "#000000" : "#DC143C"))
+                                .setOption("xOffset", (index % 2 == 0) ? 0 : -30)
+                                .setOption("content", rst)
+                                .build();
                     }
                 }))
                 .gridHidden());
@@ -80,19 +94,7 @@ public class SingleLineChart_1 implements F2CanvasView.Adapter, F2CanvasView.OnC
                         .lineDash(new double[]{8, 3, 3, 8})
                 )
         );
-        mChart.setScale("date", new F2Chart.ScaleConfigBuilder().tick(mChart, new F2Function() {
-            @Override
-            public F2Config execute(String param) {
-                String[] arr = param.split("-");
-                String rst;
-                if (arr.length == 3) {
-                    rst = arr[1] + "-" + arr[2];
-                } else {
-                    rst = param;
-                }
-                return new F2Config.Builder().setOption("content", rst).build();
-            }
-        }).tickCount(5));
+        mChart.setScale("date", new F2Chart.ScaleConfigBuilder().tickCount(5));
         mChart.setScale("value", new F2Chart.ScaleConfigBuilder().setOption("nice", true));
 
         mChart.render();

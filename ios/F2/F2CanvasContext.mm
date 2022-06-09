@@ -1,45 +1,84 @@
 //
-//  F2Canvas.m
-//  AFWFinanceChart
+//  F2CoreGraphicsCanvasContext.m
+//  F2
 //
-//  Created by weiqing.twq on 2021/7/5.
-//  Copyright © 2021 Alipay. All rights reserved.
+//  Created by weiqing.twq on 2021/12/8.
+//  Copyright © 2021 com.alipay.xgraph. All rights reserved.
 //
 
 #import "F2CanvasContext.h"
+#import "F2Utils.h"
+
+@interface F2CanvasContext()
+@property (nonatomic, assign) CGContextRef cgContext;
+@end
 
 @implementation F2CanvasContext
 
-- (void)createContextWithFrame:(CGRect)frame complete:(void (^)(F2CanvasContext *))callback {
-    NSCAssert(NO, @"子类实现");
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (self = [super init]) {
+        CGSize size = CGSizeMake(frame.size.width * F2NativeScale, frame.size.height * F2NativeScale);
+        self.cgContext = [self contextWithSize:size];
+    }
+    return self;
 }
 
-/// 渲染到屏幕上
--(BOOL)draw {
-    NSCAssert(NO, @"子类实现");
-    return NO;
+- (void)dealloc {
+    if (_cgContext) {
+        CGContextRelease(_cgContext);
+        _cgContext = nil;
+    }
 }
 
-/// 释放context
--(void)destroy {
-    NSCAssert(NO, @"子类实现");
+- (void)setFrame:(CGRect)frame {
+    //size被F2NativeScale扩大过了
+    CGSize oriSize = CGSizeMake(CGBitmapContextGetWidth(self.cgContext), CGBitmapContextGetHeight(self.cgContext));
+    CGSize newSize = CGSizeMake(frame.size.width * F2NativeScale, frame.size.height * F2NativeScale);
+    if (!CGSizeEqualToSize(newSize, oriSize)) {
+        CGContextRelease(self.cgContext);
+        self.cgContext = [self contextWithSize:newSize];
+    }
 }
 
-///获取C++的context对象
--(void *)context2d {
-    NSCAssert(NO, @"子类实现");
-    return nullptr;
+- (CGContextRef)contextWithSize:(CGSize)size {
+    CGColorSpaceRef spaceRef = CGColorSpaceCreateDeviceRGB();
+    //原点在左下
+    CGContextRef context = CGBitmapContextCreate(nil, size.width, size.height, 8, 0, spaceRef, kCGBitmapByteOrderDefault | kCGImageAlphaPremultipliedFirst);
+       
+    NSCAssert(context, @"F2CanvasContext#error:CGContextRef is nil");
+    if (!context) {
+        CGColorSpaceRelease(spaceRef);
+        NSLog(@"F2CanvasContext#error:CGContextRef is nil");
+        return nil;
+    }
+    
+    //设置rgb空间 否则图像为灰色
+    CGContextSetFillColorSpace(context,  spaceRef);
+    CGContextSetStrokeColorSpace(context,  spaceRef);
+    CGColorSpaceRelease(spaceRef);
+    
+    //CGContext原点在左下角 翻转到左上角
+    CGContextTranslateCTM(context, 0, size.height);
+    CGContextScaleCTM(context, 1, -1);
+    return context;
 }
 
-- (UIView *)contextView {
-    NSCAssert(NO, @"子类实现");
-    return nil;
+-(CGContextRef)context2d {
+    return self.cgContext;
 }
 
 - (UIImage *)snapshot {
-    NSCAssert(NO, @"子类实现");
-    return nil;
+    if (!self.cgContext) {
+        return nil;
+    }
+    CGImageRef imageRef = CGBitmapContextCreateImage(self.cgContext);
+    NSCAssert(imageRef, @"F2CanvasContext#snapshot:imageRef is nil");
+    UIImage *snapshot = [UIImage imageWithCGImage:imageRef];
+    CGImageRelease(imageRef);
+    return snapshot;
+}
+
+- (CGFloat)nativeScale {
+    return F2NativeScale;
 }
 @end
-
-

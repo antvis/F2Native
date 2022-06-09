@@ -37,6 +37,7 @@ public class F2Guide {
     public static class GuideFlagConfigBuilder extends F2Chart.TextConfigBuilder<GuideFlagConfigBuilder> {
         private static final String KEY_CONTENT = "content";
         private static final String KEY_PADDING = "padding";
+        private static final String KEY_COLOR = "color";
         private static final String KEY_LINE_WIDTH = "lineWidth";
         private static final String KEY_BACK_COLOR = "backgroundColor";
         private static final String KEY_POSITION = "position";
@@ -57,6 +58,9 @@ public class F2Guide {
             return setOption(KEY_POSITION, position);
         }
 
+        public GuideFlagConfigBuilder color(String color ) {
+            return setOption(KEY_COLOR, color);
+        }
         /**
          * @param padding [left, top, right, bottom]
          * @return

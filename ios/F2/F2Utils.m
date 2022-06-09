@@ -32,19 +32,44 @@
 
 + (NSDictionary *)resetCallbacksFromOld:(NSDictionary *)old new:(NSMutableDictionary *)newDic host:(F2Chart *)chart {
     [old enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull obj, BOOL *_Nonnull stop) {
-        if([obj isKindOfClass:[F2CallbackObj class]]) {
-            F2CallbackObj *callbackObj = obj;
-            newDic[key] = callbackObj.key;
+        if([obj isKindOfClass:[F2Callback class]]) {
+            F2Callback *callbackObj = obj;
+            newDic[key] = callbackObj.functionId;
             [chart bindF2CallbackObj:callbackObj];
         } else if([obj isKindOfClass:[NSDictionary class]]) {
             NSMutableDictionary *sub = [NSMutableDictionary dictionary];
             [self resetCallbacksFromOld:obj new:sub host:chart];
+            newDic[key] = sub;
+        } else if([obj isKindOfClass:NSArray.class]) {
+            NSMutableArray *sub = [NSMutableArray array];
+            [self resetCallbacksFromOldArray:obj new:sub host:chart];
             newDic[key] = sub;
         } else {
             newDic[key] = obj;
         }
     }];
     return newDic;
+}
+
++ (NSArray *)resetCallbacksFromOldArray:(NSArray *)old new:(NSMutableArray *)newArray host:(F2Chart *)chart {
+    [old enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if([obj isKindOfClass:[F2Callback class]]) {
+            F2Callback *callbackObj = obj;
+            [chart bindF2CallbackObj:callbackObj];
+            [newArray addObject:callbackObj];
+        } else if([obj isKindOfClass:[NSDictionary class]]) {
+            NSMutableDictionary *sub = [NSMutableDictionary dictionary];
+            [self resetCallbacksFromOld:obj new:sub host:chart];
+            [newArray addObject:sub];
+        } else if([obj isKindOfClass:NSArray.class]) {
+            NSMutableArray *sub = [NSMutableArray array];
+            [self resetCallbacksFromOldArray:obj new:sub host:chart];
+            [newArray addObject:sub];
+        } else {
+            [newArray addObject:obj];
+        }
+    }];
+    return newArray;
 }
 
 @end

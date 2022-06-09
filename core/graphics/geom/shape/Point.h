@@ -26,15 +26,6 @@ class Point : public GeomShapeBase {
 
         util::Point center = {data["_x"], data["_y"]};
         nlohmann::json style = data["_style"];
-        if(style.contains("custom") && style["custom"].is_string()) {
-            std::string customCallbackId = style["custom"];
-            nlohmann::json param = data;
-            param["_index"] = start;
-            nlohmann::json customStyle = func::InvokeFunction(customCallbackId, param);
-            if(customStyle.is_object()) {
-                style.merge_patch(customStyle);
-            }
-        }
 
         std::string colorStyle = GLOBAL_COLORS[0];
         if(style.contains("color")) {

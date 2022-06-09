@@ -91,13 +91,15 @@ class XChart {
     // emscript 编译需要
     XChart(const XChart &){};
 
+    //设置源数据
     XChart &Source(const std::string &json);
 
+    //context设置
 #if defined(ANDROID)
     ///方便降级 稳定后改回SetCanvasContext
-    XChart &SetAndroidCanvasContext(jobject context) {
+    XChart &SetCanvasContext(void *context) {
         XG_RELEASE_POINTER(canvasContext_);
-        canvasContext_ = new canvas::BitmapCanvasContext(context, static_cast<float>(ratio_));
+        canvasContext_ = new canvas::BitmapCanvasContext((jobject)context, static_cast<float>(ratio_));
         return *this;
     }
 #endif
@@ -105,7 +107,7 @@ class XChart {
 #if defined(__APPLE__)
     ///方便降级 稳定后改回SetCanvasContext
     /// context == CGContextRef
-    XChart &SetCoreGraphicsContext(void *context) {
+    XChart &SetCanvasContext(void *context) {
         XG_RELEASE_POINTER(canvasContext_);
         canvasContext_ = new canvas::CoreGraphicsContext(context, width_, height_, static_cast<float>(ratio_), nullptr);
         return *this;
@@ -128,9 +130,11 @@ class XChart {
         return *this;
     }
 
+    //padding&margin设置
     XChart &Padding(double left = 0.f, double top = 0.f, double right = 0.0, double bottom = 0.);
     XChart &Margin(double left = 0.f, double top = 0.f, double right = 0.0, double bottom = 0.);
 
+    //图形语法设置
     XChart &Scale(const std::string &field, const std::string &json);
 
     XChart &Axis(const std::string &field, const std::string &json = "");
@@ -162,10 +166,40 @@ class XChart {
     ///@return true 渲染成功 false 失败
     bool Render();
 
+    /// 内部会清理对象，然后再次调用render对象渲染
     void Repaint();
+    
+    /// 直接调用canvasContext进行绘制
+    void Redraw();
 
+    /// 清除所有的配置项
     void Clear();
-
+    
+    
+    /// 注册业务测的回调函数，所有回调都会通过这个callback回调
+    /// @param callback 回调函数
+    inline void SetInvokeFunction(func::F2Function *callback) { _invokeFunction = callback; }
+    
+    
+    /// 调用callback
+    /// @param functionId  回调函数的id
+    /// @param param  参数，是一个json string
+    inline const std::string InvokeFunction(const std::string &functionId, const std::string &param = "{}") {
+        if(_invokeFunction) {
+            return _invokeFunction->Execute(functionId, param);
+        }else {
+            return "{}";
+        }
+    }
+    
+    
+    /// 设置动画的函数id
+    /// @param funcId 回调函数的id
+    inline void SetRequestFrameFuncId(const std::string &funcId) noexcept { this->requestFrameHandleId_ = funcId; }
+    inline const std::string GetRequestFrameFuncId() noexcept { return this->requestFrameHandleId_; }
+    
+    /// 执行动画的回调函数
+    /// @param c 动画的command
     std::size_t RequestAnimationFrame(func::Command *c, long delay = 16);
 
     scale::AbstractScale &GetScale(const std::string &field);
@@ -194,11 +228,6 @@ class XChart {
     // 计算某一项数据对应的坐标位置
     const util::Point GetPosition(const nlohmann::json &item);
 
-    // 计算某个位置对应的数据信息
-    const std::string GetTooltipInfos(float touchX, float touchY, int geomIndex);
-
-    std::string GetRenderInfo() const;
-
     canvas::CanvasContext &GetCanvasContext() const { return *canvasContext_; }
 
     void AddMonitor(const std::string &action, ChartActionCallback callback, bool forChart = true) {
@@ -212,15 +241,17 @@ class XChart {
     inline const std::array<double, 4> GetPadding() { return userPadding_; }
     inline const std::array<double, 4> GetMargin() { return margin_; }
 
-    inline void SetRequestFrameFuncId(std::string funcId) noexcept { this->requestFrameHandleId_ = funcId; }
-
     /// bind long long to webassembly会报错，所以改成long,渲染时间用long表示也够用了
     inline long GetRenderDurationMM() const { return renderDurationMM_;}
     inline long GetRenderCmdCount() const { return canvasContext_->GetRenderCount();}
-    
-    void Redraw();
 
-// webassembly返回指针
+    /// 返回所有的几何对象
+    inline const std::vector<std::unique_ptr<geom::AbstractGeom>> &GetGeoms() const { return geoms_;}
+
+    /*
+     webassembly编译后如果不返回指针 不能使用chart.context().source()的连缀表达方式
+     所以下面是额外的指针接口
+     */
 #if defined(__EMSCRIPTEN__)
     XChart *SetCanvasContextWasm(const std::string &canvasName) { return &SetCanvasContext(canvasName); }
     XChart *SourceWasm(const std::string &json) { return &Source(json); }
@@ -245,7 +276,27 @@ class XChart {
     geom::Point *PointWasm() { return &Point(); }
     geom::Candle *CandleWasm() { return &Candle(); }
 #endif
+    
+    /*
+     为了能解析DSL，需要提供一些便捷方法
+    */
+    bool Parse(const std::string &dsl);
+    bool ParseObject(const nlohmann::json &dsl);
+    XChart &SourceObject(const nlohmann::json &data);
+    XChart &ScaleObject(const std::string &field, const nlohmann::json &json);
+    XChart &AxisObject(const std::string &field, const nlohmann::json &json);
+    XChart &LegendObject(const std::string &field, const nlohmann::json &json);
+    XChart &InteractionObject(const std::string &type, const nlohmann::json &json);
+    XChart &TooltipObject(const nlohmann::json &json);
+    XChart &CoordObject(const nlohmann::json &json);
+    XChart &AnimateObject(const nlohmann::json &json);
+
   private:
+    inline XChart &SetName(const std::string &name) {
+        this->chartId_ = name + "_" + std::to_string(CreateChartId());
+        return  *this;
+    }
+    
     static long long CreateChartId() {
         static std::atomic<long long> id(1);
         return id.fetch_add(+1);
@@ -321,6 +372,7 @@ class XChart {
     std::string chartId_;
     std::string requestFrameHandleId_ = "";
     nlohmann::json animateCfg_ = false;
+    func::F2Function *_invokeFunction;
 };
 } // namespace xg
 

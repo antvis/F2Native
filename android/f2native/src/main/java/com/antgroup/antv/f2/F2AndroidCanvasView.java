@@ -56,9 +56,9 @@ class F2AndroidCanvasView extends View implements F2BaseCanvasView {
         mF2DetectManager = new F2DetectManager();
     }
 
-    public void init(int width, int height, F2Config config) {
+    public void init(int widthPixel, int heightPixel, F2Config config) {
         initCanvasContext(config);
-        if (setCanvasSize(width, height)) {
+        if (setCanvasSize(widthPixel, heightPixel)) {
             mNeedAdapter = false;
             postCanvasDraw();
         }
@@ -109,15 +109,15 @@ class F2AndroidCanvasView extends View implements F2BaseCanvasView {
     public void sendRenderDetectEvent(final long renderDuration, final boolean renderSuccess, final int renderCmdCount,
                                       final boolean drawSuccess, final String chartId) {
         // 开关打开 && 上屏成功，才进行白屏检测
-        if (F2CSUtils.isDetectEnable() && drawSuccess && mCanvasContext != null && mCanvasContext.bitmap != null && mCanvasHolder != 0) {
-            F2CSUtils.showUseNativeCanvasToast("F2Native白屏检测开启");
+        if (F2CommonUtils.isDetectEnable() && drawSuccess && mCanvasContext != null && mCanvasContext.bitmap != null && mCanvasHolder != 0) {
+//            F2CommonUtils.showTestToast("F2Native白屏检测开启");
             mF2DetectManager.sendRenderDetectEvent(mCanvasContext.bitmap.copy(Bitmap.Config.ARGB_8888, false),
                     mAppId, mCanvasBizId, renderDuration, renderSuccess,
                     renderCmdCount, drawSuccess, mWidth, mHeight, mRatio, chartId);
         } else {
             // 说明开关关闭 || 上屏失败
             String desc = chartId + (mCanvasContext != null && mCanvasContext.mHadOOM ? "_OOM" : "");
-            F2Event.eventDetectRender(mAppId, mCanvasBizId, renderDuration, renderSuccess,
+            F2CommonUtils.eventDetectRender(mAppId, mCanvasBizId, renderDuration, renderSuccess,
                     renderCmdCount, drawSuccess, null, 0, mWidth, mHeight, mRatio, desc);
         }
     }
@@ -164,7 +164,6 @@ class F2AndroidCanvasView extends View implements F2BaseCanvasView {
             mAppId = config.getStringField(F2CanvasView.ConfigBuilder.KEY_APP_ID);
             mCanvasBizId = config.getStringField(F2CanvasView.ConfigBuilder.KEY_CANVAS_BIZ_ID);
         }
-        F2Event.eventPage(mAppId, mCanvasBizId, "init");
     }
 
     @Override

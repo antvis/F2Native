@@ -8,9 +8,12 @@
 
 #import <XCTest/XCTest.h>
 #import "F2.h"
+#import "F2TestUtil.h"
 #import "F2PixelMatch.h"
 #import "e2e/Baseline.h"
 #import "e2e/BaseInterval.h"
+#import "e2e/MarketMoving.h"
+#import "unit/XChart.h"
 
 
 @interface F2ChartTests : XCTestCase
@@ -27,11 +30,6 @@
     // Put teardown code here. This method is called after the invocation of each test method in the class.
 }
 
-- (void)testExample {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
-}
-
 - (NSString *)readJsonData:(NSString *)path {
     NSCAssert(path, @"readJsonData path is nil");
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
@@ -40,27 +38,12 @@
     return jsonData;
 }
 
-- (BOOL)saveImage:(UIImage *)image {
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES);
-    NSString *filePath = [[paths objectAtIndex:0]stringByAppendingPathComponent:
-                          [NSString stringWithFormat:@"demo.jpeg"]];  // 保存文件的名称
-    NSLog(@"saveImage: %@", filePath);
-    BOOL result =[UIImageJPEGRepresentation(image, 1) writeToFile:filePath  atomically:YES]; // 保存成功会返回YES
-    NSCAssert(result, @"saveImage failure");
-    return result;
-}
-
-- (UIImage *)readImage:(NSString *)imageName {
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    NSString *jsonPath = [bundle pathForResource:imageName ofType:nil];
-    return [[UIImage alloc] initWithContentsOfFile:jsonPath];
-}
 
 - (void)testBaseline {
     CGRect frame = CGRectMake(0, 0, 375, 280);
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *path = [bundle pathForResource:@"res/mockData_baseLine.json" ofType:nil];
-    F2CanvasView *canvasView = [F2CanvasView canvasWithFrame:frame andBizId:@"" complete:nil];
+    F2CanvasView *canvasView = [[F2CanvasView alloc] initWithFrame:frame];
     e2e::Baseline::Case1(frame.size.width, frame.size.height, F2NativeScale, path.UTF8String, canvasView.canvasContext.context2d);
     
     //for baseline
@@ -68,7 +51,7 @@
     
     UIImage *diff;
     BOOL match = [F2PixelMatch match:canvasView.snapshot
-                           image2:[self readImage:@"res/e2e/baseLine.jpeg"]
+                           image2:[F2TestUtil readImage:@"res/e2e/baseLine.jpeg"]
                          outImage:&diff];
     
     XCTAssertTrue(match);
@@ -78,7 +61,7 @@
     CGRect frame = CGRectMake(0, 0, 375, 280);
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *path = [bundle pathForResource:@"res/mockData_baseLine.json" ofType:nil];
-    F2CanvasView *canvasView = [F2CanvasView canvasWithFrame:frame andBizId:@"" complete:nil];
+    F2CanvasView *canvasView = [[F2CanvasView alloc] initWithFrame:frame];
     e2e::BaseInterval::Case1(frame.size.width, frame.size.height, F2NativeScale, path.UTF8String, canvasView.canvasContext.context2d);
     
     //for baseline
@@ -86,9 +69,47 @@
     
     UIImage *diff;
     BOOL match = [F2PixelMatch match:canvasView.snapshot
-                              image2:[self readImage:@"res/e2e/baseInterval.jpeg"]
+                              image2:[F2TestUtil readImage:@"res/e2e/baseInterval.jpeg"]
                             outImage:&diff];
     XCTAssertTrue(match);
+}
+
+- (void)testMarketMoving {
+    CGRect frame = CGRectMake(0, 0, 375, 280);
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSString *path = [bundle pathForResource:@"res/mockData_marketTrend.json" ofType:nil];
+    F2CanvasView *canvasView = [[F2CanvasView alloc] initWithFrame:frame];
+    e2e::MarketMoving::Case1(frame.size.width, frame.size.height, F2NativeScale, path.UTF8String, canvasView.canvasContext.context2d);
+    
+    //for baseline
+//    [self saveImage:canvasView.snapshot];
+    
+    UIImage *diff;
+    BOOL match = [F2PixelMatch match:canvasView.snapshot
+                              image2:[F2TestUtil readImage:@"res/e2e/marketMoving.jpeg"]
+                            outImage:&diff];
+    XCTAssertTrue(match);
+}
+
+- (void)testCanvasSetFrame {
+    F2CanvasContext *canvasContext = [[F2CanvasContext alloc] initWithFrame:CGRectMake(0, 0, 100, 200)];
+    XCTAssertTrue(100 * F2NativeScale == CGBitmapContextGetWidth(canvasContext.context2d));
+    XCTAssertTrue(200 * F2NativeScale == CGBitmapContextGetHeight(canvasContext.context2d));
+    
+    [canvasContext setFrame:CGRectMake(0, 0, 200, 300)];
+    XCTAssertTrue(200 * F2NativeScale == CGBitmapContextGetWidth(canvasContext.context2d));
+    XCTAssertTrue(300 * F2NativeScale == CGBitmapContextGetHeight(canvasContext.context2d));
+}
+
+- (void)testXChart {
+    XCTAssertTrue(unit::XChart::ParseConfigEmpty());
+    XCTAssertTrue(unit::XChart::ParseConfigNoGeoms());
+    XCTAssertTrue(unit::XChart::ParseConfigGeomObjectError());
+    XCTAssertTrue(unit::XChart::ParseConfigGeomObject());
+    XCTAssertTrue(unit::XChart::ParseConfigGuideObjectError());
+    XCTAssertTrue(unit::XChart::ParseConfigGuideObject());
+    XCTAssertTrue(unit::XChart::ParseConfigInteractionObjectError());
+    XCTAssertTrue(unit::XChart::ParseConfigInteractionObject());
 }
 
 

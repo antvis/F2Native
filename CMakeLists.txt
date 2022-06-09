@@ -15,8 +15,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fno-rtti -fno-exceptions -fu
 # 添加 core 下所有源文件
 aux_source_directory(core/Core.h DIR_SRC_CORE)
 aux_source_directory(core/graphics DIR_SRC_GRAPHICS)
+aux_source_directory(core/bridge DIR_SRC_BRIDGE)
 aux_source_directory(core/utils DIR_SRC_UTILS)
 aux_source_directory(core/nlohmann DIR_SRC_NLOHMANN)
+aux_source_directory(core/android DIR_SRC_ANDROID)
 
 aux_source_directory(core/graphics/axis DIR_SRC_GRAPHICS_AXIS)
 aux_source_directory(core/graphics/animate DIR_SRC_GRAPHICS_ANIMATE)
@@ -59,16 +61,18 @@ list(APPEND DIR_SRC ${DIR_SRC_CORE})
 list(APPEND DIR_SRC ${DIR_SRC_UTILS})
 list(APPEND DIR_SRC ${DIR_SRC_GRAPHICS})
 list(APPEND DIR_SRC ${DIR_SRC_NLOHMANN})
+list(APPEND DIR_SRC ${DIR_SRC_BRIDGE})
+list(APPEND DIR_SRC ${DIR_SRC_ANDROID})
+
 
 if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
     add_definitions(-D DEBUG)
 endif ()
 
-aux_source_directory(core/android DIR_SRC_ANDROID)
 
 add_library(f2
         SHARED
-        ${DIR_SRC} ${DIR_SRC_ANDROID})
+        ${DIR_SRC})
 
 find_library(log-lib log)
 

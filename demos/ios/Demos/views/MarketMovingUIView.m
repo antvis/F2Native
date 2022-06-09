@@ -1,6 +1,6 @@
 #import "MarketMovingUIView.h"
 
-@interface MarketMovingUIView()<F2GestureDelegate>
+@interface MarketMovingUIView()
 @property (nonatomic, strong) F2CanvasView *canvasView;
 @property (nonatomic, strong) F2Chart *priceChart;
 @property (nonatomic, strong) F2Chart *subChart;
@@ -11,6 +11,7 @@
 - (void)chartRender {
     NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"Res/mockData_marketMoving" ofType:@"json"];
     NSString *jsonData = [NSString stringWithContentsOfFile:jsonPath encoding:NSUTF8StringEncoding error:nil];
+    NSTimeInterval start = [[NSDate date] timeIntervalSince1970] * 1000;
     self.priceChart.canvas(self.canvasView).padding(15, 10, 15, 0.f).source(jsonData);
     self.priceChart.line().position(@"date*price").fixedColor(@"#528EFF").attrs(@{@"connectNulls": @(YES)}).fixedShape(@"smooth");
     self.priceChart.area().position(@"date*price").fixedColor(@"#108EE9").attrs(@{@"connectNulls": @(YES)}).fixedShape(@"smooth");
@@ -80,13 +81,13 @@
                                    @"lineWidth": @(0.5),
                                    @"textSize": @(11),
                                    @"backgroundColor": @"#108EE990",
-                                   @"padding": @[@5, @5, @5, @2]});
+                                   @"padding": @[@5, @5, @5, @2],
+                                   @"rounding":@[@3, @0, @3, @0]
+                                 });
     self.priceChart.tooltip(@{@"yTip":@{@"inner":@(YES)}});
+    NSTimeInterval end = [[NSDate date] timeIntervalSince1970] * 1000;
+    NSLog(@"config parse cost %fms", (end - start));
     self.priceChart.render();
-}
-
--(void)dealloc {
-   [self.canvasView destroy];
 }
 
 - (F2Chart *)priceChart {

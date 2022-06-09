@@ -6,7 +6,7 @@
 <body></body>
 <!-- Create the canvas that the C++ code will draw into -->
 <canvas id="f2wasmChart" width=600 height=400 oncontextmenu="event.preventDefault()"></canvas>
-<div id="f2wasmLoadModuel" style="margin-left: 40px;">F2Wasm Load Module</div>
+<div id="f2wasmLoadCost" style="margin-left: 40px;">F2Wasm Load Module</div>
 <div id="f2wasmCost" style="margin-left: 40px;">F2Wasm Demo</div>
 
 <canvas id="f2Chart" width="600" height="400"></canvas>
@@ -14,173 +14,40 @@
 <script>
   var scale = window.devicePixelRatio;
   var initTime = new Date().getTime();
+
   Module.onRuntimeInitialized = function () {
+    const vec = new Module.StringVector();
     let start = new Date().getTime()
-    document.getElementById('f2wasmLoadModuel').innerText = `F2Wasm Load Module: ${(start - initTime)}ms`
-    var chart = new Module.F2Chart("baseline", 600, 400, scale);
-    chart.context("f2wasmChart").margin(0, 0, 0, 0).padding(10, 10, 20, 20).source('[{\"date\":\"2017-06-05\",\"value\":116},{\"date\":\"2017-06-06\",\"value\":129},{\"date\":\"2017-06-07\",\"value\":135},{\"date\":\"2017-06-08\",\"value\":86},{\"date\":\"2017-06-09\",\"value\":73},{\"date\":\"2017-06-10\",\"value\":85},{\"date\":\"2017-06-11\",\"value\":73},{\"date\":\"2017-06-12\",\"value\":68},{\"date\":\"2017-06-13\",\"value\":92},{\"date\":\"2017-06-14\",\"value\":130},{\"date\":\"2017-06-15\",\"value\":245},{\"date\":\"2017-06-16\",\"value\":139},{\"date\":\"2017-06-17\",\"value\":115},{\"date\":\"2017-06-18\",\"value\":111},{\"date\":\"2017-06-19\",\"value\":309},{\"date\":\"2017-06-20\",\"value\":206},{\"date\":\"2017-06-21\",\"value\":137},{\"date\":\"2017-06-22\",\"value\":128},{\"date\":\"2017-06-23\",\"value\":85},{\"date\":\"2017-06-24\",\"value\":94},{\"date\":\"2017-06-25\",\"value\":71},{\"date\":\"2017-06-26\",\"value\":106},{\"date\":\"2017-06-27\",\"value\":84},{\"date\":\"2017-06-28\",\"value\":93},{\"date\":\"2017-06-29\",\"value\":85},{\"date\":\"2017-06-30\",\"value\":73},{\"date\":\"2017-07-01\",\"value\":83},{\"date\":\"2017-07-02\",\"value\":125},{\"date\":\"2017-07-03\",\"value\":107},{\"date\":\"2017-07-04\",\"value\":82},{\"date\":\"2017-07-05\",\"value\":44},{\"date\":\"2017-07-06\",\"value\":72},{\"date\":\"2017-07-07\",\"value\":106},{\"date\":\"2017-07-08\",\"value\":107},{\"date\":\"2017-07-09\",\"value\":66},{\"date\":\"2017-07-10\",\"value\":91},{\"date\":\"2017-07-11\",\"value\":92},{\"date\":\"2017-07-12\",\"value\":113},{\"date\":\"2017-07-13\",\"value\":107},{\"date\":\"2017-07-14\",\"value\":131},{\"date\":\"2017-07-15\",\"value\":111},{\"date\":\"2017-07-16\",\"value\":64},{\"date\":\"2017-07-17\",\"value\":69},{\"date\":\"2017-07-18\",\"value\":88},{\"date\":\"2017-07-19\",\"value\":77},{\"date\":\"2017-07-20\",\"value\":83},{\"date\":\"2017-07-21\",\"value\":111},{\"date\":\"2017-07-22\",\"value\":57},{\"date\":\"2017-07-23\",\"value\":55},{\"date\":\"2017-07-24\",\"value\":60}]');
-    chart.scale("date", "{\"tickCount\":3}");
-    chart.scale("value", "{\"nice\":true, \"tickCount\":8}");
-    chart.axis("date", "{\"label\":{\"labelOffset\":10,\"textAlign\":[\"start\",\"center\",\"end\"]},\"grid\":{\"type\":\"dash\"}}");
-    chart.interval().position("date*value");
-    chart.line().position("date*value").color("#ff0000").size(2);
+    document.getElementById('f2wasmLoadCost').innerText = `F2Wasm Load Module: ${(start - initTime)}ms`
+    var chart = new Module.F2Chart("baseinterval", 600, 400, scale);
+    chart.canvas("f2wasmChart").margin(0, 0, 0, 0).padding(10, 10, 20, 20).source('[{\"genre\":\"Sports\",\"sold\":275},{\"genre\":\"Strategy\",\"sold\":115},{\"genre\":\"Action\",\"sold\":120},{\"genre\":\"Shooter\",\"sold\":350},{\"genre\":\"Other\",\"sold\":150}]');
+    chart.scale("sold", "{\"min\":0}");
+    chart.scale("genre", "{\"range\":[0.1,0.9]}");
+    chart.interval().position("genre*sold").color("genre", vec);
+
     chart.render();
     let end = new Date().getTime()
     var duration = chart.renderDuration();
+    vec.delete();
     chart.delete();
     document.getElementById('f2wasmCost').innerText = `F2Wasm Demo Total Cost: ${(end - start)}ms Render Cost: ${duration}ms`;
   }
   let start = new Date().getTime()
   const data = [{
-    date: '2017-06-05',
-    value: 116
+    "genre": "Sports",
+    "sold": 275
   }, {
-    date: '2017-06-06',
-    value: 129
+    "genre": "Strategy",
+    "sold": 115
   }, {
-    date: '2017-06-07',
-    value: 135
+    "genre": "Action",
+    "sold": 120
   }, {
-    date: '2017-06-08',
-    value: 86
+    "genre": "Shooter",
+    "sold": 350
   }, {
-    date: '2017-06-09',
-    value: 73
-  }, {
-    date: '2017-06-10',
-    value: 85
-  }, {
-    date: '2017-06-11',
-    value: 73
-  }, {
-    date: '2017-06-12',
-    value: 68
-  }, {
-    date: '2017-06-13',
-    value: 92
-  }, {
-    date: '2017-06-14',
-    value: 130
-  }, {
-    date: '2017-06-15',
-    value: 245
-  }, {
-    date: '2017-06-16',
-    value: 139
-  }, {
-    date: '2017-06-17',
-    value: 115
-  }, {
-    date: '2017-06-18',
-    value: 111
-  }, {
-    date: '2017-06-19',
-    value: 309
-  }, {
-    date: '2017-06-20',
-    value: 206
-  }, {
-    date: '2017-06-21',
-    value: 137
-  }, {
-    date: '2017-06-22',
-    value: 128
-  }, {
-    date: '2017-06-23',
-    value: 85
-  }, {
-    date: '2017-06-24',
-    value: 94
-  }, {
-    date: '2017-06-25',
-    value: 71
-  }, {
-    date: '2017-06-26',
-    value: 106
-  }, {
-    date: '2017-06-27',
-    value: 84
-  }, {
-    date: '2017-06-28',
-    value: 93
-  }, {
-    date: '2017-06-29',
-    value: 85
-  }, {
-    date: '2017-06-30',
-    value: 73
-  }, {
-    date: '2017-07-01',
-    value: 83
-  }, {
-    date: '2017-07-02',
-    value: 125
-  }, {
-    date: '2017-07-03',
-    value: 107
-  }, {
-    date: '2017-07-04',
-    value: 82
-  }, {
-    date: '2017-07-05',
-    value: 44
-  }, {
-    date: '2017-07-06',
-    value: 72
-  }, {
-    date: '2017-07-07',
-    value: 106
-  }, {
-    date: '2017-07-08',
-    value: 107
-  }, {
-    date: '2017-07-09',
-    value: 66
-  }, {
-    date: '2017-07-10',
-    value: 91
-  }, {
-    date: '2017-07-11',
-    value: 92
-  }, {
-    date: '2017-07-12',
-    value: 113
-  }, {
-    date: '2017-07-13',
-    value: 107
-  }, {
-    date: '2017-07-14',
-    value: 131
-  }, {
-    date: '2017-07-15',
-    value: 111
-  }, {
-    date: '2017-07-16',
-    value: 64
-  }, {
-    date: '2017-07-17',
-    value: 69
-  }, {
-    date: '2017-07-18',
-    value: 88
-  }, {
-    date: '2017-07-19',
-    value: 77
-  }, {
-    date: '2017-07-20',
-    value: 83
-  }, {
-    date: '2017-07-21',
-    value: 111
-  }, {
-    date: '2017-07-22',
-    value: 57
-  }, {
-    date: '2017-07-23',
-    value: 55
-  }, {
-    date: '2017-07-24',
-    value: 60
+    "genre": "Other",
+    "sold": 150
   }];
 
   // Step 1: 创建 Chart 对象
@@ -193,10 +60,9 @@
   chart.source(data);
 
   // Step 3：创建图形语法，绘制柱状图，由 genre 和 sold 两个属性决定图形位置，genre 映射至 x 轴，sold 映射至 y 轴
-  chart.interval().position('date*value');
-  chart.scale("date", { "tickCount": 3 });
-  chart.scale("value", { "nice": true });
-  chart.line().position("date*value").color("#ff0000");
+  chart.scale("sold", { "min": 0 });
+  chart.scale("genre", { "range": [0.1, 0.9] });
+  chart.interval().position("genre*sold").color("genre");
   // Step 4: 渲染图表
   chart.animate(false);
   chart.render();

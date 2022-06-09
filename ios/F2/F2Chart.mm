@@ -1,19 +1,48 @@
 #import "F2Chart.h"
-#import "F2CallbackObj.h"
+#import "F2Callback.h"
 #import "F2Utils.h"
 #import "XChart.h"
 #if defined(__APPLE__)
 #import <TargetConditionals.h>
 #endif
 
+typedef const char *(*selector)(void *caller, const char *functionId, const char *parameter);
+const char *cexecute(void *caller, const char *functionId, const char *parameter) {
+    F2Chart *chart = (__bridge F2Chart *)caller;
+    return [chart execute:functionId param:parameter]; }
+
+namespace xg {
+namespace func {
+class IOSF2Function : public func::F2Function {
+  public:
+    IOSF2Function(void *_handle, selector _call) : func::F2Function(), handle_(_handle), call_(_call) {}
+    
+    const std::string Execute(const std::string &functionId, const std::string &param) override {
+        return std::string(call_(handle_,functionId.data(),  param.data()));    
+    }
+    
+    ~IOSF2Function() override {
+        handle_ = nullptr;
+        call_ = nullptr;
+    }
+
+  private:
+    void *handle_;
+    selector call_;
+};
+} // namespace func
+}
+
 @interface F2Chart ()
-@property (nonatomic, assign) xg::XChart *chart;
 @property (nonatomic, weak) F2CanvasView *canvasView;
-@property (nonatomic, strong) RequestAnimationFrameHandle *requestAnimationFrameHandle;
+@property (nonatomic, assign) xg::XChart *chart;
+@property (nonatomic, assign) xg::func::IOSF2Function *innerCallback;
 @property (nonatomic, assign) BOOL isBackground;
 @property (nonatomic, assign) BOOL cachedRender;
 @property (nonatomic, assign) BOOL cachedRepaint;
-@property (nonatomic, strong) NSMutableArray *callbackList;
+@property (nonatomic, strong) F2RequestAnimationFrameHandle *requestAnimationFrameHandle;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, F2Callback *> *callbackList;
+@property (nonatomic, copy) FunctionItemCallback outCallback;
 @end
 
 @implementation F2Chart
@@ -25,6 +54,14 @@
 - (instancetype)initWithSize:(CGSize)size name:(NSString *)name {
     if(self = [super init]) {
         _chart = new xg::XChart([F2SafeString(name) UTF8String], size.width, size.height, F2NativeScale);
+        
+       //注册统一的回调函数
+        _innerCallback = new xg::func::IOSF2Function((__bridge void *)self, cexecute);
+        _chart->SetInvokeFunction(_innerCallback);
+        
+        //初始化回调函数容器
+        _callbackList = [NSMutableDictionary dictionary];
+        
         _cachedRender = NO;
         _cachedRepaint = NO;
     }
@@ -37,19 +74,54 @@
         delete _chart;
         _chart = nil;
     }
+    
+    if (_innerCallback) {
+        delete _innerCallback;
+        _innerCallback = nil;
+    }
+    
     [self removeSystemNotification];
+}
+
+- (const char *)execute:(const char *)functionId param:(const char *)param {
+    if (!functionId || strlen(functionId) == 0) {
+        return "{}";
+    }
+    NSString *functionIdStr = [NSString stringWithUTF8String:functionId];
+    NSString *paramStr = [NSString stringWithUTF8String:param];
+    NSDictionary *paramDic = [F2Utils toJsonObject:paramStr];
+    //动画的回调函数
+    if ([functionIdStr isEqualToString:self.requestAnimationFrameHandle.functionId]) {
+        NSDictionary *rstDic = [self.requestAnimationFrameHandle execute:paramDic];
+        return rstDic ? [[F2Utils toJsonString:rstDic] UTF8String] : "{}";
+    }
+    //native的回调
+    else {
+        //根据functionId来分发
+        F2Callback *callback = [self.callbackList objectForKey:functionIdStr];
+        if (callback) {
+            NSDictionary *rstDic = [callback execute:paramDic];
+            return rstDic ? [[F2Utils toJsonString:rstDic] UTF8String] : "{}";
+        }//外部的钩子
+        else if (self.outCallback) {
+            NSDictionary *rstDic = self.outCallback(functionIdStr, paramDic);
+            return rstDic ? [[F2Utils toJsonString:rstDic] UTF8String] : "{}";
+        } else {
+            return "{}";
+        }
+    }
 }
 
 - (F2Chart * (^)(F2CanvasView *canvasView))canvas {
     return ^id(F2CanvasView *canvasView) {
         self.canvasView = canvasView;
-
         CGContextRef context = (CGContextRef)(canvasView.canvasContext.context2d);
-        self.chart->SetCoreGraphicsContext(context);
+        self.chart->SetCanvasContext(context);
 
-        self.requestAnimationFrameHandle = [RequestAnimationFrameHandle initWithF2Chart:self canvas:canvasView];
-        self.chart->SetRequestFrameFuncId([self.requestAnimationFrameHandle.key UTF8String]);
-
+        self.requestAnimationFrameHandle = [F2RequestAnimationFrameHandle initWithF2Chart:self canvas:canvasView];
+        self.chart->SetRequestFrameFuncId([self.requestAnimationFrameHandle.functionId UTF8String]);
+        
+        [self.callbackList setObject:self.requestAnimationFrameHandle forKey:self.requestAnimationFrameHandle.functionId];
         return self;
     };
 }
@@ -68,9 +140,14 @@
     };
 }
 
-- (F2Chart * (^)(NSString *json))source {
-    return ^id(NSString *json) {
-        self.chart->Source([F2SafeJson(json) UTF8String]);
+- (F2Chart * (^)(NSArray *data))source {
+    return ^id(NSArray *data) {
+        if ([data isKindOfClass:NSArray.class]) {
+            self.chart->Source([F2SafeJson([F2Utils toJsonString:data]) UTF8String]);
+        }else if([data isKindOfClass:NSString.class]) {
+            NSString *dataStr = (NSString *)data;
+            self.chart->Source([F2SafeJson(dataStr) UTF8String]);
+        }        
         return self;
     };
 }
@@ -112,6 +189,19 @@
         self.chart->Interaction([F2SafeString(type) UTF8String],
                                 [F2SafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config
                                                                                                                   host:self]]) UTF8String]);
+        if ([type isEqualToString:@"pan"]) {
+            F2WeakSelf
+            [self.canvasView addGestureListener:@"pan" callback:^(NSDictionary * _Nonnull info) {
+                F2StrongSelf;
+                strongSelf.postTouchEvent(info);
+            }];
+        } else if([type isEqualToString:@"pinch"]) {
+            F2WeakSelf
+            [self.canvasView addGestureListener:@"pinch" callback:^(NSDictionary * _Nonnull info) {
+                F2StrongSelf;
+                strongSelf.postTouchEvent(info);
+            }];
+        }
         return self;
     };
 }
@@ -119,12 +209,15 @@
 - (F2Chart * (^)(NSDictionary *config))tooltip {
     return ^id(NSDictionary *config) {
         self.chart->Tooltip([F2SafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self]]) UTF8String]);
+        F2WeakSelf
+        [self.canvasView addGestureListener:@"longPress" callback:^(NSDictionary * _Nonnull info) {
+            F2StrongSelf;
+            strongSelf.postTouchEvent(info);
+        }];
         return self;
     };
 }
 
-/// 配置动画功能
-/// @param confg    具体字段待补充
 - (F2Chart * (^)(id config))animate {
     return ^id(id config) {
         if([config isKindOfClass:[NSNumber class]]) {
@@ -244,13 +337,6 @@
     };
 }
 
-- (NSString * (^)(void))getRenderDumpInfo {
-    return ^id() {
-        std::string info = self.chart->GetRenderInfo();
-        return [NSString stringWithCString:info.c_str() encoding:[NSString defaultCStringEncoding]];
-    };
-}
-
 - (CGPoint (^)(NSDictionary *itemData))getPosition {
     return ^CGPoint(NSDictionary *itemData) {
         const xg::util::Point point =
@@ -268,11 +354,11 @@
     };
 }
 
-- (NSMutableArray *)callbackList {
-    if(!_callbackList) {
-        _callbackList = [[NSMutableArray alloc] init];
-    }
-    return _callbackList;
+- (F2Chart * (^)(NSDictionary *config))config {
+    return ^id(NSDictionary *config) {
+        self.chart->Parse([F2SafeJson([F2Utils toJsonString:config]) UTF8String]);
+        return self;
+    };
 }
 
 #pragma mark Notification
@@ -312,9 +398,17 @@
     }
 }
 
-- (void)bindF2CallbackObj:(F2CallbackObj *)callback {
+- (void)bindF2CallbackObj:(F2Callback *)callback {
     if(callback) {
-        [self.callbackList addObject:callback];
+        [self.callbackList setObject:callback forKey:callback.functionId];
     }
 }
+
+- (F2Chart * (^)(FunctionItemCallback callback))callback {
+    return ^id(FunctionItemCallback callback) {
+        self.outCallback = callback;
+        return self;
+    };
+}
+
 @end

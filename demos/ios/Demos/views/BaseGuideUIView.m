@@ -14,10 +14,8 @@
         @"label": @{
             @"labelOffset": @(5),
             @"textAlign": @[@"start", @"center", @"end"],
-            @"item": [F2CallbackObj initWithCallback:^id _Nullable(NSString *_Nonnull param) {
-                NSData *data = [param dataUsingEncoding:NSUTF8StringEncoding];
-                NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-                NSNumber *index = [json objectForKey:@"index"];
+            @"item": [F2Callback callback:^NSDictionary *_Nonnull(NSDictionary *_Nonnull param) {
+                NSNumber *index = [param objectForKey:@"index"];
                 return @{@"textColor": index.integerValue % 2 == 0 ? @"#000000" : @"#DC143C"};
             }]
         }
@@ -25,9 +23,11 @@
     self.chart.axis(@"value", @{@"grid": @{@"type": @"dash", @"dash": @[@(15), @(15), @(5), @(5)]}});
     self.chart.line().position(@"date*value").fixedSize(2).attrs(@{@"connectNulls": @(YES)});
     self.chart.tooltip(@{
-        @"onPress": [F2CallbackObj initWithCallback:^id _Nullable(NSString *_Nonnull param) {
-            NSArray *tips = [F2Utils toJsonObject:param];
-            return tips;
+        @"onPress": [F2Callback callback:^NSDictionary *_Nonnull(NSDictionary *_Nonnull param) {
+            //可以修改param中的参数，然后按原来的格式返回回去
+            NSArray *tips = [param objectForKey:@"tooltip"];
+            NSLog(@"tips %lu", (unsigned long)tips.count);
+            return param;
         }]
     });
     

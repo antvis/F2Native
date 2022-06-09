@@ -39,7 +39,7 @@ class Text : public Shape {
 
   protected:
     int lineCount_ = 1;
-    float fontSize_ = 12.f;
+    float fontSize_ = DEFAULT_FONTSIZE;
     float lineHeight_ = std::nan("0");
     float height_ = std::nan("0");
     float width_ = std::nan("0");

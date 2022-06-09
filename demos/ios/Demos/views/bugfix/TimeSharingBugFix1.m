@@ -8,7 +8,7 @@
 
 #import "TimeSharingBugFix1.h"
 
-@interface TimeSharingBugFix1()<F2GestureDelegate>
+@interface TimeSharingBugFix1()
 @property (nonatomic, strong) F2Chart *priceChart;
 @property (nonatomic, strong) F2Chart *subChart;
 @end
@@ -56,10 +56,6 @@
     self.subChart.interaction(@"pinch", @{});
     self.subChart.tooltip(@{@"yTip":@{@"inner":@(YES)}});
     self.subChart.render();
-}
-
--(void)dealloc {
-   [self.canvasView destroy];
 }
 
 - (F2Chart *)priceChart {

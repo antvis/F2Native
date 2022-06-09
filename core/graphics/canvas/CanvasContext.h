@@ -15,13 +15,13 @@
 #define TraceCommand(val) AppendCommandCount();
 #endif
 
-#if defined(__ANDROID__) || defined(ANDROID)
+#ifdef DEBUG
 #   define F2ASSERT(condition, message) \
    do { \
     if (!(condition)) { printf((message)); } \
     assert ((condition)); } while(false)
 #else
-#   define ASSERT(condition, message) do { } while (false)
+#   define F2ASSERT(condition, message) do { } while (false)
 #endif
 
 namespace xg {

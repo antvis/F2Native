@@ -1,5 +1,5 @@
 #import "F2Geom.h"
-#import "F2CallbackObj.h"
+#import "F2Callback.h"
 #import "F2Chart.h"
 #import "F2Utils.h"
 #import <graphics/geom/Area.h>

@@ -8,6 +8,7 @@
 #include <iostream>
 #include "../Scale.h"
 #include "../../global.h"
+#include "../../util/json.h"
 #include "../../../utils/StringUtil.h"
 #include "../../../utils/common.h"
 
@@ -21,10 +22,6 @@ class Linear : public AbstractScale {
         InitConfig(_config);
 
         this->ticks = this->CalculateTicks();
-
-        if(_config.contains("tick")) {
-            SetTickCallbackFun(_config["tick"]);
-        }
     }
 
     ScaleType GetType() const noexcept override { return ScaleType::Linear; }
@@ -81,31 +78,7 @@ class Linear : public AbstractScale {
         return rst;
     }
 
-    std::string GetTickText(const nlohmann::json &item) override {
-        if(!this->tickCallbackId.empty()) {
-            nlohmann::json rst = func::InvokeFunction(this->tickCallbackId, item);
-            if(rst.is_object() && rst.contains("content")) {
-                return rst["content"];
-            }
-        }
-
-        // 处理 TickText 数值精度
-        if(item.is_string()) {
-            return item.get<std::string>();
-        } else if(item.is_number_integer()) {
-            return std::to_string(item.get<int>());
-        } else if(item.is_number_float()) {
-            float val = item.get<float>();
-            if(fabs(val) < XG_EPS) {
-                return "0";
-            }
-            std::stringstream ss;
-            ss << std::fixed << std::setprecision(precision) << val;
-            return ss.str();
-        } else {
-            return ""; // TODO get Tick text from callback
-        }
-    }
+    std::string GetTickText(const nlohmann::json &item, XChart *chart) override;
 
   protected:
     nlohmann::json CalculateTicks() override {
@@ -287,6 +260,8 @@ class Linear : public AbstractScale {
         nlohmann::json &range = config_["range"];
         rangeMin = range[0];
         rangeMax = range[1];
+        
+        tickCallbackId = xg::json::GetString(config_, "tick");
     }
 
   public:
@@ -295,6 +270,7 @@ class Linear : public AbstractScale {
     double tickInterval = -1;
     std::size_t tickCount = 2;
     int precision = 0; // tickText 小数点精度
+    
 
     nlohmann::json config_ = {{"tickCount", DEFAULT_COUNT}, {"precision", 0}, {"range", {0.0, 1.0}}, {"nice", false}};
     

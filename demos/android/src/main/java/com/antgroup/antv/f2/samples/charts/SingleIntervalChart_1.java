@@ -6,7 +6,7 @@ import com.antgroup.antv.f2.F2Config;
 import com.antgroup.antv.f2.samples.Utils;
 
 /**
- * 基础柱状图-1
+ * 基础柱状图
  * @author qingyuan.yl
  * @date 2020-09-27
  */

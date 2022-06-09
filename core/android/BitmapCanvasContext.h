@@ -14,6 +14,12 @@
 #include "graphics/canvas/CanvasFontParser.h"
 #include <jni.h>
 
+#define F2SafeCallVoidMethod(env, obj, method, ...) if(env && obj && method) {env->CallVoidMethod(obj, method, __VA_ARGS__);}
+#define F2SafeCallVoidMethodNoArg(env, obj, method) if(env && obj && method) {env->CallVoidMethod(obj, method);}
+#define F2SafeCallFloatMethod(env, obj, method, ...) if(env && obj && method) {return env->CallFloatMethod(obj, method, __VA_ARGS__);} else { return 0;}
+#define F2SafeCallLongMethod(env, obj, method, ...) if(env && obj && method) {return env->CallLongMethod(obj, method, __VA_ARGS__);} else { return 0;}
+#define F2SafeCallStringMethod(env, obj, method, ...) if(env && obj && method) {return jni::JavaStringToString(env,(jstring)env->CallObjectMethod(obj, method, __VA_ARGS__));} else { return "";}
+
 using namespace xg::jni;
 
 namespace xg {

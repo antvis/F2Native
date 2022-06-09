@@ -8,7 +8,7 @@
 
 #import "KLineUIView.h"
 
-@interface KLineUIView () <F2GestureDelegate>
+@interface KLineUIView ()
 
 @property (nonatomic, strong) F2Chart *candleChart;
 @property (nonatomic, strong) F2Chart *subChart;
@@ -52,7 +52,7 @@
     self.subChart.scale(@"volumn", @{
         @"nice": @(YES),
         @"tickCount": @(2),
-        @"tick": [F2CallbackObj initWithCallback:^NSDictionary *_Nullable(NSString *_Nonnull param) {
+        @"tick": [F2Callback callback:^NSDictionary *_Nonnull(NSDictionary *_Nonnull param) {
             return @{@"content": @"1亿手"};
         }]
     });
@@ -60,6 +60,23 @@
     self.subChart.interaction(@"pinch", @{});
     self.subChart.tooltip(@{});
     self.subChart.render();
+    
+    //多个chart需要自行监听手势，并分发
+    F2WeakSelf;
+    [self.canvasView addGestureListener:@"longPress" callback:^(NSDictionary * _Nonnull info) {
+        F2StrongSelf;
+        [strongSelf handleGestureInfo:info];
+    }];
+    
+    [self.canvasView addGestureListener:@"pinch" callback:^(NSDictionary * _Nonnull info) {
+        F2StrongSelf;
+        [strongSelf handleGestureInfo:info];
+    }];
+    
+    [self.canvasView addGestureListener:@"pan" callback:^(NSDictionary * _Nonnull info) {
+        F2StrongSelf;
+        [strongSelf handleGestureInfo:info];
+    }];
 }
 
 - (F2Chart *)candleChart {
@@ -80,7 +97,7 @@
     return _subChart;
 }
 
-- (void)handleGestureInfo:(NSDictionary *)info sender:(nonnull UIGestureRecognizer *)gestureRecognizer {
+- (void)handleGestureInfo:(NSDictionary *)info {
     self.candleChart.postTouchEvent(info);
     self.subChart.postTouchEvent(info);
 }

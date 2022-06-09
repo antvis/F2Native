@@ -1,10 +1,11 @@
 package com.antgroup.antv.f2;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author qingyuan.yl
@@ -17,8 +18,11 @@ public class F2Chart {
     private F2CanvasView mCanvasView;
     private volatile boolean hasDestroyed = false;
     private boolean mLogCmdCount = true;
-
+    private long mFunctionHandle = 0;
     private RequestAnimationFrameHandle mRequestFrameHandle = null;
+    //回调函数的外部钩子
+    private F2Function mOutCallback = null;
+    Map<String, F2Function> mFunctionMap = new HashMap<String, F2Function>();
 
     public static F2Chart create(Context context, String name, double widthPixel, double heightPixel) {
         double ratio = context.getResources().getDisplayMetrics().density;
@@ -28,6 +32,7 @@ public class F2Chart {
     private F2Chart(String name, double width, double height, double ratio) {
         mName = name;
         mChartProxy = new NativeChartProxy(name, width, height, ratio);
+        mFunctionHandle = mChartProxy.createFunction(mChartProxy.getNativeChartHandler(), this);
     }
 
     public F2CanvasView getCanvasView() {
@@ -297,7 +302,7 @@ public class F2Chart {
         return isRenderSuccess;
     }
 
-    private int getRenderDuration() {
+    public int getRenderDuration() {
         if (hasDestroyed) {
             return 0;
         }
@@ -305,7 +310,7 @@ public class F2Chart {
         return mChartProxy.getRenderDuration();
     }
 
-    private int getRenderCmdCount() {
+    public int getRenderCmdCount() {
         if (hasDestroyed) {
             return 0;
         }
@@ -337,29 +342,12 @@ public class F2Chart {
         return mChartProxy.getPosition(itemJsonData);
     }
 
-    // this method is unsafe, it allows calling from main thread without throwing
-    // exception. Caller should make sure that this API is not called during rendering
-    public String getTooltipInfos(float touchX, float touchY, int geomIndex) {
-        if (hasDestroyed) {
-            return null;
-        }
-        return mChartProxy.getTooltipInfos(touchX, touchY, geomIndex);
-    }
-
     public void clear() {
         if (hasDestroyed) {
             return;
         }
         assertRenderThread();
         mChartProxy.clear();
-    }
-
-    public String getRenderDumpInfo() {
-        if (hasDestroyed) {
-            return null;
-        }
-        assertRenderThread();
-        return mChartProxy.getRenderDumpInfo();
     }
 
     public String getScaleTicks(String field) {
@@ -370,6 +358,15 @@ public class F2Chart {
         return mChartProxy.getScaleTicks(field);
     }
 
+    public F2Chart config() {
+        return this;
+    }
+
+    public F2Chart callback(F2Function function) {
+        mOutCallback = function;
+        return this;
+    }
+
     public void destroy() {
         if (hasDestroyed) {
             return;
@@ -378,6 +375,7 @@ public class F2Chart {
         if (mRequestFrameHandle != null) {
             mRequestFrameHandle.clear();
         }
+        mChartProxy.destroyFuntion(mFunctionHandle);
         mChartProxy.destroy();
         hasDestroyed = true;
     }
@@ -417,6 +415,31 @@ public class F2Chart {
         }
     }
 
+    public void bindChart(String functionId, F2Function function) {
+        if (functionId != null && function != null) {
+            mFunctionMap.put(functionId, function);
+        }
+    }
+
+    protected final String nExecute(String functionId, String param) {
+        try {
+            if (functionId.equals(mRequestFrameHandle.functionId)) {
+                return mRequestFrameHandle.execute(param).toJsonString();
+            } else {
+                F2Function function = mFunctionMap.get(functionId);
+                if (function != null) {
+                    return function.execute(param).toJsonString();
+                } else if (mOutCallback != null) {
+                    return mOutCallback.execute(param).toJsonString();
+                }
+            }
+            return "{}";
+        } catch (Exception e) {
+            F2Log.e("F2Function", "execute failed id: " + functionId, e);
+            return "{}";
+        }
+    }
+
     public static class TextConfigBuilder<T extends TextConfigBuilder> extends F2Config.Builder<T> {
         private static final String KEY_TEXT_COLOR = "textColor";
         private static final String KEY_TEXT_SIZE = "textSize";
@@ -448,7 +471,6 @@ public class F2Chart {
         private static final String KEY_TYPE = "type";
         private static final String KEY_PRECISION = "precision";
         private static final String KEY_RANGE = "range";
-        //        private static final String KEY_SCALE_RANGE = "scaleRange";
         private static final String KEY_TICK_COUNT = "tickCount";
         private static final String KEY_MAX = "max";
         private static final String KEY_MIN = "min";

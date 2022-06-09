@@ -8,7 +8,7 @@
 
 #import "TimeSharingUIView.h"
 
-@interface TimeSharingUIView()<F2GestureDelegate>
+@interface TimeSharingUIView()
 @property (nonatomic, strong) F2Chart *priceChart;
 @property (nonatomic, strong) F2Chart *subChart;
 @end
@@ -30,10 +30,9 @@
     self.priceChart.axis(@"date", @{
         @"label": @{            
             @"textColor": @"#999999",
-            @"item": [F2CallbackObj initWithCallback:^id _Nullable(NSString *_Nonnull param) {
-                NSData *data = [param dataUsingEncoding:NSUTF8StringEncoding];
-                NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-                NSNumber *index = [json objectForKey:@"index"];
+            @"item": [F2Callback callback:^NSDictionary *_Nonnull(NSDictionary *_Nonnull param) {
+               
+                NSNumber *index = [param objectForKey:@"index"];
                 if([index isEqual:@(0)]) {
                     return @{@"content": @"09:30", @"textAlign":@"start"};
                 } else if([index isEqual:@(1)]) {
@@ -61,14 +60,8 @@
         @"type": @"timeSharing",
         @"timeRange": @[@[@(1608687000000), @(1608694200000)], @[@(1608699600000), @(1608706800000)]]
     });
-    self.subChart.interaction(@"pan", @{});
-    self.subChart.interaction(@"pinch", @{});
     self.subChart.tooltip(@{@"yTip":@{@"inner":@(YES)}});
     self.subChart.render();
-}
-
--(void)dealloc {
-   [self.canvasView destroy];
 }
 
 - (F2Chart *)priceChart {

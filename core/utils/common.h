@@ -2,6 +2,7 @@
 #include <memory>
 #include <unordered_map>
 #include <vector>
+#include <string>
 
 #ifndef XG_UTIL_COMMON
 #define XG_UTIL_COMMON

@@ -30,6 +30,8 @@ class InteractionContext {
     void UpdateTicks();
 
     void SetTypeConfig(std::string type, nlohmann::json config);
+    
+    void Clear() {}
 
   protected:
     void OnAfterChartInit();

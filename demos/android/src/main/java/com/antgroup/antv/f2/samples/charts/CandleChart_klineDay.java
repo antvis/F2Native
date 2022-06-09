@@ -10,8 +10,8 @@ import com.antgroup.antv.f2.F2Function;
 import com.antgroup.antv.f2.samples.Utils;
 
 /**
+ * 蜡烛图(日K)
  * @author qingyuan.yl
- * @date 2021/1/18
  */
 public class CandleChart_klineDay implements F2CanvasView.Adapter, F2CanvasView.OnCanvasTouchListener {
     private F2Chart mCandleChart;
@@ -21,12 +21,12 @@ public class CandleChart_klineDay implements F2CanvasView.Adapter, F2CanvasView.
     public void onCanvasDraw(final F2CanvasView canvasView) {
         if (mCandleChart == null) {
             canvasView.setOnCanvasTouchListener(this);
-            mCandleChart = F2Chart.create(canvasView.getContext(), "KlineDay", canvasView.getWidth(), canvasView.getHeight() * 3/4);
+            mCandleChart = F2Chart.create(canvasView.getContext(), "KlineDay", canvasView.getWidth(), canvasView.getHeight() * 3 / 4);
             mSubChart = F2Chart.create(canvasView.getContext(), "KlineDay-Sub", canvasView.getWidth(), canvasView.getHeight() / 4);
         }
 
         mCandleChart.setCanvas(canvasView);
-        mCandleChart.padding(15, 10, 0 ,0);
+        mCandleChart.padding(15, 10, 0, 0);
         mCandleChart.source(Utils.loadAssetFile(canvasView.getContext(), "mockData_klineDay.json"));
 
         mCandleChart.candle().position("date*values");
@@ -40,7 +40,7 @@ public class CandleChart_klineDay implements F2CanvasView.Adapter, F2CanvasView.
 
         mCandleChart.setAxis("date", new F2Chart.AxisConfigBuilder()
                 .label(new F2Chart.AxisLabelConfigBuilder().labelOffset(5)));
-        mCandleChart.setScale("date", new F2Chart.ScaleConfigBuilder().type("kline-day").setOption("domain", new double[] {40, 80}));
+        mCandleChart.setScale("date", new F2Chart.ScaleConfigBuilder().type("kline-day").setOption("domain", new double[]{40, 80}));
         mCandleChart.setScale("values", new F2Chart.ScaleConfigBuilder().nice(true));
         mCandleChart.setScale("m5", new F2Chart.ScaleConfigBuilder().setOption("assign", "values")); // 复用 values 字段的度量
         mCandleChart.setScale("m10", new F2Chart.ScaleConfigBuilder().setOption("assign", "values"));// 复用 values 字段的度量
@@ -59,18 +59,20 @@ public class CandleChart_klineDay implements F2CanvasView.Adapter, F2CanvasView.
 
         // sub chart
         mSubChart.setCanvas(canvasView);
-        mSubChart.margin(0, (canvasView.getHeight() * 3/4) / canvasView.getResources().getDisplayMetrics().density, 0, 0);
+        mSubChart.margin(0, (canvasView.getHeight() * 3 / 4) / canvasView.getResources().getDisplayMetrics().density, 0, 0);
         mSubChart.padding(12, 0, 0, 20);
         mSubChart.source(Utils.loadAssetFile(canvasView.getContext(), "mockData_klineDay.json"));
         mSubChart.setAxis("date", new F2Chart.AxisConfigBuilder().hidden());
         mSubChart.interval().position("date*volumn").style(new F2Config.Builder().setOption("widthRatio", 0.9).build());
-        mSubChart.setScale("date", new F2Chart.ScaleConfigBuilder().type("kline-day").setOption("domain", new double[] {40, 80}));
-        mSubChart.setScale("volumn", new F2Chart.ScaleConfigBuilder().nice(true).tickCount(2).tick(mSubChart, new F2Function() {
-            @Override
-            public F2Config execute(String param) {
-                return new F2Config.Builder().setOption("content", "1亿手").build();
-            }
-        }));
+        mSubChart.setScale("date", new F2Chart.ScaleConfigBuilder().type("kline-day").setOption("domain", new double[]{40, 80}));
+        mSubChart.setAxis("volumn", new F2Chart.AxisConfigBuilder()
+                .label(new F2Chart.AxisLabelConfigBuilder().item(mSubChart, new F2Function() {
+                    @Override
+                    public F2Config execute(String param) {
+                        return new F2Config.Builder().setOption("content", "1亿手").build();
+                    }
+                })));
+        mSubChart.setScale("volumn", new F2Chart.ScaleConfigBuilder().nice(true).tickCount(2));
         mSubChart.interaction("pan");
         mSubChart.interaction("pinch");
         mSubChart.tooltip(new F2Chart.ToolTipConfigBuilder().setOption("xTip", false));
@@ -101,16 +103,13 @@ public class CandleChart_klineDay implements F2CanvasView.Adapter, F2CanvasView.
     }
 
     protected void drawMAIndicators(F2CanvasView canvasView, String param) {
-        JSONArray maIndicators = JSON.parseArray(param);
-        float xOffset = 50;
-        for (int i = 0; i < maIndicators.size(); i++) {
-            JSONObject item = maIndicators.getJSONObject(i);
-            if("values".equals(item.getString("name"))) {
+        JSONObject maIndicator = JSON.parseObject(param);
+        JSONArray tooltips = maIndicator.getJSONArray("tooltip");
+        for (int i = 0; i < tooltips.size(); i++) {
+            JSONObject item = tooltips.getJSONObject(i);
+            if ("values".equals(item.getString("name"))) {
                 continue;
             }
-//            canvasView.getCanvasHandle().setFillStyle(item.getString("color"));
-//            canvasView.getCanvasHandle().fillText(item.getString("name").toUpperCase()+":"+item.getString("value"), 150 + xOffset, 60);
-            xOffset += 200;
         }
     }
 }

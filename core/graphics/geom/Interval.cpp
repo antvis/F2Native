@@ -22,7 +22,7 @@ geom::Interval &geom::Interval::Tag(const std::string &json) {
                                  {"textAlign", "center"},
                                  {"textBaseline", "bottom"},
                                  {"fill", "#808080"},
-                                 {"textSize", 10.f}};
+                                 {"textSize", DEFAULT_FONTSIZE}};
 
     if(config.is_object()) {
         defaultCfg.merge_patch(config);

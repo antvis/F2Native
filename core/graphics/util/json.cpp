@@ -11,6 +11,16 @@
 namespace xg {
 namespace json {
 
+const nlohmann::json &NullObject() {
+    static nlohmann::json nullobj;
+    return nullobj;
+}
+
+const nlohmann::json &ArrayObject() {
+    static nlohmann::json array = nlohmann::json::array();
+    return array;
+}
+
 nlohmann::json ParseString(const std::string &json) { return nlohmann::json::parse(json, nullptr, false); }
 
 std::vector<float> ParseDashArray(const nlohmann::json &json, float ratio, const std::vector<float> &defVal) {
@@ -76,7 +86,7 @@ const float GetFloatNumber(const nlohmann::json &obj, const std::string &key, co
     }
 }
 
-const nlohmann::json GetArray(const nlohmann::json &obj, const std::string &key, const nlohmann::json &defVal) {
+const nlohmann::json &GetArray(const nlohmann::json &obj, const std::string &key, const nlohmann::json &defVal) {
     if(obj.is_object() && obj.contains(key) && obj[key].is_array()) {
         return obj[key];
     } else {
@@ -92,7 +102,7 @@ const bool GetBool(const nlohmann::json &obj, const std::string &key, const bool
     }
 }
 
-const nlohmann::json GetObject(const nlohmann::json &obj, const std::string &key, const nlohmann::json &defVal) {
+const nlohmann::json &GetObject(const nlohmann::json &obj, const std::string &key, const nlohmann::json &defVal) {
     if(obj.is_object() && obj.contains(key) && obj[key].is_object()) {
         return obj[key];
     } else {

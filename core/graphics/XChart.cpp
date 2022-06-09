@@ -18,7 +18,7 @@ using namespace xg;
 using namespace std;
 
 XChart::XChart(const std::string &name, double width, double height, double ratio) : chartName_(name) {
-    this->chartId_ = chartName_ + "_" + std::to_string(CreateChartId());
+    SetName(name);
     width_ = width * ratio;
     height_ = height * ratio;
     ratio_ = ratio;
@@ -44,7 +44,6 @@ XChart::XChart(const std::string &name, double width, double height, double rati
     this->logTracer_->trace("%s", "new legendController instance");
 
     eventController_ = new event::EventController();
-    interactionContext_ = new interaction::InteractionContext(this);
     this->logTracer_->trace("%s", "new eventController instance.");
 
     geomAnimate_ = new animate::GeomAnimate(this);
@@ -79,19 +78,196 @@ XChart::~XChart() {
     XG_RELEASE_POINTER(canvas_);
 }
 
-XChart &XChart::Source(const std::string &json) {
-    nlohmann::json _data = xg::json::ParseString(json);
-    this->logTracer_->trace("#Source dataSize: %lu", json.size());
-    if(!_data.is_array()) {
-        // 有问题先抛出来
-        this->logTracer_->trace("#Source json is invalid");
-        // throw std::runtime_error("json is invalid.");
-        return *this;
+bool XChart::Parse(const std::string &dsl) {
+    this->logTracer_->trace("#dsl dataSize: %lu", dsl.size());
+    nlohmann::json _dsl = xg::json::ParseString(dsl);
+    if (!_dsl.is_object()) {
+        this->logTracer_->trace("#dsl json is invalid");
+        return false;
+    }
+    return ParseObject(_dsl);
+}
+    
+bool XChart::ParseObject(const nlohmann::json &dsl) {
+    //线上已经使用了data作为key，这里兼容下
+    const std::string sourceKey = dsl.contains("data") ? "data" :"source";
+    if (!dsl.contains(sourceKey)) {
+        this->logTracer_->trace("#Parse source key is not include");
+        return false;
+    }
+    if (dsl[sourceKey].is_array()) {
+        const auto &data = json::GetArray(dsl, sourceKey);
+        SourceObject(data);
+    }
+    //线上的老代码data部分是string
+    else if(dsl[sourceKey].is_string()) {
+        const auto &dataStr = json::GetString(dsl, sourceKey);
+        const auto data = json::ParseString(dataStr);
+        SourceObject(data);
+    }
+    
+    if (!data_.is_array() || (data_.is_array() && data_.size() == 0)) {
+        this->logTracer_->trace("#Parse data json is invalid");
+        return false;
     }
 
-    this->data_ = _data;
+    const auto &name = json::GetString(dsl, "name");
+    SetName(name);
+    
+    const auto &padding = json::GetArray(dsl, "padding");
+    const auto &margin = json::GetArray(dsl, "margin");
+    if (padding.is_array() && padding.size() >= 4) {
+        Padding(padding[0], padding[1], padding[2], padding[3]);
+    }
+    
+    if (margin.is_array() && margin.size() >= 4) {
+        Margin(margin[0], margin[1], margin[2], margin[3]);
+    }
+    
+    const auto &coord = json::GetObject(dsl, "coord");
+    CoordObject(coord);
+    
+    //一个chart只有一个legend
+    const auto &legend = json::GetObject(dsl, "legend");
+    LegendObject(json::GetString(legend, "field"), legend);
+    
+    //可能是bool， 可能是object
+    const auto &animate = json::Get(dsl, "animate");
+    AnimateObject(animate);
+    
+    const auto &axises = json::GetArray(dsl, "axises");
+    for (auto it = axises.begin(); it != axises.end(); ++it) {
+        const auto &config = json::GetObject(*it, "config");
+        
+        //兼容线上老的代码
+        if (config.is_object()) {
+            AxisObject(json::GetString(*it, "field"), config);
+        } else {
+            AxisObject(json::GetString(*it, "field"), *it);
+        }
+    }
+    
+    const auto &tooltip = json::GetObject(dsl, "tooltip");
+    TooltipObject(tooltip);
+    
+    const auto &scales = json::GetArray(dsl, "scales");
+    for (auto it = scales.begin(); it != scales.end(); ++it) {
+        //todo config是否要去掉
+        const auto &config = json::GetObject(*it, "config");
+        if (config.is_object()) {
+            ScaleObject(json::GetString(*it, "field"), config);
+        } else {
+            ScaleObject(json::GetString(*it, "field"), *it);
+        }
+    }
+    
+    const auto &geoms = json::GetArray(dsl, "geoms");
+    if (geoms.size() == 0) {
+        this->logTracer_->trace("#Parse geoms size is invalid");
+        return false;
+    }
+    for (auto it = geoms.begin(); it != geoms.end(); ++it) {
+        const auto &type = json::GetString(*it, "type");
+        const auto &position = json::GetString(*it, "position");
+        
+        if (type.empty() || position.empty()) {
+            continue;
+        }
+        
+        geom::AbstractGeom *geom = nullptr;
+        if (type == "line") {
+            geom = &Line();
+        } else if (type == "interval") {
+            geom = &Interval();
+        } else if (type == "area") {
+            geom = &Area();
+        } else if (type == "point") {
+            geom = &Point();
+        } else if (type == "candle") {
+            geom = &Candle();
+        }
+        
+        if (!geom) {
+            continue;
+        }
+        
+        geom->Position(position);
+        
+        const auto &color = json::GetObject(*it , "color");
+        if (color.is_object()) {
+            geom->Color(json::GetString(color, "field"), json::GetArray(color, "attrs"));
+        }
 
-    return *this;
+        const auto &fixedColor = json::GetString(*it , "fixedColor");
+        if (!fixedColor.empty()) {
+            geom->Color(fixedColor);
+        }
+
+        const auto &size = json::GetObject(*it , "size");
+        if (size.is_object()) {
+            geom->Size(json::GetString(size, "field"), json::GetArray(size, "attrs"));
+        }
+
+        const auto fixedSize = json::GetNumber(*it , "fixedSize", NAN);
+        if (!std::isnan(fixedSize)) {
+            geom->Size(fixedSize);
+        }
+
+        const auto &shape = json::GetObject(*it , "shape");
+        if (shape.is_object()) {
+            geom->Shape(json::GetString(shape, "field"), json::GetArray(shape, "attrs"));
+        }
+
+        const auto &fixedShape = json::GetString(*it , "fixedShape");
+        if (!fixedShape.empty()) {
+            geom->Shape(fixedShape);
+        }
+
+        const auto &adjust = json::GetString(*it, "adjust");
+        if (!adjust.empty()) {
+            geom->Adjust(adjust);
+        }
+
+        const auto &style = json::GetObject(*it, "style");
+        if (style.is_object()) {
+            geom->StyleObject(style);
+        }
+
+        const auto &attrs  = json::GetObject(*it, "attrs");
+        if (attrs.is_object()) {
+            geom->AttrsObject(attrs);
+        }
+    }
+    
+    const auto &guides = json::GetArray(dsl, "guides");
+    for (auto it = guides.begin(); it != guides.end(); ++it) {
+        const auto &type = json::GetString(*it, "type");
+        if (type.empty()) {
+            continue;
+        }
+        
+        if (type == "line") {
+            Guide().LineObject(*it);
+        } else if (type == "text") {
+            Guide().TextObject(*it);
+        } else if (type == "flag") {
+            Guide().FlagObject(*it);
+        } else if (type == "background") {
+            Guide().BackgroundObject(*it);
+        } else if (type == "image") {
+            Guide().ImageObject(*it);
+        }
+    }
+    
+    const auto &interactions = json::GetArray(dsl, "interactions");
+    for (auto it = interactions.begin(); it != interactions.end(); ++it) {
+        InteractionObject(json::GetString(*it, "type"), *it);
+    }
+    return true;
+}
+
+XChart &XChart::Source(const std::string &json) {
+    return SourceObject(xg::json::ParseString(json));
 }
 
 XChart &XChart::Padding(double left, double top, double right, double bottom) {
@@ -119,49 +295,23 @@ void XChart::UpdateLayout(std::array<double, 4> newPadding) {
 }
 
 XChart &XChart::Axis(const std::string &field, const std::string &json) {
-    nlohmann::json config = xg::json::ParseString(json);
-    this->logTracer_->trace("#Axis field: %s config: %s", field.c_str(), config.dump().c_str());
-    this->axisController_->SetFieldConfig(field, config);
-    return *this;
+    return AxisObject(field, xg::json::ParseString(json));
 }
 
 XChart &XChart::Interaction(const std::string &type, const std::string &json) {
-    nlohmann::json config = xg::json::ParseString(json);
-    if(type == "pinch") {
-        std::unique_ptr<interaction::InteractionBase> pinch = std::make_unique<interaction::Pinch>(this);
-        interactions_.push_back(std::move(pinch));
-    } else if(type == "pan") {
-        std::unique_ptr<interaction::InteractionBase> pan = std::make_unique<interaction::Pan>(this);
-        interactions_.push_back(std::move(pan));
-    }
-    this->interactionContext_->SetTypeConfig(type, config);
-    return *this;
+    return InteractionObject(type, xg::json::ParseString(json));
 }
 
 XChart &XChart::Coord(const std::string &json) {
-    nlohmann::json config = xg::json::ParseString(json);
-    this->logTracer_->trace("#coord ");
-    if(config.is_object()) {
-        this->coordCfg_.merge_patch(config);
-    }
-    bool _transposed = this->coordCfg_["transposed"];
-    if(this->coord_ != nullptr) {
-        this->coord_->SetTransposed(_transposed);
-        // TODO repaint
-    }
-    return *this;
+    return CoordObject(xg::json::ParseString(json));
 }
 
 XChart &XChart::Animate(const std::string &json) {
-    this->animateCfg_ = xg::json::ParseString(json);
-    return *this;
+    return AnimateObject(xg::json::ParseString(json));
 }
 
 XChart &XChart::Legend(const std::string &field, const std::string &json) {
-    nlohmann::json config = xg::json::ParseString(json);
-    this->logTracer_->trace("#Legend field: %s config: %s", field.c_str(), config.dump().c_str());
-    this->legendController_->SetFieldConfig(field, config);
-    return *this;
+    return LegendObject(field, xg::json::ParseString(json));
 }
 
 bool XChart::OnTouchEvent(const std::string &json) {
@@ -190,10 +340,7 @@ bool XChart::OnTouchEvent(const std::string &json) {
 }
 
 XChart &XChart::Scale(const std::string &field, const std::string &json) {
-    nlohmann::json config = xg::json::ParseString(json);
-    this->logTracer_->trace("#Scale field: %s config: %s", field.c_str(), config.dump().c_str());
-    this->scaleController_->UpdateColConfig(field, config);
-    return *this;
+    return ScaleObject(field, xg::json::ParseString(json));
 }
 
 scale::AbstractScale &XChart::GetScale(const std::string &field) {
@@ -266,7 +413,7 @@ std::string XChart::GetScaleTicks(const std::string &field) noexcept {
     }
 
     scale::AbstractScale &scale = this->GetScale(field);
-    std::vector<scale::Tick> ticks = scale.GetTicks();
+    std::vector<scale::Tick> ticks = scale.GetTicks(this);
 
     for(std::size_t i = 0; i < ticks.size(); ++i) {
         scale::Tick &tick = ticks[i];
@@ -368,6 +515,11 @@ void XChart::Clear() {
     if(tooltipController_) {
         tooltipController_->Clear();
     }
+    
+    if (interactionContext_) {
+        interactionContext_->Clear();
+    }
+    
     ClearInner();
     this->geoms_.clear();
     this->geomShapeFactory_->Clear();
@@ -385,11 +537,10 @@ std::size_t XChart::RequestAnimationFrame(func::Command *c, long delay) {
         return 0;
     }
     GetLogTracer()->trace("#RequestAnimationFrame handleID: %s", requestFrameHandleId_.data());
-    func::F2Function *method = func::FunctionManager::GetInstance().Find(requestFrameHandleId_);
-    GetLogTracer()->trace("#RequestAnimationFrame method: %p", method);
-    if(method != nullptr) {
+    if(!requestFrameHandleId_.empty()) {
         long p = reinterpret_cast<long>(c);
-        method->Execute({{"command", p}, {"delay", delay}});
+        nlohmann::json data = {{"command", p}, {"delay", delay}};
+        InvokeFunction(requestFrameHandleId_, data.dump());
         return p;
     } else {
         delete c;
@@ -397,36 +548,8 @@ std::size_t XChart::RequestAnimationFrame(func::Command *c, long delay) {
     }
 }
 
-std::string XChart::GetRenderInfo() const {
-    nlohmann::json info;
-
-    // 渲染执行执行数量
-#ifdef ANDROID
-    if(canvasContext_ == nullptr || !canvasContext_->IsValid()) {
-#else
-    if(canvasContext_ == nullptr) {
-#endif
-        info["cmdCount"] = -1; // < 0 表示 canvas 环境有问题
-    } else {
-        info["cmdCount"] = canvasContext_->GetRenderCount();
-    }
-
-    info["duration"] = renderDurationMM_;
-    info["name"] = chartName_;
-    return info.dump();
-}
-
 XChart &XChart::Tooltip(const std::string &json) {
-    nlohmann::json cfg = xg::json::ParseString(json);
-    if(this->tooltipController_ == nullptr) {
-        this->tooltipController_ = new tooltip::ToolTipController(this);
-
-        this->tooltipController_->AddMonitor(
-            XG_MEMBER_OWNER_CALLBACK_1(legend::LegendController::OnToolTipMarkerItemsChanged, this->legendController_));
-    }
-
-    this->tooltipController_->Init(cfg);
-    return *this;
+    return TooltipObject(xg::json::ParseString(json));
 }
 
 void XChart::InitLayout() {
@@ -468,14 +591,6 @@ const util::Point XChart::GetPosition(const nlohmann::json &item) {
     double y = this->GetScale(yField).Scale(item[yField]);
     util::Point ret = this->GetCoord().ConvertPoint(util::Point{x, y});
     return ret;
-}
-
-const std::string XChart::GetTooltipInfos(float touchX, float touchY, int geomIndex) {
-    if (this->tooltipController_ != nullptr) {
-        return this->tooltipController_->GetTooltipInfos(touchX, touchY, geomIndex);
-    } else {
-        return "";
-    }
 }
 
 void XChart::ClearInner() {
@@ -538,7 +653,7 @@ std::map<std::string, std::vector<legend::LegendItem>> XChart::GetLegendItems() 
 
                 if(scale::IsCategory(scale.GetType())) {
                     const scale::Category &cat = static_cast<Category &>(scale);
-                    std::vector<scale::Tick> ticks = scale.GetTicks();
+                    std::vector<scale::Tick> ticks = scale.GetTicks(this);
 
                     std::vector<legend::LegendItem> fieldItems;
 
@@ -556,4 +671,84 @@ std::map<std::string, std::vector<legend::LegendItem>> XChart::GetLegendItems() 
     });
 
     return legendItems;
+}
+
+    
+#pragma mark -
+XChart &XChart::SourceObject(const nlohmann::json &_data) {
+    if(!_data.is_array()) {
+        // 有问题先抛出来
+        this->logTracer_->trace("#Source json is invalid");
+        // throw std::runtime_error("json is invalid.");
+        return *this;
+    }
+
+    this->data_ = _data;
+    return *this;
+}
+    
+XChart &XChart::ScaleObject(const std::string &field, const nlohmann::json &config) {
+    this->logTracer_->trace("#Scale field: %s config: %s", field.c_str(), config.dump().c_str());
+    this->scaleController_->UpdateColConfig(field, config);
+    return *this;
+}
+
+XChart &XChart::AxisObject(const std::string &field, const nlohmann::json &config) {
+    this->logTracer_->trace("#Axis field: %s config: %s", field.c_str(), config.dump().c_str());
+    this->axisController_->SetFieldConfig(field, config);
+    return *this;
+}
+
+XChart &XChart::LegendObject(const std::string &field, const nlohmann::json &config) {
+    this->logTracer_->trace("#Legend field: %s config: %s", field.c_str(), config.dump().c_str());
+    this->legendController_->SetFieldConfig(field, config);
+    return *this;
+}
+
+XChart &XChart::InteractionObject(const std::string &type, const nlohmann::json &config) {
+    if (!this->interactionContext_) {
+        interactionContext_ = new interaction::InteractionContext(this);
+    }
+    if(type == "pinch") {
+        std::unique_ptr<interaction::InteractionBase> pinch = std::make_unique<interaction::Pinch>(this);
+        interactions_.push_back(std::move(pinch));
+    } else if(type == "pan") {
+        std::unique_ptr<interaction::InteractionBase> pan = std::make_unique<interaction::Pan>(this);
+        interactions_.push_back(std::move(pan));
+    }
+    this->interactionContext_->SetTypeConfig(type, config);
+    return *this;
+}
+
+XChart &XChart::TooltipObject(const nlohmann::json &config) {
+    if(this->tooltipController_ == nullptr) {
+        this->tooltipController_ = new tooltip::ToolTipController(this);
+
+        this->tooltipController_->AddMonitor(
+            XG_MEMBER_OWNER_CALLBACK_1(legend::LegendController::OnToolTipMarkerItemsChanged, this->legendController_));
+    }
+
+    this->tooltipController_->Init(config);
+    return *this;
+}
+
+XChart &XChart::CoordObject(const nlohmann::json &config) {
+    this->logTracer_->trace("#coord ");
+    if(config.is_object()) {
+        this->coordCfg_.merge_patch(config);
+    }
+    bool _transposed = this->coordCfg_["transposed"];
+    if(this->coord_ != nullptr) {
+        this->coord_->SetTransposed(_transposed);
+    }
+    return *this;
+}
+
+XChart &XChart::AnimateObject(const nlohmann::json &config) {
+    //config bool or object
+    if (config.is_boolean() || config.is_object()) {
+        this->animateCfg_ = config;
+    }
+
+    return *this;
 }

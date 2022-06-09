@@ -1,0 +1,135 @@
+{
+    "name": "f2native#financialKeyIndicator",
+    "padding": [12, 18, 0, 18],
+    "data": "[{\"value\":0.1369,\"valueStr\":\"0.14\",\"yoyValue\":32.39845261121855,\"yoyValueStr\":\"32.40%\",\"financialDate\":\"2021\"},{\"value\":0.2171,\"valueStr\":\"0.22\",\"yoyValue\":10.483460559796427,\"yoyValueStr\":\"10.48%\",\"financialDate\":\"2021\"},{\"value\":0.3225,\"valueStr\":\"0.32\",\"yoyValue\":-5.8669001751313505,\"yoyValueStr\":\"-5.87%\",\"financialDate\":\"2021\"},{\"value\":0.54,\"valueStr\":\"0.54\",\"yoyValue\":20.85944494180843,\"yoyValueStr\":\"20.86%\",\"financialDate\":\"2021\"},{\"value\":0.2856,\"valueStr\":\"0.29\",\"yoyValue\":108.6194302410519,\"yoyValueStr\":\"108.62%\",\"financialDate\":\"2022\"}]",
+    "animate": false,
+    "tooltip": {
+        "xTip": false,
+        "yTip": false
+    },
+    "geoms": [{
+        "type": "interval",
+        "position": "financialDate*value",
+        "style": {
+            "widthRatio": 0.4,
+            "radius": [4, 4, 4, 4]
+        },
+        "fixedColor": "#1677FF"
+    }, {
+        "type": "line",
+        "position": "financialDate*yoyValue",
+        "attrs": {
+            "connectNulls": true
+        },
+        "lineWidth": 2,
+        "fixedColor": "#FF9F18"
+    }, {
+        "type": "point",
+        "position": "financialDate*yoyValue",
+        "fixedSize": 3,
+        "fixedShape": "circle",
+        "fixedColor": "#FF9F18"
+    }],
+    "axises": [{
+        "field": "financialDate",
+        "config": {
+            "grid": false,
+            "label": {
+                "labelOffset": 18
+            },
+            "line": false
+        }
+    }, {
+        "field": "value",
+        "config": {
+            "grid": {
+                "type": "dash",
+                "lineWidth": 1,
+                "dash": [3, 3],
+                "stroke": "#DDDDDD"
+            },
+            "line": false
+        }
+    }, {
+        "field": "yoyValue",
+        "config": {
+            "grid": false,
+            "label": {
+                "labelOffset": 10
+            },
+            "line": false
+        }
+    }],
+    "scales": [{
+        "field": "financialDate",
+        "config": {
+            "range": [0.1, 0.9]
+        }
+    }, {
+        "field": "value",
+        "config": {
+            "tickCount": 5,
+            "precision": 2,
+            "tickType": "price",
+            "tickTypePricePrecision": 2,
+            "nice": true,
+            "min": 0
+        }
+    }, {
+        "field": "yoyValue",
+        "config": {
+            "tickCount": 5,
+            "precision": 0,
+            "tickType": "percent",
+            "tickTypePercentPrecision": 0,
+            "tickTypePercentDivisor": 100,
+            "nice": true
+        }
+    }],
+    "guides": [{
+        "type": "text",
+        "position": ["2021", 0.1369],
+        "content": "0.14",
+        "textAlign": "center",
+        "textColor": "#1677FF",
+        "margin": [0, 15],
+        "textBaseline": "top",
+        "textSize": 10
+    }, {
+        "type": "text",
+        "position": ["2021", 0.2171],
+        "content": "0.22",
+        "textAlign": "center",
+        "textColor": "#1677FF",
+        "margin": [0, 15],
+        "textBaseline": "top",
+        "textSize": 10
+    }, {
+        "type": "text",
+        "position": ["2021", 0.3225],
+        "content": "0.32",
+        "textAlign": "center",
+        "textColor": "#1677FF",
+        "margin": [0, 15],
+        "textBaseline": "top",
+        "textSize": 10
+    }, {
+        "type": "text",
+        "position": ["2021", 0.54],
+        "content": "0.54",
+        "textAlign": "center",
+        "textColor": "#1677FF",
+        "margin": [0, 15],
+        "textBaseline": "top",
+        "textSize": 10
+    }, {
+        "type": "text",
+        "position": ["2022", 0.2856],
+        "content": "0.29",
+        "textAlign": "center",
+        "textColor": "#1677FF",
+        "margin": [0, 15],
+        "textBaseline": "top",
+        "textSize": 10
+    }]
+}

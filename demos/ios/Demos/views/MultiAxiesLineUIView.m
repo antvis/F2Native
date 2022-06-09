@@ -20,8 +20,6 @@
     self.chart.line().position(@"date*value").fixedSize(2).fixedColor(@"#1890FF");
     self.chart.line().position(@"date*offset").fixedSize(2).fixedColor(@"#2FC25B");
     self.chart.tooltip(@{});
-    self.chart.interaction(@"pinch", @{});
-    self.chart.interaction(@"pan", @{});
     self.chart.render();
 }
 

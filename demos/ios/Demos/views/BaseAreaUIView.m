@@ -18,10 +18,8 @@
         @"position": @[@(0), @(0), @(0), @(self.chartSize.height * [UIScreen mainScreen].scale)]
     }]);
     self.chart.point().position(@"time*tem").fixedColor(@"#000000").style(@{
-        @"custom": [F2CallbackObj initWithCallback:^NSDictionary *_Nullable(NSString *_Nonnull param) {
-            NSData *data = [param dataUsingEncoding:NSUTF8StringEncoding];
-            NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-            if([json[@"_index"] longValue] == 3) {
+        @"custom": [F2Callback callback:^NSDictionary *_Nonnull(NSDictionary *_Nonnull param) {
+            if([param[@"_index"] longValue] == 3) {
                 return @{@"color": @"#FFB6C1", @"size": @(0)};
             }
             return @{};

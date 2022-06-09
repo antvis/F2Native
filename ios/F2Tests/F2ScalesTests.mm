@@ -39,7 +39,6 @@
     XCTAssertEqual(unit::Linear::ScaleEqualMinAndMax(), YES);
     XCTAssertEqual(unit::Linear::ScaleWithOutMinAndMAX(), YES);
     XCTAssertEqual(unit::Linear::Invert(), YES);
-    XCTAssertEqual(unit::Linear::TicksCallback(), YES);
 }
 
 -(void)testCategory {
@@ -55,7 +54,6 @@
     XCTAssertEqual(unit::Category::ScaleEmptyValue(), YES);
     XCTAssertEqual(unit::Category::Invert(), YES);
     XCTAssertEqual(unit::Category::CustomTicks(), YES);
-    XCTAssertEqual(unit::Category::TicksCallback(), YES);
 }
 
 -(void)testTimeSharingLinear {

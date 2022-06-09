@@ -35,11 +35,12 @@
 		CC612BFD250B54E600315124 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC612BFC250B54E600315124 /* libc++.tbd */; };
 		CC612C04250B5C5A00315124 /* Res in Resources */ = {isa = PBXBuildFile; fileRef = CC612C03250B5C5A00315124 /* Res */; };
 		CC66877827C5D73B00DA1B5A /* MarketMovingBugFix1.m in Sources */ = {isa = PBXBuildFile; fileRef = CC66877727C5D73B00DA1B5A /* MarketMovingBugFix1.m */; };
-		CC6E83FE28348B2F00F69380 /* F2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F5DD4E7255AB42C00FD60B3 /* F2.framework */; };
+		CC6E83F9283396FB00F69380 /* F2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F5DD4E7255AB42C00FD60B3 /* F2.framework */; };
 		CC76557B26C5220100061FCF /* MultiIntervalUIView3.m in Sources */ = {isa = PBXBuildFile; fileRef = CC76557826C5220100061FCF /* MultiIntervalUIView3.m */; };
 		CC85823C2756070900C4D435 /* MarketMovingUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85823B2756070900C4D435 /* MarketMovingUIView.m */; };
 		CC8BE29E26F2EE9C00F52359 /* RadarAreaUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = CC8BE29D26F2EE9C00F52359 /* RadarAreaUIView.m */; };
 		CC8C61E92795770300F540D7 /* BaseGuideUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = CC8C61E62795770300F540D7 /* BaseGuideUIView.m */; };
+		CCA4E5CA2814F2A20014C758 /* KLineTrendBugFix1.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA4E5C72814F2A20014C758 /* KLineTrendBugFix1.m */; };
 		CCE9E3E927B12AF400D8A030 /* BugFixViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE9E3E727B12AF400D8A030 /* BugFixViewController.m */; };
 		CCE9E3ED27B12BB000D8A030 /* TimeSharingBugFix1.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE9E3EB27B12BB000D8A030 /* TimeSharingBugFix1.m */; };
 /* End PBXBuildFile section */
@@ -131,6 +132,8 @@
 		CC8BE29D26F2EE9C00F52359 /* RadarAreaUIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RadarAreaUIView.m; sourceTree = "<group>"; };
 		CC8C61E62795770300F540D7 /* BaseGuideUIView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseGuideUIView.m; sourceTree = "<group>"; };
 		CC8C61E82795770300F540D7 /* BaseGuideUIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseGuideUIView.h; sourceTree = "<group>"; };
+		CCA4E5C72814F2A20014C758 /* KLineTrendBugFix1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KLineTrendBugFix1.m; sourceTree = "<group>"; };
+		CCA4E5C92814F2A20014C758 /* KLineTrendBugFix1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KLineTrendBugFix1.h; sourceTree = "<group>"; };
 		CCE9E3E727B12AF400D8A030 /* BugFixViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BugFixViewController.m; sourceTree = "<group>"; };
 		CCE9E3E827B12AF400D8A030 /* BugFixViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BugFixViewController.h; sourceTree = "<group>"; };
 		CCE9E3EB27B12BB000D8A030 /* TimeSharingBugFix1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeSharingBugFix1.m; sourceTree = "<group>"; };
@@ -142,7 +145,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC6E83FE28348B2F00F69380 /* F2.framework in Frameworks */,
+				CC6E83F9283396FB00F69380 /* F2.framework in Frameworks */,
 				CC612BFD250B54E600315124 /* libc++.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -263,6 +266,8 @@
 		CCE9E3EA27B12B9600D8A030 /* bugfix */ = {
 			isa = PBXGroup;
 			children = (
+				CCA4E5C92814F2A20014C758 /* KLineTrendBugFix1.h */,
+				CCA4E5C72814F2A20014C758 /* KLineTrendBugFix1.m */,
 				CCE9E3EC27B12BB000D8A030 /* TimeSharingBugFix1.h */,
 				CCE9E3EB27B12BB000D8A030 /* TimeSharingBugFix1.m */,
 				CC66877627C5D73B00DA1B5A /* MarketMovingBugFix1.h */,
@@ -365,6 +370,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CCA4E5CA2814F2A20014C758 /* KLineTrendBugFix1.m in Sources */,
 				3F56A06B25272042002AA2D2 /* BasePieUIView.m in Sources */,
 				95127745264CF5400011EE7A /* ChartListViewController.m in Sources */,
 				9500DF9F2689F4A500025EF1 /* TimeSharingUIView.m in Sources */,
@@ -539,7 +545,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.0;
-				DEVELOPMENT_TEAM = A663235EQ2;
+				DEVELOPMENT_TEAM = BQWDN7869J;
 				INFOPLIST_FILE = Demos/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -566,7 +572,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.0;
-				DEVELOPMENT_TEAM = A663235EQ2;
+				DEVELOPMENT_TEAM = BQWDN7869J;
 				INFOPLIST_FILE = Demos/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;

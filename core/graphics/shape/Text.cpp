@@ -80,7 +80,7 @@ BBox xg::shape::Text::CalculateBox(canvas::CanvasContext &context) const {
 }
 
 std::string xg::shape::Text::GetFontStyle() const {
-    return fontStyle_ + " " + fontVariant_ + " " + fontWeight_ + " " + std::to_string(fontSize_) + "px " + fontFamily_;
+    return CreateFontStyle(fontSize_, fontStyle_, fontVariant_, fontWeight_, fontFamily_);
 }
 
 float xg::shape::Text::GetSpacingY() const { return std::isnan(lineHeight_) ? fontSize_ * 0.14 : (lineHeight_ - fontSize_); }

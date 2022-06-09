@@ -53,6 +53,7 @@ void Flag::PreDrawFlagContent(XChart &chart,
     bool vertical = position.y < coordCenter.y ? true : false; // true 点在上面， 旗子向下
 
     float fontSize = config_["textSize"].get<float>() * context.GetDevicePixelRatio();
+    context.SetFont(CreateFontStyle(fontSize));
     std::string content = config_["content"];
 
     float labelWidth = context.MeasureTextWidth(content);
@@ -143,6 +144,14 @@ void Flag::DrawFragContent(XChart &chart, shape::Group *container, canvas::Canva
     auto rect = xg::make_unique<shape::Rect>(util::Point{contentRect_.x, contentRect_.y},
                                              util::Size(contentRect_.width, contentRect_.height), backgroundColor, color, lineWidth);
     rect->SetZIndex(-5);
+    
+    if(config_.contains("rounding")) {
+        float roundings[4] = {0, 0, 0, 0};
+        json::ParseRoundings(config_["rounding"], &roundings[0], context.GetDevicePixelRatio());
+        rect->SetRoundings(roundings);
+    }
+
+    
     container->AddElement(std::move(rect));
 
     std::string content = config_["content"];
@@ -150,7 +159,7 @@ void Flag::DrawFragContent(XChart &chart, shape::Group *container, canvas::Canva
     std::string textAlign = config_["textAlign"];
     std::string textBaseline = config_["textBaseline"];
     std::string textColor = config_["textColor"];
-
+    
     auto text = xg::make_unique<shape::Text>(content, util::Point(0, 0), fontSize, "", textColor);
 
     text->SetPoint(util::Point(contentRect_.x + padding[0], contentRect_.y + contentRect_.height - padding[3] - 1));

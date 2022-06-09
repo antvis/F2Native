@@ -8,7 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define F2WeakSelf __weak __typeof(self) weakSelf = self;
 #define F2StrongSelf __strong __typeof(weakSelf) strongSelf = weakSelf;
-#define F2SafeBlockRun(block, ...) block ? block(__VA_ARGS__) : nil
+#define F2SafeBlockRun(block, ...) if(block != nil) block(__VA_ARGS__)
 
 #define F2NativeScale UIScreen.mainScreen.nativeScale
 

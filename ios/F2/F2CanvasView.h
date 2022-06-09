@@ -7,25 +7,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface F2CanvasView : UIView
 
-+ (F2CanvasView *)canvasWithFrame:(CGRect)frame
-                        andBizId:(NSString *)bizId
-                        complete:(void (^)(F2CanvasView *))callback;
-
-+ (F2CanvasView *)canvasWithFrame:(CGRect)frame
-                        cgBackend:(BOOL)isUseCGBackend
-                        andBizId:(NSString *)bizId
-                        complete:(void (^)(F2CanvasView *))callback;
-
-
-@property (nonatomic, weak) id<F2GestureDelegate> delegate;
-
+/// 画布的上下文
 @property (nonatomic, strong, readonly) F2CanvasContext *canvasContext;
 
-@property (nonatomic, strong, readonly) F2GestureListener *listener;
+/// 业务的id
+@property (nonatomic, copy) NSString *bizId;
 
-@property (nonatomic, copy, readonly) NSString *bizId;
+/// 初始化view
+/// @param frame 视图大小
++ (instancetype)canvasWithFrame:(CGRect)frame;
 
-@property (nonatomic, assign, readonly) BOOL isUseCGBackend;
+/// 不要使用init方法初始化
+- (instancetype)init NS_UNAVAILABLE;
 
 /// 使用 GCanvas实现的canvas渲染
 /// @return YES 渲染成功 NO 渲染失败
@@ -35,13 +28,21 @@ NS_ASSUME_NONNULL_BEGIN
 ///@return UIImage说明是白屏 nil 说明不是白屏
 - (UIImage *)detectView;
 
-/// destory canvas release ssource
-- (void)destroy;
-
 /// 转换成bitmap
 /// @return UIImage
 - (UIImage *)snapshot;
 
+/// 增加手势监听
+/// @param type   longpress, pinching, pan
+/// @param callback callback
+- (void)addGestureListener:(NSString *)type callback:(F2GestureCallback)callback;
+
+/// 按类型删除手势
+/// @param type longPress, pinching, pan
+- (void)removeGestureListener:(NSString *)type;
+
+/// 删除所有手势
+- (void)removeAllGestureListeners;
 
 /// @param chartId 图表的uuid，作为参数上报
 /// @param duration 渲染时间

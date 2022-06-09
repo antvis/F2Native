@@ -25,41 +25,56 @@ void xg::guide::GuideController::Render(xg::XChart &chart, canvas::CanvasContext
 }
 
 void xg::guide::GuideController::Flag(const std::string &json) {
-    nlohmann::json config = xg::json::ParseString(json);
+    FlagObject(xg::json::ParseString(json));
+}
+
+void xg::guide::GuideController::Text(const std::string &json) {
+    TextObject(xg::json::ParseString(json));
+}
+
+void xg::guide::GuideController::Line(const std::string &json) {
+    LineObject(xg::json::ParseString(json));
+}
+
+void xg::guide::GuideController::Background(const std::string &json) {
+    BackgroundObject(xg::json::ParseString(json));
+}
+
+void xg::guide::GuideController::Image(const std::string &json) {
+    ImageObject(xg::json::ParseString(json));
+}
+
+void xg::guide::GuideController::FlagObject(const nlohmann::json &config) {
     if(!config.is_object())
         return;
     auto guide = xg::make_unique<xg::guide::Flag>(config);
     this->guides.push_back(std::move(guide));
 }
 
-void xg::guide::GuideController::Text(const std::string &json) {
-    nlohmann::json config = xg::json::ParseString(json);
+void xg::guide::GuideController::TextObject(const nlohmann::json &config) {
     if(!config.is_object())
         return;
     auto text = xg::make_unique<xg::guide::Text>(config);
     this->guides.push_back(std::move(text));
 }
 
-void xg::guide::GuideController::Line(const std::string &json) {
-    nlohmann::json config = xg::json::ParseString(json);
+void xg::guide::GuideController::LineObject(const nlohmann::json &config) {
     if(!config.is_object())
         return;
     auto line = xg::make_unique<xg::guide::Line>(config);
     this->guides.push_back(std::move(line));
 }
 
-void xg::guide::GuideController::Background(const std::string &json) {
-    nlohmann::json cfg = xg::json::ParseString(json);
-    if(!cfg.is_object())
+void xg::guide::GuideController::BackgroundObject(const nlohmann::json &config) {
+    if(!config.is_object())
         return;
-    auto bg = xg::make_unique<xg::guide::Background>(cfg);
+    auto bg = xg::make_unique<xg::guide::Background>(config);
     this->guides.push_back(std::move(bg));
 }
 
-void xg::guide::GuideController::Image(const std::string &json) {
-    nlohmann::json cfg = xg::json::ParseString(json);
-    if(!cfg.is_object())
+void xg::guide::GuideController::ImageObject(const nlohmann::json &config) {
+    if(!config.is_object())
         return;
-    auto image = xg::make_unique<xg::guide::Image>(cfg);
+    auto image = xg::make_unique<xg::guide::Image>(config);
     this->guides.push_back(std::move(image));
 }

@@ -147,3 +147,4 @@ third_party/AntGraphic/
 
 demos/kline_data_transfomer.js
 core/graphics/canvas/AlipayCanvasContext.h
+.cxx

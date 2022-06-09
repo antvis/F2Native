@@ -35,7 +35,6 @@
 		CC612BFD250B54E600315124 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC612BFC250B54E600315124 /* libc++.tbd */; };
 		CC612C04250B5C5A00315124 /* Res in Resources */ = {isa = PBXBuildFile; fileRef = CC612C03250B5C5A00315124 /* Res */; };
 		CC66877827C5D73B00DA1B5A /* MarketMovingBugFix1.m in Sources */ = {isa = PBXBuildFile; fileRef = CC66877727C5D73B00DA1B5A /* MarketMovingBugFix1.m */; };
-		CC6E83F9283396FB00F69380 /* F2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F5DD4E7255AB42C00FD60B3 /* F2.framework */; };
 		CC76557B26C5220100061FCF /* MultiIntervalUIView3.m in Sources */ = {isa = PBXBuildFile; fileRef = CC76557826C5220100061FCF /* MultiIntervalUIView3.m */; };
 		CC85823C2756070900C4D435 /* MarketMovingUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85823B2756070900C4D435 /* MarketMovingUIView.m */; };
 		CC8BE29E26F2EE9C00F52359 /* RadarAreaUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = CC8BE29D26F2EE9C00F52359 /* RadarAreaUIView.m */; };
@@ -43,31 +42,8 @@
 		CCA4E5CA2814F2A20014C758 /* KLineTrendBugFix1.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA4E5C72814F2A20014C758 /* KLineTrendBugFix1.m */; };
 		CCE9E3E927B12AF400D8A030 /* BugFixViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE9E3E727B12AF400D8A030 /* BugFixViewController.m */; };
 		CCE9E3ED27B12BB000D8A030 /* TimeSharingBugFix1.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE9E3EB27B12BB000D8A030 /* TimeSharingBugFix1.m */; };
+		E50B27DCC615F64E724F8003 /* libPods-F2Native.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8FCBB5B94EA98197F9F583 /* libPods-F2Native.a */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		3F5DD4E6255AB42C00FD60B3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3F5DD4E1255AB42C00FD60B3 /* F2.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CC793C3B2509FBAA00E9D913;
-			remoteInfo = F2;
-		};
-		CC1A2F3325878C1E005B2111 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3F5DD4E1255AB42C00FD60B3 /* F2.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = CC793C3A2509FBAA00E9D913;
-			remoteInfo = F2;
-		};
-		CCCDF03C274E35890060D768 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3F5DD4E1255AB42C00FD60B3 /* F2.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CCCDE9CB2744D9740060D768;
-			remoteInfo = F2Tests;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		3F56A03E2523233E002AA2D2 /* DemoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoViewController.h; sourceTree = "<group>"; };
@@ -94,9 +70,9 @@
 		3F5D90902535C5320091D8F7 /* CyclicPieUIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CyclicPieUIView.m; sourceTree = "<group>"; };
 		3F5DD47B2553A34D00FD60B3 /* BaseInterval2UIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseInterval2UIView.h; sourceTree = "<group>"; };
 		3F5DD47C2553A34D00FD60B3 /* BaseInterval2UIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseInterval2UIView.m; sourceTree = "<group>"; };
-		3F5DD4E1255AB42C00FD60B3 /* F2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = F2.xcodeproj; path = ../../../ios/F2.xcodeproj; sourceTree = "<group>"; };
 		3FD08FAE25B0764A002F14AC /* KLineUIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KLineUIView.h; sourceTree = "<group>"; };
 		3FD08FAF25B0764A002F14AC /* KLineUIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KLineUIView.m; sourceTree = "<group>"; };
+		4B8FCBB5B94EA98197F9F583 /* libPods-F2Native.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-F2Native.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9500DF9D2689F4A500025EF1 /* TimeSharingUIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TimeSharingUIView.h; sourceTree = "<group>"; };
 		9500DF9E2689F4A500025EF1 /* TimeSharingUIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TimeSharingUIView.m; sourceTree = "<group>"; };
 		95127743264CF5400011EE7A /* ChartListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChartListViewController.h; sourceTree = "<group>"; };
@@ -138,6 +114,8 @@
 		CCE9E3E827B12AF400D8A030 /* BugFixViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BugFixViewController.h; sourceTree = "<group>"; };
 		CCE9E3EB27B12BB000D8A030 /* TimeSharingBugFix1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeSharingBugFix1.m; sourceTree = "<group>"; };
 		CCE9E3EC27B12BB000D8A030 /* TimeSharingBugFix1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeSharingBugFix1.h; sourceTree = "<group>"; };
+		D7078133DBF6ACBDCFD123F3 /* Pods-F2Native.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-F2Native.debug.xcconfig"; path = "Target Support Files/Pods-F2Native/Pods-F2Native.debug.xcconfig"; sourceTree = "<group>"; };
+		D75BA1E829409D38174CB20A /* Pods-F2Native.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-F2Native.release.xcconfig"; path = "Target Support Files/Pods-F2Native/Pods-F2Native.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -145,8 +123,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC6E83F9283396FB00F69380 /* F2.framework in Frameworks */,
 				CC612BFD250B54E600315124 /* libc++.tbd in Frameworks */,
+				E50B27DCC615F64E724F8003 /* libPods-F2Native.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -205,21 +183,13 @@
 			path = views;
 			sourceTree = "<group>";
 		};
-		3F5DD4E2255AB42C00FD60B3 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				3F5DD4E7255AB42C00FD60B3 /* F2.framework */,
-				CCCDF03D274E35890060D768 /* F2Tests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		CC612BAF250A28AE00315124 = {
 			isa = PBXGroup;
 			children = (
 				CC612BBA250A28AE00315124 /* Demos */,
 				CC612BB9250A28AE00315124 /* Products */,
 				CC612BE8250B2B7C00315124 /* Frameworks */,
+				EE70EA6CE60F96C703FA41AF /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -234,7 +204,6 @@
 		CC612BBA250A28AE00315124 /* Demos */ = {
 			isa = PBXGroup;
 			children = (
-				3F5DD4E1255AB42C00FD60B3 /* F2.xcodeproj */,
 				CC612BBB250A28AE00315124 /* AppDelegate.h */,
 				CC612BBC250A28AE00315124 /* AppDelegate.m */,
 				CC612BC1250A28AE00315124 /* ViewController.h */,
@@ -259,6 +228,7 @@
 			isa = PBXGroup;
 			children = (
 				CC612BFC250B54E600315124 /* libc++.tbd */,
+				4B8FCBB5B94EA98197F9F583 /* libPods-F2Native.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -276,6 +246,15 @@
 			path = bugfix;
 			sourceTree = "<group>";
 		};
+		EE70EA6CE60F96C703FA41AF /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D7078133DBF6ACBDCFD123F3 /* Pods-F2Native.debug.xcconfig */,
+				D75BA1E829409D38174CB20A /* Pods-F2Native.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -283,6 +262,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CC612BD1250A28AF00315124 /* Build configuration list for PBXNativeTarget "F2Native" */;
 			buildPhases = (
+				4A72488FE54F5A4E270EEB04 /* [CP] Check Pods Manifest.lock */,
 				CC612BB4250A28AE00315124 /* Sources */,
 				CC612BB5250A28AE00315124 /* Frameworks */,
 				CC612BB6250A28AE00315124 /* Resources */,
@@ -290,7 +270,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				CC1A2F3425878C1E005B2111 /* PBXTargetDependency */,
 			);
 			name = F2Native;
 			productName = Demos;
@@ -322,35 +301,12 @@
 			mainGroup = CC612BAF250A28AE00315124;
 			productRefGroup = CC612BB9250A28AE00315124 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 3F5DD4E2255AB42C00FD60B3 /* Products */;
-					ProjectRef = 3F5DD4E1255AB42C00FD60B3 /* F2.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				CC612BB7250A28AE00315124 /* F2Native */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		3F5DD4E7255AB42C00FD60B3 /* F2.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = F2.framework;
-			remoteRef = 3F5DD4E6255AB42C00FD60B3 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CCCDF03D274E35890060D768 /* F2Tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = F2Tests.xctest;
-			remoteRef = CCCDF03C274E35890060D768 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		CC612BB6250A28AE00315124 /* Resources */ = {
@@ -364,6 +320,31 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4A72488FE54F5A4E270EEB04 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-F2Native-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		CC612BB4250A28AE00315124 /* Sources */ = {
@@ -405,14 +386,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		CC1A2F3425878C1E005B2111 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = F2;
-			targetProxy = CC1A2F3325878C1E005B2111 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		CC612BC9250A28AF00315124 /* LaunchScreen.storyboard */ = {
@@ -538,6 +511,7 @@
 		};
 		CC612BD2250A28AF00315124 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D7078133DBF6ACBDCFD123F3 /* Pods-F2Native.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = F2Native.entitlements;
@@ -565,6 +539,7 @@
 		};
 		CC612BD3250A28AF00315124 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D75BA1E829409D38174CB20A /* Pods-F2Native.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = F2Native.entitlements;

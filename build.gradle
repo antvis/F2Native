@@ -29,7 +29,7 @@ task clean(type: Delete) {
 
 // Group names
 rootProject.extensions.groups = [
-        'Main'   : 'com.taobao.gcanvas',
+        'Main'   : 'com.antvis.f2',
 ]
 
 // Artifact IDs

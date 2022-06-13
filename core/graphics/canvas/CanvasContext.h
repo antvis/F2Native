@@ -16,6 +16,7 @@
 #endif
 
 #ifdef DEBUG
+#include <assert.h>
 #   define F2ASSERT(condition, message) \
    do { \
     if (!(condition)) { printf((message)); } \

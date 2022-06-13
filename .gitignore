@@ -54,7 +54,7 @@ gen/
 target/
 *.iml
 *.bat
-*.properties
+local.properties
 replace_language_level.py
 */build
 .gradle/

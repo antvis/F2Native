@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<script src=" ./f2wasm.js"></script>
+<script src="https://gw.alipayobjects.com/os/lib/antv/f2/3.7.0/dist/f2.min.js"></script>
+
+<body></body>
+<!-- Create the canvas that the C++ code will draw into -->
+<canvas id="f2wasmChart" width=600 height=400 oncontextmenu="event.preventDefault()"></canvas>
+<div id="f2wasmLoadCost" style="margin-left: 40px;">F2Wasm Load Module</div>
+<div id="f2wasmCost" style="margin-left: 40px;">F2Wasm Demo</div>
+
+<canvas id="f2Chart" width="600" height="400"></canvas>
+<div id="f2cost" style="margin-left: 40px;">F2 Demo</div>
+<script>
+  var scale = window.devicePixelRatio;
+  var initTime = new Date().getTime();
+
+  Module.onRuntimeInitialized = function () {
+    const vec = new Module.StringVector();
+    let start = new Date().getTime()
+    document.getElementById('f2wasmLoadCost').innerText = `F2Wasm Load Module: ${(start - initTime)}ms`
+    var chart = new Module.F2Chart("baseinterval", 600, 400, scale);
+    chart.canvas("f2wasmChart").margin(0, 0, 0, 0).padding(10, 10, 20, 20).source('[{\"genre\":\"Sports\",\"sold\":275},{\"genre\":\"Strategy\",\"sold\":115},{\"genre\":\"Action\",\"sold\":120},{\"genre\":\"Shooter\",\"sold\":350},{\"genre\":\"Other\",\"sold\":150}]');
+    chart.scale("sold", "{\"min\":0}");
+    chart.scale("genre", "{\"range\":[0.1,0.9]}");
+    chart.interval().position("genre*sold").color("genre", vec);
+
+    chart.render();
+    let end = new Date().getTime()
+    var duration = chart.renderDuration();
+    vec.delete();
+    chart.delete();
+    document.getElementById('f2wasmCost').innerText = `F2Wasm Demo Total Cost: ${(end - start)}ms Render Cost: ${duration}ms`;
+  }
+  let start = new Date().getTime()
+  const data = [{
+    "genre": "Sports",
+    "sold": 275
+  }, {
+    "genre": "Strategy",
+    "sold": 115
+  }, {
+    "genre": "Action",
+    "sold": 120
+  }, {
+    "genre": "Shooter",
+    "sold": 350
+  }, {
+    "genre": "Other",
+    "sold": 150
+  }];
+
+  // Step 1: 创建 Chart 对象
+  const chart = new F2.Chart({
+    id: 'f2Chart',
+    pixelRatio: window.devicePixelRatio // 指定分辨率
+  });
+
+  // Step 2: 载入数据源
+  chart.source(data);
+
+  // Step 3：创建图形语法，绘制柱状图，由 genre 和 sold 两个属性决定图形位置，genre 映射至 x 轴，sold 映射至 y 轴
+  chart.scale("sold", { "min": 0 });
+  chart.scale("genre", { "range": [0.1, 0.9] });
+  chart.interval().position("genre*sold").color("genre");
+  // Step 4: 渲染图表
+  chart.animate(false);
+  chart.render();
+  let end = new Date().getTime();
+  document.getElementById('f2cost').innerText = `F2 Demo Total Cost: ${(end - start)}ms`;
+</script>
+
+</html>

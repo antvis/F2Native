@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
-
+apply plugin: 'maven'
+group='com.github.antvis'
 
 android {
 
@@ -46,5 +47,4 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.alibaba:fastjson:1.2.73'
 }

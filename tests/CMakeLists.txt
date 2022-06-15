@@ -4,6 +4,8 @@ set(PROJECT_NAME "f2tests")
 
 project(${PROJECT_NAME})
 
+include_directories(../core)
+
 # g++
 add_definitions(-ffunction-sections)
 add_definitions(-fdata-sections)
@@ -73,6 +75,9 @@ list(APPEND DIR_TESTS ${DIR_TESTS_CANVAS})
 list(APPEND DIR_TESTS ${DIR_TESTS_SCALE})
 list(APPEND DIR_TESTS ${DIR_TESTS_UTILS})
 
-add_executable(${PROJECT_NAME} ${DIR_SRC} ${DIR_TESTS}
-    ./main.cpp
-)
+add_library(${PROJECT_NAME} SHARED ${DIR_SRC} ${DIR_TESTS} ./main.cpp)
+
+find_library(log-lib log)
+
+target_link_libraries(${PROJECT_NAME} ${log-lib})
+target_link_libraries(${PROJECT_NAME} android -Wl,--gc-sections)

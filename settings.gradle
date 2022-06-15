@@ -1,4 +1,4 @@
-include ':android:sample', ':android:f2native', ':android:f2nativetests'
+include ':android:sample', ':android:f2native'
 
 
 project(':android:sample').dir = new File('demos/android/')

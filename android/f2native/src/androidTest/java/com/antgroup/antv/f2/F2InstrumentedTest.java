@@ -21,5 +21,9 @@ public class F2InstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         System.loadLibrary("f2tests");
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        String packagename = appContext.getPackageName();
+        assertEquals("com.antgroup.antv.f2.test", appContext.getPackageName());
+        System.out.println("appContext.getPackageName()="+appContext.getPackageName());
     }
 }

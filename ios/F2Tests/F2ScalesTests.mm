@@ -7,11 +7,11 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "unit/scale/Linear.h"
-#import "unit/scale/Category.h"
-#import "unit/scale/TimeSharingLinear.h"
-#import "unit/scale/ScaleController.h"
-#import "unit/scale/KLineCat.h"
+#import "../../tests/unit/scale/Linear.h"
+#import "../../tests/unit/scale/Category.h"
+#import "../../tests/unit/scale/TimeSharingLinear.h"
+#import "../../tests/unit/scale/ScaleController.h"
+#import "../../tests/unit/scale/KLineCat.h"
 
 @interface F2ScaleTests : XCTestCase
 

@@ -6,7 +6,7 @@
 //  Copyright © 2021 com.alipay.xgraph. All rights reserved.
 //
 
-#include "graphics/util/json.h"
+#include "../../../core/graphics/util/json.h"
 
 using namespace xg;
 using namespace std;
@@ -73,9 +73,11 @@ public:
     }
     
     static bool GetArray() {
-        auto &ret1 = json::GetArray({{"value",{1,2,3}}}, "value");
+        nlohmann::json v1({{"value",{1,2,3}}});
+        nlohmann::json d1({1,2});
+        auto &ret1 = json::GetArray(v1, "value");
         auto &ret2 = json::GetArray("", "name");
-        auto &ret3 = json::GetArray("", "name", {1,2});
+        auto &ret3 = json::GetArray("", "name", d1);
         return ret1.size() == 3 && ret2.type() == nlohmann::json::value_t::array && ret3.size() == 2;
     }
     
@@ -92,7 +94,7 @@ public:
         auto obj3 = json::GetObject("", "value", {{"value",{{"name","f2"}}}});
         
         auto ret1 = json::GetString(obj1, "name");
-        auto ret2 = obj2.type() == nlohmann::json::value_t::object;
+        auto ret2 = obj2.is_null();
         auto ret3 = json::GetString(json::GetObject(obj3, "value"), "name");
         return ret1 == "f2" && ret2 && ret3 == "f2";
     }

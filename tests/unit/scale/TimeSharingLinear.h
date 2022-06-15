@@ -1,5 +1,5 @@
-#include "graphics/scale/continuous/TimeSharingLinear.h"
-#include "utils/common.h"
+#include "../../../core/graphics/scale/continuous/TimeSharingLinear.h"
+#include "../../../core/utils/common.h"
 
 using namespace xg;
 using namespace std;
@@ -13,7 +13,7 @@ class TimeSharingLinear {
         nlohmann::json config = {};
         //无timeRange
         scale::TimeSharingLinear timeSharing("field", values, config);
-        std::vector<scale::Tick> ticks = timeSharing.GetTicks();
+        std::vector<scale::Tick> ticks = timeSharing.GetTicks(nullptr);
         return ticks.size() == 0;
     }
 
@@ -21,7 +21,7 @@ class TimeSharingLinear {
         nlohmann::json values = {{1608687000000}};
         nlohmann::json config = {{"timeRange", {{1608687000000, 1608694200000}, {1608699600000, 1608706800000}}}};
         scale::TimeSharingLinear timeSharing("field", values, config);
-        std::vector<scale::Tick> ticks = timeSharing.GetTicks();
+        std::vector<scale::Tick> ticks = timeSharing.GetTicks(nullptr);
         return ticks.size() == 3 && ticks[0].text == "09:30" && ticks[1].text == "11:30/13:00" && ticks[2].text == "15:00";
     }
 
@@ -29,7 +29,7 @@ class TimeSharingLinear {
         nlohmann::json values = {{1608687000000}};
         nlohmann::json config = {{"timeRange", {{1608687000000, 1608694200000}, {1608694200000, 1608706800000}}}};
         scale::TimeSharingLinear timeSharing("field", values, config);
-        std::vector<scale::Tick> ticks = timeSharing.GetTicks();
+        std::vector<scale::Tick> ticks = timeSharing.GetTicks(nullptr);
         return ticks.size() == 3 && ticks[0].text == "09:30" && ticks[1].text == "11:30" && ticks[2].text == "15:00";
     }
 
@@ -37,7 +37,7 @@ class TimeSharingLinear {
         nlohmann::json values = {{1628731800000}};
         nlohmann::json config = {{"timeRange", {{1628731800000, 1628740800000}, {1628744400000, 1628755200000}}}};
         scale::TimeSharingLinear timeSharing("field", values, config);
-        std::vector<scale::Tick> ticks = timeSharing.GetTicks();
+        std::vector<scale::Tick> ticks = timeSharing.GetTicks(nullptr);
         return ticks.size() == 3 && ticks[0].text == "09:30" && ticks[1].text == "12:00/13:00" && ticks[2].text == "16:00";
     }
 
@@ -46,7 +46,7 @@ class TimeSharingLinear {
         //时区转换 夏令时
         nlohmann::json config = {{"timeZoneOffset", -4 * 60 * 60}, {"timeRange", {{1628688600000, 1628712000000}}}};
         scale::TimeSharingLinear timeSharing("field", values, config);
-        std::vector<scale::Tick> ticks = timeSharing.GetTicks();
+        std::vector<scale::Tick> ticks = timeSharing.GetTicks(nullptr);
         return ticks.size() == 2 && ticks[0].text == "09:30" && ticks[1].text == "16:00";
     }
 
@@ -83,7 +83,7 @@ class TimeSharingLinear {
         scale::TimeSharingLinear timeSharing("field", values, config);
         bool ret1 = timeSharing.Invert(0) == 0;
         bool ret2 = std::isnan(timeSharing.Scale(1608687000000));
-        bool ret3 = timeSharing.GetTickText(1608687000000) == "";
+        bool ret3 = timeSharing.GetTickText(1608687000000, nullptr) == "";
         return ret1 && ret2 && ret3;
     }
     
@@ -94,7 +94,7 @@ class TimeSharingLinear {
         scale::TimeSharingLinear timeSharing("field", values, config);
         bool ret1 = timeSharing.Invert(0) == 0;
         bool ret2 = std::isnan(timeSharing.Scale(1608687000000));
-        bool ret3 = timeSharing.GetTickText(1608687000000) == "";
+        bool ret3 = timeSharing.GetTickText(1608687000000, nullptr) == "";
         return ret1 && ret2 && ret3;
     }
     
@@ -105,7 +105,7 @@ class TimeSharingLinear {
         scale::TimeSharingLinear timeSharing("field", values, config);
         bool ret1 = timeSharing.Invert(0) == 0;
         bool ret2 = std::isnan(timeSharing.Scale(1608687000000));
-        bool ret3 = timeSharing.GetTickText(1608687000000) == "";
+        bool ret3 = timeSharing.GetTickText(1608687000000, nullptr) == "";
         return ret1 && ret2 && ret3;
     }
 };

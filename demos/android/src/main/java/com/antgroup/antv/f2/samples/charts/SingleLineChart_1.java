@@ -77,8 +77,7 @@ public class SingleLineChart_1 implements F2CanvasView.Adapter, F2CanvasView.OnC
                             rst = param;
                         }
 
-                        JSONObject params = JSON.parseObject(param);
-                        int index = params.getIntValue("index");
+                        int index = jsonObject.getIntValue("index");
                         return new F2Config.Builder()
                                 .setOption("textColor", (index % 2 == 0 ? "#000000" : "#DC143C"))
                                 .setOption("xOffset", (index % 2 == 0) ? 0 : -30)

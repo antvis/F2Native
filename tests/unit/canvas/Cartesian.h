@@ -6,7 +6,7 @@
 //  Copyright © 2021 com.alipay.xgraph. All rights reserved.
 //
 
-#include "graphics/canvas/Cartesian.h"
+#include "../../../core/graphics/canvas/Cartesian.h"
 
 using namespace xg;
 using namespace xg::canvas;

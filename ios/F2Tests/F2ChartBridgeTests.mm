@@ -10,7 +10,7 @@
 #import "F2TestUtil.h"
 #import "F2PixelMatch.h"
 #import "F2CanvasContext.h"
-#import "unit/bridge/ChartBridge.h"
+#import "../../tests/unit/bridge/ChartBridge.h"
 
 
 @interface F2ChartBridgeTests : XCTestCase

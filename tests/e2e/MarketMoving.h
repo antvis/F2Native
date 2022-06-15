@@ -14,7 +14,7 @@ using namespace xg;
 
 namespace e2e {
 
-class BaseInterval {
+class MarketMoving {
 public:
     
     //基础的线图
@@ -22,11 +22,8 @@ public:
         XChart chart("Baseline#Test", width, height, ratio);
         std::ifstream jsonFile(path);
         std::string jsonData((std::istreambuf_iterator<char>(jsonFile)), std::istreambuf_iterator<char>());
-        chart.Source(jsonData);
         chart.SetCanvasContext(context).Padding(20, 10, 20, 0);
-        chart.Scale("date", "{\"tickCount\": 3}");
-        chart.Scale("value", "{\"nice\": true}");
-        chart.Interval().Position("date*value");
+        chart.Parse(jsonData);
         chart.Render();
         return true;
     }

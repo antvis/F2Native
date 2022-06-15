@@ -146,7 +146,6 @@
 		CC612BFA250B2EF700315124 /* F2Guide.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC612BF2250B2EF700315124 /* F2Guide.mm */; };
 		CC69E013284F2F6600261105 /* F2ChartBridgeTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC69E012284F2F6600261105 /* F2ChartBridgeTests.mm */; };
 		CC69E019284F51C400261105 /* F2TestUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = CC69E018284F51C400261105 /* F2TestUtil.m */; };
-		CC6E83ED2833731100F69380 /* XChart.h in Sources */ = {isa = PBXBuildFile; fileRef = CC6E83EC2833731100F69380 /* XChart.h */; };
 		CC8955112844DAC400AD24E0 /* BridgeRailingIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = CC89550F2844DAC300AD24E0 /* BridgeRailingIOS.h */; };
 		CC8955122844DAC400AD24E0 /* BridgeRailingIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC8955102844DAC300AD24E0 /* BridgeRailingIOS.mm */; };
 		CC8955252847653100AD24E0 /* Scale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC8955242847653100AD24E0 /* Scale.cpp */; };
@@ -703,32 +702,17 @@
 		CC612BF1250B2EF700315124 /* F2Geom.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = F2Geom.mm; sourceTree = "<group>"; };
 		CC612BF2250B2EF700315124 /* F2Guide.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = F2Guide.mm; sourceTree = "<group>"; };
 		CC69E012284F2F6600261105 /* F2ChartBridgeTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = F2ChartBridgeTests.mm; sourceTree = "<group>"; };
-		CC69E015284F304200261105 /* ChartBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChartBridge.h; sourceTree = "<group>"; };
 		CC69E017284F51C400261105 /* F2TestUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F2TestUtil.h; sourceTree = "<group>"; };
 		CC69E018284F51C400261105 /* F2TestUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = F2TestUtil.m; sourceTree = "<group>"; };
-		CC6E83EC2833731100F69380 /* XChart.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XChart.h; sourceTree = "<group>"; };
 		CC6E83EF28337A3400F69380 /* MarketMoving.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MarketMoving.h; sourceTree = "<group>"; };
 		CC793C3B2509FBAA00E9D913 /* F2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = F2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC79F1AB28587A8C00A5623C /* XChart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XChart.h; sourceTree = "<group>"; };
 		CC89550F2844DAC300AD24E0 /* BridgeRailingIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BridgeRailingIOS.h; sourceTree = "<group>"; };
 		CC8955102844DAC300AD24E0 /* BridgeRailingIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BridgeRailingIOS.mm; sourceTree = "<group>"; };
 		CC8955242847653100AD24E0 /* Scale.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Scale.cpp; sourceTree = "<group>"; };
 		CC895526284766C800AD24E0 /* Linear.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Linear.cpp; sourceTree = "<group>"; };
 		CC8B572F2817F0B3006B2E45 /* Core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Core.h; sourceTree = "<group>"; };
 		CC8B74DF2818F83A006B2E45 /* json.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = json.hpp; sourceTree = "<group>"; };
-		CC8C6180278FDEA500F540D7 /* Point.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Point.h; sourceTree = "<group>"; };
-		CC8C6181278FDEA500F540D7 /* StringUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringUtils.h; sourceTree = "<group>"; };
-		CC8C6182278FDEA500F540D7 /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json.h; sourceTree = "<group>"; };
-		CC8C6183278FDEA500F540D7 /* XTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTime.h; sourceTree = "<group>"; };
-		CC8C6184278FDEA500F540D7 /* Vector2d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector2d.h; sourceTree = "<group>"; };
-		CC8C6186278FDEA500F540D7 /* Linear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Linear.h; sourceTree = "<group>"; };
-		CC8C6187278FDEA500F540D7 /* ScaleController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScaleController.h; sourceTree = "<group>"; };
-		CC8C6188278FDEA500F540D7 /* KLineCat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KLineCat.h; sourceTree = "<group>"; };
-		CC8C6189278FDEA500F540D7 /* Category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Category.h; sourceTree = "<group>"; };
-		CC8C618A278FDEA500F540D7 /* TimeSharingLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeSharingLinear.h; sourceTree = "<group>"; };
-		CC8C618D278FDEA500F540D7 /* Cartesian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cartesian.h; sourceTree = "<group>"; };
-		CC8C618E278FDEA500F540D7 /* CanvasFontParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasFontParser.h; sourceTree = "<group>"; };
-		CC8C618F278FDEA500F540D7 /* CanvasColorParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasColorParser.h; sourceTree = "<group>"; };
-		CC8C6190278FDEA500F540D7 /* Polar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Polar.h; sourceTree = "<group>"; };
 		CC8C6195278FE54300F540D7 /* res */ = {isa = PBXFileReference; lastKnownFileType = folder; name = res; path = ../../tests/res; sourceTree = "<group>"; };
 		CC8C6197278FF30E00F540D7 /* pixelmatch.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pixelmatch.hpp; sourceTree = "<group>"; };
 		CC8C6198278FF92B00F540D7 /* F2PixelMatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F2PixelMatch.h; sourceTree = "<group>"; };
@@ -759,6 +743,21 @@
 		CCCDEA09274635170060D768 /* F2CanvasTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = F2CanvasTests.mm; sourceTree = "<group>"; };
 		CCCEC0D727883043008E217E /* CanvasColorParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasColorParser.cpp; sourceTree = "<group>"; };
 		CCCEC0D927883043008E217E /* CanvasColorParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasColorParser.h; sourceTree = "<group>"; };
+		CCD8ACA3285876FE00A6DAB8 /* Linear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Linear.h; sourceTree = "<group>"; };
+		CCD8ACA4285876FE00A6DAB8 /* ScaleController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScaleController.h; sourceTree = "<group>"; };
+		CCD8ACA5285876FE00A6DAB8 /* KLineCat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KLineCat.h; sourceTree = "<group>"; };
+		CCD8ACA6285876FE00A6DAB8 /* Category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Category.h; sourceTree = "<group>"; };
+		CCD8ACA7285876FE00A6DAB8 /* TimeSharingLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeSharingLinear.h; sourceTree = "<group>"; };
+		CCD8ACAA285876FE00A6DAB8 /* ChartBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChartBridge.h; sourceTree = "<group>"; };
+		CCD8ACAC285876FE00A6DAB8 /* Point.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Point.h; sourceTree = "<group>"; };
+		CCD8ACAD285876FE00A6DAB8 /* StringUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringUtils.h; sourceTree = "<group>"; };
+		CCD8ACAE285876FE00A6DAB8 /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json.h; sourceTree = "<group>"; };
+		CCD8ACAF285876FE00A6DAB8 /* XTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTime.h; sourceTree = "<group>"; };
+		CCD8ACB0285876FE00A6DAB8 /* Vector2d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector2d.h; sourceTree = "<group>"; };
+		CCD8ACB2285876FE00A6DAB8 /* CanvasFontParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasFontParser.h; sourceTree = "<group>"; };
+		CCD8ACB3285876FE00A6DAB8 /* Cartesian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cartesian.h; sourceTree = "<group>"; };
+		CCD8ACB4285876FE00A6DAB8 /* CanvasColorParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasColorParser.h; sourceTree = "<group>"; };
+		CCD8ACB5285876FE00A6DAB8 /* Polar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Polar.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1126,14 +1125,6 @@
 			path = F2;
 			sourceTree = "<group>";
 		};
-		CC69E014284F302E00261105 /* bridge */ = {
-			isa = PBXGroup;
-			children = (
-				CC69E015284F304200261105 /* ChartBridge.h */,
-			);
-			path = bridge;
-			sourceTree = "<group>";
-		};
 		CC793C312509FBAA00E9D913 = {
 			isa = PBXGroup;
 			children = (
@@ -1172,54 +1163,6 @@
 			path = nlohmann;
 			sourceTree = "<group>";
 		};
-		CC8C617E278FDEA500F540D7 /* unit */ = {
-			isa = PBXGroup;
-			children = (
-				CC69E014284F302E00261105 /* bridge */,
-				CC8C617F278FDEA500F540D7 /* utils */,
-				CC8C6185278FDEA500F540D7 /* scale */,
-				CC8C618C278FDEA500F540D7 /* canvas */,
-				CC6E83EC2833731100F69380 /* XChart.h */,
-			);
-			name = unit;
-			path = ../../tests/unit;
-			sourceTree = "<group>";
-		};
-		CC8C617F278FDEA500F540D7 /* utils */ = {
-			isa = PBXGroup;
-			children = (
-				CC8C6180278FDEA500F540D7 /* Point.h */,
-				CC8C6181278FDEA500F540D7 /* StringUtils.h */,
-				CC8C6182278FDEA500F540D7 /* json.h */,
-				CC8C6183278FDEA500F540D7 /* XTime.h */,
-				CC8C6184278FDEA500F540D7 /* Vector2d.h */,
-			);
-			path = utils;
-			sourceTree = "<group>";
-		};
-		CC8C6185278FDEA500F540D7 /* scale */ = {
-			isa = PBXGroup;
-			children = (
-				CC8C6186278FDEA500F540D7 /* Linear.h */,
-				CC8C6187278FDEA500F540D7 /* ScaleController.h */,
-				CC8C6188278FDEA500F540D7 /* KLineCat.h */,
-				CC8C6189278FDEA500F540D7 /* Category.h */,
-				CC8C618A278FDEA500F540D7 /* TimeSharingLinear.h */,
-			);
-			path = scale;
-			sourceTree = "<group>";
-		};
-		CC8C618C278FDEA500F540D7 /* canvas */ = {
-			isa = PBXGroup;
-			children = (
-				CC8C618D278FDEA500F540D7 /* Cartesian.h */,
-				CC8C618E278FDEA500F540D7 /* CanvasFontParser.h */,
-				CC8C618F278FDEA500F540D7 /* CanvasColorParser.h */,
-				CC8C6190278FDEA500F540D7 /* Polar.h */,
-			);
-			path = canvas;
-			sourceTree = "<group>";
-		};
 		CC8C6191278FDEA500F540D7 /* e2e */ = {
 			isa = PBXGroup;
 			children = (
@@ -1237,6 +1180,7 @@
 		CCCDE9CC2744D9740060D768 /* F2Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CCD8ACA1285876FE00A6DAB8 /* unit */,
 				CC8C6195278FE54300F540D7 /* res */,
 				CC8FC7D4275E3291001A5CA6 /* F2ChartTests.mm */,
 				CCCDE9D62744D9D70060D768 /* F2ScalesTests.mm */,
@@ -1244,11 +1188,66 @@
 				CC69E012284F2F6600261105 /* F2ChartBridgeTests.mm */,
 				CCCDEA09274635170060D768 /* F2CanvasTests.mm */,
 				CC8C6191278FDEA500F540D7 /* e2e */,
-				CC8C617E278FDEA500F540D7 /* unit */,
 				CC69E017284F51C400261105 /* F2TestUtil.h */,
 				CC69E018284F51C400261105 /* F2TestUtil.m */,
 			);
 			path = F2Tests;
+			sourceTree = "<group>";
+		};
+		CCD8ACA1285876FE00A6DAB8 /* unit */ = {
+			isa = PBXGroup;
+			children = (
+				CC79F1AB28587A8C00A5623C /* XChart.h */,
+				CCD8ACA2285876FE00A6DAB8 /* scale */,
+				CCD8ACA9285876FE00A6DAB8 /* bridge */,
+				CCD8ACAB285876FE00A6DAB8 /* utils */,
+				CCD8ACB1285876FE00A6DAB8 /* canvas */,
+			);
+			name = unit;
+			path = ../../tests/unit;
+			sourceTree = "<group>";
+		};
+		CCD8ACA2285876FE00A6DAB8 /* scale */ = {
+			isa = PBXGroup;
+			children = (
+				CCD8ACA3285876FE00A6DAB8 /* Linear.h */,
+				CCD8ACA4285876FE00A6DAB8 /* ScaleController.h */,
+				CCD8ACA5285876FE00A6DAB8 /* KLineCat.h */,
+				CCD8ACA6285876FE00A6DAB8 /* Category.h */,
+				CCD8ACA7285876FE00A6DAB8 /* TimeSharingLinear.h */,
+			);
+			path = scale;
+			sourceTree = "<group>";
+		};
+		CCD8ACA9285876FE00A6DAB8 /* bridge */ = {
+			isa = PBXGroup;
+			children = (
+				CCD8ACAA285876FE00A6DAB8 /* ChartBridge.h */,
+			);
+			path = bridge;
+			sourceTree = "<group>";
+		};
+		CCD8ACAB285876FE00A6DAB8 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				CCD8ACAC285876FE00A6DAB8 /* Point.h */,
+				CCD8ACAD285876FE00A6DAB8 /* StringUtils.h */,
+				CCD8ACAE285876FE00A6DAB8 /* json.h */,
+				CCD8ACAF285876FE00A6DAB8 /* XTime.h */,
+				CCD8ACB0285876FE00A6DAB8 /* Vector2d.h */,
+			);
+			path = utils;
+			sourceTree = "<group>";
+		};
+		CCD8ACB1285876FE00A6DAB8 /* canvas */ = {
+			isa = PBXGroup;
+			children = (
+				CCD8ACB2285876FE00A6DAB8 /* CanvasFontParser.h */,
+				CCD8ACB3285876FE00A6DAB8 /* Cartesian.h */,
+				CCD8ACB4285876FE00A6DAB8 /* CanvasColorParser.h */,
+				CCD8ACB5285876FE00A6DAB8 /* Polar.h */,
+			);
+			path = canvas;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1552,7 +1551,6 @@
 				CCCDEA0A274635170060D768 /* F2CanvasTests.mm in Sources */,
 				CC69E013284F2F6600261105 /* F2ChartBridgeTests.mm in Sources */,
 				CCCDE9D72744D9D70060D768 /* F2ScalesTests.mm in Sources */,
-				CC6E83ED2833731100F69380 /* XChart.h in Sources */,
 				CC69E019284F51C400261105 /* F2TestUtil.m in Sources */,
 				CCCDE9ED2744E2E30060D768 /* F2UtilsTests.mm in Sources */,
 				CC8C619A278FF92B00F540D7 /* F2PixelMatch.mm in Sources */,
@@ -1777,12 +1775,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = A663235EQ2;
 				GENERATE_INFOPLIST_FILE = YES;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/../core\"",
-					"\"$(SRCROOT)/../third_party\"",
-					"\"$(SRCROOT)/../third_party/json/single_include\"",
-					"\"$(SRCROOT)/../tests\"",
-				);
+				HEADER_SEARCH_PATHS = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1806,12 +1799,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = A663235EQ2;
 				GENERATE_INFOPLIST_FILE = YES;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/../core\"",
-					"\"$(SRCROOT)/../third_party\"",
-					"\"$(SRCROOT)/../third_party/json/single_include\"",
-					"\"$(SRCROOT)/../tests\"",
-				);
+				HEADER_SEARCH_PATHS = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

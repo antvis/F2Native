@@ -6,8 +6,8 @@
 //  Copyright © 2022 com.alipay.xgraph. All rights reserved.
 //
 
-#include "graphics/canvas/CanvasFontParser.h"
-#include "utils/common.h"
+#include "../../../core/graphics/canvas/CanvasFontParser.h"
+#include "../../../core/utils/common.h"
 
 using namespace xg;
 using namespace xg::canvas;

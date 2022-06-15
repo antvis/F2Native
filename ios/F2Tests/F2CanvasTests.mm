@@ -7,10 +7,10 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "unit/canvas/Polar.h"
-#import "unit/canvas/Cartesian.h"
-#import "unit/canvas/CanvasColorParser.h"
-#import "unit/canvas/CanvasFontParser.h"
+#import "../../tests/unit/canvas/Polar.h"
+#import "../../tests/unit/canvas/Cartesian.h"
+#import "../../tests/unit/canvas/CanvasColorParser.h"
+#import "../../tests/unit/canvas/CanvasFontParser.h"
 
 
 

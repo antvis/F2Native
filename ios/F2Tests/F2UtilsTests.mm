@@ -7,10 +7,10 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "unit/utils/StringUtils.h"
-#import "unit/utils/XTime.h"
-#import "unit/utils/json.h"
-#import "unit/utils/Point.h"
+#import "../../tests/unit/utils/StringUtils.h"
+#import "../../tests/unit/utils/XTime.h"
+#import "../../tests/unit/utils/json.h"
+#import "../../tests/unit/utils/Point.h"
 #import "F2Utils.h"
 
 

@@ -6,7 +6,7 @@
 //  Copyright © 2022 com.alipay.xgraph. All rights reserved.
 //
 
-#include "graphics/canvas/CanvasColorParser.h"
+#include "../../../core/graphics/canvas/CanvasColorParser.h"
 
 using namespace xg;
 using namespace xg::canvas;

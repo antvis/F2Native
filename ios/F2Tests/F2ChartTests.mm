@@ -10,10 +10,10 @@
 #import "F2.h"
 #import "F2TestUtil.h"
 #import "F2PixelMatch.h"
-#import "e2e/Baseline.h"
-#import "e2e/BaseInterval.h"
-#import "e2e/MarketMoving.h"
-#import "unit/XChart.h"
+#import "../../tests/e2e/Baseline.h"
+#import "../../tests/e2e/BaseInterval.h"
+#import "../../tests/e2e/MarketMoving.h"
+#import "../../tests/unit/XChart.h"
 
 
 @interface F2ChartTests : XCTestCase

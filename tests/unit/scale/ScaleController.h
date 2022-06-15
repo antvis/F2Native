@@ -1,6 +1,6 @@
-#include "graphics/scale/ScaleController.h"
-#include "graphics/canvas/Cartesian.h"
-#include "utils/common.h"
+#include "../../../core/graphics/scale/ScaleController.h"
+#include "../../../core/graphics/canvas/Cartesian.h"
+#include "../../../core/utils/common.h"
 
 using namespace xg;
 using namespace std;

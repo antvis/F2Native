@@ -4,7 +4,7 @@ package com.antgroup.antv.f2;
  * @author qingyuan.yl
  * @date 2020-09-23
  */
-final class NativeChartProxy {
+public final class NativeChartProxy {
     private volatile long mNativeChartHandler = 0;
 
     NativeChartProxy(String name, double width, double height, double ratio) {

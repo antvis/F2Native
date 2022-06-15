@@ -424,7 +424,8 @@ public class F2Chart {
     public final String nExecute(String functionId, String param) {
         try {
             if (functionId.equals(mRequestFrameHandle.functionId)) {
-                return mRequestFrameHandle.execute(param).toJsonString();
+                mRequestFrameHandle.execute(param);
+                return param;
             } else {
                 F2Function function = mFunctionMap.get(functionId);
                 if (function != null) {

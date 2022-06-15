@@ -19,7 +19,7 @@ import com.antgroup.antv.f2.base.F2BaseCanvasView;
  * @author ruize
  */
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-class F2AndroidCanvasView extends View implements F2BaseCanvasView {
+public class F2AndroidCanvasView extends View implements F2BaseCanvasView {
 
     private PaintFlagsDrawFilter paintFlagsDrawFilter = new PaintFlagsDrawFilter(0, Paint.FILTER_BITMAP_FLAG | Paint.ANTI_ALIAS_FLAG);
 

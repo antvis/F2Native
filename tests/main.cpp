@@ -1,8 +1,9 @@
+#include <assert.h>
+#include <jni.h>
 #include "unit/scale/Category.h"
 #include "unit/scale/Linear.h"
 #include "unit/scale/ScaleController.h"
 #include "unit/scale/TimeSharingLinear.h"
-#include <assert.h>
 
 #define XCTAssertEqual(a, b) assert(a == b)
 #define YES true
@@ -55,16 +56,19 @@ void testScaleController() {
     XCTAssertEqual(unit::ScaleController::ClearScale(), YES);
 }
 
-int main() {
-    printf("Start F2 Unit Test!\n");
+//单测的入口
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_antgroup_antv_f2_F2TestProxy_runTest(JNIEnv *env) {
+    F2_LOG_I("F2Test", "Start F2 Unit Test!\n");
     testLinear();
-    printf("Linear Test Passed!\n");
+    F2_LOG_I("F2Test", "Linear Test Passed!\n");
     testCategory();
-    printf("Linear Category Passed!\n");
+    F2_LOG_I("F2Test", "Category Passed!\n");
     testTimeSharingLinear();
-    printf("TimeSharingLinear Category Passed!\n");
+    F2_LOG_I("F2Test", "TimeSharingLinear Category Passed!\n");
     testScaleController();
-    printf("ScaleController Category Passed!\n");
-    printf("All Passed!\n");
+    F2_LOG_I("F2Test", "ScaleController Category Passed!\n");
+    F2_LOG_I("F2Test", "All Passed!\n");
     return 1;
 }

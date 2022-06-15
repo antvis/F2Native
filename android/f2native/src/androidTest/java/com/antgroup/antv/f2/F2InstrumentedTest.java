@@ -18,12 +18,11 @@ import static org.junit.Assert.*;
 @RunWith(AndroidJUnit4.class)
 public class F2InstrumentedTest {
     @Test
-    public void useAppContext() {
-        // Context of the app under test.
+    public void runAllTest() {
         System.loadLibrary("f2tests");
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        String packagename = appContext.getPackageName();
-        assertEquals("com.antgroup.antv.f2.test", appContext.getPackageName());
-        System.out.println("appContext.getPackageName()="+appContext.getPackageName());
+        F2TestProxy test = new F2TestProxy();
+
+        //所有c++的单测都在JNI的runTest中
+        assertEquals(test.runTest(), 1);
     }
 }

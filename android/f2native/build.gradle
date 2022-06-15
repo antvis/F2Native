@@ -40,11 +40,6 @@ android {
             path "../../CMakeLists.txt"
         }
     }
-
-    packagingOptions {
-        exclude '**/libc++_shared.so'
-        exclude '**/**/libc++_shared.so'
-    }
 }
 
 dependencies {

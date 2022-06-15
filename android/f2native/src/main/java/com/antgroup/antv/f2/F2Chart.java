@@ -421,7 +421,7 @@ public class F2Chart {
         }
     }
 
-    protected final String nExecute(String functionId, String param) {
+    public final String nExecute(String functionId, String param) {
         try {
             if (functionId.equals(mRequestFrameHandle.functionId)) {
                 return mRequestFrameHandle.execute(param).toJsonString();

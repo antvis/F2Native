@@ -244,7 +244,7 @@ class XChart {
 
     /// bind long long to webassembly会报错，所以改成long,渲染时间用long表示也够用了
     inline long GetRenderDurationMM() const { return renderDurationMM_;}
-    inline long GetRenderCmdCount() const { return canvasContext_->GetRenderCount();}
+    inline long GetRenderCmdCount() const { return canvasContext_ ? canvasContext_->GetRenderCount() : 0;}
 
     /// 返回所有的几何对象
     inline const std::vector<std::unique_ptr<geom::AbstractGeom>> &GetGeoms() const { return geoms_;}

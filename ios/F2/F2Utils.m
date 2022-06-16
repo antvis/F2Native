@@ -14,15 +14,26 @@
     return jsonString;
 }
 
-+ (id)toJsonObject:(NSString *)jsonString {
-    id jsonObj = nil;
++ (id)toJsonObject:(NSString *)jsonString defValye:(id)defValue{
     @try {
         NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
-        jsonObj = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        return [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
     } @catch(NSException *exception) {
         NSLog(@"Json Invalid , Error %@", [exception description]);
+        return defValue;
     }
-    return jsonObj;
+}
+
++ (id)toJsonObject:(NSString *)jsonString {
+    return [F2Utils toJsonObject:jsonString defValye:nil];
+}
+
++ (id)toJsonDictionary:(NSString *)jsonString {
+    return [F2Utils toJsonObject:jsonString defValye:@{}];
+}
+
++ (id)toJsonArray:(NSString *)jsonString {
+    return [F2Utils toJsonObject:jsonString defValye:@[]];
 }
 
 + (NSDictionary *)resetCallbacksFromOld:(NSDictionary *)config host:(F2Chart *)chart {

@@ -146,6 +146,7 @@
 		CC612BFA250B2EF700315124 /* F2Guide.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC612BF2250B2EF700315124 /* F2Guide.mm */; };
 		CC69E013284F2F6600261105 /* F2ChartBridgeTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC69E012284F2F6600261105 /* F2ChartBridgeTests.mm */; };
 		CC69E019284F51C400261105 /* F2TestUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = CC69E018284F51C400261105 /* F2TestUtil.m */; };
+		CC79F1CF285AAFF900A5623C /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC79F1CE285AAFF900A5623C /* libc++.tbd */; };
 		CC8955112844DAC400AD24E0 /* BridgeRailingIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = CC89550F2844DAC300AD24E0 /* BridgeRailingIOS.h */; };
 		CC8955122844DAC400AD24E0 /* BridgeRailingIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC8955102844DAC300AD24E0 /* BridgeRailingIOS.mm */; };
 		CC8955252847653100AD24E0 /* Scale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC8955242847653100AD24E0 /* Scale.cpp */; };
@@ -707,6 +708,7 @@
 		CC6E83EF28337A3400F69380 /* MarketMoving.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MarketMoving.h; sourceTree = "<group>"; };
 		CC793C3B2509FBAA00E9D913 /* F2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = F2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC79F1AB28587A8C00A5623C /* XChart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XChart.h; sourceTree = "<group>"; };
+		CC79F1CE285AAFF900A5623C /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
 		CC89550F2844DAC300AD24E0 /* BridgeRailingIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BridgeRailingIOS.h; sourceTree = "<group>"; };
 		CC8955102844DAC300AD24E0 /* BridgeRailingIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BridgeRailingIOS.mm; sourceTree = "<group>"; };
 		CC8955242847653100AD24E0 /* Scale.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Scale.cpp; sourceTree = "<group>"; };
@@ -765,6 +767,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC79F1CF285AAFF900A5623C /* libc++.tbd in Frameworks */,
 				CC8C61F727965A6F00F540D7 /* CoreText.framework in Frameworks */,
 				CC8C61F227965A0400F540D7 /* CoreGraphics.framework in Frameworks */,
 				CC8C61F027965A0000F540D7 /* UIKit.framework in Frameworks */,
@@ -1148,6 +1151,7 @@
 		CC794AE52509FD7800E9D913 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CC79F1CE285AAFF900A5623C /* libc++.tbd */,
 				CC8C61F527965A5E00F540D7 /* CoreText.framework */,
 				CC8C61F127965A0400F540D7 /* CoreGraphics.framework */,
 				CC8C61EF27965A0000F540D7 /* UIKit.framework */,

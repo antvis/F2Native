@@ -24,11 +24,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 解析成NSArray或者NSDictionary, 如果解析失败返回空字典
 /// @param jsonString json格式
-+ (id)toJsonDictionary:(NSString *)jsonString;
++ (NSDictionary *)toJsonDictionary:(NSString *)jsonString;
 
 /// 解析成NSArray或者NSDictionary, 如果解析失败返回空数组
 /// @param jsonString json格式
-+ (id)toJsonArray:(NSString *)jsonString;
++ (NSArray *)toJsonArray:(NSString *)jsonString;
 
 + (NSDictionary *)resetCallbacksFromOld:(NSDictionary *)config host:(F2Chart *)chart;
 

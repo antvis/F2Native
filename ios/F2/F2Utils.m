@@ -28,11 +28,11 @@
     return [F2Utils toJsonObject:jsonString defValye:nil];
 }
 
-+ (id)toJsonDictionary:(NSString *)jsonString {
++ (NSDictionary *)toJsonDictionary:(NSString *)jsonString {
     return [F2Utils toJsonObject:jsonString defValye:@{}];
 }
 
-+ (id)toJsonArray:(NSString *)jsonString {
++ (NSArray *)toJsonArray:(NSString *)jsonString {
     return [F2Utils toJsonObject:jsonString defValye:@[]];
 }
 

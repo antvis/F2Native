@@ -21,6 +21,7 @@ Pod::Spec.new do |spec|
   spec.public_header_files = "ios/F2/*.{h}"
   spec.prefix_header_file = 'ios/F2/F2-prefix.pch'
   spec.libraries = 'c++'
+  spec.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 
   spec.ios.frameworks = 'Foundation', 'UIKit', 'CoreText', 'CoreGraphics'
   

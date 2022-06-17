@@ -102,21 +102,22 @@ dependencies {
 
 ```java
 F2CanvasView canvasView = findViewById(R.id.canvasView);
-canvasView.initCanvasContext(new F2CanvasView.ConfigBuilder().asyncRender(true).build());
+canvasView.initCanvasContext(new F2CanvasView.ConfigBuilder().build());
 
 canvasView.setAdapter(new F2CanvasView.Adapter() {
     private F2Chart mChart;
     @Override
     public void onCanvasDraw(F2CanvasView canvasView) {
        if (mChart == null) {
-           mChart = F2Chart.create(canvasView.getContext(), "SingleLineChart_1", canvasView.getWidth(), canvasView.getHeight());
-       }
-       mChart.setCanvas(canvasView);
-       mChart.padding(10, 0, 0, 0);
-       mChart.source(Utils.loadAssetFile(canvasView.getContext(), "mockData_singleLineChart.json"));
-       mChart.line().position("date*value");
-       mChart.setScale("date", new F2Chart.ScaleConfigBuilder().tickCount(3));
-       mChart.render(); 
+            mChart = F2Chart.create(canvasView.getContext(), "SingleIntervalChart_2", canvasView.getWidth(), canvasView.getHeight());
+        }
+        mChart.setCanvas(canvasView);
+        mChart.padding(20, 10, 10, 10);
+        mChart.source(Utils.loadAssetFile(canvasView.getContext(), "mockData_singleIntervalChart_2.json"));
+        mChart.interval().position("genre*sold").color("genre");
+        mChart.setScale("sold", new F2Chart.ScaleConfigBuilder().min(0));
+        mChart.setScale("genre", new F2Chart.ScaleConfigBuilder().range(new double[]{0.1, 0.9}));
+        mChart.render();
     }
 
     @Override

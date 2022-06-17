@@ -93,6 +93,7 @@ dependencies {
 }
 ```
 
+#### XML
 ```xml
 <com.antgroup.antv.f2.F2CanvasView
     android:id="@+id/canvasView"
@@ -100,6 +101,7 @@ dependencies {
     android:layout_height="220dp"/>
 ```
 
+#### Java
 ```java
 F2CanvasView canvasView = findViewById(R.id.canvasView);
 canvasView.initCanvasContext(new F2CanvasView.ConfigBuilder().build());

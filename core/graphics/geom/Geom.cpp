@@ -1,12 +1,11 @@
-#include "graphics/geom/Geom.h"
-#include "graphics/XChart.h"
-#include "graphics/adjust/Dodge.h"
-#include "graphics/adjust/Stack.h"
-#include "graphics/global.h"
-#include "graphics/util/Point.h"
-#include "graphics/util/json_util.h"
-#include "utils/StringUtil.h"
-#include <nlohmann/json.hpp>
+#include "Geom.h"
+#include "../XChart.h"
+#include "../adjust/Dodge.h"
+#include "../adjust/Stack.h"
+#include "../global.h"
+#include "../util/Point.h"
+#include "../util/json_util.h"
+#include "../../utils/StringUtil.h"
 
 using namespace std;
 
@@ -76,12 +75,30 @@ xg::geom::AbstractGeom &xg::geom::AbstractGeom::Adjust(const string &adjust) {
 }
 
 xg::geom::AbstractGeom &xg::geom::AbstractGeom::Style(const std::string &json) {
-    nlohmann::json cfg = xg::json::ParseString(json);
+    return StyleObject(xg::json::ParseString(json));
+}
+
+xg::geom::AbstractGeom &xg::geom::AbstractGeom::Attrs(const std::string &attrs) {
+    return AttrsObject(xg::json::ParseString(attrs));
+}
+
+xg::geom::AbstractGeom &xg::geom::AbstractGeom::StyleObject(const nlohmann::json &cfg) {
     if(cfg.is_object()) {
         this->styleConfig_.merge_patch(cfg);
     }
     return *this;
 }
+
+xg::geom::AbstractGeom &xg::geom::AbstractGeom::AttrsObject(const nlohmann::json &cfg) {
+    if(cfg.is_object() && cfg.size() > 0) {
+        if(cfg.contains("connectNulls") && cfg["connectNulls"].is_boolean()) {
+            this->connectNulls_ = cfg["connectNulls"];
+        }
+    }
+    return *this;
+}
+
+
 
 const unique_ptr<xg::attr::AttrBase> &xg::geom::AbstractGeom::GetColor() { return attrs_[xg::attr::AttrType::Color]; }
 

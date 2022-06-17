@@ -1,5 +1,5 @@
 #include "Line.h"
-#include "graphics/XChart.h"
+#include "../XChart.h"
 
 using namespace xg;
 

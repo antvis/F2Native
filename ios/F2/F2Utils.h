@@ -8,7 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define F2WeakSelf __weak __typeof(self) weakSelf = self;
 #define F2StrongSelf __strong __typeof(weakSelf) strongSelf = weakSelf;
-#define F2SafeBlockRun(block, ...) block ? block(__VA_ARGS__) : nil
+#define F2SafeBlockRun(block, ...) if(block != nil) block(__VA_ARGS__)
 
 #define F2NativeScale UIScreen.mainScreen.nativeScale
 
@@ -17,7 +17,18 @@ NS_ASSUME_NONNULL_BEGIN
 /// jsonDict可能是NSDictionary or NSArray
 + (NSString *)toJsonString:(id)jsonDict;
 
+
+/// 解析成NSArray或者NSDictionary, 如果解析失败返回nil
+/// @param jsonString json格式
 + (id)toJsonObject:(NSString *)jsonString;
+
+/// 解析成NSArray或者NSDictionary, 如果解析失败返回空字典
+/// @param jsonString json格式
++ (NSDictionary *)toJsonDictionary:(NSString *)jsonString;
+
+/// 解析成NSArray或者NSDictionary, 如果解析失败返回空数组
+/// @param jsonString json格式
++ (NSArray *)toJsonArray:(NSString *)jsonString;
 
 + (NSDictionary *)resetCallbacksFromOld:(NSDictionary *)config host:(F2Chart *)chart;
 

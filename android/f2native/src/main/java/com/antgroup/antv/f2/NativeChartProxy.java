@@ -4,7 +4,7 @@ package com.antgroup.antv.f2;
  * @author qingyuan.yl
  * @date 2020-09-23
  */
-final class NativeChartProxy {
+public final class NativeChartProxy {
     private volatile long mNativeChartHandler = 0;
 
     NativeChartProxy(String name, double width, double height, double ratio) {
@@ -124,13 +124,6 @@ final class NativeChartProxy {
         return nGetPosition(mNativeChartHandler, itemData);
     }
 
-    String getTooltipInfos(float touchX, float touchY, int geomIndex) {
-        if (mNativeChartHandler == 0) {
-            return null;
-        }
-        return nGetTooltipInfos(mNativeChartHandler, touchX, touchY, geomIndex);
-    }
-
     int clear() {
         if (mNativeChartHandler == 0) {
             return F2Constants.CODE_FAIL_UNKNOWN;
@@ -242,13 +235,6 @@ final class NativeChartProxy {
         nGeomAttrs(geom.getNativeGeomHandler(), config);
     }
 
-    String getRenderDumpInfo() {
-        if (mNativeChartHandler == 0) {
-            return null;
-        }
-        return nGetRenderDumpInfo(mNativeChartHandler);
-    }
-
     int getRenderDuration() {
         if (mNativeChartHandler == 0) {
             return 0;
@@ -300,6 +286,20 @@ final class NativeChartProxy {
         return code;
     }
 
+    long createFunction(long nativeChartHandler, Object thisObj) {
+        if (mNativeChartHandler == 0) {
+            return F2Constants.CODE_FAIL_UNKNOWN;
+        }
+        return nCreateFunctionV(nativeChartHandler, thisObj);
+    }
+
+    int destroyFuntion(long nativeFunctionHandle) {
+        if (mNativeChartHandler == 0 || nativeFunctionHandle == 0) {
+            return F2Constants.CODE_FAIL_UNKNOWN;
+        }
+        return nDestroyFunction(mNativeChartHandler, nativeFunctionHandle);
+    }
+
     long getNativeChartHandler() {
         return mNativeChartHandler;
     }
@@ -334,8 +334,6 @@ final class NativeChartProxy {
 
     private native static long nCreateGeom(long nativeChartHandler, String geomType);
 
-    private native static String nGetRenderDumpInfo(long nativeChartHandler);
-
     private native static String nGetChartId(long nativeChartHandler);
 
     private native static int nGetRenderCmdCount(long nativeChartHandler);
@@ -349,8 +347,6 @@ final class NativeChartProxy {
     private native static boolean nRender(long nativeChartHandler);
 
     private native static double[] nGetPosition(long nativeChartHandler, String itemData);
-
-    private native static String nGetTooltipInfos(long nativeChartHandler, float touchX, float touchY, int geomIndex);
 
     private native static int nClear(long nativeChartHandler);
 
@@ -379,4 +375,11 @@ final class NativeChartProxy {
     private native static int nExecuteCommand(long commandHandle);
 
     private native static int nDeallocCommand(long commandHandle);
+
+    private native static long nCreateFunctionV(long nativeChartHandler, Object thisObj);
+
+    private native static int nDestroyFunction(long nativeChartHandler, long nativeFunctionHandle);
+
+    private native static int nConfig(long nativeChartHandler, String config);
+
 }

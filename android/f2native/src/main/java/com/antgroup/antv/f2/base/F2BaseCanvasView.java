@@ -9,7 +9,9 @@ import com.antgroup.antv.f2.F2Config;
  * 业务层调用F2CanvasView的接口，antg和native canvas子类分别实现
  */
 public interface F2BaseCanvasView {
-    void init(int width, int height, F2Config config);
+
+    // 单位是px
+    void init(int widthPixel, int heightPixel, F2Config config);
 
     View getView();
 

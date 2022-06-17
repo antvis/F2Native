@@ -30,12 +30,10 @@ F2Native 支持 Android，iOS，MacOS 平台。使用跨平台语言 C++ 来生�
 * 中文文档: https://f2native.antv.vision/zh
 
 ## 快速开始
-<p style = "display:block;margin:0 auto;">
-<img width = "260" src = "docs/images/ios_barchart.jpg"/> 
-<img width = "260" src = "docs/images/android_barchart.jpg"/>
-</p>
 
 ### iOS
+<img width = "260" src = "https://gw.alipayobjects.com/mdn/rms_b413ff/afts/img/A*ZJ-iRby9Gt4AAAAAAAAAAAAAARQnAQ"/>
+
 
 ```obj-c
 #import <F2/F2.h>
@@ -69,6 +67,7 @@ F2Native 支持 Android，iOS，MacOS 平台。使用跨平台语言 C++ 来生�
 
 
 ### Android
+<img width = "260" src = "https://gw.alipayobjects.com/mdn/rms_b413ff/afts/img/A*YTFkT4NizlIAAAAAAAAAAAAAARQnAQ"/>
 
 ```xml
 <com.antgroup.antv.f2.F2CanvasView
@@ -104,6 +103,9 @@ canvasView.setAdapter(new F2CanvasView.Adapter() {
     }
 });
 ```
+
+## 联系我们
+![](https://gw.alipayobjects.com/mdn/rms_b413ff/afts/img/A*O-tFT7mMQ74AAAAAAAAAAAAAARQnAQ)
 
 ## 如何贡献
 

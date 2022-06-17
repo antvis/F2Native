@@ -1,14 +1,14 @@
-#include "graphics/axis/AxisController.h"
-#include "graphics/XChart.h"
-#include "graphics/func/Func.h"
-#include "graphics/shape/Circle.h"
-#include "graphics/shape/Line.h"
-#include "graphics/shape/Polyline.h"
-#include "graphics/shape/Text.h"
-#include "graphics/shape/Rect.h"
-#include "graphics/shape/Polygon.h"
-#include "utils/common.h"
-#include "utils/xtime.h"
+#include "AxisController.h"
+#include "../XChart.h"
+#include "../func/Func.h"
+#include "../shape/Circle.h"
+#include "../shape/Line.h"
+#include "../shape/Polyline.h"
+#include "../shape/Text.h"
+#include "../shape/Rect.h"
+#include "../shape/Polygon.h"
+#include "../../utils/common.h"
+#include "../../utils/xtime.h"
 
 // 网格线绘制始终是从 0 - 1， 数据不足时主动补齐
 static std::vector<xg::scale::Tick> FormatTicks(std::vector<xg::scale::Tick> ticks) {
@@ -137,7 +137,7 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
     }
 
     scale::AbstractScale &scale = chart.GetScale(axis->field);
-    axis->ticks = scale.GetTicks();
+    axis->ticks = scale.GetTicks(&chart);
 
     int ticksTmp = 1;
     if(axis->ticks.size() > 600) {
@@ -160,23 +160,23 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
         
         bool inner = json::GetBool(axis->labelCfg, "inner");
 
-        func::F2Function *labelItemFunc = nullptr;
+        std::string labelItemFuncId;
         if(axis->labelCfg.contains("item")) {
-            std::string labelItemFuncId = axis->labelCfg["item"];
-            labelItemFunc = func::FunctionManager::GetInstance().Find(labelItemFuncId);
+            labelItemFuncId = axis->labelCfg["item"];
         }
 
         for(std::size_t index = 0; index < axis->ticks.size(); ++index) {
             if(index == 0 || index == (axis->ticks.size() - 1) || index % ticksTmp == 0) {
                 const xg::scale::Tick &tick = axis->ticks[index];
-                if(labelItemFunc != nullptr) {
-                    nlohmann::json param = {{"text", tick.text}, {"index", index}, {"count", axis->ticks.size()}};
-
+                if(!labelItemFuncId.empty()) {
                     nlohmann::json itemStyle = axis->labelCfg;
+                    nlohmann::json param = {{"text", tick.text}, {"index", index}, {"count", axis->ticks.size()}, {"content", tick.text}};
+                    param.merge_patch(itemStyle);
+                    
                     itemStyle["xOffset"] = 0;
                     itemStyle["yOffset"] = 0;
 
-                    nlohmann::json itemStyleRst = labelItemFunc->Execute(param);
+                    nlohmann::json itemStyleRst = xg::json::ParseString(chart.InvokeFunction(labelItemFuncId, param.dump()));
                     if(itemStyleRst.is_object()) {
                         itemStyle.merge_patch(itemStyleRst);
                     }
@@ -189,10 +189,7 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
                     xOffset *= chart.GetCanvasContext().GetDevicePixelRatio();
                     yOffset *= chart.GetCanvasContext().GetDevicePixelRatio();
 
-                    std::string textContent = tick.text;
-                    if(itemStyle.contains("content") && itemStyle["content"].is_string()) {
-                        textContent = itemStyle["content"];
-                    }
+                    std::string textContent = json::GetString(itemStyle, "content", tick.text);
 
                     std::unique_ptr<xg::shape::Text> text =
                         xg::make_unique<xg::shape::Text>(textContent, util::Point{xOffset, yOffset}, textSize, "", itemStyle["textColor"]);
@@ -248,7 +245,7 @@ void xg::axis::AxisController::InitAxisConfig(xg::XChart &chart) {
 
         // grid Points
         if(axis->gridCfg.is_object() && !axis->verticalField.empty()) {
-            std::vector<xg::scale::Tick> verticalTicks = FormatTicks(chart.GetScale(axis->verticalField).GetTicks());
+            std::vector<xg::scale::Tick> verticalTicks = FormatTicks(chart.GetScale(axis->verticalField).GetTicks(&chart));
 
             for(std::size_t index = 0; index < ticks.size(); ++index) {
                 auto &tick = ticks[index];
@@ -492,15 +489,14 @@ void xg::axis::AxisController::DrawLabel(XChart &chart, std::unique_ptr<xg::axis
         }
         
         bool inner = json::GetBool(axis->labelCfg, "inner");
+        xg::util::BBox bbox = text->GetBBox(context);
         
         //等于把pt.y轴下移了5个dp，textbaseline变成了middle
         //这时候textAlign是center textBaseline是middle，等于pt对应了字体中心的锚点
-        GetSidePoint(pt, inner ? 0 : 5 * chart.GetCanvasContext().GetDevicePixelRatio(), dimType);
+        GetSidePoint(pt, inner ? 0 : bbox.height / 2, dimType);
         auto txtPoint = text->GetPoint();
         pt.x += txtPoint.x;
         pt.y += txtPoint.y;
-
-        xg::util::BBox bbox = text->GetBBox(context);
 
         if(axis->position == "bottom") {
             if(isFirst) {

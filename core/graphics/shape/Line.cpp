@@ -1,4 +1,4 @@
-#include "graphics/shape/Line.h"
+#include "Line.h"
 
 xg::shape::Line::Line(const Point &pt1, const Point &pt2) {
     p1_ = pt1;

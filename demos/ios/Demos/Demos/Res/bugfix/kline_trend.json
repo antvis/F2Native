@@ -1,0 +1,91 @@
+{
+    "guides": [{
+        "orientation": "horizontal",
+        "lineWidth": 0.5,
+        "type": "line",
+        "position": ["max", "max"],
+        "color": "#F5F5F5"
+    }, {
+        "dash": [2, 2],
+        "orientation": "horizontal",
+        "lineWidth": 1,
+        "type": "line",
+        "position": ["max", 0],
+        "color": "#DDDDDD"
+    }],
+    "scales": [{
+        "ticks": [0, 5, 10, 15, 20],
+        "field": "date"
+    }, {
+        "precision": 2,
+        "tickCount": 5,
+        "field": "leftValue",
+        "nice": true
+    }, {
+        "precision": 2,
+        "tickCount": 5,
+        "field": "rightValue",
+        "nice": true
+    }],
+    "interactions": [],
+    "axises": [{
+        "label": {
+            "labelOffset": 5,
+            "item": "00E8073A-10E8-457F-B36D-938F29A80E50"
+        },
+        "line": false,
+        "grid": false,
+        "field": "date"
+    }, {
+        "label": false,
+        "line": false,
+        "grid": false,
+        "field": "leftValue"
+    }, {
+        "line": false,
+        "field": "rightValue"
+    }, {
+        "label": {
+            "labelOffset": 0,
+            "textColor": "#CCCCCC",
+            "item": "1CFAD1DA-6EF5-4236-993B-7296D607A31C"
+        },
+        "line": false,
+        "grid": false,
+        "field": "rightValue"
+    }],
+    "geoms": [{
+        "type": "line",
+        "position": "date*leftValue",
+        "fixedColor": "#1677FF"
+    }, {
+        "fixedColor": "#1677FF1a",
+        "style": {
+            "startOnZero": false
+        },
+        "type": "area",
+        "position": "date*leftValue"
+    }, {
+        "type": "line",
+        "position": "date*rightValue",
+        "fixedColor": "#1677FF"
+    }],
+    "source": "[{\"leftValue\":0,\"rightValue\":0,\"value\":722.05610000000001,\"date\":\"0\"},{\"leftValue\":0.51000192367324426,\"rightValue\":0.51000192367324426,\"value\":725.73860000000002,\"date\":\"1\"},{\"leftValue\":0.88188438543764303,\"rightValue\":0.88188438543764303,\"value\":728.42380000000003,\"date\":\"2\"},{\"leftValue\":4.3724026429525313,\"rightValue\":4.3724026429525313,\"value\":753.62729999999999,\"date\":\"3\"},{\"leftValue\":5.4474437651035608,\"rightValue\":5.4474437651035608,\"value\":761.38969999999995,\"date\":\"4\"},{\"leftValue\":3.7708288871183231,\"rightValue\":3.7708288871183231,\"value\":749.28359999999998,\"date\":\"5\"},{\"leftValue\":3.563282686760759,\"rightValue\":3.563282686760759,\"value\":747.78499999999997,\"date\":\"6\"},{\"leftValue\":2.6519269070644289,\"rightValue\":2.6519269070644289,\"value\":741.20450000000005,\"date\":\"7\"},{\"leftValue\":5.2490242794154058,\"rightValue\":5.2490242794154058,\"value\":759.95699999999999,\"date\":\"8\"},{\"leftValue\":4.2702083674661857,\"rightValue\":4.2702083674661857,\"value\":752.88940000000002,\"date\":\"9\"},{\"leftValue\":4.6247237576138485,\"rightValue\":4.6247237576138485,\"value\":755.44920000000002,\"date\":\"10\"},{\"leftValue\":3.0762845158430179,\"rightValue\":3.0762845158430179,\"value\":744.26859999999999,\"date\":\"11\"},{\"leftValue\":2.4062950233368205,\"rightValue\":2.4062950233368205,\"value\":739.43089999999995,\"date\":\"12\"},{\"leftValue\":3.4918062460797734,\"rightValue\":3.4918062460797734,\"value\":747.26890000000003,\"date\":\"13\"},{\"leftValue\":5.0027830247538878,\"rightValue\":5.0027830247538878,\"value\":758.17899999999997,\"date\":\"14\"},{\"leftValue\":3.9002509638794045,\"rightValue\":3.9002509638794045,\"value\":750.21810000000005,\"date\":\"15\"},{\"leftValue\":1.32352596979653,\"rightValue\":1.32352596979653,\"value\":731.61270000000002,\"date\":\"16\"},{\"leftValue\":5.0725005993301648,\"rightValue\":5.0725005993301648,\"value\":758.68240000000003,\"date\":\"17\"},{\"leftValue\":1.5315568970333373,\"rightValue\":1.5315568970333373,\"value\":733.11479999999995,\"date\":\"18\"},{\"leftValue\":-3.1287458135178206,\"rightValue\":-3.1287458135178206,\"value\":699.46479999999997,\"date\":\"19\"},{\"leftValue\":-0.87164972361566273,\"rightValue\":-0.87164972361566273,\"value\":715.76229999999998,\"date\":\"20\"}]",
+    "legends": [],
+    "padding": [0, 10, 0, 0],
+    "tooltip": {
+        "onPressEnd": "8D530BFD-8578-4B0F-8E23-B6E40041C09B",
+        "crosshairsStyle": {
+            "stroke": "#1677FE",
+            "dash": [2, 4]
+        },
+        "onPressStart": "C89F26A2-8DBD-461E-B477-BB28DE44B2DD",
+        "onPress": "489EA88F-76CE-4677-AAD3-2BD45ABE7303",
+        "yTip": {
+            "inner": true
+        },
+        "background": {
+            "fill": "#1677FE"
+        }
+    }
+}

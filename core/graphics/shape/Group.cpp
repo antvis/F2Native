@@ -1,6 +1,6 @@
-#include "graphics/shape/Group.h"
-#include "graphics/util/Vector2d.h"
 #include <float.h>
+#include "Group.h"
+#include "../util/Vector2d.h"
 
 using namespace xg::util;
 

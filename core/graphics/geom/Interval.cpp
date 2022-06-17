@@ -1,7 +1,7 @@
-#include "graphics/geom/Interval.h"
-#include "graphics/XChart.h"
-#include "graphics/scale/Scale.h"
-#include "graphics/scale/continuous/Linear.h"
+#include "Interval.h"
+#include "../XChart.h"
+#include "../scale/Scale.h"
+#include "../scale/continuous/Linear.h"
 
 using namespace xg;
 
@@ -22,7 +22,7 @@ geom::Interval &geom::Interval::Tag(const std::string &json) {
                                  {"textAlign", "center"},
                                  {"textBaseline", "bottom"},
                                  {"fill", "#808080"},
-                                 {"textSize", 10.f}};
+                                 {"textSize", DEFAULT_FONTSIZE}};
 
     if(config.is_object()) {
         defaultCfg.merge_patch(config);

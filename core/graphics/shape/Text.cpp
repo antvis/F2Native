@@ -1,5 +1,5 @@
-#include "graphics/shape/Text.h"
-#include <utils/StringUtil.h>
+#include "Text.h"
+#include "../../utils/StringUtil.h"
 
 xg::shape::Text::Text(const std::string &text, const Point &pt, const float fontSize, const std::string &strokeColor, const std::string &fillColor) {
     type_ = "text";
@@ -80,7 +80,7 @@ BBox xg::shape::Text::CalculateBox(canvas::CanvasContext &context) const {
 }
 
 std::string xg::shape::Text::GetFontStyle() const {
-    return fontStyle_ + " " + fontVariant_ + " " + fontWeight_ + " " + std::to_string(fontSize_) + "px " + fontFamily_;
+    return CreateFontStyle(fontSize_, fontStyle_, fontVariant_, fontWeight_, fontFamily_);
 }
 
 float xg::shape::Text::GetSpacingY() const { return std::isnan(lineHeight_) ? fontSize_ * 0.14 : (lineHeight_ - fontSize_); }

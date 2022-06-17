@@ -8,7 +8,7 @@
 
 #include <fstream>
 #include <iostream>
-#include "graphics/XChart.h"
+#include "../../core/graphics/XChart.h"
 
 using namespace xg;
 
@@ -23,7 +23,7 @@ public:
         std::ifstream jsonFile(path);
         std::string jsonData((std::istreambuf_iterator<char>(jsonFile)), std::istreambuf_iterator<char>());
         chart.Source(jsonData);
-        chart.SetCoreGraphicsContext(context).Padding(20, 10, 20, 0);
+        chart.SetCanvasContext(context).Padding(20, 10, 20, 0);
         chart.Scale("date", "{\"tickCount\": 3}");
         chart.Scale("value", "{\"nice\": true}");
         chart.Line().Position("date*value");

@@ -8,6 +8,7 @@
 #include "../../nlohmann/json.hpp"
 
 namespace xg {
+class XChart;
 namespace scale {
 
 enum class ScaleType {
@@ -64,13 +65,13 @@ class AbstractScale {
     // 重置度量, 重新生成 ticks
     void Reset() { this->ticks = this->CalculateTicks(); }
 
-    std::vector<Tick> GetTicks() {
+    std::vector<Tick> GetTicks(XChart *chart) {
         std::vector<Tick> ticks_;
 
         for(size_t i = 0; i < ticks.size(); i++) {
             nlohmann::json &item = ticks[i];
             scale::Tick tick;
-            tick.text = this->GetTickText(item);
+            tick.text = this->GetTickText(item, chart);
             tick.value = this->Scale(item);
             tick.tickValue = item;
             ticks_.push_back(std::move(tick));
@@ -82,23 +83,7 @@ class AbstractScale {
 
     virtual inline std::size_t GetValuesSize() noexcept { return values.size(); }
 
-    virtual std::string GetTickText(const nlohmann::json &item) {
-        if(!this->tickCallbackId.empty()) {
-            nlohmann::json rst = func::InvokeFunction(this->tickCallbackId, item);
-            if(rst.is_object() && rst.contains("content")) {
-                return rst["content"];
-            }
-        }
-
-        if(item.is_string()) {
-            return item.get<std::string>();
-        } else if(item.is_number()) {
-            return std::to_string(item.get<int>());
-        } else {
-            return ""; // TODO get Tick text from callback
-        }
-    }
-
+    virtual std::string GetTickText(const nlohmann::json &item, XChart *chart);
   public:
     std::string field;     // 度量字段名称
     double rangeMin = 0.0; // 取值范围
@@ -109,15 +94,10 @@ class AbstractScale {
 
   protected:
     virtual nlohmann::json CalculateTicks() = 0;
-
-    void SetTickCallbackFun(std::string tickCallbackId) { this->tickCallbackId = tickCallbackId; }
-
   public:
     // 刻度值, 通过 wilkinson 算法计算得出
     nlohmann::json ticks; // 数组
     nlohmann::json values;
-    std::map<std::size_t, int> dataIndexTable_;
-
     std::string tickCallbackId;
 };
 } // namespace scale

@@ -9,8 +9,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.3'
-        // publish maven
-        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3"
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
     }
 }
 
@@ -19,23 +18,13 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven { url 'https://jitpack.io' }
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
-
-
-// Group names
-rootProject.extensions.groups = [
-        'Main'   : 'com.taobao.gcanvas',
-]
-
-// Artifact IDs
-rootProject.extensions.artifacts = [
-        'F2Native': 'f2native',
-]
 
 rootProject.extensions.sdks = [
         'Gradle'        : '3.0.1',

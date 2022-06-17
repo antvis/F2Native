@@ -6,6 +6,7 @@
 #include <string>
 #include <unordered_map>
 #include "Scale.h"
+#include "../util/json.h"
 #include "../../utils/common.h"
 
 using namespace std;
@@ -188,10 +189,6 @@ class Category : public AbstractScale {
             this->max = fmax(0, values.size() - 1);
         }
 
-        if(config_.contains("tick")) {
-            SetTickCallbackFun(config_["tick"]);
-        }
-
         if(config_.contains("tickCount")) {
             this->tickCount = config_["tickCount"];
         } else {
@@ -203,6 +200,8 @@ class Category : public AbstractScale {
         } else {
             this->ticks = this->CalculateTicks();
         }
+                
+        tickCallbackId = xg::json::GetString(config_, "tick");
     }
 
   protected:

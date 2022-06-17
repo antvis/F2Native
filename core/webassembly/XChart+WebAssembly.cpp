@@ -30,11 +30,13 @@ EMSCRIPTEN_BINDINGS(xchart) {
         .function("source", &XChart::SourceWasm, allow_raw_pointers()) //普通类成员函数
         .function("padding", &XChart::PaddingWasm, allow_raw_pointers())
         .function("margin", &XChart::MarginWasm, allow_raw_pointers())
+        .function("parse", &XChart::Parse)
         .function("render", &XChart::Render)
         .function("clear", &XChart::Clear)
         .function("repaint", &XChart::Repaint)
+        .function("callback", &XChart::SetInvokeFunction, allow_raw_pointers())
         .function("axis", &XChart::AxisWasm, allow_raw_pointers())
-        .function("context", &XChart::SetCanvasContextWasm, allow_raw_pointers())
+        .function("canvas", &XChart::SetCanvasContextWasm, allow_raw_pointers())
         .function("scale", &XChart::Scale, allow_raw_pointers())
         .function("renderDuration", &XChart::GetRenderDurationMM)
         .function("line", &XChart::LineWasm, allow_raw_pointers())
@@ -74,6 +76,12 @@ EMSCRIPTEN_BINDINGS(guide) {
         .function("line", &guide::GuideController::Line)
         .function("background", &guide::GuideController::Background)
         .function("image", &guide::GuideController::Image);
+}
+
+////////////////////////////////////////////////////////////////////////
+// vector
+EMSCRIPTEN_BINDINGS(module) {
+    emscripten::register_vector<std::string>("StringVector");
 }
 
 #endif

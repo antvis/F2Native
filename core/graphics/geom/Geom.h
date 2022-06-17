@@ -49,7 +49,12 @@ class AbstractGeom {
     AbstractGeom &Shape(const string &field, const vector<string> &shapes);
     AbstractGeom &Shape(const string &shape);
     AbstractGeom &Adjust(const string &adjust);
-    AbstractGeom &Style(const std::string &json = "{}");
+    AbstractGeom &Style(const std::string &json);
+    AbstractGeom &Attrs(const std::string &attrs);
+    
+    AbstractGeom &StyleObject(const nlohmann::json &cfg);
+    AbstractGeom &AttrsObject(const nlohmann::json &cfg);
+    
 
     const unique_ptr<attr::AttrBase> &GetColor();
 

@@ -1,9 +1,8 @@
 #include <map>
-
-#include "LegendController.h"
-#include "graphics/XChart.h"
-#include "graphics/scale/Scale.h"
 #include <math.h>
+#include "LegendController.h"
+#include "../XChart.h"
+#include "../scale/Scale.h"
 
 using namespace xg;
 

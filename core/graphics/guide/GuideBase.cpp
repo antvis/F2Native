@@ -1,7 +1,7 @@
-#include "graphics/guide/GuideBase.h"
-#include "graphics/XChart.h"
-#include "graphics/scale/Scale.h"
-#include "graphics/util/Point.h"
+#include "GuideBase.h"
+#include "../XChart.h"
+#include "../scale/Scale.h"
+#include "../util/Point.h"
 
 using namespace xg;
 

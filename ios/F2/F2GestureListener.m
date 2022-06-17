@@ -14,26 +14,8 @@ const double LONG_GESTURE_MINI_DURATION = 0.25f;
 - (instancetype)initWithView:(UIView *)view {
     if(self = [super init]) {
         _view = view;
-        [self initGesture];
     }
     return self;
-}
-
-- (void)initGesture {
-    [self addLongPressGesture];
-    [self addPinchingGesture];
-    [self addPanningGesture];
-    [self addTapGesture];
-}
-
-- (void)removeAllGestures {
-    for(UIGestureRecognizer *gesture in _view.gestureRecognizers) {
-        [_view removeGestureRecognizer:gesture];
-    }
-}
-
-- (void)removeGesture:(UIGestureRecognizer *)gesture {
-    [_view removeGestureRecognizer:gesture];
 }
 
 - (void)gestureAction:(id)sender {
@@ -56,8 +38,12 @@ const double LONG_GESTURE_MINI_DURATION = 0.25f;
         points = @[point];
     }
     NSDictionary *event = @{ @"eventType": eventType, @"points": points };
-    if([self.delegate respondsToSelector:@selector(handleGestureInfo:sender:)]) {
-        [self.delegate handleGestureInfo:event sender:sender];
+    if([sender isKindOfClass:UILongPressGestureRecognizer.class]) {
+        F2SafeBlockRun(self.longGestureCallback, event);
+    } else if([sender isKindOfClass:UIPanGestureRecognizer.class]) {
+        F2SafeBlockRun(self.panGestureCallback, event);
+    } else if([sender isKindOfClass:UIPinchGestureRecognizer.class]) {
+        F2SafeBlockRun(self.pinchGestureCallback, event);
     }
     [self supplementAction:event sender:sender];
 }
@@ -73,7 +59,7 @@ const double LONG_GESTURE_MINI_DURATION = 0.25f;
         NSString *eventType = [strongSelf.event objectForKey:@"eventType"];
         if ([eventType isEqualToString:@"touchstart"]) {
             NSArray *points = [strongSelf.event objectForKey:@"points"];
-            [strongSelf.delegate handleGestureInfo:@{@"eventType": @"touchmove", @"points": points ? : @[]} sender:sender];
+            F2SafeBlockRun(strongSelf.longGestureCallback, @{@"eventType": @"touchmove", @"points": points ? : @[]});
         }
     });
 }
@@ -108,52 +94,50 @@ const double LONG_GESTURE_MINI_DURATION = 0.25f;
 
 #pragma mark - initGesture
 
-- (void)addLongPressGesture {
+- (void)addLongPressGesture:(F2GestureCallback)callback {
     UILongPressGestureRecognizer *longGesture =
         [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(gestureAction:)];
     longGesture.minimumPressDuration = LONG_GESTURE_MINI_DURATION;
     [_view addGestureRecognizer:longGesture];
     longGesture.delegate = self;
     self.longGesture = longGesture;
+    self.longGestureCallback = callback;
 }
 
-- (void)addPinchingGesture {
+- (void)addPinchGesture:(F2GestureCallback)callback {
     UIPinchGestureRecognizer *pinchGesture =
         [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(gestureAction:)];
     [_view addGestureRecognizer:pinchGesture];
     pinchGesture.delegate = self;
     self.pinchGesture = pinchGesture;
+    self.pinchGestureCallback = callback;
 }
 
-
--(void)addTapGesture {
-    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer  alloc] initWithTarget:self action:@selector(gestureAction:)];
-    [_view addGestureRecognizer:tapGesture];
-    tapGesture.delegate = self;
-    self.tapGesture = tapGesture;
-}
-
-- (void)addPanningGesture {
+- (void)addPanGesture:(F2GestureCallback)callback {
     UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(gestureAction:)];
     panGesture.minimumNumberOfTouches = 1;
     panGesture.maximumNumberOfTouches = 1;
     [_view addGestureRecognizer:panGesture];
     panGesture.delegate = self;
     self.panGesture = panGesture;
+    self.panGestureCallback = callback;
 }
 
-- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
-    if ([self.delegate respondsToSelector:@selector(handleGestureRecognizerShouldBegin:listener:)]) {
-        return [self.delegate handleGestureRecognizerShouldBegin:gestureRecognizer listener:self];
-    }
-    return YES;
+- (void)removeLongPressGesture {
+    [_view removeGestureRecognizer:self.longGesture];
 }
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
-shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-    if ([self.delegate respondsToSelector:@selector(handleGestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:listener:)]) {
-        return [self.delegate handleGestureRecognizer:gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:otherGestureRecognizer listener:self];
+- (void)removePinchGesture {
+    [_view removeGestureRecognizer:self.pinchGesture];
+}
+
+- (void)removePanGesture {
+    [_view removeGestureRecognizer:self.panGesture];
+}
+
+- (void)removeAllGestures {
+    for(UIGestureRecognizer *gesture in _view.gestureRecognizers) {
+        [_view removeGestureRecognizer:gesture];
     }
-    return YES;
 }
 @end

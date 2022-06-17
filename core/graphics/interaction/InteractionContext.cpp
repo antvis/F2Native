@@ -1,7 +1,7 @@
 #include "InteractionContext.h"
-#include "graphics/XChart.h"
-#include "graphics/util/json_util.h"
-#include "utils/xtime.h"
+#include "../XChart.h"
+#include "../util/json_util.h"
+#include "../../utils/xtime.h"
 
 using namespace xg;
 
@@ -15,6 +15,9 @@ interaction::InteractionContext::~InteractionContext() { this->chart_ = nullptr;
 void interaction::InteractionContext::SetTypeConfig(std::string type, nlohmann::json config) { this->config_[type] = config; }
 
 void interaction::InteractionContext::OnAfterChartInit() {
+    if (config_.is_null()) {
+        return;
+    }
     const std::string &xField = chart_->GetXScaleField();
     auto &scale = chart_->GetScale(xField);
     this->values_ = scale.values;

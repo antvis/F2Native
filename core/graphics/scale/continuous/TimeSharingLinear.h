@@ -136,7 +136,7 @@ class TimeSharingLinear : public AbstractScale {
 
     //timeRange格式为[[9:30, 11:30] [13:00, 16:00]]
     //返回的tick应该是9:30, 11.30/13:00 16:00
-    std::string GetTickText(const nlohmann::json &item) override {
+    std::string GetTickText(const nlohmann::json &item, XChart *chart) override {
         if (!isTimeRangeValid_) {
             return "";
         }

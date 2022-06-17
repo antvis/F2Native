@@ -69,6 +69,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 break;
             }
+            case R.id.action_bridge:{
+                startActivity(new Intent(this,BridgeActivity.class));
+                break;
+            }
         }
         return super.onOptionsItemSelected(item);
     }

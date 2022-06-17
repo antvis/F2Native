@@ -1,5 +1,5 @@
-#include "graphics/shape/Polyline.h"
-#include "graphics/util/Path.h"
+#include "Polyline.h"
+#include "../util/Path.h"
 
 using namespace xg;
 using namespace std;

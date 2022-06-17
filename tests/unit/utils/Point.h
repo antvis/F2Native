@@ -6,7 +6,7 @@
 //  Copyright © 2021 com.alipay.xgraph. All rights reserved.
 //
 
-#include "graphics/util/Point.h"
+#include "../../../core/graphics/util/Point.h"
 
 using namespace xg;
 using namespace std;

@@ -17,47 +17,33 @@ class JavaF2Function : public func::F2Function {
   public:
     JavaF2Function(ScopedJavaGlobalRef<jobject> *_handle) : func::F2Function(), handle_(_handle) {}
 
-    nlohmann::json Execute(nlohmann::json t = nlohmann::json()) override {
+    const std::string Execute(const std::string &functionId, const std::string &param) override {
         JNIEnv *env = GetJniEnvSafe();
-        if(env == nullptr || handle_ == nullptr || handle_->isNull()) {
-            return nlohmann::json();
-        }
-
         if(nExecuteMethod_ == nullptr) {
             jclass functionClass = env->GetObjectClass(handle_->obj());
-            nExecuteMethod_ = env->GetMethodID(functionClass, "nExecute", "(Ljava/lang/String;)Ljava/lang/String;");
+            nExecuteMethod_ = env->GetMethodID(functionClass, "nExecute", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;");
         }
 
         // double check nExecuteMethod_.
         if(nExecuteMethod_ == nullptr || jni::HasException(env)) {
             jni::ClearException(env);
             F2_LOG_E("JavaF2Function", "Get nExecute Method failed.  functionId: %s", functionId.data());
-            return nlohmann::json();
+            return "{}";
         }
 
-        std::string param;
-        if(t.is_string()) {
-            param = t;
-        } else {
-            param = t.dump();
-        }
+        jstring jfunctionId = StringToJString(env, functionId);
         jstring jparam = StringToJString(env, param);
-        jstring jrst = (jstring)env->CallObjectMethod(handle_->obj(), nExecuteMethod_, jparam);
+        jstring jrst = (jstring)env->CallObjectMethod(handle_->obj(), nExecuteMethod_, jfunctionId, jparam);
 
         if(jni::HasException(env)) {
             jni::ClearException(env);
             F2_LOG_E("JavaF2Function", "execute nExecute Method failed.  functionId: %s", functionId.data());
-            return nlohmann::json();
+            return "{}";
         }
 
         std::string result = JavaStringToString(env, jrst);
-
-        nlohmann::json rst = json::ParseString(result);
-        if(!rst.is_object() && !rst.is_array()) {
-            rst = result;
-        }
         jni::ClearException(env);
-        return rst;
+        return result;
     }
 
     ~JavaF2Function() override {

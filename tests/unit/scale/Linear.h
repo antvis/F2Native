@@ -1,6 +1,5 @@
-#include "TestF2Function.h"
-#include "graphics/scale/continuous/Linear.h"
-#include "utils/common.h"
+#include "../../../core/graphics/scale/continuous/Linear.h"
+#include "../../../core/utils/common.h"
 #include <assert.h>
 
 using namespace xg;
@@ -15,7 +14,7 @@ class Linear {
         //tickCount为0 返回min和max
         nlohmann::json config = {{"tickCount", 0}, {"min", 5}, {"max", 55}};
         scale::Linear linear("field", values, config);
-        std::vector<scale::Tick> ticks = linear.GetTicks();
+        std::vector<scale::Tick> ticks = linear.GetTicks(nullptr);
         return ticks.size() == 2 && ticks[0].tickValue == 5 && ticks[1].tickValue == 55;
     };
     
@@ -24,7 +23,7 @@ class Linear {
         nlohmann::json values = {10, 20, 30, 40, 50};
         nlohmann::json config = {{"tickCount", 1}, {"min", 5}, {"max", 55}};
         scale::Linear linear("field", values, config);
-        std::vector<scale::Tick> ticks = linear.GetTicks();
+        std::vector<scale::Tick> ticks = linear.GetTicks(nullptr);
         return ticks.size() == 2 && ticks[0].tickValue == 5 && ticks[1].tickValue == 55;
     };
 
@@ -32,7 +31,7 @@ class Linear {
         nlohmann::json values = {10, 20, 30, 40, 50};
         nlohmann::json config = {{"tickCount", 3}, {"min", 10}, {"max", 50}};
         scale::Linear linear("field", values, config);
-        std::vector<scale::Tick> ticks = linear.GetTicks();
+        std::vector<scale::Tick> ticks = linear.GetTicks(nullptr);
         return ticks.size() == 3 && ticks[0].tickValue == 10 && ticks[2].tickValue == 50;
     };
 
@@ -40,7 +39,7 @@ class Linear {
         nlohmann::json values = {10, 20, 30, 40, 50, 60};
         nlohmann::json config = {{"tickCount", 4}, {"min", 10}, {"max", 60}, {"nice", true}};
         scale::Linear linear("field", values, config);
-        std::vector<scale::Tick> ticks = linear.GetTicks();
+        std::vector<scale::Tick> ticks = linear.GetTicks(nullptr);
         return ticks.size() == 4 && ticks[0].tickValue == 0 && ticks[3].tickValue == 60;
     };
 
@@ -48,7 +47,7 @@ class Linear {
         nlohmann::json values = {10, 20, 30, 40, 50, 55};
         nlohmann::json config = {{"tickCount", 4}, {"min", 10}, {"max", 55}, {"nice", true}};
         scale::Linear linear("field", values, config);
-        std::vector<scale::Tick> ticks = linear.GetTicks();
+        std::vector<scale::Tick> ticks = linear.GetTicks(nullptr);
         return ticks.size() == 4 && ticks[0].tickValue == 0 && ticks[3].tickValue == 60;
     };
 
@@ -56,7 +55,7 @@ class Linear {
         nlohmann::json values = {10, 20, 30, 40, 50, 55};
         nlohmann::json config = {{"tickCount", 2}, {"min", 10}, {"max", 55}, {"nice", true}};
         scale::Linear linear("field", values, config);
-        std::vector<scale::Tick> ticks = linear.GetTicks();
+        std::vector<scale::Tick> ticks = linear.GetTicks(nullptr);
         return ticks.size() == 2;
     };
 
@@ -69,7 +68,7 @@ class Linear {
         // tickCount=2 ticks返回nan
         nlohmann::json config = {{"tickCount", 2}, {"nice", true}, {"min", -0.1}, {"max", 0.2}, {"precision", 1}};
         scale::Linear linear("field", values, config);
-        std::vector<scale::Tick> ticks = linear.GetTicks();
+        std::vector<scale::Tick> ticks = linear.GetTicks(nullptr);
         return ticks.size() == 2 && ticks[0].text == "-0.1" && ticks[1].text == "0.2";
     };
 
@@ -94,10 +93,10 @@ class Linear {
         double scaleUnsignedint = linear.Scale(65);
         bool isDiff = !IsEqual(scaleDouble0, scaleUnsignedint);
         
-        bool isText1 = linear.GetTickText("20") == "20";
-        bool isText2 = linear.GetTickText(20) == "20";
-        bool isText3 = linear.GetTickText(20.02) == "20.02";
-        bool isText4 = linear.GetTickText({"hello", "world"}) == "";
+        bool isText1 = linear.GetTickText("20", nullptr) == "20";
+        bool isText2 = linear.GetTickText(20, nullptr) == "20";
+        bool isText3 = linear.GetTickText(20.02, nullptr) == "20.02";
+        bool isText4 = linear.GetTickText({"hello", "world"}, nullptr) == "";
         return isNana && isNana2 && isText1 && isText2 && isText3 && isText4 && isSame && isDiff;
     }
 
@@ -128,25 +127,6 @@ class Linear {
         bool isMax = linear.Invert(1) == 50;
         bool isMiddel = linear.Invert(0.5) == 30;
         return isMin && isMax && isMiddel;
-    }
-
-    //设置了tick的callback
-    static bool TicksCallback() {
-        auto callback = [&](const nlohmann::json &param) {
-            double value = param.get<double>();
-            const nlohmann::json ret = {"content", value};
-            assert(xg::IsEqual(value, 0) || xg::IsEqual(value, 60));
-            return ret;
-        };
-        auto func = new TestF2Function(callback);
-        xg::func::FunctionManager::GetInstance().Add(func);
-        nlohmann::json values = {10, 20, 30, 40, 50, 55};
-        nlohmann::json config = {{"tickCount", 2}, {"min", 10}, {"max", 55}, {"nice", true}, {"tick", func->functionId}};
-        scale::Linear linear("field", values, config);
-        std::vector<scale::Tick> ticks = linear.GetTicks();
-        xg::func::FunctionManager::GetInstance().Remove(func->functionId);
-        delete func;
-        return true;
     }
     
     static bool Performance(int size) {

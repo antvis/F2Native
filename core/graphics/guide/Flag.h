@@ -33,7 +33,7 @@ class Flag : public GuideBase {
     static nlohmann::json MergeDefaultCfg(const nlohmann::json &config) {
         nlohmann::json defaultCfg = {
             {"color", "#1890FF"}, // 子元素统一颜色(点/线/方块边框)
-            {"textSize", 9.f},
+            {"textSize", DEFAULT_FONTSIZE},
             {"textColor", "#1890FF"},
             {"textAlign", "start"},
             {"textBaseline", "bottom"},

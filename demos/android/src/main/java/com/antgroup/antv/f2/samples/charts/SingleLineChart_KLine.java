@@ -6,6 +6,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.antgroup.antv.f2.F2CanvasView;
 import com.antgroup.antv.f2.F2Chart;
 import com.antgroup.antv.f2.F2Config;
@@ -18,7 +20,7 @@ import java.util.Date;
 
 
 /**
- * 基础折线图-1
+ * 股票日K趋势图
  *
  * @author qingyuan.yl
  * @date 2020-09-27
@@ -37,47 +39,34 @@ public class SingleLineChart_KLine implements F2CanvasView.Adapter, F2CanvasView
         mChart.setCanvas(canvasView);
         mChart.padding(10, 30, 10, 20);
         mChart.source(Utils.loadAssetFile(canvasView.getContext(), "mockData_line_kline.json"));
+        mChart.line().position("date*price");
+
         F2Chart.ScaleConfigBuilder scaleConfigBuilder = new F2Chart.ScaleConfigBuilder();
         scaleConfigBuilder
                 .tickCount(5)
-                .tick(mChart, new F2Function() {
+                .type("kline-day")
+                .setOption("timeZoneOffset", 28800)
+                .setOption("domain", new double[]{1, 20});
+
+
+        mChart.setScale("date", scaleConfigBuilder);
+
+        mChart.setAxis("date", new F2Chart.AxisConfigBuilder()
+                .label(new F2Chart.AxisLabelConfigBuilder().item(mChart, new F2Function() {
                     @Override
-                    public F2Config execute(String param) {
+                    public F2Config execute(String paramStr) {
+                        JSONObject jsonObject = JSON.parseObject(paramStr);
+                        String param = jsonObject.getString("content");
                         long timestamp = Long.parseLong(param);
                         String content = DateFormat.getDateInstance().format(new Date(timestamp));
                         return new F2Config.Builder().setOption("content", content).build();
                     }
-                })
-                .type("kline-day")
-                .setOption("timeZoneOffset", 28800)
-                .setOption("domain", new double[] {1, 20});
-
-        mChart.setScale("date", scaleConfigBuilder);
-
-//        mChart.area().position( "date*price");
-        mChart.line().position( "date*price");
-
-//        F2Chart.AxisConfigBuilder builder = new F2Chart.AxisConfigBuilder()
-//                .grid(new F2Chart.AxisGridConfigBuilder().lineWidth(mConfig.getWidthRegion1Grid()).stroke(colorInt2Hex(mConfig.getColorRegion1Grid())))
-//                .lineHidden();
-//
-//        mChart.setAxis("date", builder);
-
+                })));
 
         mChart.setScale("price", new F2Chart.ScaleConfigBuilder()
                 .tickCount(2).nice(true));
-
-//        F2Chart.AxisConfigBuilder axisConfigBuilder = new F2Chart.AxisConfigBuilder()
-//                .grid(new F2Chart.AxisGridConfigBuilder().lineWidth(mConfig.getWidthRegion1Grid()).stroke(colorInt2Hex(mConfig.getColorRegion1Grid())))
-//                .labelHidden()
-//                .lineHidden();
-
-//        mChart.setAxis("price", axisConfigBuilder);
-
-
         mChart.tooltip(new F2Chart.ToolTipConfigBuilder()
-                .setOption("yTip", new F2Config.Builder().setOption("inner", true))
-        );
+                .setOption("yTip", new F2Config.Builder().setOption("inner", true)));
 
         mChart.render();
     }

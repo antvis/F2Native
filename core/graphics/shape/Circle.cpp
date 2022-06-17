@@ -1,4 +1,4 @@
-#include "graphics/shape/Circle.h"
+#include "Circle.h"
 
 void xg::shape::Circle::CreatePath(canvas::CanvasContext &context) const {
     context.BeginPath();

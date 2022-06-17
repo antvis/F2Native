@@ -100,7 +100,7 @@ class AxisController {
         nlohmann::json label = {
             // 轴标签配置
             {"textColor", "#808080"}, // 标签文字颜色
-            {"textSize", 10.f},       // 标签文字字号
+            {"textSize", DEFAULT_FONTSIZE},       // 标签文字字号
             {"labelMargin", 0.f},     // 轴上标签的外边距. x 轴为左右外边距， y 轴为上下外边距
             {"labelOffset", 0.f},     // 轴上标签的垂直方向偏移量。x 轴为上下的整体偏移量， y 轴为左右的整体偏移量
             {"textAlign", "center"},  //文字水平对齐方式 start center end

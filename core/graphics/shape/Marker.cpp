@@ -1,5 +1,4 @@
-
-#include "graphics/shape/Marker.h"
+#include "Marker.h"
 
 void xg::shape::Marker::CreatePath(canvas::CanvasContext &context) const {
     context.BeginPath();

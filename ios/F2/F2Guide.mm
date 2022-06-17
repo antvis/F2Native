@@ -1,6 +1,6 @@
 #import "F2Guide.h"
 #import "F2Utils.h"
-#import <graphics/guide/GuideController.h>
+#import "../../core/graphics/guide/GuideController.h"
 
 @interface F2Guide () {
     xg::guide::GuideController *_guide;

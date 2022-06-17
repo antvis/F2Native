@@ -14,12 +14,12 @@ import org.json.JSONObject;
 public class F2CanvasView extends FrameLayout {
 
     protected F2BaseCanvasView mF2BaseCanvasView;
-    public static boolean mLoadedPlotLibrary = false;
+    public static boolean mLoadedF2Library = false;
 
     static {
-        if (!mLoadedPlotLibrary) {
-            System.loadLibrary("f2");
-            mLoadedPlotLibrary = true;
+        if (!mLoadedF2Library) {
+            F2CommonUtils.loadLibrary("f2");
+            mLoadedF2Library = true;
         }
     }
 
@@ -38,9 +38,10 @@ public class F2CanvasView extends FrameLayout {
         addView(mF2BaseCanvasView.getView(), params);
     }
 
-    protected void init(int width, int height, F2Config config) {
+    // 单位是px
+    public void init(int widthPixel, int heightPixel, F2Config config) {
         if (mF2BaseCanvasView != null) {
-            mF2BaseCanvasView.init(width, height, config);
+            mF2BaseCanvasView.init(widthPixel, heightPixel, config);
         }
     }
 
@@ -225,7 +226,7 @@ public class F2CanvasView extends FrameLayout {
         }
     }
 
-    native static long nCreateCanvasContextHandle(Object thisObj);
+    public native static long nCreateCanvasContextHandle(Object thisObj);
 
-    native static void nDestroyCanvasContextHandle(long canvasHolder);
+    public native static void nDestroyCanvasContextHandle(long canvasHolder);
 }

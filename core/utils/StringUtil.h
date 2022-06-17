@@ -1,6 +1,6 @@
 #include <regex>
 #include <sstream>
-#include <string.h>
+#include <string>
 #include <vector>
 
 #ifndef XG_UTILS_STRING_H

@@ -124,7 +124,7 @@ public class MKTrendChart implements F2CanvasView.Adapter {
                     cfg.textColor("#ffffff");
                     cfg.backgroundColor("#108EE9");
                 } else {
-                    cfg.textColor("#108EE9");
+                    cfg.textColor("#F54346");
                     cfg.backgroundColor("#C7E7FF");
                 }
                 mChart.guide().flag(cfg);

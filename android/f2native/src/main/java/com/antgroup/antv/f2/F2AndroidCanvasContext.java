@@ -18,7 +18,7 @@ import android.graphics.Typeface;
 /**
  * android native canvas需要的CanvasContext
  */
-class F2AndroidCanvasContext  {
+public class F2AndroidCanvasContext  {
     public Bitmap bitmap = null;
     private Canvas bitmapCanvas = null;
     private Paint paint = null;

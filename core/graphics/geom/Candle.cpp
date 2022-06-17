@@ -1,6 +1,6 @@
-#include "graphics/geom/Candle.h"
-#include "graphics/XChart.h"
-#include "graphics/scale/Scale.h"
+#include "Candle.h"
+#include "../XChart.h"
+#include "../scale/Scale.h"
 
 using namespace xg;
 

@@ -1,5 +1,5 @@
-#include "graphics/shape/Element.h"
-#include "utils/common.h"
+#include "Element.h"
+#include "../../utils/common.h"
 
 #pragma mark static
 bool xg::shape::Element::IsUnchanged(const Matrix &m) {

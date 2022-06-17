@@ -6,13 +6,18 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
-import java.util.Random;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * @author qingyuan.yl
- * @date 2020-09-18
  */
 public final class F2Util {
+
+    private static final String DEFAULT_TIMEZONE = "Asia/Shanghai";
+    private static final String TIME_PATTERN_ALL = "yyyy-MM-dd HH:mm:ss";
 
     static class ColorGradient<T extends ColorGradient> {
         protected JSONArray colorStops = new JSONArray();
@@ -23,7 +28,9 @@ public final class F2Util {
         }
 
         public T addColorStop(float offset, String color) {
-            if (offset < 0 || offset > 1) return (T) this;
+            if (offset < 0 || offset > 1) {
+                return (T) this;
+            }
             try {
                 JSONObject colorStop = new JSONObject();
                 colorStop.put("offset", offset);
@@ -68,6 +75,34 @@ public final class F2Util {
             }
         }
         return targetField;
+    }
+
+    // 以格林威治为标准时间，计算时间差，单位s
+    public static long getTimeZoneOffset(long utcTime, String tz) {
+        // 更新时区
+        if (TextUtils.isEmpty(tz)) {
+            tz = "GMT+8";
+        }
+        TimeZone timeZone = TimeZone.getTimeZone(tz);
+        return timeZone.getOffset(utcTime) / 1000;
+    }
+
+    public static String getFormatTime(String dateString, String timeZoneStr, String formatter) {
+        if (TextUtils.isEmpty(formatter)) {
+            formatter = TIME_PATTERN_ALL;
+        }
+        if (TextUtils.isEmpty(timeZoneStr)) {
+            timeZoneStr = DEFAULT_TIMEZONE;
+        }
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat(formatter);
+            dateFormat.setTimeZone(TimeZone.getTimeZone(timeZoneStr));
+            long timeStamp = new BigDecimal(dateString).longValue();
+            return dateFormat.format(new Date(timeStamp));
+        } catch (Exception e) {
+            F2Log.e("F2Util", "getFormatTime exception: " + e.getMessage());
+        }
+        return dateString;
     }
 
 }

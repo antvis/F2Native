@@ -28,15 +28,6 @@ class Interval : public GeomShapeBase {
 
         const nlohmann::json &_points = data["_points"];
         nlohmann::json _style = data["_style"];
-        if(_style.contains("custom") && _style["custom"].is_string()) {
-            std::string customCallbackId = _style["custom"];
-            nlohmann::json param = data;
-            param["_index"] = start;
-            nlohmann::json customStyle = func::InvokeFunction(customCallbackId, param);
-            if(customStyle.is_object()) {
-                _style.merge_patch(customStyle);
-            }
-        };
 
         std::vector<util::Point> points;
         for(std::size_t i = 0; i < _points.size(); ++i) {

@@ -2,6 +2,8 @@
 
 #include <android/log.h>
 #include <jni.h>
+#include <string>
+#include <functional>
 
 #include "F2NativeJNI.h"
 #include "JavaRef.h"
@@ -11,6 +13,9 @@
 #include "graphics/geom/Geom.h"
 #include "graphics/geom/Interval.h"
 #include "graphics/guide/GuideController.h"
+#include "JavaChartBridgeCallBack.h"
+#include "bridge/ChartBridge.h"
+#include "BridgeRailingAndroid.h"
 
 #ifndef xg_jni_arraysize
 
@@ -44,6 +49,7 @@ static ScopedJavaGlobalRef<jclass> *gNativeCanvasProxyClass = nullptr;
 static ScopedJavaGlobalRef<jclass> *gNativeChartProxyClass = nullptr;
 static ScopedJavaGlobalRef<jclass> *gNativeFunctionProxyClass = nullptr;
 static ScopedJavaGlobalRef<jclass> *gNativeF2CanvasViewProxyClass = nullptr;
+static ScopedJavaGlobalRef<jclass> *gNativeF2ChartBridgeProxyClass = nullptr;
 
 //###################### F2Chart Begin ###################################
 static jlong CreateNativeChart(JNIEnv *env, jclass clazz, jstring name, jdouble width, jdouble height, jdouble ratio) {
@@ -59,7 +65,7 @@ static jint SetChartCanvas(JNIEnv *env, jclass clazz, jlong chart, jlong view, j
     F2_LOG_I("#SetChartCanvas", "bind canvas requestFrameHandleId: %s", _requestFrameHandleId.data());
     _chart->SetRequestFrameFuncId(_requestFrameHandleId);
     ScopedJavaGlobalRef<jobject> *handle = reinterpret_cast<ScopedJavaGlobalRef<jobject> *>(view);
-    _chart->SetAndroidCanvasContext(handle->obj());
+    _chart->SetCanvasContext(handle->obj());
     return 0;
 }
 
@@ -203,13 +209,6 @@ static jlong CreateChartGeom(JNIEnv *env, jclass clazz, jlong chart, jstring typ
     return reinterpret_cast<jlong>(geom);
 }
 
-static jstring GetChartRenderDumpInfo(JNIEnv *env, jclass clazz, jlong chart) {
-    xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
-    F2_LOG_I(_chart->GetChartName(), "%s", "#:GetChartRenderDumpInfo");
-    std::string dumpInfo = _chart->GetRenderInfo();
-    return env->NewStringUTF(dumpInfo.data());
-}
-
 static jint GetRenderDurationMM(JNIEnv *env, jclass clazz, jlong chart) {
     xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
     F2_LOG_I(_chart->GetChartName(), "%s", "#:GetRenderDurationMM");
@@ -217,9 +216,9 @@ static jint GetRenderDurationMM(JNIEnv *env, jclass clazz, jlong chart) {
 }
 
 static jint GetRenderCmdCount(JNIEnv *env, jclass clazz, jlong chart) {
-   xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
-   F2_LOG_I(_chart->GetChartName(), "%s", "#:GetRenderCmdCount");
-   return _chart->GetRenderCmdCount();
+    xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
+    F2_LOG_I(_chart->GetChartName(), "%s", "#:GetRenderCmdCount");
+    return _chart->GetRenderCmdCount();
 }
 static jstring GetChartId(JNIEnv *env, jclass clazz, jlong chart) {
     xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
@@ -259,13 +258,6 @@ static jdoubleArray ChartGetPosition(JNIEnv *env, jclass clazz, jlong chart, jst
     jdoubleArray rst = env->NewDoubleArray(2);
     env->SetDoubleArrayRegion(rst, 0, 2, &buf[0]);
     return rst;
-}
-
-static jstring ChartGetTooltipInfos(JNIEnv *env, jclass clazz, jlong chart, jfloat touchX, jfloat touchY, jint geomIndex) {
-    xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
-    std::string tooltipInfo = _chart->GetTooltipInfos(touchX, touchY, geomIndex);
-    F2_LOG_I(_chart->GetChartName(), "#:ChartGetTooltipInfos:got %s", tooltipInfo.c_str());
-    return env->NewStringUTF(tooltipInfo.data());
 }
 
 static jint ChartClear(JNIEnv *env, jclass clazz, jlong chart) {
@@ -395,6 +387,29 @@ static jint SetChartGeomAdjust(JNIEnv *env, jclass clazz, jlong geom, jstring ty
     return 0;
 }
 
+static jlong nCreateFunctionV(JNIEnv *env, jclass clazz, jlong chart, jobject jhandle) {
+    ScopedJavaGlobalRef<jobject> *handle = new ScopedJavaGlobalRef<jobject>(env, jhandle);
+    xg::func::F2Function *function = new xg::jni::JavaF2Function(handle);
+    xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
+    _chart->SetInvokeFunction(function);
+    return reinterpret_cast<jlong>(function);
+}
+
+static int destroyFuntion(JNIEnv *env, jclass clazz, jlong chart, jlong function) {
+    xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
+    _chart->SetInvokeFunction(nullptr);
+    xg::func::F2Function *_function = reinterpret_cast<xg::func::F2Function *>(function);
+    delete _function;
+    return 0;
+}
+
+static int nConfig(JNIEnv *env, jclass clazz, jlong chart, jstring config) {
+    xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
+    std::string _config = JavaStringToString(env, config);
+    _chart->Parse(_config);
+    return 0;
+}
+
 static const JNINativeMethod native_chart_methods[] = {{
                                                            .name = "nCreateNativeChart",
                                                            .signature = "(Ljava/lang/String;DDD)J",
@@ -471,11 +486,6 @@ static const JNINativeMethod native_chart_methods[] = {{
                                                            .fnPtr = reinterpret_cast<void *>(CreateChartGeom),
                                                        },
                                                        {
-                                                           .name = "nGetRenderDumpInfo",
-                                                           .signature = "(J)Ljava/lang/String;",
-                                                           .fnPtr = reinterpret_cast<void *>(GetChartRenderDumpInfo),
-                                                       },
-                                                       {
                                                            .name = "nGetRenderCmdCount",
                                                            .signature = "(J)I",
                                                            .fnPtr = reinterpret_cast<void *>(GetRenderCmdCount),
@@ -511,11 +521,6 @@ static const JNINativeMethod native_chart_methods[] = {{
                                                            .fnPtr = reinterpret_cast<void *>(ChartGetPosition),
                                                        },
                                                        {
-                                                           .name = "nGetTooltipInfos",
-                                                           .signature = "(JFFI)Ljava/lang/String;",
-                                                           .fnPtr = reinterpret_cast<void *>(ChartGetTooltipInfos),
-                                                       },
-                                                       {
                                                            .name = "nClear",
                                                            .signature = "(J)I",
                                                            .fnPtr = reinterpret_cast<void *>(ChartClear),
@@ -529,7 +534,7 @@ static const JNINativeMethod native_chart_methods[] = {{
                                                            .name = "nGeomColor",
                                                            .signature =
                                                                "(JLjava/lang/String;Ljava/lang/String;[Ljava/lang/String;)I",
-                                                           .fnPtr = reinterpret_cast<void *>(SetChartGeomColors),
+                                                               .fnPtr = reinterpret_cast<void *>(SetChartGeomColors),
                                                        },
                                                        {
                                                            .name = "nGeomColor",
@@ -586,7 +591,23 @@ static const JNINativeMethod native_chart_methods[] = {{
                                                            .name = "nDeallocCommand",
                                                            .signature = "(J)I",
                                                            .fnPtr = reinterpret_cast<void *>(DeallocCommand),
-                                                       }};
+                                                       },
+                                                       {
+                                                               .name = "nCreateFunctionV",
+                                                               .signature = "(JLjava/lang/Object;)J",
+                                                               .fnPtr = reinterpret_cast<void *>(nCreateFunctionV),
+                                                       },
+                                                       {
+                                                               .name = "nDestroyFunction",
+                                                               .signature = "(JJ)I",
+                                                               .fnPtr = reinterpret_cast<void *>(destroyFuntion),
+                                                       },
+                                                       {
+                                                               .name = "nConfig",
+                                                               .signature = "(JLjava/lang/String;)I",
+                                                               .fnPtr = reinterpret_cast<void *>(nConfig),
+                                                       }
+                                                      };
 //###################### F2Chart END ###################################
 
 static ScopedJavaGlobalRef<jclass> *gF2LogClass = nullptr;
@@ -616,38 +637,6 @@ static bool InitF2Log(JNIEnv *env) {
 
     return true;
 }
-//###################### F2Function Begin ###################################
-
-static jstring nCreateFunction(JNIEnv *env, jclass clazz, jobject jhandle) {
-    ScopedJavaGlobalRef<jobject> *handle = new ScopedJavaGlobalRef<jobject>(env, jhandle);
-    xg::func::F2Function *function = new xg::jni::JavaF2Function(handle);
-    xg::func::FunctionManager::GetInstance().Add(function);
-    return StringToJString(env, function->functionId);
-}
-
-static void nFunctionBindChart(JNIEnv *env, jclass clazz, jstring jfunctionId, jlong jchart) {
-    std::string functionId = JavaStringToString(env, jfunctionId);
-    F2_LOG_I("#nFunctionBindChart", "functionId: %s", functionId.data());
-    xg::func::F2Function *function = xg::func::FunctionManager::GetInstance().Find(functionId);
-
-    if(function != nullptr) {
-        xg::XChart *_chart = reinterpret_cast<xg::XChart *>(jchart);
-        function->hostChartId = _chart->GetChartId();
-    }
-}
-
-static const JNINativeMethod native_function_methods[] = {{
-                                                              .name = "nCreateFunction",
-                                                              .signature = "(Ljava/lang/Object;)Ljava/lang/String;",
-                                                              .fnPtr = reinterpret_cast<void *>(nCreateFunction),
-                                                          },
-                                                          {
-                                                              .name = "nBindChart",
-                                                              .signature = "(Ljava/lang/String;J)V",
-                                                              .fnPtr = reinterpret_cast<void *>(nFunctionBindChart),
-                                                          }};
-
-//###################### F2Function End ###################################
 
 //###################### F2CanvasView Start ###################################
 static jlong nCreateCanvasContextHandle(JNIEnv *env, jclass clazz, jobject canvasConext) {
@@ -674,6 +663,134 @@ static const JNINativeMethod native_canvascontext_methods[] = {{
                                                                    .fnPtr = reinterpret_cast<void *>(nDestroyCanvasContextHandle),
                                                                }};
 //###################### F2CanvasView End ###################################
+
+//###################### F2ChartBridge Start ################################
+
+static jlong
+nChartBridgeCreate(JNIEnv *env, jclass clazz,
+                   jlong nativeRail,
+                   jlong nativeCanvas,
+                   jdouble width, jdouble height, jdouble ratio, jdouble rpxRatio) {
+
+    F2_LOG_I("#F2NativeJNI", "%s", "F2ChartBridge_nCreate ");
+    xg::bridge::ChartBridge *chartBridge = new xg::bridge::ChartBridge(width, height, ratio);
+    chartBridge->SetPixelRatio(rpxRatio);
+
+    ScopedJavaGlobalRef<jobject> *nativeRailHandle = reinterpret_cast<ScopedJavaGlobalRef<jobject> *>(nativeRail);
+    xg::bridge::BridgeRailingAndroid *railHandle_ = new xg::bridge::BridgeRailingAndroid(nativeRailHandle->obj());
+
+    ScopedJavaGlobalRef<jobject> *nativeCanvasHandle = reinterpret_cast<ScopedJavaGlobalRef<jobject> *>(nativeCanvas);
+    railHandle_->SetCanvasContext(nativeCanvasHandle->obj());
+
+    chartBridge->SetRailing(std::move(railHandle_));
+    return reinterpret_cast<jlong>(chartBridge);
+}
+
+static void
+nChartBridgeDestroy(JNIEnv *env, jclass clazz,
+                    jlong bridgeHandle) {
+    F2_LOG_I("#F2NativeJNI", "%s", "#F2ChartBridge_nChartBridgeDestroy ");
+    //释放scopedGlobalJavaRef对象
+    xg::bridge::ChartBridge *bridge = reinterpret_cast<xg::bridge::ChartBridge *>(bridgeHandle);
+    xg::bridge::AbstractBridgeRailing *railing = bridge->GetRailing();
+    delete railing;
+    delete bridge;
+}
+
+static void
+nChartBridgeInvokeMethod(JNIEnv *env, jclass clazz, jlong bridgeHandle, jobject nativeBridgeObject,
+                         jstring method, jstring config) {
+    std::string method_ = JavaStringToString(env, method);
+    std::string config_ = JavaStringToString(env, config);
+    F2_LOG_I("#F2NativeJNI", "#F2ChartBridge_nInvokeMethod method: %s config: %s",
+             method_.data(), config_.data());
+
+    xg::bridge::ChartBridge *bridge = reinterpret_cast<xg::bridge::ChartBridge *>(bridgeHandle);
+    BridgeRailingAndroid *railingAndroid_ = reinterpret_cast<BridgeRailingAndroid *>(bridge->GetRailing());
+    railingAndroid_->InvokeJavaMethod(std::move(method_), std::move(config_), nativeBridgeObject, bridge);
+}
+
+
+static jboolean
+nChartBridgeSendTouchEvent(JNIEnv *env, jclass clazz,
+                           jlong bridgeHandle,
+                           jstring eventStr) {
+    F2_LOG_I("#F2NativeJNI", "%s", "#F2ChartBridge_nChartBridgeSendTouchEvent ");
+    std::string eventJson_ = JavaStringToString(env, eventStr);
+
+    xg::bridge::ChartBridge *bridge = reinterpret_cast<xg::bridge::ChartBridge *>(bridgeHandle);
+    bool isSuccess = bridge->OnTouchEvent(std::move(eventJson_));
+    return isSuccess ? JNI_TRUE : JNI_FALSE;
+}
+
+
+static long
+nCreateNativeRailHandle(JNIEnv *env, jclass clazz,
+                        jobject railObject) {
+    F2_LOG_I("#F2NativeJNI", "%s", "#F2ChartBridge_nCreateNativeRailHandle ");
+
+    //因为canvasConext是个临时对象，使用ScopedJavaGlobalRef包裹，确保canvasConext不被释放
+    ScopedJavaGlobalRef<jobject> *handle = new ScopedJavaGlobalRef<jobject>(env,
+                                                                            railObject);
+    return reinterpret_cast<jlong>(handle);
+}
+
+static void
+nDestroyNativeRailHandle(JNIEnv *env, jclass clazz,
+                         jlong railHandle) {
+    F2_LOG_I("#F2NativeJNI", "%s", "#F2ChartBridge_nDestroyNativeRailHandle ");
+    //释放scopedGlobalJavaRef对象
+    ScopedJavaGlobalRef<jobject> *handle = reinterpret_cast<ScopedJavaGlobalRef<jobject> *>(railHandle);
+    delete handle;
+    handle = nullptr;
+}
+
+
+static void
+nChartBridgeSetNeedTooltip(JNIEnv *env, jclass clazz, jlong bridgeHandle,
+                           jboolean tooltip) {
+    F2_LOG_I("#F2NativeJNI", "%s", "#F2ChartBridge_nChartBridgeSetNeedTooltip ");
+    xg::bridge::ChartBridge *bridge = reinterpret_cast<xg::bridge::ChartBridge *>(bridgeHandle);
+    bridge->SetNeedTooltip(tooltip == JNI_TRUE);
+}
+
+static const JNINativeMethod native_chart_bridge_methods[] = {{
+                                                                      .name = "nCreate",
+                                                                      .signature = "(JJDDDD)J",
+                                                                      .fnPtr = reinterpret_cast<void *>(nChartBridgeCreate),
+                                                              },
+                                                              {
+                                                                      .name = "nDestroy",
+                                                                      .signature = "(J)V",
+                                                                      .fnPtr = reinterpret_cast<void *>(nChartBridgeDestroy),
+                                                              },
+                                                              {
+                                                                      .name = "nInvokeMethod",
+                                                                      .signature = "(JLjava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V",
+                                                                      .fnPtr = reinterpret_cast<void *>(nChartBridgeInvokeMethod),
+                                                              },
+                                                              {
+                                                                      .name = "nSendTouchEvent",
+                                                                      .signature = "(JLjava/lang/String;)Z",
+                                                                      .fnPtr = reinterpret_cast<void *>(nChartBridgeSendTouchEvent),
+                                                              },
+                                                              {
+                                                                      .name = "nCreateNativeRailHandle",
+                                                                      .signature = "(Ljava/lang/Object;)J",
+                                                                      .fnPtr = reinterpret_cast<void *>(nCreateNativeRailHandle),
+                                                              },
+                                                              {
+                                                                      .name = "nDestroyNativeRailHandle",
+                                                                      .signature = "(J)V",
+                                                                      .fnPtr = reinterpret_cast<void *>(nDestroyNativeRailHandle),
+                                                              },
+                                                              {
+                                                                      .name = "nSetNeedTooltip",
+                                                                      .signature = "(JZ)V",
+                                                                      .fnPtr = reinterpret_cast<void *>(nChartBridgeSetNeedTooltip),
+                                                              }};
+
+//###################### F2ChartBridge End ##################################
 
 static bool
 RegisterJNIInterface(JNIEnv *env, ScopedJavaGlobalRef<jclass> **holder, const char *class_path, const JNINativeMethod *methods, int array_size) {
@@ -740,11 +857,12 @@ static bool OnJniLoad(JNIEnv *env) {
     }
     F2_LOG_I("#OnJniLoad", "%s", "register f2 chart success");
 
-    if(!RegisterJNIInterface(env, &gNativeFunctionProxyClass, "com/antgroup/antv/f2/F2Function", native_function_methods,
-                             xg_jni_arraysize(native_function_methods))) {
+    if(!RegisterJNIInterface(env, &gNativeF2ChartBridgeProxyClass, "com/antgroup/antv/f2/F2ChartBridge", native_chart_bridge_methods,
+                             xg_jni_arraysize(native_chart_bridge_methods))) {
         return false;
     }
-    F2_LOG_I("#OnJniLoad", "%s", "register f2function success");
+    F2_LOG_I("#OnJniLoad", "%s", "register chart bridge success");
+
     return true;
 }
 

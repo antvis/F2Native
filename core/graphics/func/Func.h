@@ -18,8 +18,8 @@ static std::string MakeFunctionId() { return std::to_string(xg::CurrentTimestamp
 struct F2Function {
 
     F2Function() { functionId = MakeFunctionId(); }
-
-    virtual nlohmann::json Execute(nlohmann::json t) { return nlohmann::json(); }
+    
+    virtual const std::string Execute(const std::string &functionId, const std::string &param) = 0;
 
     virtual ~F2Function() {}
     std::string functionId;
@@ -75,13 +75,6 @@ class FunctionManager {
     std::mutex mutex_;
 };
 
-static nlohmann::json InvokeFunction(const std::string &functionId, const nlohmann::json &param) {
-    F2Function *func = FunctionManager::GetInstance().Find(functionId);
-    if(func == nullptr) {
-        return nlohmann::json();
-    }
-    return func->Execute(param);
-}
 
 } // namespace func
 } // namespace xg

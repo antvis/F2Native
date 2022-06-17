@@ -1,5 +1,5 @@
-#include "graphics/guide/Background.h"
-#include "graphics/XChart.h"
+#include "Background.h"
+#include "../XChart.h"
 
 void xg::guide::Background::Render(XChart &chart, shape::Group *container, canvas::CanvasContext &context, const std::vector<util::Rect> &dangerRects) {
     const std::string &xField = chart.GetXScaleField();

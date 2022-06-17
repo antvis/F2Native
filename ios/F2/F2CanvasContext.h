@@ -1,45 +1,37 @@
 //
-//  F2Canvas.h
-//  AFWFinanceChart
+//  F2CoreGraphicsCanvasContext.h
+//  F2
 //
-//  Created by weiqing.twq on 2021/7/5.
-//  Copyright © 2021 Alipay. All rights reserved.
+//  Created by weiqing.twq on 2021/12/8.
+//  Copyright © 2021 com.alipay.xgraph. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
-@class F2CanvasContext;
-@protocol F2CanvasContextProtocol <NSObject>
 
-@required;
+@interface F2CanvasContext : NSObject
+
 /// 创建渲染的canvas，因为AntG是异步创建canvas的，所以这里需要回调
 /// 解耦AntG后可以优化下方向的命名..
 /// @param frame  canvas的size
-/// @param callback 回调canvas
-- (void)createContextWithFrame:(CGRect)frame complete:(void (^)(F2CanvasContext *))callback;
+- (instancetype)initWithFrame:(CGRect)frame;
 
-/// 渲染到屏幕上
-/// @return YES 渲染成功 NO 白屏
-- (BOOL)draw;
-
-/// 释放context
-- (void)destroy;
+/// 如果画布的大小与之前的不同，则更新画布的大小
+/// @param frame 画布的大小
+- (void)setFrame:(CGRect)frame;
 
 ///获取C++的context对象
-- (void *)context2d;
+///@return CGContextRef 渲染的上下文
+- (CGContextRef)context2d;
 
-/// context所在的view
-- (UIView *)contextView;
-
-///截图
+///返回context2d上下文的截图
+///@return UIImage
 - (UIImage *)snapshot;
 
-@end
-
-@interface F2CanvasContext : NSObject <F2CanvasContextProtocol>
-
+/// 返回画布的密度
+- (CGFloat)nativeScale;
 
 @end
 

@@ -1,4 +1,4 @@
-#import "F2CallbackObj.h"
+#import "F2Callback.h"
 #import "F2CanvasView.h"
 #import "F2Geom.h"
 #import "F2Guide.h"
@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 设置chart的元数据
 /// json JSON格式的数据
-- (F2Chart * (^)(NSString *json))source;
+- (F2Chart * (^)(NSArray *data))source;
 
 /// 设置度量，
 /// field 需要设置度量的字段
@@ -79,9 +79,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 重新渲染
 - (F2Chart * (^)(void))repaint;
-/// 获取渲染的信息
-/// @return JSON格式，cmdCount表示渲染指令的个数，-1表示环境有问题，0表示指令数为0，>0表示正常的绘制指令个数
-- (NSString * (^)(void))getRenderDumpInfo;
 
 /// 获取对应度量的 ticks 信息
 /// @return [{@"text":"-3.00";@"tickValue": "-3";@"value": 0}]
@@ -116,7 +113,19 @@ NS_ASSUME_NONNULL_BEGIN
 - (F2Chart * (^)(NSDictionary *config))postTouchEvent;
 
 /// 把callback缓存到chart中
-- (void)bindF2CallbackObj:(F2CallbackObj *)callback;
+- (void)bindF2CallbackObj:(F2Callback *)callback;
+
+/// 设置config
+- (F2Chart * (^)(NSDictionary *config))config;
+
+/// 当使用renderConfig方法时，在config方法中的functionId及param会通过这个callback回调出来
+- (F2Chart * (^)(FunctionItemCallback callback))callback;
+
+/// 内部分发functionId的方法 外部请勿调用
+/// @param functionId 方法名字
+/// @param param 参数 json格式
+/// @return const char * json格式
+- (const char *)execute:(const char *)functionId param:(const char *)param;
 
 @end
 

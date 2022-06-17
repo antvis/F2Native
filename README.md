@@ -67,15 +67,15 @@ pod 'F2'
 
 #### Swift
 ```swift
-    func chartRender() {
-        self.chart!.canvas()(self.canvasView!)
-        self.chart!.padding()(10, 20, 10, 0)
-        self.chart!.source()(jsonData)
-        self.chart!.interval()().position()("genre*sold").color()("genre", [])
-        self.chart!.scale()("sold", ["min":0])
-        self.chart!.scale()("genre", ["range": [0.1, 0.9]])
-        self.chart!.render()();
-    }
+func chartRender() {
+    self.chart!.canvas()(self.canvasView!)
+    self.chart!.padding()(10, 20, 10, 0)
+    self.chart!.source()(jsonData)
+    self.chart!.interval()().position()("genre*sold").color()("genre", [])
+    self.chart!.scale()("sold", ["min":0])
+    self.chart!.scale()("genre", ["range": [0.1, 0.9]])
+    self.chart!.render()();
+}
 ```
 
 

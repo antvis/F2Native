@@ -1,6 +1,6 @@
 platform :ios, '9.0'
 
 target "Demos-Swift" do
-	pod 'F2', '~> 2.0.15'
+	pod 'F2'
 end
 

@@ -34,7 +34,12 @@ F2Native 支持 Android，iOS，MacOS 平台。使用跨平台语言 C++ 来生�
 ### iOS
 <img width = "260" src = "https://gw.alipayobjects.com/mdn/rms_b413ff/afts/img/A*ZJ-iRby9Gt4AAAAAAAAAAAAAARQnAQ"/>
 
+#### CocoaPod设置
+```pod
+pod 'F2'
+```
 
+#### Objective-C
 ```obj-c
 #import <F2/F2.h>
 @interface F2Demo : UIView
@@ -49,25 +54,44 @@ F2Native 支持 Android，iOS，MacOS 平台。使用跨平台语言 C++ 来生�
       {\"genre\":\"Shooter\",\"sold\":350},
       {\"genre\":\"Other\",\"sold\":150}]";
 }
--(void)drawGraph {
-     // step1
-     CGRect viewFrame = CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width, 280);
-     self.canvasView = [F2CanvasView canvasWithFrame:viewFrame andBizId:@"" complete:nil];
-     [self addSubview:self.canvasView];
-     // step2
-     F2Chart *chart = [F2Chart chart:canvas.view.bounds.size withName:@"f2chart"];
-     // step3
-     chart.canvas(self.canvasView).padding(20, 10, 20, 0.f).source([self jsonData]);
-     // step4
-     chart.interval().position(@"genre*sold");
-     // step5
-     chart.render();
+- (void)chartRender {
+    self.chart.canvas(self.canvasView);
+    self.chart.padding(10, 20, 10, 0.f);
+    self.chart.source([self jsonData]);
+    self.chart.interval().position(@"genre*sold").color(@"genre", @[]);
+    self.chart.scale(@"sold", @{@"min": @(0)});
+    self.chart.scale(@"genre", @{@"range": @[@(0.1), @(0.9)]});
+    self.chart.render();
 }
+```
+
+#### Swift
+```swift
+    func chartRender() {
+        self.chart!.canvas()(self.canvasView!)
+        self.chart!.padding()(10, 20, 10, 0)
+        self.chart!.source()(jsonData)
+        self.chart!.interval()().position()("genre*sold").color()("genre", [])
+        self.chart!.scale()("sold", ["min":0])
+        self.chart!.scale()("genre", ["range": [0.1, 0.9]])
+        self.chart!.render()();
+    }
 ```
 
 
 ### Android
 <img width = "260" src = "https://gw.alipayobjects.com/mdn/rms_b413ff/afts/img/A*YTFkT4NizlIAAAAAAAAAAAAAARQnAQ"/>
+
+#### Gradle设置
+```gradle
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+     implementation 'com.github.antvis:F2Native:2.0.15'
+}
+```
 
 ```xml
 <com.antgroup.antv.f2.F2CanvasView

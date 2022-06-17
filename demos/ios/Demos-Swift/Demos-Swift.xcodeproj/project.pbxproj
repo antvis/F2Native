@@ -11,53 +11,36 @@
 		CC79F208285AB18100A5623C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC79F207285AB18100A5623C /* ViewController.swift */; };
 		CC79F20D285AB18300A5623C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC79F20C285AB18300A5623C /* Assets.xcassets */; };
 		CC79F210285AB18300A5623C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC79F20E285AB18300A5623C /* LaunchScreen.storyboard */; };
-		CC79F223285AB1B400A5623C /* F2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC79F21D285AB1A700A5623C /* F2.framework */; };
-		CC79F225285AB22F00A5623C /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC79F224285AB22F00A5623C /* libc++.tbd */; };
 		CC79F248285AB94F00A5623C /* Res in Resources */ = {isa = PBXBuildFile; fileRef = CC79F247285AB94F00A5623C /* Res */; };
 		CC79F24B285AD17A00A5623C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC79F249285AD17A00A5623C /* Main.storyboard */; };
 		CC79F24E285AD97E00A5623C /* BaseLineUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC79F24D285AD97E00A5623C /* BaseLineUIView.swift */; };
 		CC79F250285AD98D00A5623C /* BaseInterval2UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC79F24F285AD98D00A5623C /* BaseInterval2UIView.swift */; };
 		CC79F252285ADA2300A5623C /* DemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC79F251285ADA2300A5623C /* DemoViewController.swift */; };
+		CC79F27B285C115F00A5623C /* libF2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CC79F27A285C115F00A5623C /* libF2.a */; };
+		D1093B56324A12388FFA958C /* libPods-Demos-Swift.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B6B0DAB8161155F20647AC22 /* libPods-Demos-Swift.a */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		CC79F21C285AB1A700A5623C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CC79F217285AB1A700A5623C /* F2.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CC793C3B2509FBAA00E9D913;
-			remoteInfo = F2;
-		};
-		CC79F21E285AB1A700A5623C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CC79F217285AB1A700A5623C /* F2.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CCCDE9CB2744D9740060D768;
-			remoteInfo = F2Tests;
-		};
-		CC79F220285AB1B000A5623C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CC79F217285AB1A700A5623C /* F2.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = CC793C3A2509FBAA00E9D913;
-			remoteInfo = F2;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
+		7BD1F423043680858A1042C3 /* Pods-Demos-Swift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demos-Swift.release.xcconfig"; path = "Target Support Files/Pods-Demos-Swift/Pods-Demos-Swift.release.xcconfig"; sourceTree = "<group>"; };
+		A2880A139FC7C7C81542CC93 /* Pods-Demos-Swift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demos-Swift.debug.xcconfig"; path = "Target Support Files/Pods-Demos-Swift/Pods-Demos-Swift.debug.xcconfig"; sourceTree = "<group>"; };
+		B6B0DAB8161155F20647AC22 /* libPods-Demos-Swift.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Demos-Swift.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC79F200285AB18100A5623C /* Demos-Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Demos-Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC79F203285AB18100A5623C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CC79F207285AB18100A5623C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		CC79F20C285AB18300A5623C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CC79F20F285AB18300A5623C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CC79F211285AB18300A5623C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		CC79F217285AB1A700A5623C /* F2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = F2.xcodeproj; path = ../../../../ios/F2.xcodeproj; sourceTree = "<group>"; };
 		CC79F224285AB22F00A5623C /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		CC79F247285AB94F00A5623C /* Res */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Res; sourceTree = "<group>"; };
 		CC79F24A285AD17A00A5623C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		CC79F24D285AD97E00A5623C /* BaseLineUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseLineUIView.swift; sourceTree = "<group>"; };
 		CC79F24F285AD98D00A5623C /* BaseInterval2UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseInterval2UIView.swift; sourceTree = "<group>"; };
 		CC79F251285ADA2300A5623C /* DemoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoViewController.swift; sourceTree = "<group>"; };
+		CC79F253285B22B400A5623C /* libF2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libF2.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC79F256285B22C200A5623C /* libc++abi.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++abi.tbd"; path = "usr/lib/libc++abi.tbd"; sourceTree = SDKROOT; };
+		CC79F257285B22C200A5623C /* libc++.1.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.1.tbd"; path = "usr/lib/libc++.1.tbd"; sourceTree = SDKROOT; };
+		CC79F276285B245900A5623C /* libF2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libF2.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC79F27A285C115F00A5623C /* libF2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libF2.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,20 +48,30 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC79F225285AB22F00A5623C /* libc++.tbd in Frameworks */,
-				CC79F223285AB1B400A5623C /* F2.framework in Frameworks */,
+				CC79F27B285C115F00A5623C /* libF2.a in Frameworks */,
+				D1093B56324A12388FFA958C /* libPods-Demos-Swift.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		197DA23CDE616F4F5BCC759F /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				A2880A139FC7C7C81542CC93 /* Pods-Demos-Swift.debug.xcconfig */,
+				7BD1F423043680858A1042C3 /* Pods-Demos-Swift.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		CC79F1F7285AB18100A5623C = {
 			isa = PBXGroup;
 			children = (
 				CC79F202285AB18100A5623C /* Demos-Swift */,
 				CC79F201285AB18100A5623C /* Products */,
 				CC79F222285AB1B400A5623C /* Frameworks */,
+				197DA23CDE616F4F5BCC759F /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -93,7 +86,6 @@
 		CC79F202285AB18100A5623C /* Demos-Swift */ = {
 			isa = PBXGroup;
 			children = (
-				CC79F217285AB1A700A5623C /* F2.xcodeproj */,
 				CC79F203285AB18100A5623C /* AppDelegate.swift */,
 				CC79F207285AB18100A5623C /* ViewController.swift */,
 				CC79F251285ADA2300A5623C /* DemoViewController.swift */,
@@ -107,19 +99,16 @@
 			path = "Demos-Swift";
 			sourceTree = "<group>";
 		};
-		CC79F218285AB1A700A5623C /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CC79F21D285AB1A700A5623C /* F2.framework */,
-				CC79F21F285AB1A700A5623C /* F2Tests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		CC79F222285AB1B400A5623C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CC79F27A285C115F00A5623C /* libF2.a */,
+				CC79F276285B245900A5623C /* libF2.a */,
+				CC79F257285B22C200A5623C /* libc++.1.tbd */,
+				CC79F256285B22C200A5623C /* libc++abi.tbd */,
+				CC79F253285B22B400A5623C /* libF2.a */,
 				CC79F224285AB22F00A5623C /* libc++.tbd */,
+				B6B0DAB8161155F20647AC22 /* libPods-Demos-Swift.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -140,6 +129,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CC79F214285AB18300A5623C /* Build configuration list for PBXNativeTarget "Demos-Swift" */;
 			buildPhases = (
+				A578B91E08DDEEEBCDF7B168 /* [CP] Check Pods Manifest.lock */,
 				CC79F1FC285AB18100A5623C /* Sources */,
 				CC79F1FD285AB18100A5623C /* Frameworks */,
 				CC79F1FE285AB18100A5623C /* Resources */,
@@ -147,7 +137,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				CC79F221285AB1B000A5623C /* PBXTargetDependency */,
 			);
 			name = "Demos-Swift";
 			productName = "Demos-Swift";
@@ -180,35 +169,12 @@
 			mainGroup = CC79F1F7285AB18100A5623C;
 			productRefGroup = CC79F201285AB18100A5623C /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = CC79F218285AB1A700A5623C /* Products */;
-					ProjectRef = CC79F217285AB1A700A5623C /* F2.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				CC79F1FF285AB18100A5623C /* Demos-Swift */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		CC79F21D285AB1A700A5623C /* F2.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = F2.framework;
-			remoteRef = CC79F21C285AB1A700A5623C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CC79F21F285AB1A700A5623C /* F2Tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = F2Tests.xctest;
-			remoteRef = CC79F21E285AB1A700A5623C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		CC79F1FE285AB18100A5623C /* Resources */ = {
@@ -224,6 +190,31 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		A578B91E08DDEEEBCDF7B168 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Demos-Swift-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		CC79F1FC285AB18100A5623C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -238,14 +229,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		CC79F221285AB1B000A5623C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = F2;
-			targetProxy = CC79F220285AB1B000A5623C /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		CC79F20E285AB18300A5623C /* LaunchScreen.storyboard */ = {
@@ -383,6 +366,7 @@
 		};
 		CC79F215285AB18300A5623C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A2880A139FC7C7C81542CC93 /* Pods-Demos-Swift.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -396,11 +380,24 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-l\"c++\"",
+					"-framework",
+					"\"CoreGraphics\"",
+					"-framework",
+					"\"CoreText\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"UIKit\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.alipay.f2.Demos-Swift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -411,6 +408,7 @@
 		};
 		CC79F216285AB18300A5623C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7BD1F423043680858A1042C3 /* Pods-Demos-Swift.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -424,11 +422,24 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-l\"c++\"",
+					"-framework",
+					"\"CoreGraphics\"",
+					"-framework",
+					"\"CoreText\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"UIKit\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.alipay.f2.Demos-Swift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

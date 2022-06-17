@@ -32,7 +32,6 @@
 		CC612BC8250A28AF00315124 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC612BC7250A28AF00315124 /* Assets.xcassets */; };
 		CC612BCB250A28AF00315124 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC612BC9250A28AF00315124 /* LaunchScreen.storyboard */; };
 		CC612BCE250A28AF00315124 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CC612BCD250A28AF00315124 /* main.m */; };
-		CC612BFD250B54E600315124 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC612BFC250B54E600315124 /* libc++.tbd */; };
 		CC612C04250B5C5A00315124 /* Res in Resources */ = {isa = PBXBuildFile; fileRef = CC612C03250B5C5A00315124 /* Res */; };
 		CC66877827C5D73B00DA1B5A /* MarketMovingBugFix1.m in Sources */ = {isa = PBXBuildFile; fileRef = CC66877727C5D73B00DA1B5A /* MarketMovingBugFix1.m */; };
 		CC76557B26C5220100061FCF /* MultiIntervalUIView3.m in Sources */ = {isa = PBXBuildFile; fileRef = CC76557826C5220100061FCF /* MultiIntervalUIView3.m */; };
@@ -102,6 +101,7 @@
 		CC66877727C5D73B00DA1B5A /* MarketMovingBugFix1.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MarketMovingBugFix1.m; sourceTree = "<group>"; };
 		CC76557826C5220100061FCF /* MultiIntervalUIView3.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultiIntervalUIView3.m; sourceTree = "<group>"; };
 		CC76557A26C5220100061FCF /* MultiIntervalUIView3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiIntervalUIView3.h; sourceTree = "<group>"; };
+		CC79F278285B24A400A5623C /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
 		CC8582392756070900C4D435 /* MarketMovingUIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarketMovingUIView.h; sourceTree = "<group>"; };
 		CC85823B2756070900C4D435 /* MarketMovingUIView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MarketMovingUIView.m; sourceTree = "<group>"; };
 		CC8BE29C26F2EE9C00F52359 /* RadarAreaUIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RadarAreaUIView.h; sourceTree = "<group>"; };
@@ -123,7 +123,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC612BFD250B54E600315124 /* libc++.tbd in Frameworks */,
 				E50B27DCC615F64E724F8003 /* libPods-F2Native.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -228,6 +227,7 @@
 			isa = PBXGroup;
 			children = (
 				CC612BFC250B54E600315124 /* libc++.tbd */,
+				CC79F278285B24A400A5623C /* libc++.tbd */,
 				4B8FCBB5B94EA98197F9F583 /* libPods-F2Native.a */,
 			);
 			name = Frameworks;

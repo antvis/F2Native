@@ -19,7 +19,8 @@ namespace bridge {
 class BridgeRailingIOS final : public AbstractBridgeRailing {
 public:
     ///传入view，在这里是UIView的指针
-    BridgeRailingIOS(void *view) { view_ = view; }
+    BridgeRailingIOS(void *view);
+    ~BridgeRailingIOS();
     
     void PlayAnimation(const std::string &params)  override;
     
@@ -34,6 +35,7 @@ public:
 private:
     void *view_ = nullptr;
     void *context_ = nullptr;
+    void *proxy_ = nullptr;
 };
 }
 }

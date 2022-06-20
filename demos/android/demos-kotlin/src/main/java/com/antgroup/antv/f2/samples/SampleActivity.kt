@@ -13,17 +13,12 @@ class SampleActivity : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         setContentView(R.layout.activity_sample)
         mCanvasView = findViewById(R.id.canvasView)
-        mCanvasView.initCanvasContext(
-            ConfigBuilder()
-                .setOption("canvasBizId", "F2NativeDemo")
-                .setOption("appId", "1000")
-                .build()
-        )
+        mCanvasView!!.initCanvasContext()
         val chartModel = intent.getSerializableExtra("ChartModel") as ChartModel
         title = chartModel.title
         try {
             val adapter = chartModel.adapterClass.newInstance()
-            mCanvasView.setAdapter(adapter)
+            mCanvasView!!.setAdapter(adapter)
         } catch (e: IllegalAccessException) {
             e.printStackTrace()
         } catch (e: InstantiationException) {

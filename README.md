@@ -104,7 +104,7 @@ dependencies {
 #### Java
 ```java
 F2CanvasView canvasView = findViewById(R.id.canvasView);
-canvasView.initCanvasContext(new F2CanvasView.ConfigBuilder().build());
+canvasView.initCanvasContext();
 
 canvasView.setAdapter(new F2CanvasView.Adapter() {
     private F2Chart mChart;
@@ -129,6 +129,41 @@ canvasView.setAdapter(new F2CanvasView.Adapter() {
         }
     }
 });
+```
+
+#### Kotlin
+```java
+mCanvasView = findViewById(R.id.canvasView)
+mCanvasView!!.initCanvasContext()
+
+private var mChart: F2Chart? = null
+    override fun onCanvasDraw(canvasView: F2CanvasView) {
+        if (mChart == null) {
+            mChart = F2Chart.create(
+                canvasView.context,
+                "SingleIntervalChart_2",
+                canvasView.width.toDouble(),
+                canvasView.height.toDouble()
+            )
+        }
+        mChart!!.setCanvas(canvasView)
+        mChart!!.padding(20.0, 10.0, 10.0, 10.0)
+        mChart!!.source(loadAssetFile(canvasView.context, "mockData_singleIntervalChart_2.json"))
+        mChart!!.interval().position("genre*sold").color("genre")
+        mChart!!.setScale("sold", ScaleConfigBuilder().min(0.0))
+        mChart!!.setScale("genre", ScaleConfigBuilder().range(doubleArrayOf(0.1, 0.9)))
+        mChart!!.legend(
+            "genre",
+            LegendConfigBuild().enable(true).position("top").symbol("circle").setOption("radius", 3)
+        )
+        mChart!!.render()
+    }
+
+    override fun onDestroy() {
+        if (mChart != null) {
+            mChart!!.destroy()
+        }
+    }
 ```
 
 ## 联系我们

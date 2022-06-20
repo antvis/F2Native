@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/render1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="绘制_1"/>
+
+                <Button
+                    android:id="@+id/render2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="绘制_2"/>
+
+                <Button
+                    android:id="@+id/render3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="render_3"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/destroy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="destroy"/>
+
+            <LinearLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="600dp"
+                android:background="#220000ff"
+                android:orientation="vertical"
+                android:padding="20dp"/>
+
+            <FrameLayout
+                android:id="@+id/container2"
+                android:layout_width="match_parent"
+                android:layout_height="600dp"
+                android:layout_marginTop="10dp"
+                android:background="#2200ff00"
+                android:padding="20dp"/>
+        </LinearLayout>
+    </ScrollView>
+
+
+</FrameLayout>

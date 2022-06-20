@@ -31,7 +31,7 @@ F2Native 支持 Android，iOS，MacOS 平台。使用跨平台语言 C++ 来生�
 
 ## Demos
 
-[Chart Demos](https://f2native.antv.vision/zh/docs/examples/line/line)
+[图表实例](https://f2native.antv.vision/zh/docs/examples/line/line)
 
 ## 快速开始
 

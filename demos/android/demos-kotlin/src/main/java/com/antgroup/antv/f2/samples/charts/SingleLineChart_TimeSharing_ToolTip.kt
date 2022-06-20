@@ -23,7 +23,7 @@ class SingleLineChart_TimeSharing_ToolTip : F2CanvasView.Adapter {
                 canvasView.width.toDouble(),
                 canvasView.height.toDouble()
             )
-            canvasView.setOnCanvasTouchListener { canvasView, event -> mChart.postTouchEvent(event) }
+            canvasView.setOnCanvasTouchListener { canvasView, event -> mChart!!.postTouchEvent(event) }
         }
         mChart!!.setCanvas(canvasView)
         mChart!!.padding(10.0, 0.0, 0.0, 0.0)

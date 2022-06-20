@@ -34,6 +34,8 @@ class CanvasImage {
   private:
     //在ios上是CGImageRef
     void *image_ = nullptr;
+    //在ios上是一个下载器
+    void *downloader_ = nullptr;
     std::string url_;
 };
 

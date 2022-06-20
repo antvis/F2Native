@@ -102,6 +102,7 @@
 		CC76557826C5220100061FCF /* MultiIntervalUIView3.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultiIntervalUIView3.m; sourceTree = "<group>"; };
 		CC76557A26C5220100061FCF /* MultiIntervalUIView3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiIntervalUIView3.h; sourceTree = "<group>"; };
 		CC79F278285B24A400A5623C /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
+		CC79F27D285C69F400A5623C /* libF2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libF2.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC8582392756070900C4D435 /* MarketMovingUIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarketMovingUIView.h; sourceTree = "<group>"; };
 		CC85823B2756070900C4D435 /* MarketMovingUIView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MarketMovingUIView.m; sourceTree = "<group>"; };
 		CC8BE29C26F2EE9C00F52359 /* RadarAreaUIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RadarAreaUIView.h; sourceTree = "<group>"; };
@@ -226,6 +227,7 @@
 		CC612BE8250B2B7C00315124 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CC79F27D285C69F400A5623C /* libF2.a */,
 				CC612BFC250B54E600315124 /* libc++.tbd */,
 				CC79F278285B24A400A5623C /* libc++.tbd */,
 				4B8FCBB5B94EA98197F9F583 /* libPods-F2Native.a */,

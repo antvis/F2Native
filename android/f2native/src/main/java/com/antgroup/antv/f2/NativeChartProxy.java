@@ -300,6 +300,20 @@ public final class NativeChartProxy {
         return nDestroyFunction(mNativeChartHandler, nativeFunctionHandle);
     }
 
+    void adjustScale(boolean adjust) {
+        if (mNativeChartHandler == 0) {
+            return ;
+        }
+        nAdjustScale(mNativeChartHandler, adjust);
+    }
+
+    void syncYScale(boolean sync) {
+        if (mNativeChartHandler == 0) {
+            return;
+        }
+        nAdjustScale(mNativeChartHandler, sync);
+    }
+
     long getNativeChartHandler() {
         return mNativeChartHandler;
     }
@@ -382,4 +396,7 @@ public final class NativeChartProxy {
 
     private native static int nConfig(long nativeChartHandler, String config);
 
+    private native static void nAdjustScale(long nativeChartHandler, boolean adjust);
+
+    private native static void nSyncYScale(long nativeChartHandler, boolean sync);
 }

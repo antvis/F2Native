@@ -42,6 +42,7 @@
     self.candleChart.tooltip(@{});
     self.candleChart.render();
 
+    self.subChart.adjustScale(NO);
     self.subChart.canvas(self.canvasView);
     self.subChart.margin(0, 210, 0, 0);
     self.subChart.padding(15, 10, 15, 10);

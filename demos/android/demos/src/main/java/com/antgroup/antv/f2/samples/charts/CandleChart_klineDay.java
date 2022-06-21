@@ -58,6 +58,7 @@ public class CandleChart_klineDay implements F2CanvasView.Adapter, F2CanvasView.
         mCandleChart.render();
 
         // sub chart
+        mSubChart.adjustScale(false);
         mSubChart.setCanvas(canvasView);
         mSubChart.margin(0, (canvasView.getHeight() * 3 / 4) / canvasView.getResources().getDisplayMetrics().density, 0, 0);
         mSubChart.padding(12, 0, 0, 20);

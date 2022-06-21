@@ -6,6 +6,7 @@
 - (void)chartRender {
     NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"Res/mockData_multiAxiesLine" ofType:@"json"];
     NSString *jsonData = [NSString stringWithContentsOfFile:jsonPath encoding:NSUTF8StringEncoding error:nil];
+    self.chart.syncYScale(NO);
     self.chart.canvas(self.canvasView).padding(20, 10, 20, 0.f).source(jsonData);
     self.chart.scale(@"date", @{@"tickCount": @(5)});
     self.chart.scale(@"value", @{@"nice": @(YES)});

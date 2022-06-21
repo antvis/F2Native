@@ -207,7 +207,7 @@ void animate::GeomAnimate::OnBeforeCanvasDraw() {
 
     isUpdate_ = true;
 
-    if(chart_->animateCfg_.is_boolean() && chart_->animateCfg_ == false) {
+    if(animateCfg_.is_boolean() && animateCfg_ == false) {
         return;
     }
 

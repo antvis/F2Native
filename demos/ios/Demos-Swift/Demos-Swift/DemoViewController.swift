@@ -24,10 +24,13 @@ class DemoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.edgesForExtendedLayout = UIRectEdge.init(rawValue:0);
-        let appearance = UINavigationBarAppearance.init();
-        appearance.configureWithOpaqueBackground();
-        self.navigationController?.navigationBar.standardAppearance = appearance;
-        self.navigationController?.navigationBar.scrollEdgeAppearance = appearance;
+        if #available(iOS 13.0, *) {
+            let appearance = UINavigationBarAppearance.init()
+            appearance.configureWithOpaqueBackground()
+            self.navigationController?.navigationBar.standardAppearance = appearance
+            self.navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        }
+     
         self.title = self.info.object(forKey: "name") as? String
         self.navigationController?.navigationBar.backgroundColor = UIColor.white
         self.view.backgroundColor = UIColor.white;

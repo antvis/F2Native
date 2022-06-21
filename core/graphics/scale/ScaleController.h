@@ -18,6 +18,7 @@
 #include "../../nlohmann/json.hpp"
 
 namespace xg {
+class XChart;
 namespace scale {
 
 static nlohmann::json AdjustRange(const nlohmann::json &fieldColumn, std::unique_ptr<canvas::coord::AbstractCoord> &coord) {
@@ -123,47 +124,34 @@ static std::unique_ptr<AbstractScale> MakeScale(const std::string &field_,
 
 class ScaleController {
   public:
+    ScaleController(XChart *chart): chart_(chart) {}
     const std::unique_ptr<AbstractScale> &CreateScale(const std::string &field_,
                                                       const nlohmann::json &data,
                                                       utils::Tracer *tracer,
-                                                      std::unique_ptr<canvas::coord::AbstractCoord> &coord) {
-        nlohmann::json fieldConfig = json::Get(colConfigs, field_);
-        if(!scales_.empty()) {
-            std::string _key = field_;
-            if(fieldConfig.contains("assign")) {
-                _key = fieldConfig["assign"];
-            }
-
-            std::vector<std::unique_ptr<AbstractScale>>::iterator it =
-                std::find_if(scales_.begin(), scales_.end(),
-                             [&](const std::unique_ptr<AbstractScale> &item) { return (item->field == _key); });
-
-            if(it != scales_.end()) {
-                // TODO 更新 scale config, 暂时没有什么 config
-                return (*it);
-            }
-        }
-        std::unique_ptr<AbstractScale> _target = MakeScale(field_, data, colConfigs[field_], tracer, coord);
-        scales_.push_back(std::move(_target));
-        return scales_[scales_.size() - 1];
-    }
+                                                      std::unique_ptr<canvas::coord::AbstractCoord> &coord);
 
     void UpdateColConfig(const std::string &field, nlohmann::json cfg) { colConfigs[field] = cfg; }
 
-    bool Empty() { return scales_.empty(); }
+    inline bool Empty() { return scales_.empty(); }
 
-    void Clear() {
+    inline void Clear() {
         scales_.clear();
         colConfigs = {};
     };
     
-    size_t ScaleCount() {
+    inline size_t ScaleCount() {
         return scales_.size();
     }
+    
+    void SyncYScale();
+    void SyncYScale(const size_t valueStart, const size_t valueEnd, bool nice);
+    void UpdateScale(const std::string &field, const nlohmann::json &cfg);
+    void AdjustScale();
 
   private:
     std::vector<std::unique_ptr<AbstractScale>> scales_{};
     nlohmann::json colConfigs;
+    XChart *chart_ = nullptr;
 };
 } // namespace scale
 } // namespace xg

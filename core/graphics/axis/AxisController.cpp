@@ -67,7 +67,6 @@ void xg::axis::AxisController::DrawAxes(xg::XChart *chart, canvas::CanvasContext
         const std::string &yField = yFields[index];
         if(!axisConfig_.contains(yField)) {
             axisConfig_[yField] = AxisController::MergeDefaultConfig({});
-            axisConfig_[yField]["grid"] = false; // y 轴默认不显示网格
         }
 
         if(!axisConfig_[yField]["hidden"]) {
@@ -116,10 +115,6 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
     bool showGrid = axis->position == "bottom"; // bottom 默认显示轴
     if(fieldCfg["grid"].is_object()) {
         showGrid = true;
-    }
-
-    if(showGrid) {
-        // 默认值
         axis->gridCfg = fieldCfg["grid"];
     }
 
@@ -145,9 +140,6 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
     }
 
     if(axis->labelCfg.is_object()) {
-        float labelMargin = axis->labelCfg["labelMargin"];
-        labelMargin *= chart.GetCanvasContext().GetDevicePixelRatio();
-
         float labelOffset = axis->labelCfg["labelOffset"];
         labelOffset *= chart.GetCanvasContext().GetDevicePixelRatio();
 
@@ -457,12 +449,6 @@ void xg::axis::AxisController::DrawLabel(XChart &chart, std::unique_ptr<xg::axis
     // std::unique_ptr<xg::shape::Text> text = xg::make_unique<xg::shape::Text>(label.text.c_str(), xg::util::Point(start.x,
     // start.y), label.fontSize, "", label.fill);
 
-    float labelMargin = 0.f;
-    if(axis->labelCfg.is_object()) {
-        labelMargin = axis->labelCfg["labelMargin"];
-    }
-    labelMargin *= context.GetDevicePixelRatio();
-
     float labelOffset = 0.f;
     if(axis->labelCfg.is_object()) {
         labelOffset = axis->labelCfg["labelOffset"];
@@ -470,16 +456,12 @@ void xg::axis::AxisController::DrawLabel(XChart &chart, std::unique_ptr<xg::axis
     labelOffset *= context.GetDevicePixelRatio();
 
     auto &coord = chart.GetCoord();
-    size_t size = axis->labels.size();
     
     //textAlign 默认center textBaseline 默认bottom
     //pt默认对应的是字体中下方的锚点
     while(axis->labels.size() > 0) {
         auto text = std::move(axis->labels[0]);
         axis->labels.erase(axis->labels.begin());
-
-        bool isFirst = axis->labels.size() == (size - 1);
-        bool isLast = axis->labels.size() == 0;
 
         double tickValue = text->ext["tickValue"];
         xg::util::Point pt = axis->GetOffsetPoint(tickValue, labelOffset);
@@ -493,41 +475,25 @@ void xg::axis::AxisController::DrawLabel(XChart &chart, std::unique_ptr<xg::axis
         
         //等于把pt.y轴下移了5个dp，textbaseline变成了middle
         //这时候textAlign是center textBaseline是middle，等于pt对应了字体中心的锚点
-        GetSidePoint(pt, inner ? 0 : bbox.height / 2, dimType);
+//        GetSidePoint(pt, inner ? 0 : bbox.height / 2, dimType);
         auto txtPoint = text->GetPoint();
         pt.x += txtPoint.x;
         pt.y += txtPoint.y;
 
         if(axis->position == "bottom") {
-            if(isFirst) {
-                pt.x += labelMargin;
-            } else if(isLast) {
-                pt.x -= labelMargin;
-            }
             pt.y += labelOffset;
-            pt.y += bbox.height / 2;
+            pt.y += bbox.height;
             pt.y += (text->GetLineCount() - 1) * text->GetSpacingY() * context.GetDevicePixelRatio();
         } else if(axis->position == "left") {
-            if(isFirst) {
-                pt.y -= labelMargin;
-            } else if(isLast) {
-                pt.y += labelMargin;
-            }
             pt.y += bbox.height / 2;
-            pt.x += labelOffset;
+            pt.x -= labelOffset;
 
             if(text->GetTextAlign() == "center") {
                 pt.x -= axis->maxWidth / 2;
             } else if(text->GetTextAlign() == "left" || text->GetTextAlign() == "start") {
                 pt.x -= axis->maxWidth;
             }
-
         } else if(axis->position == "right") {
-            if(isFirst) {
-                pt.y -= labelMargin;
-            } else if(isLast) {
-                pt.y += labelMargin;
-            }
             pt.y += bbox.height / 2;
             pt.x += labelOffset; // + bbox.width / 2;
 

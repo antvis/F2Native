@@ -188,7 +188,7 @@ static void JsonRangeInGeomDataArray(const nlohmann::json &geomDataArray,
             std::size_t _end = fmin(end, groupData.size() - 1);
             if(groupData.is_array() && _end > start) {
                 for(std::size_t column = start; column <= _end; ++column) {
-                    const nlohmann::json item = groupData[column];
+                    const nlohmann::json &item = groupData[column];
                     if(item.contains(field)) {
                         if(item[field].is_number()) {
                             double val = item[field];

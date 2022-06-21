@@ -89,7 +89,7 @@ class AxisController {
         nlohmann::json gridCfg = {{"type", "line"},      // 网格线类型
                                   {"lineWidth", .6f},    // 网格线线宽
                                   {"stroke", "#E8E8E8"}, // 网格线颜色
-                                  {"dash", {10, 10}}}; 
+                                  {"dash", {10, 10}}};
 
         nlohmann::json line = {// 轴线配置
                                {"color", "#999999"},
@@ -101,8 +101,7 @@ class AxisController {
             // 轴标签配置
             {"textColor", "#808080"}, // 标签文字颜色
             {"textSize", DEFAULT_FONTSIZE},       // 标签文字字号
-            {"labelMargin", 0.f},     // 轴上标签的外边距. x 轴为左右外边距， y 轴为上下外边距
-            {"labelOffset", 0.f},     // 轴上标签的垂直方向偏移量。x 轴为上下的整体偏移量， y 轴为左右的整体偏移量
+            {"labelOffset", 5.f},     // 轴上标签的垂直方向偏移量。x 轴为上下的整体偏移量， y 轴为左右的整体偏移量
             {"textAlign", "center"},  //文字水平对齐方式 start center end
             {"textBaseline", "bottom"},//文字垂直对齐方式 top middle bottom
             {"inner", false}            //轴上的文字是否在图表内部

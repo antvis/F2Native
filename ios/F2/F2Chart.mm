@@ -411,4 +411,18 @@ class IOSF2Function : public func::F2Function {
     };
 }
 
+- (F2Chart * (^)(BOOL adjust))adjustScale {
+    return ^id(BOOL adjust) {
+        self.chart->AdjustScale(adjust);
+        return self;
+    };
+}
+
+- (F2Chart * (^)(BOOL sync))syncYScale {
+    return ^id(BOOL sync) {
+        self.chart->SyncYScale(sync);
+        return self;
+    };
+}
+
 @end

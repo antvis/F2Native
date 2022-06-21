@@ -350,6 +350,20 @@ public class F2Chart {
         mChartProxy.clear();
     }
 
+    //设置当geom中有interval的时候，是否调整max, min, range三个参数, 默认是true
+    public void adjustScale(boolean adjust) {
+        if (!hasDestroyed) {
+            mChartProxy.adjustScale(adjust);
+        }
+    }
+
+    //是否同步多个y轴的最值，默认为true
+    public void syncYScale(boolean sync) {
+        if (!hasDestroyed) {
+            mChartProxy.syncYScale(sync);
+        }
+    }
+
     public String getScaleTicks(String field) {
         if (hasDestroyed) {
             return null;

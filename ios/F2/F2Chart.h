@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 快捷创建chart
 /// @param size dp为单位
 /// @param name 输出日志时会附加name
-+ (F2Chart *)chart:(CGSize)size withName:(NSString *)name;
++ (F2Chart *)chart:(CGSize)size name:(NSString *)name;
 
 ///  设置canvas。设置canvas时，需要先清屏，调用[[canvas getContext2D] clearScreen]
 ///  gcanvas的创建和销毁需要业务自己完成，清理不干净会有内存泄露

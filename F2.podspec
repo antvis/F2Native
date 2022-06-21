@@ -9,14 +9,14 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "F2"
-  spec.version      = "2.0.15"
+  spec.version      = "2.1.0"
   spec.summary      = "An elegant, interactive and flexible native charting library for mobile."
   spec.description  = "F2Native is born for mobile visual development. It is out-of-the-box,cross-platform, high-performance visualization solution . Support Android and iOS perfect, moreover have high-performance experience in low-end mobile. Based on the grammar of graphics, F2Native provides all the chart types you'll need. Our mobile design guidelines enable better user experience in mobile visualzation projects."
 
   spec.homepage     = "https://f2native.antv.vision"
   spec.license      = { :type => "MIT", :file => "LICENSE" }
   spec.author             = { "weiqingtangx" => "razer751@163.com" }
-  spec.source       = { :git => "https://github.com/antvis/F2Native.git", :tag => "2.0.15" }
+  spec.source       = { :git => "https://github.com/antvis/F2Native.git", :tag => spec.version }
   spec.source_files  =  "ios/F2/*", "core/graphics/**/*", "core/ios/**/*", "core/utils/**/*", "core/bridge/**/*", "core/nlohmann/**/*"
   spec.public_header_files = "ios/F2/*.{h}"
   spec.prefix_header_file = 'ios/F2/F2-prefix.pch'

@@ -84,7 +84,7 @@
     if(!_candleChart) {
         CGSize size = self.canvasView.bounds.size;
         size.height = size.height * 3 / 4;
-        _candleChart = [F2Chart chart:size withName:@"KLineChart#Candle"];
+        _candleChart = [F2Chart chart:size name:@"KLineChart#Candle"];
     }
     return _candleChart;
 }
@@ -93,7 +93,7 @@
     if(!_subChart) {
         CGSize size = self.canvasView.bounds.size;
         size.height = size.height / 4;
-        _subChart = [F2Chart chart:size withName:@"KLineChart#Sub"];
+        _subChart = [F2Chart chart:size name:@"KLineChart#Sub"];
     }
     return _subChart;
 }

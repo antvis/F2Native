@@ -47,7 +47,7 @@ class IOSF2Function : public func::F2Function {
 
 @implementation F2Chart
 
-+ (F2Chart *)chart:(CGSize)size withName:(NSString *)name {
++ (F2Chart *)chart:(CGSize)size name:(NSString *)name {
     return [[F2Chart alloc] initWithSize:size name:name];
 }
 

@@ -94,7 +94,7 @@
    if(!_priceChart) {
        CGSize size = self.canvasView.bounds.size;
        size.height = size.height * 3 / 4;
-       _priceChart = [F2Chart chart:size withName:@"MarketMovingUIView#pricechart"];
+       _priceChart = [F2Chart chart:size name:@"MarketMovingUIView#pricechart"];
    }
    return _priceChart;
 }

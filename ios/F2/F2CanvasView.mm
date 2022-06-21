@@ -15,7 +15,7 @@
 
 @implementation F2CanvasView
 
-+ (instancetype)canvasWithFrame:(CGRect)frame {
++ (instancetype)canvas:(CGRect)frame {
     return [[F2CanvasView alloc] initWithFrame:frame];
 }
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.antgroup.antv.f2.samples"
+<manifest package="com.antgroup.antv.f2.kotlinsamples"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
@@ -9,24 +9,24 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ChartListActivity"
+            android:name="com.antgroup.antv.f2.kotlinsamples.ChartListActivity"
             android:label="@string/title_activity_chart_list"
             android:theme="@style/AppTheme"></activity>
         <activity
-            android:name=".SampleActivity"
+            android:name="com.antgroup.antv.f2.kotlinsamples.SampleActivity"
             android:label="@string/title_activity_sample"
             android:theme="@style/AppTheme"></activity>
         <activity
-            android:name=".SampleActivityHorizontal"
+            android:name="com.antgroup.antv.f2.kotlinsamples.SampleActivityHorizontal"
             android:label="@string/title_activity_sample"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".BridgeActivity"
+            android:name="com.antgroup.antv.f2.kotlinsamples.BridgeActivity"
             android:label="@string/title_activity_bridge"
             android:theme="@style/AppTheme" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name="com.antgroup.antv.f2.kotlinsamples.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

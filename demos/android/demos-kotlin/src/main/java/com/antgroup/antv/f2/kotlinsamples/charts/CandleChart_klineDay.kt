@@ -79,6 +79,7 @@ class CandleChart_klineDay : F2CanvasView.Adapter, OnCanvasTouchListener {
         mCandleChart!!.render()
 
         // sub chart
+        mSubChart!!.adjustScale(false)
         mSubChart!!.setCanvas(canvasView)
         mSubChart!!.margin(
             0.0,

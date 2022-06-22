@@ -94,7 +94,7 @@ repositories {
 }
 
 dependencies {
-     implementation 'com.github.antvis:F2Native:2.0.15'
+      implementation 'com.github.antvis:F2Native:latest.release'
 }
 ```
 

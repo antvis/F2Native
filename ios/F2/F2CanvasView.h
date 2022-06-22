@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 初始化view
 /// @param frame 视图大小
-+ (instancetype)canvasWithFrame:(CGRect)frame;
++ (instancetype)canvas:(CGRect)frame;
 
 /// 不要使用init方法初始化
 - (instancetype)init NS_UNAVAILABLE;

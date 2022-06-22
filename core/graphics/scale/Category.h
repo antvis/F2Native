@@ -19,56 +19,21 @@ namespace scale {
  */
 class Category : public AbstractScale {
   public:
-    Category(const std::string &_field, const nlohmann::json &_values, const nlohmann::json &config = {})
-        : AbstractScale(_field, _values) {
-        if(config.is_object()) {
-            config_.merge_patch(config);
-        }
-        this->InitConfig();
+    Category(const std::string &_field, const nlohmann::json &_values, const nlohmann::json &_config)
+        : AbstractScale(_field, _values, _config) {
+            
+        InitConfig(_config);
+        ticks = CalculateTicks();
     }
 
     ScaleType GetType() const noexcept override { return ScaleType::Cat; }
 
     void Change(const nlohmann::json &cfg = {}) override {
-        bool valuesChanged = false;
-        if(cfg.contains("values")) {
-            values = cfg["values"];
-            valuesChanged = true;
-        }
-
-        if(cfg.contains("range") && cfg["range"].is_array()) {
-            const nlohmann::json &range = cfg["range"];
-            rangeMin = range[0];
-            rangeMax = range[1];
-            config_["range"] = range;
-        }
-
-        bool reCalcTicks = true;
-        if(!cfg.contains("ticks")) {
-            if(config_.contains("tickCount")) {
-                this->tickCount = config_["tickCount"];
-            }
-        } else {
-            if(cfg["ticks"].is_boolean()) {
-                reCalcTicks = cfg["ticks"];
-            } else if(cfg["ticks"].is_array()) {
-                this->ticks = cfg["ticks"];
-                reCalcTicks = false;
-            }
-        }
-
-        if(cfg.contains("domain") && cfg["domain"].is_array()) {
-            const nlohmann::json &domain = cfg["domain"];
-            this->min = domain[0];
-            this->max = domain[1];
-        } else if(valuesChanged) {
-            this->min = 0.;
-            this->max = fmax(0, values.size() - 1);
-        }
-
-        if(reCalcTicks) {
-            this->ticks = this->CalculateTicks();
-        }
+        values = json::GetArray(cfg, "values", values);
+        
+        //里面max和min的计算依赖上面的values
+        InitConfig(cfg);
+        this->ticks = this->CalculateTicks();
     }
 
     double Scale(const nlohmann::json &key) override {
@@ -169,45 +134,24 @@ class Category : public AbstractScale {
 
     static inline double CalculateValue(double percent, double min, double max) { return min + percent * (max - min); }
 
-    virtual void InitConfig() {
-        rangeMin = 0.0;
-        rangeMax = 1.0;
-        if(config_.contains("range") && config_["range"].is_array()) {
-            const nlohmann::json &range = config_["range"];
-            if (range.size() >= 2) {
-                rangeMin = range[0];
-                rangeMax = range[1];
-            }
-        }
+    virtual void InitConfig(const nlohmann::json &config) override {
+        AbstractScale::InitConfig(config);
 
-        if(config_.contains("domain") && config_["domain"].is_array()) {
-            nlohmann::json &domain = config_["domain"];
+        if(config.contains("domain") && config["domain"].is_array()) {
+            const nlohmann::json &domain = config["domain"];
             this->min = domain[0];
             this->max = domain[1];
         } else {
             this->min = 0.;
             this->max = fmax(0, values.size() - 1);
         }
-
-        if(config_.contains("tickCount")) {
-            this->tickCount = config_["tickCount"];
+        
+        if(config.contains("tickCount")) {
+            this->tickCount = config["tickCount"];
         } else {
             this->tickCount = GetValuesSize();
         }
-
-        if(config_.contains("ticks") && config_["ticks"].is_array()) {
-            this->ticks = config_["ticks"];
-        } else {
-            this->ticks = this->CalculateTicks();
-        }
-                
-        tickCallbackId = xg::json::GetString(config_, "tick");
     }
-
-  protected:
-    nlohmann::json config_ = {
-        {"range", {0.0, 1.0}},
-    };
 }; // namespace scale
 } // namespace scale
 } // namespace xg

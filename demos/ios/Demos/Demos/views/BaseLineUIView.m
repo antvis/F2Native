@@ -72,7 +72,7 @@
 
 - (F2Chart *)chart {
     if(!_chart) {
-        _chart = [F2Chart chart:self.chartSize withName:NSStringFromClass([self class])];
+        _chart = [F2Chart chart:self.chartSize name:NSStringFromClass([self class])];
     }
     return _chart;
 }

@@ -36,11 +36,8 @@ With the power of grammar of graphics, F2Native including classical charts such 
 [Chart Demos](https://f2native.antv.vision/en/docs/examples/line/line)
 
 
-## Getting Started
-<p style = "display:block;margin:0 auto;">
-<img width = "260" src = "docs/images/ios_barchart.jpg"/> 
-<img width = "260" src = "docs/images/android_barchart.jpg"/>
-</p>
+### iOS
+<img width = "260" src = "https://gw.alipayobjects.com/mdn/rms_b413ff/afts/img/A*ZJ-iRby9Gt4AAAAAAAAAAAAAARQnAQ"/>
 
 #### CocoaPod Setup
 ```pod
@@ -97,7 +94,7 @@ repositories {
 }
 
 dependencies {
-     implementation 'com.github.antvis:F2Native:2.0.15'
+      implementation 'com.github.antvis:F2Native:latest.release'
 }
 ```
 

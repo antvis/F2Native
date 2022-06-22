@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include "../func/Func.h"
+#include "../util/json.h"
 #include "../../nlohmann/json.hpp"
 
 namespace xg {
@@ -39,7 +40,7 @@ class Tick {
  */
 class AbstractScale {
   public:
-    AbstractScale(const std::string &_field, const nlohmann::json &_values) : field(_field) {
+    AbstractScale(const std::string &_field, const nlohmann::json &_values, const nlohmann::json &_cfg) : field(_field) {
         if(_values.is_array()) {
             this->values = _values;
         }
@@ -49,7 +50,7 @@ class AbstractScale {
     // 度量类型 [Identity | Cat | TimeCat | Linear]
     virtual ScaleType GetType() const noexcept = 0;
 
-    virtual void Change(const nlohmann::json &cfg = {}) = 0;
+    virtual void Change(const nlohmann::json &cfg) = 0;
 
     // double Scale(const nlohmann::json &key) {
     //     util::Data _key = util::ConvertJsonToData(key);
@@ -84,10 +85,13 @@ class AbstractScale {
     virtual inline std::size_t GetValuesSize() noexcept { return values.size(); }
 
     virtual std::string GetTickText(const nlohmann::json &item, XChart *chart);
+    
+    virtual void InitConfig(const nlohmann::json &_cfg);
+    
   public:
     std::string field;     // 度量字段名称
-    double rangeMin = 0.0; // 取值范围
-    double rangeMax = 1.0; // 取值范围
+    double rangeMin = 0; // 取值范围
+    double rangeMax = 1; // 取值范围
     size_t tickCount = 5;  // 刻度总数
     double min = 0;
     double max = 0;

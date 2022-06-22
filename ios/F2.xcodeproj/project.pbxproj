@@ -147,6 +147,8 @@
 		CC69E013284F2F6600261105 /* F2ChartBridgeTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC69E012284F2F6600261105 /* F2ChartBridgeTests.mm */; };
 		CC69E019284F51C400261105 /* F2TestUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = CC69E018284F51C400261105 /* F2TestUtil.m */; };
 		CC79F1CF285AAFF900A5623C /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC79F1CE285AAFF900A5623C /* libc++.tbd */; };
+		CC79F2B228619F6B00A5623C /* ScaleController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC79F2B128619F6B00A5623C /* ScaleController.cpp */; };
+		CC79F2B328619F6B00A5623C /* ScaleController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC79F2B128619F6B00A5623C /* ScaleController.cpp */; };
 		CC8955112844DAC400AD24E0 /* BridgeRailingIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = CC89550F2844DAC300AD24E0 /* BridgeRailingIOS.h */; };
 		CC8955122844DAC400AD24E0 /* BridgeRailingIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC8955102844DAC300AD24E0 /* BridgeRailingIOS.mm */; };
 		CC8955252847653100AD24E0 /* Scale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC8955242847653100AD24E0 /* Scale.cpp */; };
@@ -709,6 +711,7 @@
 		CC793C3B2509FBAA00E9D913 /* F2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = F2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC79F1AB28587A8C00A5623C /* XChart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XChart.h; sourceTree = "<group>"; };
 		CC79F1CE285AAFF900A5623C /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
+		CC79F2B128619F6B00A5623C /* ScaleController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScaleController.cpp; sourceTree = "<group>"; };
 		CC89550F2844DAC300AD24E0 /* BridgeRailingIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BridgeRailingIOS.h; sourceTree = "<group>"; };
 		CC8955102844DAC300AD24E0 /* BridgeRailingIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BridgeRailingIOS.mm; sourceTree = "<group>"; };
 		CC8955242847653100AD24E0 /* Scale.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Scale.cpp; sourceTree = "<group>"; };
@@ -911,6 +914,7 @@
 				CC8955242847653100AD24E0 /* Scale.cpp */,
 				955723A725ECBF7200D2FC07 /* TimeCategory.h */,
 				955723A825ECBF7200D2FC07 /* ScaleController.h */,
+				CC79F2B128619F6B00A5623C /* ScaleController.cpp */,
 				955723A925ECBF7200D2FC07 /* Identity.h */,
 				955723AA25ECBF7200D2FC07 /* KLineCat.h */,
 				955723AB25ECBF7200D2FC07 /* Category.h */,
@@ -1537,6 +1541,7 @@
 				CC612BF7250B2EF700315124 /* F2Chart.mm in Sources */,
 				CC612BFA250B2EF700315124 /* F2Guide.mm in Sources */,
 				CC3C01E426A00E9300335A1C /* F2Logger.mm in Sources */,
+				CC79F2B228619F6B00A5623C /* ScaleController.cpp in Sources */,
 				CC612BF9250B2EF700315124 /* F2Geom.mm in Sources */,
 				9557240A25ECBF7200D2FC07 /* Text.cpp in Sources */,
 				955723F125ECBF7200D2FC07 /* Line.cpp in Sources */,
@@ -1557,6 +1562,7 @@
 				CCCDE9D72744D9D70060D768 /* F2ScalesTests.mm in Sources */,
 				CC69E019284F51C400261105 /* F2TestUtil.m in Sources */,
 				CCCDE9ED2744E2E30060D768 /* F2UtilsTests.mm in Sources */,
+				CC79F2B328619F6B00A5623C /* ScaleController.cpp in Sources */,
 				CC8C619A278FF92B00F540D7 /* F2PixelMatch.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -28,3 +28,23 @@ std::string AbstractScale::GetTickText(const nlohmann::json &item, XChart *chart
         return ""; // TODO get Tick text from callback
     }
 }
+
+void AbstractScale::InitConfig(const nlohmann::json &cfg) {
+    if (!cfg.is_object()) {
+        return;
+    }
+    tickCount = json::GetIntNumber(cfg, "tickCount", int(tickCount));
+    tickCount = fmax(2, tickCount);
+
+    min = json::GetNumber(cfg, "min", min);
+    max = json::GetNumber(cfg, "max", max);
+    auto &range = json::GetArray(cfg, "range");
+    if (range.size() >= 2) {
+        rangeMin = range[0];
+        rangeMax = range[1];
+    }
+    
+    tickCallbackId = xg::json::GetString(cfg, "tick");
+    
+    ticks = json::GetArray(cfg, "ticks");
+}

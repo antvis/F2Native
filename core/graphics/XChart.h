@@ -176,18 +176,25 @@ class XChart {
     /// 清除所有的配置项
     void Clear();
     
+    ///设置当geom中有interval的时候，是否调整max, min, range三个参数, 默认是true
+    ///@param adjust 是否调整，默认是调整的，可设置false 关闭
+    inline void AdjustScale(bool adjust) { adjustScale_ = adjust; }
+    
+    ///是否同步多个y轴的最值，默认为true
+    ///@param sync 可设置false关闭
+    inline void SyncYScale(bool sync) { syncY_ = sync; }
     
     /// 注册业务测的回调函数，所有回调都会通过这个callback回调
     /// @param callback 回调函数
-    inline void SetInvokeFunction(func::F2Function *callback) { _invokeFunction = callback; }
+    inline void SetInvokeFunction(func::F2Function *callback) { invokeFunction_ = callback; }
     
     
     /// 调用callback
     /// @param functionId  回调函数的id
     /// @param param  参数，是一个json string
     inline const std::string InvokeFunction(const std::string &functionId, const std::string &param = "{}") {
-        if(_invokeFunction) {
-            return _invokeFunction->Execute(functionId, param);
+        if(invokeFunction_) {
+            return invokeFunction_->Execute(functionId, param);
         }else {
             return "{}";
         }
@@ -372,8 +379,12 @@ class XChart {
 
     std::string chartId_;
     std::string requestFrameHandleId_ = "";
-    nlohmann::json animateCfg_ = false;
-    func::F2Function *_invokeFunction;
+    func::F2Function *invokeFunction_ = nullptr;
+    
+    //当geom中有interval的时候自动调整max, min, range三个参数
+    bool adjustScale_ = true;
+    //当geom中有过个图形时，是否同步他们的最值
+    bool syncY_ = true;
 };
 } // namespace xg
 

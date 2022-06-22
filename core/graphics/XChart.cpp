@@ -27,7 +27,7 @@ XChart::XChart(const std::string &name, double width, double height, double rati
     geomShapeFactory_ = xg::make_unique<geom::shape::GeomShapeFactory>();
 
     // 初始化度量控制器
-    scaleController_ = new scale::ScaleController();
+    scaleController_ = new scale::ScaleController(this);
     this->logTracer_->trace("%s", "new ScaleController instance.");
     // 画布
     this->canvas_ = new canvas::Canvas();
@@ -449,6 +449,17 @@ bool XChart::Render() {
 
         this->logTracer_->trace("%s", "foreach geom init");
         std::for_each(geoms_.begin(), geoms_.end(), [this](auto &geom) -> void { geom->Init(this); });
+        
+        //调整interval中的min和max值
+        if (adjustScale_) {
+            scaleController_->AdjustScale();
+        }
+
+        //调整interval中的rangeMin和rangeMax值
+        if (syncY_) {
+            scaleController_->SyncYScale();
+        }
+        
         rendered_ = true;
 
         this->NotifyAction(ACTION_CHART_AFTER_INIT);
@@ -746,8 +757,7 @@ XChart &XChart::CoordObject(const nlohmann::json &config) {
 XChart &XChart::AnimateObject(const nlohmann::json &config) {
     //config bool or object
     if (config.is_boolean() || config.is_object()) {
-        this->animateCfg_ = config;
+        geomAnimate_->SetAnimateConfig(config);
     }
-
     return *this;
 }

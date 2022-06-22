@@ -11,7 +11,7 @@ namespace scale {
 class TimeSharingLinear : public AbstractScale {
   public:
     TimeSharingLinear(const std::string &_field, nlohmann::json _values, nlohmann::json _config = {})
-        : AbstractScale(_field, _values), config_(_config) {
+        : AbstractScale(_field, _values, _config), config_(_config) {
         //入口检查 其它方法都判断这个变量
         if (!(isTimeRangeValid_ = CheckValidTimeRange(_config))) {
             return;

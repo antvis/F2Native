@@ -62,7 +62,7 @@
    if(!_priceChart) {
        CGSize size = self.canvasView.bounds.size;
        size.height = size.height * 3 / 4;
-       _priceChart = [F2Chart chart:size withName:@"TimeSharingUIView#pricechart"];
+       _priceChart = [F2Chart chart:size name:@"TimeSharingUIView#pricechart"];
    }
    return _priceChart;
 }
@@ -71,7 +71,7 @@
     if(!_subChart) {
         CGSize size = self.canvasView.bounds.size;
         size.height = size.height / 4;
-        _subChart = [F2Chart chart:size withName:@"TimeSharingUIView#Sub"];
+        _subChart = [F2Chart chart:size name:@"TimeSharingUIView#Sub"];
     }
     return _subChart;
 }

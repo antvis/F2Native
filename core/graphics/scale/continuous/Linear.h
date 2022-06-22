@@ -18,37 +18,17 @@ namespace scale {
 class Linear : public AbstractScale {
   public:
     // 线性度量
-    Linear(const std::string &_field, nlohmann::json _values, nlohmann::json _config = {}) : AbstractScale(_field, _values) {
+    Linear(const std::string &_field, nlohmann::json _values, const nlohmann::json &_config = {}) : AbstractScale(_field, _values, _config) {
+        
         InitConfig(_config);
-
-        this->ticks = this->CalculateTicks();
+        ticks = CalculateTicks();
     }
 
     ScaleType GetType() const noexcept override { return ScaleType::Linear; }
 
     void Change(const nlohmann::json &cfg = {}) override {
-        //        bool valueChanged = false;
-        // InitConfig(cfg);
-        // if(cfg.contains("values")) {
-        //     values = cfg["values"];
-        //     valueChanged = true;
-        // }
-
-        bool reCalcTicks = true;
-        if(cfg.contains("ticks")) {
-            if(cfg["ticks"].is_boolean()) {
-                reCalcTicks = cfg["ticks"];
-            } else if(cfg["ticks"].is_array()) {
-                this->ticks = cfg["ticks"];
-                reCalcTicks = false;
-            }
-        }
-
         InitConfig(cfg);
-
-        if(reCalcTicks) {
-            this->ticks = this->CalculateTicks();
-        }
+        this->ticks = this->CalculateTicks();
     }
 
     double Scale(const nlohmann::json &key) override {
@@ -82,7 +62,7 @@ class Linear : public AbstractScale {
 
   protected:
     nlohmann::json CalculateTicks() override {
-        if(config_["nice"] == true || IsEqual(this->min, this->max)) {
+        if(nice == true || IsEqual(this->min, this->max)) {
             nlohmann::json _ticks = NiceCalculateTicks();
             //修改最值
             this->min = _ticks[0];
@@ -105,10 +85,11 @@ class Linear : public AbstractScale {
         }
     }
 
-    nlohmann::json NiceCalculateTicks() {
-        nlohmann::json rst;
+    std::vector<double> NiceCalculateTicks() {
+        std::vector<double> rst;
 
         std::size_t count = tickCount;
+        
 
         // 计算interval， 优先取tickInterval
         const double interval = GetBestInterval(count, max, min);
@@ -245,35 +226,15 @@ class Linear : public AbstractScale {
     double ToFixed(const double val, const int decimal) const { return val; }
 
   private:
-    void InitConfig(const nlohmann::json &cfg) {
-        if(cfg.is_object()) {
-            config_.merge_patch(cfg);
-        }
-        tickCount = config_["tickCount"];
-        tickCount = fmax(2, tickCount);
-
-        precision = config_["precision"];
-        if (config_.contains("min") && config_.contains("max")) {
-            min = config_["min"];
-            max = config_["max"];
-        }
-        nlohmann::json &range = config_["range"];
-        rangeMin = range[0];
-        rangeMax = range[1];
-        
-        tickCallbackId = xg::json::GetString(config_, "tick");
+    void InitConfig(const nlohmann::json &cfg) override {
+        AbstractScale::InitConfig(cfg);
+        nice = json::GetBool(cfg, "nice", nice);
     }
 
   public:
-    //    double minLimit = 0;
-    //    double maxLimit = 0;
     double tickInterval = -1;
-    std::size_t tickCount = 2;
     int precision = 0; // tickText 小数点精度
-    
-
-    nlohmann::json config_ = {{"tickCount", DEFAULT_COUNT}, {"precision", 0}, {"range", {0.0, 1.0}}, {"nice", false}};
-    
+    bool nice = true;
 };
 } // namespace scale
 } // namespace xg

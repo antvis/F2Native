@@ -19,7 +19,7 @@ public final class F2Util {
     private static final String DEFAULT_TIMEZONE = "Asia/Shanghai";
     private static final String TIME_PATTERN_ALL = "yyyy-MM-dd HH:mm:ss";
 
-    static class ColorGradient<T extends ColorGradient> {
+    public static class ColorGradient<T extends ColorGradient> {
         protected JSONArray colorStops = new JSONArray();
         F2Config.Builder gradient = new F2Config.Builder();
 

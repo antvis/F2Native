@@ -47,7 +47,7 @@ class IOSF2Function : public func::F2Function {
 
 @implementation F2Chart
 
-+ (F2Chart *)chart:(CGSize)size withName:(NSString *)name {
++ (F2Chart *)chart:(CGSize)size name:(NSString *)name {
     return [[F2Chart alloc] initWithSize:size name:name];
 }
 
@@ -407,6 +407,20 @@ class IOSF2Function : public func::F2Function {
 - (F2Chart * (^)(FunctionItemCallback callback))callback {
     return ^id(FunctionItemCallback callback) {
         self.outCallback = callback;
+        return self;
+    };
+}
+
+- (F2Chart * (^)(BOOL adjust))adjustScale {
+    return ^id(BOOL adjust) {
+        self.chart->AdjustScale(adjust);
+        return self;
+    };
+}
+
+- (F2Chart * (^)(BOOL sync))syncYScale {
+    return ^id(BOOL sync) {
+        self.chart->SyncYScale(sync);
         return self;
     };
 }

@@ -10,7 +10,7 @@ namespace scale {
  */
 class Identity : public AbstractScale {
   public:
-    Identity(const std::string &_field, const nlohmann::json &_values) : AbstractScale(_field, _values) {
+    Identity(const std::string &_field, const nlohmann::json &_values) : AbstractScale(_field, _values, {}) {
         this->ticks = this->CalculateTicks();
     }
 

@@ -410,6 +410,17 @@ static int nConfig(JNIEnv *env, jclass clazz, jlong chart, jstring config) {
     return 0;
 }
 
+static void AdjustScale(JNIEnv *env, jclass clazz, jlong chart, jboolean adjust) {
+    xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
+    _chart->AdjustScale(adjust);
+}
+
+static void SyncYScale(JNIEnv *env, jclass clazz, jlong chart, jboolean sync) {
+    xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
+    _chart->SyncYScale(sync);
+}
+
+
 static const JNINativeMethod native_chart_methods[] = {{
                                                            .name = "nCreateNativeChart",
                                                            .signature = "(Ljava/lang/String;DDD)J",
@@ -606,6 +617,16 @@ static const JNINativeMethod native_chart_methods[] = {{
                                                                .name = "nConfig",
                                                                .signature = "(JLjava/lang/String;)I",
                                                                .fnPtr = reinterpret_cast<void *>(nConfig),
+                                                       },
+                                                       {
+                                                               .name = "nAdjustScale",
+                                                               .signature = "(JZ)V",
+                                                               .fnPtr = reinterpret_cast<void *>(AdjustScale),
+                                                       },
+                                                       {
+                                                               .name = "nSyncYScale",
+                                                               .signature = "(JZ)V",
+                                                               .fnPtr = reinterpret_cast<void *>(SyncYScale),
                                                        }
                                                       };
 //###################### F2Chart END ###################################

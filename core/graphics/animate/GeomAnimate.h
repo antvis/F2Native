@@ -61,10 +61,15 @@ class GeomAnimate {
     void OnBeforeCanvasDraw();
 
     void Clear();
+    
+    inline void SetAnimateConfig(const nlohmann::json &cfg) {
+        animateCfg_ = cfg;
+    }
   private:
     TimeLine *timeLine_ = nullptr;
     XChart *chart_ = nullptr;
     bool isUpdate_ = false;
+    nlohmann::json animateCfg_ = false;
 };
 } // namespace animate
 } // namespace xg

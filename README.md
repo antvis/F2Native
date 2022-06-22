@@ -29,6 +29,10 @@ F2Native 支持 Android，iOS，MacOS 平台。使用跨平台语言 C++ 来生�
 * English documents: https://f2native.antv.vision/en
 * 中文文档: https://f2native.antv.vision/zh
 
+## Demos
+
+[图表实例](https://f2native.antv.vision/zh/docs/examples/line/line)
+
 ## 快速开始
 
 ### iOS
@@ -89,7 +93,7 @@ repositories {
 }
 
 dependencies {
-     implementation 'com.github.antvis:F2Native:2.0.15'
+      implementation 'com.github.antvis:F2Native:latest.release'
 }
 ```
 

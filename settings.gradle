@@ -1,1 +1,5 @@
-include ':demos:android:demos', ':android:f2native', ':demos:android:demos-kotlin'
+include ':android:sample', ':android:f2native', ':android:sample-kotlin'
+
+project(':android:sample').dir = new File('demos/android/demos')
+project(':android:f2native').dir = new File('android/f2native/')
+project(':android:sample-kotlin').dir = new File('demos/android/demos-kotlin')

@@ -40,7 +40,7 @@ class Linear {
         nlohmann::json config = {{"tickCount", 4}, {"min", 10}, {"max", 60}, {"nice", true}};
         scale::Linear linear("field", values, config);
         std::vector<scale::Tick> ticks = linear.GetTicks(nullptr);
-        return ticks.size() == 4 && ticks[0].tickValue == 0 && ticks[3].tickValue == 60;
+        return ticks.size() == 4 && ticks[0].tickValue == 10 && ticks[3].tickValue == 60;
     };
 
     static bool TicksNice2() {
@@ -48,7 +48,7 @@ class Linear {
         nlohmann::json config = {{"tickCount", 4}, {"min", 10}, {"max", 55}, {"nice", true}};
         scale::Linear linear("field", values, config);
         std::vector<scale::Tick> ticks = linear.GetTicks(nullptr);
-        return ticks.size() == 4 && ticks[0].tickValue == 0 && ticks[3].tickValue == 60;
+        return ticks.size() == 4 && ticks[0].tickValue == 10 && ticks[3].tickValue == 55;
     };
 
     static bool TicksNice3() {
@@ -105,7 +105,7 @@ class Linear {
         nlohmann::json config = {{"tickCount", 2}, {"min", 55}, {"max", 55}, {"nice", false}};
         scale::Linear linear("field", values, config);
         // nice max 60 min 55
-        bool isMin = linear.Scale(55) == 0.5;
+        bool isMin = linear.Scale(55) == 0;
         return isMin;
     }
 
@@ -114,7 +114,7 @@ class Linear {
         nlohmann::json config = {{"tickCount", 2}, {"nice", false}};
         scale::Linear linear("field", values, config);
         //只有一个数据的时候linear的max 1 min 0， scale 55 返回为1
-        bool isMax = linear.Scale(55) == 1;
+        bool isMax = linear.Scale(55) == 0;
         bool isMin = linear.Scale(-1) == 0;
         return isMax && isMin;
     }

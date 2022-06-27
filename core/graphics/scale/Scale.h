@@ -93,8 +93,8 @@ class AbstractScale {
     double rangeMin = 0; // 取值范围
     double rangeMax = 1; // 取值范围
     size_t tickCount = 5;  // 刻度总数
-    double min = 0;
-    double max = 0;
+    double min = NAN;
+    double max = NAN;
 
   protected:
     virtual nlohmann::json CalculateTicks() = 0;

@@ -23,7 +23,10 @@ class Category : public AbstractScale {
         : AbstractScale(_field, _values, _config) {
             
         InitConfig(_config);
-        ticks = CalculateTicks();
+        //在initConfig中未传入ticks了
+        if (!ticks.is_array() || ticks.size() == 0) {
+            ticks = CalculateTicks();
+        }
     }
 
     ScaleType GetType() const noexcept override { return ScaleType::Cat; }

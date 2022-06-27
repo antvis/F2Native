@@ -59,17 +59,6 @@ static std::unique_ptr<AbstractScale> MakeLinear(const std::string &field_,
                                                 utils::Tracer *tracer,
                                                 std::unique_ptr<canvas::coord::AbstractCoord> &coord,
                                                 nlohmann::json &fieldColumn) {
-    if(!config.contains("max") || !config.contains("min")) {
-        std::array<double, 2> range = util::JsonArrayRange(fieldColumn);
-        if(!config.contains("max")) {
-            config["max"] = range[1];
-        }
-
-        if(!config.contains("min")) {
-            config["min"] = range[0];
-        }
-    }
-
     tracer->trace("MakeScale: %s, return Linear. ", field_.c_str());
     return xg::make_unique<Linear>(field_, fieldColumn, config);
 }
@@ -105,11 +94,9 @@ static std::unique_ptr<AbstractScale> MakeScale(const std::string &field_,
             return xg::make_unique<KLineCat>(field_, fieldColumn, config);
         } else if(type == "cat") {
             return MakeCategory(field_, data, config, tracer, coord, fieldColumn);
+        } else if(type == "linear") {
+            return MakeLinear(field_, data, config, tracer, coord, fieldColumn);
         }
-        //历史资金卡片写了个错误的度量 实际为cat,但写了linear 待其优化后再进
-//        else if(type == "linear") {
-//            return MakeLinear(field_, data, config, tracer, coord, fieldColumn);
-//        }
     }
 
     if(firstVal.is_string()) {

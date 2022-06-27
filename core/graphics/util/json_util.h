@@ -56,7 +56,7 @@ static nlohmann::json JsonArrayByKey(const nlohmann::json &data, const std::stri
     return rst;
 }
 
-static std::array<double, 2> JsonArrayRange(nlohmann::json &data) {
+static std::array<double, 2> JsonArrayRange(const nlohmann::json &data) {
     if(!data.is_array() || data.size() <= 0) {
         return std::array<double, 2>{0, 0};
     }

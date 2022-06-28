@@ -93,46 +93,46 @@ nlohmann::json geom::Candle::getLinePoints(nlohmann::json &cfg) {
     return rst;
 }
 
-void geom::Candle::BeforeMapping(XChart &chart, nlohmann::json &dataArray) {
-    auto timestamp = xg::CurrentTimestampAtMM();
-    const std::string &yField = this->GetYScaleField();
-    auto &xScale = chart.GetScale(GetXScaleField());
-    for(std::size_t index = 0; index < dataArray.size(); ++index) {
-
-        nlohmann::json &groupData = dataArray[index];
-
-        std::size_t start = 0, end = groupData.size() - 1;
-        if(scale::IsCategory(xScale.GetType())) {
-            start = fmax(start, xScale.min);
-            end = fmin(end, xScale.max);
-        }
-
-        for(std::size_t position = start; position <= end; ++position) {
-            nlohmann::json &item = groupData[position];
-
-            if(!item.contains(yField)) {
-                // 无效点
-                continue;
-            }
-            nlohmann::json yValue = item[yField];
-            nlohmann::json cfg = CreateShapePointsCfg(chart, item, index);
-            nlohmann::json rect = getRectPoints(cfg);
-            nlohmann::json line = getLinePoints(cfg);
-
-            item["_rect"] = rect;
-            item["_line"] = line;
-            item["_state"] = cfg["state"];
-            if(!item.contains("_style")) {
-                item["_style"] = styleConfig_;
-            }
-        }
-    }
-    chart.GetLogTracer()->trace("Geom#%s Beforemapping duration: %lums", type_.data(), (CurrentTimestampAtMM() - timestamp));
+void geom::Candle::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
+//    auto timestamp = xg::CurrentTimestampAtMM();
+//    const std::string &yField = this->GetYScaleField();
+//    auto &xScale = chart.GetScale(GetXScaleField());
+//    for(std::size_t index = 0; index < dataArray.size(); ++index) {
+//
+//        auto &groupData = dataArray[index];
+//
+//        std::size_t start = 0, end = groupData.size() - 1;
+//        if(scale::IsCategory(xScale.GetType())) {
+//            start = fmax(start, xScale.min);
+//            end = fmin(end, xScale.max);
+//        }
+//
+//        for(std::size_t position = start; position <= end; ++position) {
+//            auto &item = groupData[position];
+//
+//            if(!item.contains(yField)) {
+//                // 无效点
+//                continue;
+//            }
+//            nlohmann::json yValue = item[yField];
+//            nlohmann::json cfg = CreateShapePointsCfg(chart, item, index);
+//            nlohmann::json rect = getRectPoints(cfg);
+//            nlohmann::json line = getLinePoints(cfg);
+//
+//            item["_rect"] = rect;
+//            item["_line"] = line;
+//            item["_state"] = cfg["state"];
+//            if(!item.contains("_style")) {
+//                item["_style"] = styleConfig_;
+//            }
+//        }
+//    }
+//    chart.GetLogTracer()->trace("Geom#%s Beforemapping duration: %lums", type_.data(), (CurrentTimestampAtMM() - timestamp));
 }
 
-void geom::Candle::Draw(XChart &chart, const nlohmann::json &groupData, std::size_t start, std::size_t end) const {
+void geom::Candle::Draw(XChart &chart, const XDataArray &groupData, std::size_t start, std::size_t end) const {
     for(std::size_t i = start; i <= end; ++i) {
-        const nlohmann::json &item = groupData[i];
+        auto &item = groupData[i];
         chart.geomShapeFactory_->DrawGeomShape(chart, type_, shapeType_, item, i, i + 1, *this->container_, this->connectNulls_);
     }
 }

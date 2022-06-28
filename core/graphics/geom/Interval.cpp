@@ -112,57 +112,57 @@ nlohmann::json geom::Interval::getRectPoints(nlohmann::json &cfg) {
     return std::move(rst);
 }
 
-void geom::Interval::BeforeMapping(XChart &chart, nlohmann::json &dataArray) {
-    auto timestamp = xg::CurrentTimestampAtMM();
-    const std::string &yField = this->GetYScaleField();
-    auto &xScale = chart.GetScale(GetXScaleField());
-
-    if(chart.GetCoord().GetType() == coord::CoordType::Polar) {
-        shapeType_ = "sector";
-    }
-
-    for(std::size_t index = 0; index < dataArray.size(); ++index) {
-
-        nlohmann::json &groupData = dataArray[index];
-
-        std::size_t start = 0, end = groupData.size() - 1;
-        if(scale::IsCategory(xScale.GetType())) {
-            start = fmax(start, xScale.min);
-            end = fmin(end, xScale.max);
-        }
-
-        for(std::size_t position = start; position <= end; ++position) {
-            nlohmann::json &item = groupData[position];
-
-            if(!item.contains(yField)) {
-                // 无效点
-                continue;
-            }
-            nlohmann::json yValue = item[yField];
-            nlohmann::json cfg = CreateShapePointsCfg(chart, item, index);
-            nlohmann::json points = getRectPoints(cfg);
-            item["_points"] = points;
-
-            if(item.contains("_beforeMapped")) {
-                continue;
-            }
-
-            if(this->tagConfig_.is_object()) {
-                item["_tag"] = tagConfig_;
-                item["_tag"]["content"] = yValue.dump();
-            }
-
-            item["_style"] = styleConfig_;
-            item["_style"]["content"] = yValue.dump();
-            item["_beforeMapped"] = true;
-        }
-    }
-    chart.GetLogTracer()->trace("Geom#%s Beforemapping duration: %lums", type_.data(), (CurrentTimestampAtMM() - timestamp));
+void geom::Interval::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
+//    auto timestamp = xg::CurrentTimestampAtMM();
+//    const std::string &yField = this->GetYScaleField();
+//    auto &xScale = chart.GetScale(GetXScaleField());
+//
+//    if(chart.GetCoord().GetType() == coord::CoordType::Polar) {
+//        shapeType_ = "sector";
+//    }
+//
+//    for(std::size_t index = 0; index < dataArray.size(); ++index) {
+//
+//        nlohmann::json &groupData = dataArray[index];
+//
+//        std::size_t start = 0, end = groupData.size() - 1;
+//        if(scale::IsCategory(xScale.GetType())) {
+//            start = fmax(start, xScale.min);
+//            end = fmin(end, xScale.max);
+//        }
+//
+//        for(std::size_t position = start; position <= end; ++position) {
+//            nlohmann::json &item = groupData[position];
+//
+//            if(!item.contains(yField)) {
+//                // 无效点
+//                continue;
+//            }
+//            nlohmann::json yValue = item[yField];
+//            nlohmann::json cfg = CreateShapePointsCfg(chart, item, index);
+//            nlohmann::json points = getRectPoints(cfg);
+//            item["_points"] = points;
+//
+//            if(item.contains("_beforeMapped")) {
+//                continue;
+//            }
+//
+//            if(this->tagConfig_.is_object()) {
+//                item["_tag"] = tagConfig_;
+//                item["_tag"]["content"] = yValue.dump();
+//            }
+//
+//            item["_style"] = styleConfig_;
+//            item["_style"]["content"] = yValue.dump();
+//            item["_beforeMapped"] = true;
+//        }
+//    }
+//    chart.GetLogTracer()->trace("Geom#%s Beforemapping duration: %lums", type_.data(), (CurrentTimestampAtMM() - timestamp));
 }
 
-void geom::Interval::Draw(XChart &chart, const nlohmann::json &groupData, std::size_t start, std::size_t end) const {
+void geom::Interval::Draw(XChart &chart, const XDataArray &groupData, std::size_t start, std::size_t end) const {
     for(std::size_t i = start; i <= end; ++i) {
-        const nlohmann::json &item = groupData[i];
+        const auto &item = groupData[i];
         chart.geomShapeFactory_->DrawGeomShape(chart, type_, shapeType_, item, i, i + 1, *this->container_, this->connectNulls_);
     }
 }

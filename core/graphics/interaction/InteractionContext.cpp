@@ -165,11 +165,11 @@ void interaction::InteractionContext::UpdateFollowScale(scale::AbstractScale &pi
     //     }
     // }
 
-    double rangeMin = DBL_MAX, rangeMax = DBL_MIN;
-    std::for_each(chart_->geoms_.begin(), chart_->geoms_.end(), [&](auto &geom) -> void {
-        util::JsonRangeInGeomDataArray(geom->GetDataArray(), followField, valueStart, valueEnd, &rangeMin, &rangeMax);
-    });
-    UpdateScale(followField, {{"min", rangeMin}, {"max", rangeMax}, {"nice", true}});
+//    double rangeMin = DBL_MAX, rangeMax = DBL_MIN;
+//    std::for_each(chart_->geoms_.begin(), chart_->geoms_.end(), [&](auto &geom) -> void {
+//        util::JsonRangeInGeomDataArray(geom->GetDataArray(), followField, valueStart, valueEnd, &rangeMin, &rangeMax);
+//    });
+//    UpdateScale(followField, {{"min", rangeMin}, {"max", rangeMax}, {"nice", true}});
 }
 
 void interaction::InteractionContext::UpdateScale(const std::string &field, nlohmann::json cfg) {

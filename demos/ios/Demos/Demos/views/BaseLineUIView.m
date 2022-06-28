@@ -65,7 +65,7 @@
     self.chart.guide().background(@{@"color":@"#FF00001D",@"leftBottom":@[@"min", @"min"], @"rightTop":@[@"max", @(80)]});
     self.chart.guide().background(@{@"color":@"#00FF001D",@"leftBottom":@[@"min", @(80)], @"rightTop":@[@"max", @(320)]});
     
-    self.chart.animate(@(YES));
+    self.chart.animate(@(NO ));
     
     self.chart.render();
 }

@@ -6,6 +6,7 @@
 #include "../../canvas/CanvasContext.h"
 #include "../../canvas/Coord.h"
 #include "../../shape/Group.h"
+#include "../../util/json_data.h"
 #include "../../../nlohmann/json.hpp"
 #include "../../../utils/common.h"
 
@@ -23,7 +24,7 @@ class GeomShapeBase {
     virtual void Draw(std::string shapeType,
                       canvas::coord::AbstractCoord &coord,
                       canvas::CanvasContext &context,
-                      const nlohmann::json &data,
+                      const XDataArray &data,
                       std::size_t start,
                       std::size_t end,
                       xg::shape::Group &container,

@@ -16,7 +16,7 @@ class Area : public AbstractGeom {
         generatePoints_ = true;
     }
 
-    void BeforeMapping(XChart &chart, nlohmann::json &dataArray) override;
+    void BeforeMapping(XChart &chart, XDataGroup &dataArray) override;
 
   private:
     nlohmann::json CreateShapePointsCfg(XChart &chart, nlohmann::json &data);

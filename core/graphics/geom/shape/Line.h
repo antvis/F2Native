@@ -20,7 +20,7 @@ class Line : public GeomShapeBase {
     void Draw(std::string shapeType,
               canvas::coord::AbstractCoord &coord,
               canvas::CanvasContext &context,
-              const nlohmann::json &data,
+              const XDataArray &data,
               std::size_t start,
               std::size_t end,
               xg::shape::Group &container,
@@ -31,7 +31,7 @@ class Line : public GeomShapeBase {
   private:
     // 还缺一个style
     void drawLines(canvas::coord::AbstractCoord &coord,
-                   const nlohmann::json &data,
+                   const XDataArray &data,
                    std::size_t start,
                    std::size_t end,
                    canvas::CanvasContext &canvasContext,
@@ -41,28 +41,22 @@ class Line : public GeomShapeBase {
         if(size <= 0)
             return;
 
-        canvas::CanvasFillStrokeStyle colorStyle = util::ColorParser(data[start], "_color");
+        std::string color = data[start]._color.empty() ? GLOBAL_COLORS[0] : data[start]._color;
 
-        float lineWidth = 1.0;
-        if(data[start].contains("_size")) {
-            lineWidth = data[start]["_size"];
-        }
+        float lineWidth = data[start]._size;
 
-        string shapeType = "line"; // [line, smooth]
-        if(data[start].contains("_shape")) {
-            shapeType = data[start]["_shape"];
-        }
+        string shapeType = data[start]._shape; // [line, smooth]
         bool smooth = shapeType == "smooth";
 
-        if(data[start]["_y"].is_array()) {
+        if(!data[0]._y0.empty()) {
             // stack 下的多组线
             vector<xg::util::Point> topPoints;
             vector<xg::util::Point> bottomPoints;
 
             for(std::size_t i = start; i <= end; i++) {
-                const nlohmann::json &item = data[i];
-                double x = item["_x"];
-                const nlohmann::json &yVal = item["_y"];
+                const auto &item = data[i];
+                double x = item._x;
+                auto &yVal = item._y0;
                 if(yVal.size() != 2) {
                     continue;
                 }
@@ -71,11 +65,11 @@ class Line : public GeomShapeBase {
             }
 
             auto topLine = xg::make_unique<xg::shape::Polyline>(lineWidth * canvasContext.GetDevicePixelRatio(), topPoints, smooth);
-            if(data[start].contains("_style") && data[start]["_style"].contains("dash")) {
-                topLine->SetDashLine(json::ParseDashArray(data[start]["_style"]["dash"], canvasContext.GetDevicePixelRatio()));
+            if(data[start]._style.contains("dash")) {
+                topLine->SetDashLine(json::ParseDashArray(data[start]._style["dash"], canvasContext.GetDevicePixelRatio()));
             }
 
-            topLine->SetStorkStyle(colorStyle);
+            topLine->SetStorkColor(color);
             container.AddElement(std::move(topLine));
 
             // auto bottomLine =
@@ -92,13 +86,13 @@ class Line : public GeomShapeBase {
 
         // todo 这里有一个判断 如果线是循环的 会将第一个点复制成新点插入队尾 形成循环 目前没有这个判断 后续添加
         for(std::size_t i = start; i <= end; i++) {
-            const nlohmann::json &item = data[i];
+            const auto &item = data[i];
             if(connectNulls) {
-                if(item["_x"].is_number() && !std::isnan(item["_x"]) && item["_y"].is_number() && !std::isnan(item["_y"])) {
-                    points.push_back(util::Point(item["_x"], item["_y"]));
+                if(!std::isnan(item._x) && !std::isnan(item._y)) {
+                    points.push_back(util::Point(item._x, item._y));
                 }
             } else {
-                points.push_back(util::Point(item["_x"], item["_y"]));
+                points.push_back(util::Point(item._x, item._y));
             }
         }
         
@@ -108,10 +102,10 @@ class Line : public GeomShapeBase {
         }
 
         auto l = xg::make_unique<xg::shape::Polyline>(lineWidth * canvasContext.GetDevicePixelRatio(), points, smooth);
-        if(data[start].contains("_style") && data[start]["_style"].contains("dash")) {
-            l->SetDashLine(json::ParseDashArray(data[start]["_style"]["dash"], canvasContext.GetDevicePixelRatio()));
+        if(data[start]._style.contains("dash")) {
+            l->SetDashLine(json::ParseDashArray(data[start]._style["dash"], canvasContext.GetDevicePixelRatio()));
         }
-        l->SetStorkStyle(colorStyle);
+        l->SetStorkColor(color);
         container.AddElement(std::move(l));
     }
 };

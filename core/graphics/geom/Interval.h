@@ -22,11 +22,11 @@ class Interval : public AbstractGeom {
 
     nlohmann::json CreateShapePointsCfg(XChart &chart, nlohmann::json &item, size_t index); // {x, y, y0, size}
 
-    void BeforeMapping(XChart &chart, nlohmann::json &dataArray) override;
+    void BeforeMapping(XChart &chart, XDataGroup &dataArray) override;
 
     nlohmann::json getRectPoints(nlohmann::json &cfg);
 
-    virtual void Draw(XChart &chart, const nlohmann::json &groupData, std::size_t start, std::size_t end) const override;
+    virtual void Draw(XChart &chart, const XDataArray &groupData, std::size_t start, std::size_t end) const override;
 
     Interval &Tag(const std::string &json = "{}");
 

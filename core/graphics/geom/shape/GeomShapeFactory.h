@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include "GeomShapeBase.h"
+#include "../../util/json_data.h"
 #include "../../shape/Group.h"
 #include "../../../nlohmann/json.hpp"
 
@@ -30,7 +31,16 @@ class GeomShapeFactory final {
     void DrawGeomShape(XChart &chart,
                        std::string geomType,
                        std::string shapeType,
-                       const nlohmann::json &data,
+                       const XDataArray &data,
+                       std::size_t start,
+                       std::size_t end,
+                       xg::shape::Group &container,
+                       bool connectNulls);
+    
+    void DrawGeomShape(XChart &chart,
+                       std::string geomType,
+                       std::string shapeType,
+                       const XData &data,
                        std::size_t start,
                        std::size_t end,
                        xg::shape::Group &container,

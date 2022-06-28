@@ -9,6 +9,7 @@
 #include <set>
 #include <string>
 #include <unordered_map>
+#include "json_data.h"
 #include "../../nlohmann/json.hpp"
 
 using namespace std;
@@ -91,7 +92,7 @@ static std::array<double, 2> JsonArrayRange(const nlohmann::json &data) {
     return std::array<double, 2>{_min, _max};
 }
 
-static std::string GenerateRowUniqueKey(nlohmann::json &row, std::set<std::string> &fields) {
+static std::string GenerateRowUniqueKey(const nlohmann::json &row, std::set<std::string> &fields) {
 
     std::string unique = "_";
 
@@ -105,27 +106,31 @@ static std::string GenerateRowUniqueKey(nlohmann::json &row, std::set<std::strin
     return unique;
 }
 
-static nlohmann::json JsonGroupByFields(const nlohmann::json &data, std::set<std::string> fields) {
+static XDataGroup JsonGroupByFields(const nlohmann::json &data, std::set<std::string> fields) {
+    XDataGroup rst;
     if(fields.empty()) {
-        nlohmann::json rst;
-        rst.push_back(data);
+        XDataArray ary;
+        for(size_t index = 0, size = data.size(); index < size; ++index) {
+            ary.emplace_back(XData{.data = data[index]});
+        }
+        rst.emplace_back(std::move(ary));
         return rst;
     }
 
-    nlohmann::json group;
+    std::map<std::string, std::vector<XData>> group;
     std::set<std::string> rowKeys;
     std::vector<std::string> rowKeysOrder;
 
     size_t size = data.size();
     for(size_t index = 0; index < size; ++index) {
-        nlohmann::json row = data[index];
+        const nlohmann::json &row = data[index];
 
         std::string key = GenerateRowUniqueKey(row, fields);
-        if(group.contains(key)) {
-            group[key].push_back(row);
+        if(group.count(key)) {
+            group[key].push_back({row});
         } else {
-            nlohmann::json array;
-            array.push_back(row);
+            std::vector<XData> array;
+            array.push_back({row});
             group[key] = array;
         }
 
@@ -135,13 +140,8 @@ static nlohmann::json JsonGroupByFields(const nlohmann::json &data, std::set<std
         rowKeys.insert(key);
     }
 
-    nlohmann::json rst;
-    if(group.is_object() && group.size() > 0) {
-        for(auto it = rowKeysOrder.begin(); it != rowKeysOrder.end(); ++it) {
-            rst.push_back(group[*it]);
-        }
-    } else {
-        rst.push_back(data);
+    for(auto it = rowKeysOrder.begin(); it != rowKeysOrder.end(); ++it) {
+        rst.push_back(group[*it]);
     }
     return rst;
 }

@@ -21,6 +21,7 @@ class GeomShapeBase {
     GeomShapeBase() {}
     virtual ~GeomShapeBase() {}
 
+    //绘制一组数据 比如线
     virtual void Draw(std::string shapeType,
                       canvas::coord::AbstractCoord &coord,
                       canvas::CanvasContext &context,
@@ -28,7 +29,17 @@ class GeomShapeBase {
                       std::size_t start,
                       std::size_t end,
                       xg::shape::Group &container,
-                      bool connectNulls) = 0;
+                      bool connectNulls) {};
+    
+    //绘制一个数据 比如柱
+    virtual void Draw(std::string shapeType,
+                      canvas::coord::AbstractCoord &coord,
+                      canvas::CanvasContext &context,
+                      const XData &data,
+                      std::size_t start,
+                      std::size_t end,
+                      xg::shape::Group &container,
+                      bool connectNulls) {};
 
     // // line暂未用到
     util::Point ParsePoint(canvas::coord::AbstractCoord &coord, const util::Point &point) {

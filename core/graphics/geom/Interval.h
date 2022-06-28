@@ -20,7 +20,7 @@ class Interval : public AbstractGeom {
 
     float GetDefaultWidthRatio(XChart &chart);
 
-    nlohmann::json CreateShapePointsCfg(XChart &chart, nlohmann::json &item, size_t index); // {x, y, y0, size}
+    nlohmann::json CreateShapePointsCfg(XChart &chart, XData &item, size_t index); // {x, y, y0, size}
 
     void BeforeMapping(XChart &chart, XDataGroup &dataArray) override;
 

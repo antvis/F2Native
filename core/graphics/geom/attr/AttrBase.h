@@ -52,8 +52,8 @@ class Position : public AttrBase {
     void Mapping(XDataArray &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
         for(size_t i = start; i <= end; i++) {
             auto &item = groupData[i];
-            auto &xVal = item.data[fields_[0]];
-            auto &yVal = item.data[fields_[1]];
+            auto &xVal = (*item.data)[fields_[0]];
+            auto &yVal = (*item.data)[fields_[1]];
 
             if(xVal.is_null() && yVal.is_null()) {
                 item._x = std::nan("0"); // attr names[x, y]
@@ -62,21 +62,35 @@ class Position : public AttrBase {
                 // TODO
             } else if(xVal.is_array()) {
                 // TODO
-            } else if(yVal.is_array()) {
-                double x = xScale.Scale(item.data[fields_[0]]);
+            } else if(item.adjust.size() >= 2) { //stack
+                double x = xScale.Scale((*item.data)[fields_[0]]);
 
-                double rstX;
+                std::vector<double> rstY;
+                for(std::size_t index = 0; index < item.adjust.size(); ++index) {
+                    util::Point _point = coord.ConvertPoint(util::Point{x, yScale.Scale(item.adjust[index])});
+                    item._x  = _point.x;
+                    rstY.push_back(_point.y);
+                }
+                item._y0 = rstY;
+            } else if(item.dodge.size() >= 1) { //dodge
+                double x = xScale.Scale(item.dodge[0]);
+                double y = item.dodge.size() >= 2 ? yScale.Scale(item.dodge[1]) : yScale.Scale((*item.data)[fields_[1]]);
+                util::Point point = coord.ConvertPoint(util::Point(x, y));
+                item._x = point.x; // attr names[x, y]
+                item._y = point.y;
+            } else if(yVal.is_array()) { //区间柱状图
+                double x = xScale.Scale((*item.data)[fields_[0]]);
                 std::vector<double> rstY;
                 for(std::size_t index = 0; index < yVal.size(); ++index) {
                     util::Point _point = coord.ConvertPoint(util::Point{x, yScale.Scale(yVal[index])});
-                    rstX = _point.x;
+                    item._x  = _point.x;
                     rstY.push_back(_point.y);
                 }
-                item._x = rstX;
                 item._y0 = rstY;
-            } else {
-                double x = xScale.Scale(item.data[fields_[0]]);
-                double y = yScale.Scale(item.data[fields_[1]]);
+            }
+            else {
+                double x = xScale.Scale((*item.data)[fields_[0]]);
+                double y = yScale.Scale((*item.data)[fields_[1]]);
                 util::Point point = coord.ConvertPoint(util::Point(x, y));
                 item._x = point.x; // attr names[x, y]
                 item._y = point.y;
@@ -101,14 +115,21 @@ class Color : public AttrBase {
     inline const string &GetColor(int index) const { return index < colors_.size() ? colors_[index] : colors_[0]; }
 
     void Mapping(XDataArray &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
-        for(size_t i = start; i <= end; i++) {
-            auto &item = groupData[i];
-            if(!fields_.empty() && scale::IsCategory(xScale.GetType())) {
-                const scale::Category &cat = (scale::Category &)xScale;
-                std::size_t index = cat.Transform(item.data[fields_[0]]);
-                item._color = colors_[index];
-            } else {
-                item._color = colors_[0];
+        //设置的是一个固定的颜色
+        if (fields_.empty()) {
+            for(std::size_t index = start; index <= end; ++index) {
+                groupData[index]._color = colors_[0];
+            }
+        } else {
+            for(size_t i = start; i <= end; i++) {
+                auto &item = groupData[i];
+                if(!fields_.empty() && scale::IsCategory(xScale.GetType())) {
+                    const scale::Category &cat = (scale::Category &)xScale;
+                    std::size_t index = cat.Transform((*item.data)[fields_[0]]);
+                    item._color = colors_[index];
+                } else {
+                    item._color = colors_[0];
+                }
             }
         }
     }
@@ -128,14 +149,21 @@ class Size : public AttrBase {
     AttrType GetType() const override { return AttrType::Size; }
 
     void Mapping(XDataArray &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
-        for(std::size_t index = start; index <= end; ++index) {
-            auto &item = groupData[index];
-            if(scale::IsCategory(xScale.GetType())) {
-                std::size_t val = static_cast<scale::Category &>(xScale).Transform(item.data[xScale.field]);
-                item._size = sizes_[val % sizes_.size()];
-            } else {
-                double percent = xScale.Scale(item.data[xScale.field]);
-                item._size = sizes_[GetLinear(percent) % sizes_.size()];
+        //用户设置的是一个固定的size
+        if (fields_.empty()) {
+            for(std::size_t index = start; index <= end; ++index) {
+                groupData[index]._size = sizes_[0];
+            }
+        } else {
+            for(std::size_t index = start; index <= end; ++index) {
+                auto &item = groupData[index];
+                if(scale::IsCategory(xScale.GetType())) {
+                    std::size_t val = static_cast<scale::Category &>(xScale).Transform((*item.data)[xScale.field]);
+                    item._size = sizes_[val % sizes_.size()];
+                } else {
+                    double percent = xScale.Scale((*item.data)[xScale.field]);
+                    item._size = sizes_[GetLinear(percent) % sizes_.size()];
+                }
             }
         }
     }

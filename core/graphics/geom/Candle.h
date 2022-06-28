@@ -18,7 +18,7 @@ class Candle : public AbstractGeom {
         };
     }
 
-    nlohmann::json CreateShapePointsCfg(XChart &chart, nlohmann::json &item, size_t index);
+    nlohmann::json CreateShapePointsCfg(XChart &chart, XData &item, size_t index);
 
     void BeforeMapping(XChart &chart, XDataGroup &dataArray) override;
 

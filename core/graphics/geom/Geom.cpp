@@ -150,14 +150,14 @@ void xg::geom::AbstractGeom::ProcessData(XChart &chart) {
                 auto &group = dataArray_[groupIdx];
                 for(std::size_t index = 0; index < group.size(); ++index) {
                     auto &item = group[index];
-                    if(scale::IsCategory(xScale.GetType()) && item.data.contains(xField)) {
+                    if(scale::IsCategory(xScale.GetType()) && (*item.data).contains(xField)) {
                         scale::Category &catScale = static_cast<scale::Category &>(xScale);
-                        item.xField = catScale.Transform(item.data[xField]);
+                        item.dodge.push_back( catScale.Transform((*item.data)[xField]));
                     }
 
-                    if(scale::IsCategory(yScale.GetType()) && item.data.contains(yField)) {
+                    if(scale::IsCategory(yScale.GetType()) && (*item.data).contains(yField)) {
                         scale::Category &catScale = static_cast<scale::Category &>(yScale);
-                        item.yField = catScale.Transform(item.data[yField]);
+                        item.dodge.push_back( catScale.Transform((*item.data)[yField]));
                     }
                 }
             }
@@ -167,7 +167,7 @@ void xg::geom::AbstractGeom::ProcessData(XChart &chart) {
             updateStackRange(chart);
         } else if(adjust->GetAdjust() == "dodge") {
             // TODO 补充输入 marginRatio 参数
-//            adjust::Dodge::processDodge(GetXScaleField(), GetYScaleField(), dataArray_);
+            adjust::Dodge::processDodge(GetXScaleField(), GetYScaleField(), dataArray_);
         }
     }
 
@@ -280,29 +280,28 @@ double xg::geom::AbstractGeom::GetYMinValue(XChart &chart) {
 
 #pragma mark - Stack
 void xg::geom::AbstractGeom::updateStackRange(XChart &chart) {
-//    const std::string &yField = GetYScaleField();
-//    const std::string &xField = GetXScaleField();
-//    scale::AbstractScale &yScale = chart.GetScale(yField);
-//    adjust::Stack::processStack(xField, yField, dataArray_);
-//    double min = yScale.min;
-//    double max = yScale.max;
-//    for(size_t i = 0; i < dataArray_.size(); i++) {
-//        nlohmann::json data = dataArray_[i];
-//        for(size_t j = 0; j < data.size(); j++) {
-//            auto item = data[j];
-//            auto a = item[yField];
-//            if(a.is_array() && a.size() == 2) {
-//                min = fmin(min, a[0]);
-//                max = fmax(max, a[1]);
-//            }
-//        }
-//    }
-//    if(min < yScale.min || max > yScale.max) {
-//        yScale.Change({{"min", min}, {"max", max}});
-//    }
+    const std::string &yField = GetYScaleField();
+    const std::string &xField = GetXScaleField();
+    scale::AbstractScale &yScale = chart.GetScale(yField);
+    adjust::Stack::processStack(xField, yField, dataArray_);
+    double min = yScale.min;
+    double max = yScale.max;
+    for(size_t i = 0; i < dataArray_.size(); i++) {
+        auto &data = dataArray_[i];
+        for(size_t j = 0; j < data.size(); j++) {
+            auto &item = data[j];
+            if(item.adjust.size() == 2) {
+                min = fmin(min, item.adjust[0]);
+                max = fmax(max, item.adjust[1]);
+            }
+        }
+    }
+    if(min < yScale.min || max > yScale.max) {
+        yScale.Change({{"min", min}, {"max", max}});
+    }
 }
 
-nlohmann::json xg::geom::AbstractGeom::GetSnapRecords(XChart *chart, util::Point point) {
+XDataArray xg::geom::AbstractGeom::GetSnapRecords(XChart *chart, util::Point point) {
     util::Point invertPoint = chart->GetCoord().InvertPoint(point);
 
     auto &xScale = chart->GetScale(GetXScaleField());
@@ -319,41 +318,41 @@ nlohmann::json xg::geom::AbstractGeom::GetSnapRecords(XChart *chart, util::Point
         // TODO _getSnap
     }
 
-    nlohmann::json tmp;
+    XDataArray tmp;
 
-//    for(std::size_t num = 0; num < dataArray_.size(); ++num) {
-//        nlohmann::json &groupData = dataArray_[num];
-//
-//        std::size_t start = 0, end = groupData.size() - 1;
-//        if(scale::IsCategory(xScale.GetType())) {
-//            start = fmax(start, xScale.min);
-//            end = fmin(end, xScale.max);
-//        }
-//
-//        auto &xField = GetXScaleField();
-//        for(size_t index = start; index <= end; index++) {
-//            nlohmann::json &item = groupData[index];
-//            if(item.contains(xField) && item[xField] == xValue) {
-//                tmp.push_back(item);
-//            }
-//        }
-//    }
+    for(std::size_t num = 0; num < dataArray_.size(); ++num) {
+        auto &groupData = dataArray_[num];
+
+        std::size_t start = 0, end = groupData.size() - 1;
+        if(scale::IsCategory(xScale.GetType())) {
+            start = fmax(start, xScale.min);
+            end = fmin(end, xScale.max);
+        }
+
+        auto &xField = GetXScaleField();
+        for(size_t index = start; index <= end; index++) {
+            auto &item = groupData[index];
+            if((*item.data).contains(xField) && (*item.data)[xField] == xValue) {
+                tmp.push_back(item);
+            }
+        }
+    }
 
     // TODO speical for pie chart.
 
     return tmp;
 }
 
-const nlohmann::json &xg::geom::AbstractGeom::GetLastSnapRecord(XChart *chart) {
+const XData &xg::geom::AbstractGeom::GetLastSnapRecord(XChart *chart) {
     auto &xScale = chart->GetScale(GetXScaleField());
     std::size_t end = scale::IsCategory(xScale.GetType()) ? fmax(0 , xScale.max): (dataArray_[0].size() - 1);
-    return dataArray_[0][end].data;
+    return dataArray_[0][end];
 }
 
-const nlohmann::json &xg::geom::AbstractGeom::GetFirstSnapRecord(XChart *chart) {
+const XData &xg::geom::AbstractGeom::GetFirstSnapRecord(XChart *chart) {
     auto &xScale = chart->GetScale(GetXScaleField());
     std::size_t start = scale::IsCategory(xScale.GetType()) ? fmax(0, xScale.min) : 0;
-    return dataArray_[0][start].data;
+    return dataArray_[0][start];
 }
 
 void xg::geom::AbstractGeom::Clear() {

@@ -72,7 +72,8 @@ struct XConfig final {
     //当geom中有interval的时候自动调整max, min, range三个参数
     bool adjustScale_ = true;
     //当geom中有过个图形时，是否同步他们的最值
-    bool syncY_ = true;
+    //默认为false 因为shape为stack的时候不能sync
+    bool syncY_ = false;
     
     //coord setting
     std::string coordType = "cartesian";

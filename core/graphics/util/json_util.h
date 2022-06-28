@@ -111,7 +111,7 @@ static XDataGroup JsonGroupByFields(const nlohmann::json &data, std::set<std::st
     if(fields.empty()) {
         XDataArray ary;
         for(size_t index = 0, size = data.size(); index < size; ++index) {
-            ary.emplace_back(XData{.data = data[index]});
+            ary.emplace_back(XData{.data = &data[index]});
         }
         rst.emplace_back(std::move(ary));
         return rst;
@@ -127,10 +127,10 @@ static XDataGroup JsonGroupByFields(const nlohmann::json &data, std::set<std::st
 
         std::string key = GenerateRowUniqueKey(row, fields);
         if(group.count(key)) {
-            group[key].push_back({row});
+            group[key].push_back({&row});
         } else {
             std::vector<XData> array;
-            array.push_back({row});
+            array.push_back({&row});
             group[key] = array;
         }
 
@@ -175,20 +175,20 @@ static bool isEqualsQuick(nlohmann::json &data1, nlohmann::json &data2) {
     return (data1[0] == data2[0] && data1[lastIndex] == data2[lastIndex]);
 }
 
-static void JsonRangeInGeomDataArray(const nlohmann::json &geomDataArray,
+static void JsonRangeInGeomDataArray(const XDataGroup &geomDataArray,
                                      const std::string &field,
                                      std::size_t start,
                                      std::size_t end,
                                      double *rangeMin,
                                      double *rangeMax) {
-    if(geomDataArray.is_array() && geomDataArray.size() > 0) {
+    if(geomDataArray.size() > 0) {
         for(std::size_t index = 0; index < geomDataArray.size(); ++index) {
-            const nlohmann::json &groupData = geomDataArray[index];
+            auto &groupData = geomDataArray[index];
 
             std::size_t _end = fmin(end, groupData.size() - 1);
-            if(groupData.is_array() && _end > start) {
+            if(_end > start) {
                 for(std::size_t column = start; column <= _end; ++column) {
-                    const nlohmann::json &item = groupData[column];
+                    auto &item = (*groupData[column].data);
                     if(item.contains(field)) {
                         if(item[field].is_number()) {
                             double val = item[field];

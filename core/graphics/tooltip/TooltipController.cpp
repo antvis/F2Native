@@ -135,19 +135,17 @@ bool tooltip::ToolTipController::ShowToolTip(const util::Point &point) {
     double maxPointX = FLT_MIN;
     double minPointX = FLT_MAX;
     auto &geom = chart_->geoms_.front();
-    const nlohmann::json &firstRecord = geom->GetFirstSnapRecord(chart_);
-    const nlohmann::json &lastRecord = geom->GetLastSnapRecord(chart_);
+    auto &firstRecord = geom->GetFirstSnapRecord(chart_);
+    auto &lastRecord = geom->GetLastSnapRecord(chart_);
     //在各分组中取最大的 当scale为timesharing的时候，first和last可能对调，所以min和max判断都需要
-    if (lastRecord.contains("_x")) {
-        double lastX = json::GetNumber(lastRecord, "_x");
-        minPointX = fmin(minPointX, lastX);
-        maxPointX = fmax(maxPointX, lastX);
+    if (!std::isnan(lastRecord._x)) {
+        minPointX = fmin(minPointX, lastRecord._x);
+        maxPointX = fmax(maxPointX, lastRecord._x);
     }
     
-    if (firstRecord.contains("_x")) {
-        double firstX = json::GetNumber(firstRecord, "_x");
-        minPointX = fmin(minPointX, firstX);
-        maxPointX = fmax(maxPointX, firstX);
+    if (!std::isnan(firstRecord._x)) {
+        minPointX = fmin(minPointX, firstRecord._x);
+        maxPointX = fmax(maxPointX, firstRecord._x);
     }
     _point.x = fmax(fmin(_point.x, maxPointX), minPointX);
     
@@ -155,14 +153,14 @@ bool tooltip::ToolTipController::ShowToolTip(const util::Point &point) {
     nlohmann::json tooltipMarkerItems;
     std::for_each(chart_->geoms_.begin(), chart_->geoms_.end(), [&](auto &geom) -> void {
         // TODO geom is visible
-        nlohmann::json records = geom->GetSnapRecords(chart_, _point);
+        auto records = geom->GetSnapRecords(chart_, _point);
         for(std::size_t index = 0; index < records.size(); ++index) {
-            nlohmann::json &record = records[index];
-            if(record.contains("_x") && record.contains("_y")) {
+            auto &record = records[index];
+            if(!std::isnan(record._x) && !std::isnan(record._y)) {
                 nlohmann::json tooltipItem;
-                tooltipItem["x"] = record["_x"];
-                tooltipItem["y"] = record["_y"];
-                tooltipItem["color"] = record.contains("_color") ? record["_color"].get<std::string>() : GLOBAL_COLORS[0];
+                tooltipItem["x"] = record._x;
+                tooltipItem["y"] = record._y;
+                tooltipItem["color"] = record._color;
                 tooltipItem["xTip"] = config_["xTip"];
                 tooltipItem["yTip"] = config_["yTip"];
 
@@ -170,9 +168,9 @@ bool tooltip::ToolTipController::ShowToolTip(const util::Point &point) {
                 auto &yScale = chart_->GetScale(nameField);
                 tooltipItem["name"] = nameField;
 
-                _point.x = record["_x"];
+                _point.x = record._x;
                 tooltipItem["value"] = InvertYTip(_point, yScale);
-                tooltipItem["title"] = chart_->GetScale(geom->GetXScaleField()).GetTickText(record[geom->GetXScaleField()], chart_);
+                tooltipItem["title"] = chart_->GetScale(geom->GetXScaleField()).GetTickText((*record.data)[geom->GetXScaleField()], chart_);
                 
                 tooltipItem["touchX"] = _point.x;
                 tooltipItem["touchY"] = _point.y;

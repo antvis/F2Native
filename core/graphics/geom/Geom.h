@@ -71,9 +71,9 @@ class AbstractGeom {
 
     bool ContainsAttr(attr::AttrType type);
 
-    nlohmann::json GetSnapRecords(XChart *chart, util::Point point);
-    const nlohmann::json &GetLastSnapRecord(XChart *chart);
-    const nlohmann::json &GetFirstSnapRecord(XChart *chart);
+    XDataArray GetSnapRecords(XChart *chart, util::Point point);
+    const XData &GetLastSnapRecord(XChart *chart);
+    const XData &GetFirstSnapRecord(XChart *chart);
 
     const std::unique_ptr<AttrBase> &GetAttr(AttrType type) { return attrs_[type]; }
 

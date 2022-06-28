@@ -15,13 +15,23 @@
 namespace xg {
 namespace util {
     struct XData final {
-        nlohmann::json data;
-        double _x, _y;
+        nlohmann::json::const_pointer data;
+        double _x = NAN, _y = NAN;
         std::vector<double> _y0;
-        size_t xField, yField;
         nlohmann::json _style;
         std::string _color, _shape, _adjust;
-        double _size;
+        double _size = NAN;
+        
+        //for interval and candle
+        nlohmann::json _points, _tag, _rect, _line, _state;
+        bool _beforeMapped = false;
+        
+        //for adjust
+        std::vector<double> adjust;
+        
+        //for dodge
+        //index 0 for xfiled, index 1 for yfield
+        std::vector<double> dodge;
     };
 
 using XDataArray = std::vector<XData>;

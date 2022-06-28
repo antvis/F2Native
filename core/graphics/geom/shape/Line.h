@@ -43,7 +43,7 @@ class Line : public GeomShapeBase {
 
         std::string color = data[start]._color.empty() ? GLOBAL_COLORS[0] : data[start]._color;
 
-        float lineWidth = data[start]._size;
+        float lineWidth = std::isnan(data[start]._size) ? 1 : data[start]._size;
 
         string shapeType = data[start]._shape; // [line, smooth]
         bool smooth = shapeType == "smooth";

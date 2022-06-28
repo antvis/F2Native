@@ -53,13 +53,13 @@ void scale::ScaleController::SyncYScale(const size_t valueStart, const size_t va
         chart_->GetGeoms().size() == 1) {
         return;
     }
-//    double rangeMin = DBL_MAX, rangeMax = DBL_MIN;
-//    std::for_each(chart_->GetGeoms().begin(), chart_->GetGeoms().end(), [&](auto &geom) -> void {
-//        util::JsonRangeInGeomDataArray(geom->GetDataArray(), geom->GetYScaleField(), valueStart, valueEnd, &rangeMin, &rangeMax);
-//    });
-//    std::for_each(chart_->GetGeoms().begin(), chart_->GetGeoms().end(), [&](auto &geom) -> void {
-//        UpdateScale(geom->GetYScaleField(), {{"min", rangeMin}, {"max", rangeMax}});
-//    });
+    double rangeMin = DBL_MAX, rangeMax = DBL_MIN;
+    std::for_each(chart_->GetGeoms().begin(), chart_->GetGeoms().end(), [&](auto &geom) -> void {
+        util::JsonRangeInGeomDataArray(geom->GetDataArray(), geom->GetYScaleField(), valueStart, valueEnd, &rangeMin, &rangeMax);
+    });
+    std::for_each(chart_->GetGeoms().begin(), chart_->GetGeoms().end(), [&](auto &geom) -> void {
+        UpdateScale(geom->GetYScaleField(), {{"min", rangeMin}, {"max", rangeMax}});
+    });
 }
     
 void scale::ScaleController::UpdateScale(const std::string &field, const nlohmann::json &cfg) {

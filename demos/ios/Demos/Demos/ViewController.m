@@ -58,7 +58,7 @@
 
 - (UIBarButtonItem *)rightButton {
     if (!_rightButton) {
-        _rightButton = [[UIBarButtonItem alloc] initWithTitle:@"多图列表" style:UIBarButtonItemStyleDone target:self action:@selector(onMultiChart)];
+        _rightButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"ChartList", @"ChartList") style:UIBarButtonItemStyleDone target:self action:@selector(onMultiChart)];
     }
     return _rightButton;
 }
@@ -75,28 +75,28 @@
 
 + (NSArray *)demoInfo {
     return @[    
-        @{@"type": @"baseLine", @"name": @"基础折线图", @"view": @"BaseLineUIView"},
-        @{@"type": @"multiAxiesLine", @"name": @"基础折线图(双Y轴)", @"view": @"MultiAxiesLineUIView"},
-        @{@"type": @"multiLine", @"name": @"对比折线图", @"view": @"MultiLineUIView"},
-        @{@"type": @"baseArea", @"name": @"基础面积图", @"view": @"BaseAreaUIView"},
-        @{@"type": @"baseArea2", @"name": @"基础面积图2(带负值)", @"view": @"BaseAreaUIView2"},
-        @{@"type": @"baseArea3", @"name": @"基础面积图2(x基线不为0)", @"view": @"BaseAreaUIView3"},
-        @{@"type": @"multiArea", @"name": @"层叠面积图", @"view": @"MultiAreaUIView"},
-        @{@"type": @"baseInterval", @"name": @"基础柱状图", @"view": @"BaseIntervalUIView"},
-        @{@"type": @"baseInterval2", @"name": @"基础柱状图2", @"view": @"BaseInterval2UIView"},
-        @{@"type": @"multiInterval", @"name": @"分组柱状图", @"view": @"MultintervalUIView"},
-        @{@"type": @"multiInterval2", @"name": @"分组柱状图2(带负值)", @"view": @"MultiIntervalUIView2"},
-        @{@"type": @"multiInterval3", @"name": @"分组层叠柱状图", @"view": @"MultiIntervalUIView3"},
-        @{@"type": @"setionInterval", @"name": @"区间柱状图", @"view": @"SetionIntervalUIView"},
-        @{@"type": @"Point", @"name": @"散点图", @"view": @"BasePointUIView"},
-        @{@"type": @"basestrip", @"name": @"条状图", @"view": @"StripUIView"},
-        @{@"type": @"basePie", @"name": @"饼图", @"view": @"BasePieUIView"},
-        @{@"type": @"basePie", @"name": @"环形饼图", @"view": @"CyclicPieUIView"},
-        @{@"type": @"radarArea", @"name": @"雷达面积图", @"view": @"RadarAreaUIView"},
-        @{@"type": @"klineDay", @"name": @"蜡烛图(日K)", @"view": @"KLineUIView"},
-        @{@"type": @"timeSharing", @"name": @"股票分时图", @"view": @"TimeSharingUIView"},
-        @{@"type": @"marketMoving", @"name": @"大盘异动", @"view": @"MarketMovingUIView"},
-        @{@"type": @"baseGuide", @"name": @"辅助组件", @"view": @"BaseGuideUIView"},
+        @{@"type": @"baseLine", @"name": NSLocalizedString(@"BaseLineChart", "BaseLineChart"), @"view": @"BaseLineUIView"},
+        @{@"type": @"multiAxiesLine", @"name": NSLocalizedString(@"BaseLineChart2", "BaseLineChart(Dual Y-axis)"), @"view": @"MultiAxiesLineUIView"},
+        @{@"type": @"multiLine", @"name": NSLocalizedString(@"ContrastLineChart", "ContrastLineChart"), @"view": @"MultiLineUIView"},
+        @{@"type": @"baseArea", @"name": NSLocalizedString(@"BaseAreaChart", "BaseAreaChart"), @"view": @"BaseAreaUIView"},
+        @{@"type": @"baseArea2", @"name": NSLocalizedString(@"BaseAreaChart2", "BaseAreaChart2(with negative value)"), @"view": @"BaseAreaUIView2"},
+        @{@"type": @"baseArea3", @"name": NSLocalizedString(@"BaseAreaChart3", "BaseAreaChart3(x baseline is not 0)"), @"view": @"BaseAreaUIView3"},
+        @{@"type": @"multiArea", @"name": NSLocalizedString(@"StackedAreaChart", "StackedAreaChart"), @"view": @"MultiAreaUIView"},
+        @{@"type": @"baseInterval", @"name": NSLocalizedString(@"BaseBarChart", "BaseBarChart"), @"view": @"BaseIntervalUIView"},
+        @{@"type": @"baseInterval2", @"name": NSLocalizedString(@"BaseBarChart2", "BaseBarChart2"), @"view": @"BaseInterval2UIView"},
+        @{@"type": @"multiInterval", @"name": NSLocalizedString(@"GroupBarChart", "GroupBarChart"), @"view": @"MultintervalUIView"},
+        @{@"type": @"multiInterval2", @"name": NSLocalizedString(@"GroupBarChart2", "GroupBarChart2(with negative value)"), @"view": @"MultiIntervalUIView2"},
+        @{@"type": @"multiInterval3", @"name": NSLocalizedString(@"GroupStackBarChart", "GroupStackBarChart"), @"view": @"MultiIntervalUIView3"},
+        @{@"type": @"setionInterval", @"name": NSLocalizedString(@"HistogramBarChart", "HistogramBarChart"), @"view": @"SetionIntervalUIView"},
+        @{@"type": @"Point", @"name": NSLocalizedString(@"BasePointChart", "BasePointChart"), @"view": @"BasePointUIView"},
+        @{@"type": @"basestrip", @"name": NSLocalizedString(@"StripChart", "StripChart"), @"view": @"StripUIView"},
+        @{@"type": @"basePie", @"name": NSLocalizedString(@"BasePieChart", "BasePieChart"), @"view": @"BasePieUIView"},
+        @{@"type": @"basePie", @"name": NSLocalizedString(@"CyclicPieChart", "CyclicPieChart"), @"view": @"CyclicPieUIView"},
+        @{@"type": @"radarArea", @"name": NSLocalizedString(@"RadarAreaChart", "RadarAreaChart"), @"view": @"RadarAreaUIView"},
+        @{@"type": @"klineDay", @"name": NSLocalizedString(@"CandleChart", "CandleChart"), @"view": @"KLineUIView"},
+        @{@"type": @"timeSharing", @"name":NSLocalizedString(@"TimeSharingChart", "TimeSharingChart"), @"view": @"TimeSharingUIView"},
+        @{@"type": @"marketMoving", @"name": NSLocalizedString(@"MarketMovingChart", "MarketMovingChart"), @"view": @"MarketMovingUIView"},
+        @{@"type": @"baseGuide", @"name": NSLocalizedString(@"BaseGuideChart", "BaseGuideChart"), @"view": @"BaseGuideUIView"},
     ];
 }
 

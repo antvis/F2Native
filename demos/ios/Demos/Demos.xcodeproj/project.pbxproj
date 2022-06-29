@@ -27,6 +27,7 @@
 		95982AF825CA8D3D0066F875 /* MultiAxiesLineUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 95982AF725CA8D3D0066F875 /* MultiAxiesLineUIView.m */; };
 		95A7D80A25A3035800CA8B9F /* BasePointUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 95A7D80925A3035800CA8B9F /* BasePointUIView.m */; };
 		CC31D1762637BE0C008F6422 /* BaseAreaUIView3.m in Sources */ = {isa = PBXBuildFile; fileRef = CC31D1752637BE0C008F6422 /* BaseAreaUIView3.m */; };
+		CC5C3013286C257600B2837D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CC5C3015286C257600B2837D /* Localizable.strings */; };
 		CC612BBD250A28AE00315124 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CC612BBC250A28AE00315124 /* AppDelegate.m */; };
 		CC612BC3250A28AE00315124 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CC612BC2250A28AE00315124 /* ViewController.m */; };
 		CC612BC8250A28AF00315124 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC612BC7250A28AF00315124 /* Assets.xcassets */; };
@@ -86,6 +87,9 @@
 		95A7D80925A3035800CA8B9F /* BasePointUIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BasePointUIView.m; sourceTree = "<group>"; };
 		CC31D1742637BE0C008F6422 /* BaseAreaUIView3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseAreaUIView3.h; sourceTree = "<group>"; };
 		CC31D1752637BE0C008F6422 /* BaseAreaUIView3.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseAreaUIView3.m; sourceTree = "<group>"; };
+		CC5C3010286C253900B2837D /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
+		CC5C3014286C257600B2837D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		CC5C3016286C257700B2837D /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		CC612BB8250A28AE00315124 /* F2Native.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = F2Native.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC612BBB250A28AE00315124 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		CC612BBC250A28AE00315124 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -215,6 +219,7 @@
 				95127744264CF5400011EE7A /* ChartListViewController.m */,
 				CCE9E3E827B12AF400D8A030 /* BugFixViewController.h */,
 				CCE9E3E727B12AF400D8A030 /* BugFixViewController.m */,
+				CC5C3015286C257600B2837D /* Localizable.strings */,
 				CC612BC7250A28AF00315124 /* Assets.xcassets */,
 				CC612BC9250A28AF00315124 /* LaunchScreen.storyboard */,
 				CC612BCC250A28AF00315124 /* Info.plist */,
@@ -301,6 +306,7 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
 			);
 			mainGroup = CC612BAF250A28AE00315124;
 			productRefGroup = CC612BB9250A28AE00315124 /* Products */;
@@ -318,6 +324,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC612BCB250A28AF00315124 /* LaunchScreen.storyboard in Resources */,
+				CC5C3013286C257600B2837D /* Localizable.strings in Resources */,
 				CC612BC8250A28AF00315124 /* Assets.xcassets in Resources */,
 				CC612C04250B5C5A00315124 /* Res in Resources */,
 			);
@@ -392,10 +399,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		CC5C3015286C257600B2837D /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CC5C3014286C257600B2837D /* en */,
+				CC5C3016286C257700B2837D /* zh-Hans */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		CC612BC9250A28AF00315124 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				CC612BCA250A28AF00315124 /* Base */,
+				CC5C3010286C253900B2837D /* zh-Hans */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -407,6 +424,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -465,6 +483,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";

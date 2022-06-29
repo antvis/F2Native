@@ -3,25 +3,25 @@ title: F2Guide
 order: 7
 ---
 
-图形辅助对象，用于在特定点位进行标注
+Graphical helper object for dimensioning at specific points
 
-## 创建 F2Guide 实例
+## Create F2Guide Instance
 #### iOS
-```obj-c
+````obj-c
   chart.guide();
-```
+````
 
 #### Android
-```java
+````java
   chart.guide();
-```
+````
 <br/>
 
-## 方法
+## method
 ### - flag
-绘制旗子辅助图形
+Drawing flag auxiliary graphics
 #### iOS
-```obj-c
+````obj-c
   chart.guide().flag(
                      @{
                         @"color":@"#108EE9",
@@ -32,26 +32,26 @@ order: 7
                         @"textColor":@"#108EE9",
                         @"textSize": @(10.f)
                       });
-```
+````
 #### Android
-```java
-```
-- 参数
+````java
+````
+- parameters
 
-| **属性名** |  **类型** | **解释** |
+| **Attribute Name** | **Type** | **Explanation** |
 | --- | --- | --- |
-| `color`| String | 旗子辅助标志的颜色（Hex rgb）
-| `position`| Array&lt;Number&gt; | 辅助标志绘制的位置 <br/>padding[0] 表示X轴所在的位置  <br/> padding[1] 表示Y轴所在的位置
-| `padding`| Array&lt;Number&gt; |  辅助标志绘制的位置 <br/>padding[0] 左  <br/> padding[1] 上  <br/>padding[2] 右 <br/> padding[3] 下
-| `backgroundColor`| String | 旗子辅助标志的背景色  （Hex rgb）
-| `textColor`| String | 文字颜色
-| `textSize` | Number | 文字大小
+| `color`| String | The color of the flag auxiliary flag (Hex rgb)
+| `position`| Array&lt;Number&gt; | The position where the auxiliary mark is drawn <br/>padding[0] indicates the position of the X-axis <br/> padding[1] indicates the position of the Y-axis
+| `padding`| Array&lt;Number&gt; | The position where the auxiliary logo is drawn<br/>padding[0] left<br/> padding[1] top<br/>padding[2] right<br/> padding[3] Down
+| `backgroundColor`| String | The background color of the flag auxiliary logo (Hex rgb)
+| `textColor`| String | Text color
+| `textSize` | Number | Text size
 <br/>
 
 ### - text
-绘制文字辅助图形
+Drawing text auxiliary graphics
 #### iOS
-```obj-c
+````obj-c
 chart.guide().text(
                @{
                  @"position": @[@(1), @(99.9)],
@@ -60,25 +60,18 @@ chart.guide().text(
                  @"textColor":@"#108EE9",
                  @"textSize": @(10.f)
                  });
-```
+````
 
 #### Android
-```java
-```
+````java
+````
 
-- 参数
+- parameters
 
-| **属性名** |  **类型** | **解释** |
+| **Attribute Name** | **Type** | **Explanation** |
 | --- | --- | --- |
-| `position`| Array&lt;Number&gt; | 辅助标志绘制的位置 <br/>padding[0] 表示X轴所在的位置  <br/> padding[1] 表示Y轴所在的位置
-| `padding`| Array&lt;Number&gt; |  辅助标志绘制的位置 <br/>padding[0] 左  <br/> padding[1] 上  <br/>padding[2] 右 <br/> padding[3] 下
-| `textColor`| String | 文字颜色
-| `textSize` | Number | 文字大小
+| `position`| Array&lt;Number&gt; | The position where the auxiliary mark is drawn <br/>padding[0] indicates the position of the X-axis <br/> padding[1] indicates the position of the Y-axis
+| `padding`| Array&lt;Number&gt; | The position where the auxiliary logo is drawn<br/>padding[0] left<br/> padding[1] top<br/>padding[2] right<br/> padding[3] Down
+| `textColor`| String | Text color
+| `textSize` | Number | Text size
 <br/>
-
-
-
-
-
-
-

@@ -11,7 +11,7 @@ F2CanvasView 是 F2Native 图表的渲染引擎，对底层实际绘制引擎 ap
 
 ```obj-c
 #import <F2/F2.h>
-F2CanvasView  *f2CanvasView = [F2CanvasView canvasWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 280)];
+F2CanvasView  *f2CanvasView = [F2CanvasView canvas:CGRectMake(0, 0, self.view.bounds.size.width, 280)];
 [self.view addSubview:f2CanvasView];
 ```
 ### Android
@@ -45,9 +45,13 @@ canvasView.initCanvasContext(new F2CanvasView.ConfigBuilder().asyncRender(true).
 @implementation DemoUIView
 
 -(void)initView {
-self.canvasView = [F2CanvasView canvasWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 280)];
-f2CanvasView.delegate = self;
+self.canvasView = [F2CanvasView canvas:CGRectMake(0, 0, self.view.bounds.size.width, 280)];
 [self.view addSubview:f2CanvasView];
+
+[self.canvasView addGestureListener:@"longPress" callback:^(NSDictionary * _Nonnull info) {
+            F2StrongSelf;
+            strongSelf.handleGestureInfo(info);
+        }];
 }
 
 - (void)handleGestureInfo:(NSDictionary *)info {

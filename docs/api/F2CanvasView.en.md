@@ -4,39 +4,39 @@ order: 1
 ---
 
 # F2CanvasView
-F2CanvasView 是 F2Native 图表的渲染引擎，对底层实际绘制引擎 api 进行二次封装与上层绘制指令进行解耦，实现底层绘制可插拔架构设计。图形引擎最终将图表绘制在 F2CanvasView 上，使用者根据添加到指定位置即可。
+F2CanvasView is the rendering engine of F2Native charts. It decouples the underlying actual drawing engine api by secondary encapsulation and the upper-level drawing instructions, and realizes the design of the bottom-level drawing pluggable architecture. The graphics engine finally draws the chart on the F2CanvasView, and the user can add it to the specified position.
 
-## 创建 F2CanvasView 实例
+## Create An Instance Of F2CanvasView
 ### iOS
 
-```obj-c
+````obj-c
 #import <F2/F2.h>
-F2CanvasView  *f2CanvasView = [F2CanvasView canvasWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 280)];
+F2CanvasView *f2CanvasView = [F2CanvasView canvas:CGRectMake(0, 0, self.view.bounds.size.width, 280)];
 [self.view addSubview:f2CanvasView];
-```
+````
 ### Android
 
-```xml
+````xml
 <com.antgroup.antv.f2.F2CanvasView
     android:id="@+id/canvasView"
     android:layout_width="match_parent"
     android:layout_height="220dp"/>
-```
+````
 
-```java
+````java
 F2CanvasView canvasView = findViewById(R.id.canvasView);
 canvasView.initCanvasContext(new F2CanvasView.ConfigBuilder().asyncRender(true).build());
-```
+````
 
-## 手势
-原生 View 手势事件对接 Chart 实例
+## gestures
+Native View gesture event docking with Chart instance
 
 ### iOS
 
-```obj-c
+````obj-c
 #import <F2/F2.h>
 
-@interface DemoUIView () <F2GestureDelegate>
+@interface DemoUIView() <F2GestureDelegate>
 
 @property (nonatomic, strong) F2CanvasView *canvasView;
 @property (nonatomic, strong) F2Chart *chart;
@@ -45,9 +45,13 @@ canvasView.initCanvasContext(new F2CanvasView.ConfigBuilder().asyncRender(true).
 @implementation DemoUIView
 
 -(void)initView {
-self.canvasView = [F2CanvasView canvasWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 280)];
-f2CanvasView.delegate = self;
+self.canvasView = [F2CanvasView canvas:CGRectMake(0, 0, self.view.bounds.size.width, 280)];
 [self.view addSubview:f2CanvasView];
+
+[self.canvasView addGestureListener:@"longPress" callback:^(NSDictionary * _Nonnull info) {
+            F2StrongSelf;
+            strongSelf.handleGestureInfo(info);
+        }];
 }
 
 - (void)handleGestureInfo:(NSDictionary *)info {
@@ -55,15 +59,14 @@ f2CanvasView.delegate = self;
 }
 
 @end
-```
+````
 ### Android
 
-```java
+````java
 canvasView.setOnCanvasTouchListener(new F2CanvasView.OnCanvasTouchListener() {
     @Override
     public void onTouch(F2CanvasView canvasView, F2CanvasView.TouchEvent event) {
         mChart.postTouchEvent(event);
     }
 });
-```
-
+````

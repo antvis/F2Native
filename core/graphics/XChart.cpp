@@ -744,8 +744,8 @@ XChart &XChart::TooltipObject(const nlohmann::json &config) {
 
 XChart &XChart::CoordObject(const nlohmann::json &config) {
     this->logTracer_->trace("#coord ");
-    config_.coordType = config.value("type", config_.coordType);
-    config_.transposed = config.value("transposed", config_.transposed);
+    config_.coordType = json::GetString(config, "type", config_.coordType);
+    config_.transposed = json::GetBool(config, "transposed", config_.transposed);
     if(this->coord_ != nullptr) {
         this->coord_->SetTransposed(config_.transposed);
     }

@@ -34,12 +34,8 @@
     NSArray *jsonArray = [F2Utils toJsonObject:jsonData];
     self.chart.clear();
     self.chart.canvas(self.canvasView).padding(20, 10, 20, 0.f).source(jsonArray);
-    self.chart.scale(@"date", @{@"tickCount": @(3), @"tick":[F2Callback callback:^NSDictionary * _Nonnull(NSDictionary * _Nonnull param) {
-        return param;
-    }]});
-    self.chart.scale(@"value", @{@"nice": @(YES), @"tick":[F2Callback callback:^NSDictionary * _Nonnull(NSDictionary * _Nonnull param) {
-        return param;
-    }]});
+    self.chart.scale(@"date", @{@"tickCount": @(3)});
+    self.chart.scale(@"value", @{@"nice": @(YES)});
     self.chart.axis(@"date", @{
         @"grid": @(NO),
         @"label": @{           

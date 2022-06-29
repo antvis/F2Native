@@ -1,26 +1,25 @@
 ---
-title: 图表组成
+title: Chart Composition
 order: 1
 ---
 
-为了更好得使用 F2Native 进行数据可视化，我们需要了解 F2Native 图表的组成以及相关术语。
+In order to better use F2Native for data visualization, we need to understand the composition of F2Native charts and related terminology.
 
-## 图表部件
+## Chart Widgets
 
-一般情况下，F2Native 的图表包含坐标轴（Axis）、几何标记（Geometry）、提示信息（Tooltip）、图例（Legend）等，另外还可以包括辅助标记（Guide）、数据标签（dataLabels）等。
+In general, F2Native's charts include Axis, Geometry, Tooltip, Legend, etc. In addition, it can also include auxiliary markers (Guide), data labels (dataLabels), etc.
 
-F2Native 基本组成部分如下图所示：
+The basic components of F2Native are shown in the following figure:
 
-![](https://gw.alipayobjects.com/zos/rmsportal/tpfdzWDYmxzHkquTihJe.png#width=600) ![](https://gw.alipayobjects.com/zos/rmsportal/lUqXwLjgRWhugemcNsqc.png#width=600)
+![](https://gw.alipayobjects.com/zos/rmsportal/tpfdzWDYmxzHkquTihJe.png#width=600) ![](https://gw.alipayobjects.com/zos/rmsportal/lUqXwLjgRWhugemcNsqc.png#width= 600)
 
-## 术语
-| **术语** | **英文** | **描述** |
+## The Term
+| **Terminology** | **English** | **Description** |
 | --- | --- | --- |
-| 坐标轴 | Axis | 每个图表通常包含两个坐标轴，在直角坐标系（笛卡尔坐标系）下，分别为 x 轴和 y 轴，在极坐标轴下，则分别由角度和半径 2 个维度构成。每个坐标轴由坐标轴线（line）、刻度线（tickLine）、刻度文本（label）以及网格线（grid）组成。 |
-| 图例 | Legend | 图例作为图表的辅助元素，用于标定不同的数据类型以及数据的范围，用于辅助阅读图表以及帮助用户在图表中进行数据的筛选过滤。 |
-| 几何标记 | Geometry | 即我们所说的点、线、面这些几何图形，在图形语法 中几何标记的类型决定了生成图表的类型。也就是数据被可视化后的实际表现，不同的几何标记都包含对应的图形属性。 |
-| 图形属性 | Attribute | 图形属性对应视觉编码中的视觉通道，是图形语法元素非常重要和灵活的一部分，不同的几何标记拥有自己的图形属性，F2Native 提供了位置（position）、颜色（color）、大小（size）、形状（shape）这四种图形属性。 |
-| 坐标系 | Coordinate | 坐标系是将两种位置标度结合在一起组成的 2 维定位系统，描述了数据是如何映射到图形所在的平面。 |
-| 提示信息 | Tooltip | 当鼠标悬停在某个点上时，会以提示框的形式显示当前点对应的数据的信息，比如该点的值，数据单位等，帮助用户从图表中获取具体的数据信息。 |
-| 辅助标记 | Guide | 当需要在图表上绘制一些辅助线、辅助框或者文本时，比如增加预警线、最高值线或者标示明显的范围区域时，辅助标记 Guide 是非常有用的工具。 |
-
+| Coordinate axis | Axis | Each chart usually contains two coordinate axes, under the Cartesian coordinate system (Cartesian coordinate system), the x-axis and the y-axis, respectively, under the polar coordinate axis, the angle and the radius are respectively 2 dimensional composition. Each axis consists of a line, a tickLine, a label, and a grid. |
+| Legend | Legend | Legend is an auxiliary element of the chart, used to demarcate different data types and data ranges, to assist in reading the chart and to help users filter and filter data in the chart. |
+| Geometry Marker | Geometry | That is, the geometric figures we call point, line, and surface. In the graphics grammar, the type of geometric mark determines the type of graph generated. That is, the actual performance of the data after being visualized. Different geometric markers contain corresponding graphical attributes. |
+| Graphic attributes | Attribute | Graphic attributes correspond to visual channels in visual coding, and are a very important and flexible part of graphic syntax elements. Different geometric markers have their own graphic attributes. F2Native provides position, color, Four graphic attributes: size and shape. |
+| Coordinate System | Coordinate | The coordinate system is a 2-dimensional positioning system that combines two position scales, describing how data is mapped to the plane on which the graph is located. |
+| Prompt information | Tooltip | When the mouse hovers over a point, the information of the data corresponding to the current point will be displayed in the form of a prompt box, such as the value of the point, data unit, etc., to help users obtain specific information from the chart Data information. |
+| Guide | Guide | Guide is a very useful tool when you need to draw some guide lines, guide boxes or text on the chart, such as adding warning lines, maximum value lines, or marking obvious range areas. |

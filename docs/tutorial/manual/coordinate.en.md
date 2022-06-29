@@ -1,54 +1,54 @@
 ---
-title: 坐标系
+title: Coordinate System
 order: 6
 ---
 
-坐标系是将两种位置标度结合在一起组成的 2 维定位系统，描述了数据是如何映射到图形所在的平面。
+A coordinate system is a 2-dimensional positioning system that combines two position scales, describing how data is mapped to the plane on which the graphics lie.
 
-F2Native 提供了直角坐标系和极坐标两种类型，目前所有的坐标系均是 2 维的。
+F2Native provides two types of Cartesian coordinate system and polar coordinate. Currently, all coordinate systems are 2-dimensional.
 
-## 如何设置坐标系
+## How To Set The Coordinate System
 
-F2Native 默认提供的坐标系类型为笛卡尔坐标系，当需要切换坐标系时，可以通过调用下面的语法声明需要使用的坐标系：
+The coordinate system type provided by F2Native by default is Cartesian coordinate system. When you need to switch the coordinate system, you can declare the coordinate system to be used by calling the following syntax:
 
-```
+````
 chart.coord(@{@"type": @"polar", @"transposed": @(YES)});
-}); 
-```
-| **坐标系类型** | **说明** |
+});
+````
+| **Type Of Coordinate System** | **Description** |
 | --- | --- |
-| `rect` | 直角坐标系，目前仅支持二维，由 x, y 两个互相垂直的坐标轴构成。 |
-| `polar` | 极坐标系，由角度和半径 2 个维度构成。 |
+| `rect` | Cartesian coordinate system, currently only supports two-dimensional, consisting of two mutually perpendicular coordinate axes x, y. |
+| `polar` | Polar coordinate system, consisting of 2 dimensions, angle and radius. |
 
 
-## 坐标系类型及配置
+## Coordinate System Type And Configuration
 
-坐标系可以分为笛卡尔坐标系和非笛卡尔坐标系，非笛卡尔坐标系即极坐标，由角度和半径这两个维度来确定位置。
+The coordinate system can be divided into a Cartesian coordinate system and a non-Cartesian coordinate system. The non-Cartesian coordinate system is polar coordinates, and the position is determined by the two dimensions of angle and radius.
 
-利用极坐标可生成饼图、玫瑰图和雷达图等，较适用于周期性数据的可视化场景，比如时间和方向数据。
+Using polar coordinates can generate pie charts, rose charts, and radar charts, which are more suitable for visualization scenarios of periodic data, such as time and direction data.
 
-坐标系类型的变换会改变几何标记的形状，比如在极坐标系中，矩形将变为圆环的一部分。
+A coordinate system type transformation will change the shape of a geometric marker, for example in a polar coordinate system a rectangle will become part of a torus.
 
-### 坐标系配置
+### Coordinate System Configuration
 
-#### 直角坐标系
+#### Cartesian Coordinate System
 
-```
-// 声明直角坐标系
-// 直角坐标系转置
+````
+// declare Cartesian coordinate system
+// Cartesian coordinate system transpose
 chart.coord(@{@"type": @"rect", @"transposed": @(YES)});
 
-```
+````
 
-#### 极坐标
+#### Polar Coordinates
 
-```
+````
 chart.coord(@{
-  @"type": @"polar", // 声明极坐标系
-  @"transposed": @(YES) // 转置
+  @"type": @"polar", // declare polar coordinate system
+  @"transposed": @(YES) // transposed
   });
-```
+````
 
-这里需要说明的是，F2Native 极坐标默认的起始角度和结束角度如下图所示：
+It should be noted here that the default start and end angles of F2Native polar coordinates are shown in the following figure:
 
 ![](https://zos.alipayobjects.com/skylark/85950a42-9579-44cb-b656-8dd28c9a014a/attach/2378/d648679184c6977c/image.png#width=)

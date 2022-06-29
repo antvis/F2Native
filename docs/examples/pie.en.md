@@ -3,10 +3,10 @@ title: Pie Chart
 order: 4
 ---
 
-## 演示
+## Example
 
 ### 数据（jsonString）
-下述 jsonData 对应数据
+Prepare jsonData like this
 
 ```json
 [{"name": "芳华","percent": 0.4,"a": "1"}, 
@@ -22,9 +22,8 @@ order: 4
     <table style="margin-left: auto; margin-right: auto;">
         <tr>
              <td width = 55%>
-            F2CanvasView *canvasView =[F2CanvasView canvasWithFrame:self.frame];<br/>
-             canvasView.delegate = self;<br/>
-             F2Chart *chart = [F2Chart chart:canvasView.bounds.size withName:NSStringFromClass([self class])];<br/>
+            F2CanvasView *canvasView =[F2CanvasView canvas:self.frame];<br/>
+             F2Chart *chart = [F2Chart chart:canvasView.bounds.size name:NSStringFromClass([self class])];<br/>
              chart.axis(@"percent", @{@"line": @(NO), @"label": @(NO)});<br/>
              chart.axis(@"a", @{@"line": @(NO), @"label": @(NO)});<br/>
              chart.coord(@{@"type": @"polar", @"transposed": @(YES)});<br/>

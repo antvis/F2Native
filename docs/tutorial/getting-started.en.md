@@ -1,10 +1,22 @@
 ---
-title: 快速上手
+title: Quick Start
 order: 0
 redirect_from:
   - /en/docs/tutorial
 ---
 
+## Introduction
+The following is an example of a basic bar chart to start our first chart creation.
+
+Mainly through the following steps to create:
+
+* step1: Initialize the F2CanvasView graphics view;<br/>
+* step2: Create F2Chart graph instance <br/>
+* step3: F2Chart graphics instance associates configuration items such as rendering view and data <br/>
+* step4: Use the Graphics Syntax API to complete the chart description <br/>
+* step5: render the chart <br/>
+
+## Quick Start
 ### iOS
 <img width = "260" src = "https://gw.alipayobjects.com/mdn/rms_b413ff/afts/img/A*ZJ-iRby9Gt4AAAAAAAAAAAAAARQnAQ"/>
 

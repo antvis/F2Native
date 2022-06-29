@@ -29,7 +29,7 @@ public class SingleIntervalChart_1 implements F2CanvasView.Adapter {
         mChart.padding(10, 0, 0, 0);
         mChart.source(Utils.loadAssetFile(canvasView.getContext(), "mockData_singleIntervalChart.json"));
         mChart.interval().position("year*sales").style(new F2Config.Builder()
-                .setOption("radius", new float[]{3, 3, 0, 0 }) // [tl, tr, bl, br]
+                .setOption("rounding", new float[]{3, 3, 0, 0 }) // [tl, tr, bl, br]
                 .build());
         mChart.setAxis("year", new F2Chart.AxisConfigBuilder()
                 .label(new F2Chart.AxisLabelConfigBuilder().labelOffset(5.f))

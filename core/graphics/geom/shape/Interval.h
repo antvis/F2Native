@@ -81,9 +81,10 @@ class Interval : public GeomShapeBase {
                 rect->SetStorkColor(color);
                 rect->SetLineWidth(lineWidth);
             }
-            if(_style.contains("radius")) {
+            
+            if(_style.contains("rounding")) {
                 float roundings[4] = {0, 0, 0, 0};
-                json::ParseRoundings(_style["radius"], &roundings[0], context.GetDevicePixelRatio());
+                json::ParseRoundings(_style["rounding"], &roundings[0], context.GetDevicePixelRatio());
                 rect->SetRoundings(roundings);
             }
 

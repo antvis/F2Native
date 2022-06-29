@@ -1,5 +1,3 @@
-
-
 #import "BaseAreaChart.h"
 #import <F2/F2.h>
 
@@ -9,7 +7,8 @@
     NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"Res/mockData_baseArea" ofType:@"json"];
     NSString *jsonData = [NSString stringWithContentsOfFile:jsonPath encoding:NSUTF8StringEncoding error:nil];
     self.chart.clear();
-    self.chart.canvas(self.canvasView).padding(20, 10, 0, 0.f).source(jsonData);
+    self.chart.canvas(self.canvasView).padding(20, 10, 0, 0.f);
+    self.chart.source([F2Utils toJsonArray:jsonData]);
     self.chart.scale(@"tem", @{@"min": @(0)});
     self.chart.axis(@"time", @{@"grid": @(NO), @"label": @{@"textAlign": @"start"}});
     self.chart.line().position(@"time*tem").fixedSize(2).fixedShape(@"smooth");
@@ -26,6 +25,7 @@
         }]
     });
     self.chart.animate(@YES);
+    self.chart.tooltip(@{});
     self.chart.render();
 }
 

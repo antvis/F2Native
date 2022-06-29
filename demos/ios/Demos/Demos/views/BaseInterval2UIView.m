@@ -18,8 +18,9 @@
 - (void)chartRender {
     self.chart.canvas(self.canvasView);
     self.chart.padding(10, 20, 10, 0.f);
-    self.chart.source([self jsonData]);
+    self.chart.source([F2Utils toJsonArray:[self jsonData]]);
     self.chart.interval().position(@"genre*sold").color(@"genre", @[]);
+    self.chart.tooltip(@{});
     self.chart.render();
 }
 

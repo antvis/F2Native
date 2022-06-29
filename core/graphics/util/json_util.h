@@ -92,7 +92,7 @@ static std::array<double, 2> JsonArrayRange(const nlohmann::json &data) {
     return std::array<double, 2>{_min, _max};
 }
 
-static std::string GenerateRowUniqueKey(const nlohmann::json &row, std::set<std::string> &fields) {
+static std::string GenerateRowUniqueKey(const nlohmann::json &row, const std::set<std::string> &fields) {
 
     std::string unique = "_";
 
@@ -106,7 +106,7 @@ static std::string GenerateRowUniqueKey(const nlohmann::json &row, std::set<std:
     return unique;
 }
 
-static XDataGroup JsonGroupByFields(const nlohmann::json &data, std::set<std::string> fields) {
+static XDataGroup JsonGroupByFields(const nlohmann::json &data, const std::set<std::string> &fields) {
     XDataGroup rst;
     if(fields.empty()) {
         XDataArray ary;
@@ -131,7 +131,7 @@ static XDataGroup JsonGroupByFields(const nlohmann::json &data, std::set<std::st
         } else {
             std::vector<XData> array;
             array.push_back({&row});
-            group[key] = array;
+            group[key] = std::move(array);
         }
 
         if(std::find(rowKeys.begin(), rowKeys.end(), key) == rowKeys.end()) {

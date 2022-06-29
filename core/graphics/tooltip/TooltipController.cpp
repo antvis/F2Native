@@ -31,14 +31,6 @@ static scale::AbstractScale &_GetToolTipGroupScale(XChart *chart, std::unique_pt
     return _GetToolTipValueScale(chart, geom);
 }
 
-static const std::string &_GetToolTipGroupNameField(XChart *chart, std::unique_ptr<geom::AbstractGeom> &geom) {
-    auto &attr = geom->GetAttr(attr::AttrType::Color);
-    if(attr.get() != nullptr && !attr->GetFields().empty()) {
-        auto &scale = chart->GetScale(attr->GetFields()[0]);
-        return scale.field;
-    }
-    return geom->GetYScaleField();
-}
 } // namespace tooltip
 } // namespace xg
 
@@ -156,15 +148,15 @@ bool tooltip::ToolTipController::ShowToolTip(const util::Point &point) {
         auto records = geom->GetSnapRecords(chart_, _point);
         for(std::size_t index = 0; index < records.size(); ++index) {
             auto &record = records[index];
-            if(!std::isnan(record._x) && !std::isnan(record._y)) {
+            if(!std::isnan(record._x) ) {
                 nlohmann::json tooltipItem;
                 tooltipItem["x"] = record._x;
-                tooltipItem["y"] = record._y;
+                tooltipItem["y"] = record._y0.empty() ? record._y : record._y0[0];
                 tooltipItem["color"] = record._color;
                 tooltipItem["xTip"] = config_["xTip"];
                 tooltipItem["yTip"] = config_["yTip"];
 
-                auto &nameField = tooltip::_GetToolTipGroupNameField(chart_, geom);
+                auto &nameField = geom->GetYScaleField();
                 auto &yScale = chart_->GetScale(nameField);
                 tooltipItem["name"] = nameField;
 

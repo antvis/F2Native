@@ -320,6 +320,7 @@ XDataArray xg::geom::AbstractGeom::GetSnapRecords(XChart *chart, util::Point poi
 
     XDataArray tmp;
 
+    auto &xField = GetXScaleField();
     for(std::size_t num = 0; num < dataArray_.size(); ++num) {
         auto &groupData = dataArray_[num];
 
@@ -329,7 +330,6 @@ XDataArray xg::geom::AbstractGeom::GetSnapRecords(XChart *chart, util::Point poi
             end = fmin(end, xScale.max);
         }
 
-        auto &xField = GetXScaleField();
         for(size_t index = start; index <= end; index++) {
             auto &item = groupData[index];
             if((*item.data).contains(xField) && (*item.data)[xField] == xValue) {
@@ -345,14 +345,20 @@ XDataArray xg::geom::AbstractGeom::GetSnapRecords(XChart *chart, util::Point poi
 
 const XData &xg::geom::AbstractGeom::GetLastSnapRecord(XChart *chart) {
     auto &xScale = chart->GetScale(GetXScaleField());
-    std::size_t end = scale::IsCategory(xScale.GetType()) ? fmax(0 , xScale.max): (dataArray_[0].size() - 1);
-    return dataArray_[0][end];
+    //说明分组了
+    if (dataArray_.size() > 1) {
+        std::size_t end = scale::IsCategory(xScale.GetType()) ? fmax(0 , xScale.max): (dataArray_.back().size() - 1);
+        return dataArray_.back()[end];
+    } else {
+        std::size_t end = scale::IsCategory(xScale.GetType()) ? fmax(0 , xScale.max): (dataArray_.front().size() - 1);
+        return dataArray_.front()[end];
+    }
 }
 
 const XData &xg::geom::AbstractGeom::GetFirstSnapRecord(XChart *chart) {
     auto &xScale = chart->GetScale(GetXScaleField());
     std::size_t start = scale::IsCategory(xScale.GetType()) ? fmax(0, xScale.min) : 0;
-    return dataArray_[0][start];
+    return dataArray_.front()[start];
 }
 
 void xg::geom::AbstractGeom::Clear() {

@@ -33,7 +33,7 @@ F2Chart chart = F2Chart.create(context, "ChartName", width, height);
 | `name`| String | Custom graphic name, mainly used for log output |
 
 
-## method
+## Method
 ### - canvas
 Set the drawing engine instance corresponding to the current graphics command engine
 #### iOS
@@ -115,7 +115,7 @@ set metric
 <br/>
 
 
-### - coord
+### - Coord
 set coordinate system
 #### iOS
 ````obj-c
@@ -136,7 +136,7 @@ Type: Dictionary
 
 <br/>
 
-### - axis
+### - Axis
 Set the coordinate axis configuration; the coordinate axis of F2-Native is composed as follows
 #### iOS
 ````obj-c
@@ -172,16 +172,16 @@ chart.setAxis("sales", new F2Chart.AxisConfigBuilder()
 
 <br/>
 
-### - line
+### - Line
 Create a line instance; F2Line configuration information [see here](./F2Line)
 
-### - interval
+### - Interval
 Create a column instance; F2Interval configuration information [see here](./F2Interval)
 
-### - area
+### - Area
 Create a shadow instance; F2Area configuration information [see here](./F2Area)
 
-### - guide
+### - Guide
 Create an auxiliary instance; the configuration information of F2Guide [see here for details](./F2Guide)
 
 <br/>

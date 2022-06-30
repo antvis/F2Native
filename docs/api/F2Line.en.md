@@ -19,7 +19,7 @@ Graphic line object, used to draw line graphs
 ````
 <br/>
 
-## method
+## Method
 ### - position
 where to draw the column chart
 #### iOS

@@ -28,7 +28,7 @@ F2CanvasView canvasView = findViewById(R.id.canvasView);
 canvasView.initCanvasContext(new F2CanvasView.ConfigBuilder().asyncRender(true).build());
 ````
 
-## gestures
+## Gestures
 Native View gesture event docking with Chart instance
 
 ### iOS

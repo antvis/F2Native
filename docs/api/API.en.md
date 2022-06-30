@@ -15,9 +15,9 @@ The two basic classes in F2Native are F2CanvasView and F2Chart. It needs to be i
 ## F2Chart
 [F2Chart](./chart/F2Chart.md) Graphics instruction generation engine, uses graphic syntax theory to encapsulate api, and finally generates drawing instructions to the drawing engine for drawing.
 
-## quick start
+## Quick start
 
-###iOS
+### iOS
 
 ````obj-c
 #import <F2/F2.h>

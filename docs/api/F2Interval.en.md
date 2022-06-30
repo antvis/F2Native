@@ -19,7 +19,7 @@ Graphical column object, the user draws the column chart
 ````
 <br/>
 
-## method
+## Method
 ### - position
 where to draw the column chart
 #### iOS

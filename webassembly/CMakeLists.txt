@@ -4,13 +4,13 @@ set(PROJECT_NAME "f2wasm")
 
 project(${PROJECT_NAME})
 
-#JSON_NOEXCEPTION定义
+# JSON_NOEXCEPTION定义
 add_definitions(-DJSON_NOEXCEPTION=1)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_XCODE_ATTRIBUTE_MACOSX_DEPLOYMENT_TARGET "10.9")
-#set(CMAKE_CXX_FLAGS "-std=c++14 -Os -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s STANDALONE_WASM -s MAYBE_WASM2JS=0 -s TOTAL_MEMORY=1MB -s TOTAL_STACK=512KB -s ALLOW_MEMORY_GROWTH=1 -fno-exceptions")
 
+# set(CMAKE_CXX_FLAGS "-std=c++14 -Os -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s STANDALONE_WASM -s MAYBE_WASM2JS=0 -s TOTAL_MEMORY=1MB -s TOTAL_STACK=512KB -s ALLOW_MEMORY_GROWTH=1 -fno-exceptions")
 add_definitions(-ffunction-sections)
 add_definitions(-fdata-sections)
 
@@ -18,14 +18,13 @@ include_directories(../core)
 include_directories(../third_party)
 include_directories(../third_party/json/single_include)
 
-
 # 添加 core/utils 下所有源文件
 aux_source_directory(../core/utils DIR_SRC_UTILS)
 
-#添加core/webassembly 下所有源文件
+# 添加core/webassembly 下所有源文件
 aux_source_directory(../core/webassembly/ DIR_SRC_WEBASSEMBLY)
 
-#添加core/graphics 下所有源文件
+# 添加core/graphics 下所有源文件
 aux_source_directory(../core/graphics DIR_SRC_GRAPHICS)
 aux_source_directory(../core/graphics/axis DIR_SRC_GRAPHICS_AXIS)
 aux_source_directory(../core/graphics/canvas DIR_SRC_GRAPHICS_CANVAS)
@@ -66,18 +65,16 @@ list(APPEND DIR_SRC_GRAPHICS ${DIR_SRC_GRAPHICS_ANIMATE})
 list(APPEND DIR_SRC ${DIR_SRC_WEBASSEMBLY})
 list(APPEND DIR_SRC ${DIR_SRC_UTILS})
 list(APPEND DIR_SRC ${DIR_SRC_GRAPHICS})
-################
 
-aux_source_directory(../third_party/WilkinsonExtended WilkinsonExtended)
-list(REMOVE_ITEM WilkinsonExtended "../third_party/WilkinsonExtended/main.cpp")
+# ###############
+add_executable(${PROJECT_NAME} ${DIR_SRC})
 
-add_executable(${PROJECT_NAME} ${DIR_SRC} ${WilkinsonExtended})
-#https://github.com/timhutton/sdl-canvas-wasm
-#emcc core.cpp -s WASM=1 -s USE_SDL=2 -O3 -o index.js
-#执行上面的命令 预下载SDL2
-#-Oz > Os > O3 > O2 > O1 > O0 (O0-default)
-#-s STANDALONE_WASM  独立wasm
-#--no-entry 没有main函数
-#-nostdlib 声明不要使用系统库
-#-s ENVIRONMENT='node'
+# https://github.com/timhutton/sdl-canvas-wasm
+# emcc core.cpp -s WASM=1 -s USE_SDL=2 -O3 -o index.js
+# 执行上面的命令 预下载SDL2
+# -Oz > Os > O3 > O2 > O1 > O0 (O0-default)
+# -s STANDALONE_WASM  独立wasm
+# --no-entry 没有main函数
+# -nostdlib 声明不要使用系统库
+# -s ENVIRONMENT='node'
 set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "--bind  -Wall -Werror -s  ALLOW_MEMORY_GROWTH=1 -s ALLOW_TABLE_GROWTH -s EXPORTED_RUNTIME_METHODS=\"['addFunction']\" -O3")

@@ -10,13 +10,12 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_XCODE_ATTRIBUTE_MACOSX_DEPLOYMENT_TARGET "10.9")
 
-# set(CMAKE_CXX_FLAGS "-std=c++14 -Os -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s STANDALONE_WASM -s MAYBE_WASM2JS=0 -s TOTAL_MEMORY=1MB -s TOTAL_STACK=512KB -s ALLOW_MEMORY_GROWTH=1 -fno-exceptions")
+# -flto
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fno-rtti -fno-exceptions -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0")
 add_definitions(-ffunction-sections)
 add_definitions(-fdata-sections)
 
 include_directories(../core)
-include_directories(../third_party)
-include_directories(../third_party/json/single_include)
 
 # 添加 core/utils 下所有源文件
 aux_source_directory(../core/utils DIR_SRC_UTILS)
@@ -77,4 +76,5 @@ add_executable(${PROJECT_NAME} ${DIR_SRC})
 # --no-entry 没有main函数
 # -nostdlib 声明不要使用系统库
 # -s ENVIRONMENT='node'
-set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "--bind  -Wall -Werror -s  ALLOW_MEMORY_GROWTH=1 -s ALLOW_TABLE_GROWTH -s EXPORTED_RUNTIME_METHODS=\"['addFunction']\" -O3")
+# -s FILESYSTEM=0 关闭文件系统 不能减小包大小
+set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "--bind  -Wall -Werror -s  ALLOW_MEMORY_GROWTH=1 -s ALLOW_TABLE_GROWTH -s -Oz -fno-rtti -fno-exceptions -s ENVIRONMENT='web' -s FILESYSTEM=0")

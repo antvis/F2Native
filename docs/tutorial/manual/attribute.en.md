@@ -50,8 +50,7 @@ F2Native's parsing rules for the parameter `fields` of each graphics property ar
 - If it is a mapping of multiple attributes, you need to use `*` to connect, F2Native will parse and map these fields in turn, such as `position(@"cut*price")`;
 
 
-<a name="4933d1a9"></a>
-## position position property
+### Position  Property
 
 The mapping of the position attribute is used to determine which fields in the data determine the position of the data in the plane coordinate system. In layman's terms, the data fields that determine the x-axis and y-axis.
 
@@ -61,8 +60,7 @@ Taking the following statement as an example, on the position attribute, two att
 chart.line().position(@"cut*price");
 ````
 
-<a name="color"></a>
-##color
+### Color
 
 From the perspective of visual coding, color can be divided into three visual channels: brightness, saturation and hue. The first two can be considered as visual channels for encoding quantitative and ordinal data, while hue belongs to encoding qualitative Visual channel for data. In F2Native, the distinction is not so detailed, and the color method is uniformly used for mapping configuration.
 
@@ -115,7 +113,7 @@ In F2Native, the following mapping syntaxes are supported:
 
 As mentioned earlier, the visual channels supported by each geometric marker are different, and the mapping relationship between data and visual channels is not exactly the same. The following table lists the support of each graph attribute for each geom geometry tag:
 
-| **geometry mark** | **position** | **color** | **size** | **shape** |
+| **Geometry Mark** | **Position** | **Color** | **Size** | **Shape** |
 | --- | --- | --- | --- | --- |
 | line | support | support | support | support |
 | area | Supported | Supported | `Not supported` | `Not supported` |

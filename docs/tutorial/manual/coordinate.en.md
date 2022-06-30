@@ -15,7 +15,7 @@ The coordinate system type provided by F2Native by default is Cartesian coordina
 chart.coord(@{@"type": @"polar", @"transposed": @(YES)});
 });
 ````
-| **Type Of Coordinate System** | **Description** |
+| **Coordinate System Type** | **Description** |
 | --- | --- |
 | `rect` | Cartesian coordinate system, currently only supports two-dimensional, consisting of two mutually perpendicular coordinate axes x, y. |
 | `polar` | Polar coordinate system, consisting of 2 dimensions, angle and radius. |

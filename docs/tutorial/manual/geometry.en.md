@@ -48,7 +48,7 @@ The following table shows the correspondence between geom geometric marker types
 
 The following provides the built-in shape types provided by each geom in F2Native. The usage of shapes will be described in detail in the following chapters on graphics properties.
 
-| **geom type** | **shape type** | **interpretation** |
+| **Geom Type** | **Shape Type** | **Interpretation** |
 | --- | --- | --- |
 | line | 'line', 'smooth', 'dash' | dash: dashed line, smooth: smooth line |
 | area | 'area', 'smooth' | area map with filled content |

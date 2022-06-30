@@ -22,7 +22,7 @@ Therefore, in F2Native, we usually describe a graph as follows: a graph is a map
 
 For more information, please read the following chapters:
 
-- [Graph composition](./understanding)
+- [graph composition](./understanding)
 
 - [data](./data)
 

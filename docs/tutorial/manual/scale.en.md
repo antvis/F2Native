@@ -1,5 +1,5 @@
 ---
-title: measure
+title: Measure
 order: 3
 ---
 

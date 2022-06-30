@@ -3,51 +3,51 @@ title: F2Area
 order: 5
 ---
 
-图形区域对象，用于绘制区域范围
+Graphics area object, used to draw area extents
 
-## 创建 F2Area 实例
+## Create F2Area Instance
 #### iOS
-```obj-c
-  chart.area();
-```
+````obj-c
+   chart.area();
+````
 
 #### Android
-```java
-  chart.area();
-```
+````java
+   chart.area();
+````
 <br/>
 
-## 方法
-### - position 
-绘制区域位置
+## Method
+### - Position
+draw area location
 #### iOS
-```obj-c
-  chart.area().position(@"date*value");
-```
+````obj-c
+   chart.area().position(@"date*value");
+````
 #### Android
-```java
-  chart.area().position("date*value");
-```
-- 参数
+````java
+   chart.area().position("date*value");
+````
+- parameters
 
-| **属性名** |  **类型** | **解释** |
+| **Attribute Name** | **Type** | **Explanation** |
 | --- | --- | --- |
-| `attr`| String | X*Y：绘制的区域在source中对应的名称
+| `attr`| String | X*Y: The corresponding name of the drawn area in the source
 
 <br/>
 
-### - fixedColor 
-设置统一的区域填充的颜色
+### - FixedColor
+Set the color of the uniform area fill
 #### iOS
-```obj-c
-  chart.area().fixedColor(@"#108EE9");
-```
+````obj-c
+   chart.area().fixedColor(@"#108EE9");
+````
 #### Android
-```java
-  chart.area().fixedColor("#108EE9");
-```
-- 参数
+````java
+   chart.area().fixedColor("#108EE9");
+````
+- parameters
 
-| **属性名** |  **类型** | **解释** |
+| **Attribute Name** | **Type** | **Explanation** |
 | --- | --- | --- |
-| `attr`| String | 设置区域填充的颜色 （Hex rgba）
+| `attr`| String | Set the color of the area fill (Hex rgba)

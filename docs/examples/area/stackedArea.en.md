@@ -4,20 +4,19 @@ order: 1
 ---
 
 
-### 数据（jsonString）
-[下述 jsonData 对应数据](https://gw.alipayobjects.com/os/bmw-prod/a1808820-395f-44de-b069-b923edfdbf75.json)
+### Data（jsonString）
+[jsonData](https://gw.alipayobjects.com/os/bmw-prod/a1808820-395f-44de-b069-b923edfdbf75.json)
 
 
-## 演示
+## Example
 
 ### iOS
 <html>
     <table style="margin-left: auto; margin-right: auto;">
         <tr>
             <td width=55%>
-             F2CanvasView *canvasView =[F2CanvasView canvasWithFrame:self.frame];<br/>
-             canvasView.delegate = self;<br/>
-             F2Chart *chart = [F2Chart chart:canvasView.bounds.size withName:NSStringFromClass([self class])];<br/>
+             F2CanvasView *canvasView =[F2CanvasView canvas:self.frame];<br/>
+             F2Chart *chart = [F2Chart chart:canvasView.bounds.size name:NSStringFromClass([self class])];<br/>
              chart.canvas(canvasView).padding(20, 10, 20, 0.f).source(jsonData);<br/>
              chart.scale(@"date", @{@"tickCount": @(5)});<br/>
              chart.scale(@"value", @{@"min": @(0)});<br/>

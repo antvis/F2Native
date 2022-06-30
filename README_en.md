@@ -14,7 +14,7 @@ F2Native is born for mobile visual development. It is out-of-the-box,cross-platf
 ## Features
 ### Focus on the mobile,extreme experience
 F2Native supports Android, iOS And MacOS. Using the cross-platform language C++ to generate the underlying drawing commands，
- can achieve **cross-platform, unified experience, high-performance experience**. After packaging on Android and iOS, the APK and IPA size are 250KB and 500KB respectively.
+ can achieve **cross-platform, unified experience, high-performance experience**. After packaging on Android and iOS, the APK and IPA size are **250KB and 500KB** respectively.
 
 ### Light and natural
 make data more alive and chart interactions more natural.

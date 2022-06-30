@@ -8,6 +8,7 @@
 #include "../../canvas/Coord.h"
 #include "../../scale/Category.h"
 #include "../../scale/Scale.h"
+#include "../../util/json_data.h""
 
 using namespace xg::canvas::coord;
 using namespace xg::scale;
@@ -31,7 +32,7 @@ class AttrBase {
     virtual AttrType GetType() const = 0;
 
     virtual void
-    Mapping(nlohmann::json &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord){};
+    Mapping(XDataArray &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord){};
 
   protected:
     vector<string> fields_;
@@ -48,37 +49,51 @@ class Position : public AttrBase {
 
     AttrType GetType() const override { return AttrType::Position; }
 
-    void Mapping(nlohmann::json &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
+    void Mapping(XDataArray &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
         for(size_t i = start; i <= end; i++) {
             auto &item = groupData[i];
-            nlohmann::json &xVal = item[fields_[0]];
-            nlohmann::json &yVal = item[fields_[1]];
+            auto &xVal = (*item.data)[fields_[0]];
+            auto &yVal = (*item.data)[fields_[1]];
 
             if(xVal.is_null() && yVal.is_null()) {
-                item["_x"] = std::nan("0"); // attr names[x, y]
-                item["_y"] = std::nan("0");
+                item._x = std::nan("0"); // attr names[x, y]
+                item._y = std::nan("0");
             } else if(xVal.is_array() && yVal.is_array()) {
                 // TODO
             } else if(xVal.is_array()) {
                 // TODO
-            } else if(yVal.is_array()) {
-                double x = xScale.Scale(item[fields_[0]]);
+            } else if(item.adjust.size() >= 2) { //stack
+                double x = xScale.Scale((*item.data)[fields_[0]]);
 
-                double rstX;
-                nlohmann::json rstY;
-                for(std::size_t index = 0; index < yVal.size(); ++index) {
-                    util::Point _point = coord.ConvertPoint(util::Point{x, yScale.Scale(yVal[index])});
-                    rstX = _point.x;
+                std::vector<double> rstY;
+                for(std::size_t index = 0; index < item.adjust.size(); ++index) {
+                    util::Point _point = coord.ConvertPoint(util::Point{x, yScale.Scale(item.adjust[index])});
+                    item._x  = _point.x;
                     rstY.push_back(_point.y);
                 }
-                item["_x"] = rstX;
-                item["_y"] = rstY;
-            } else {
-                double x = xScale.Scale(item[fields_[0]]);
-                double y = yScale.Scale(item[fields_[1]]);
+                item._y0 = rstY;
+            } else if(item.dodge.size() >= 1) { //dodge
+                double x = xScale.Scale(item.dodge[0]);
+                double y = item.dodge.size() >= 2 ? yScale.Scale(item.dodge[1]) : yScale.Scale((*item.data)[fields_[1]]);
                 util::Point point = coord.ConvertPoint(util::Point(x, y));
-                item["_x"] = point.x; // attr names[x, y]
-                item["_y"] = point.y;
+                item._x = point.x; // attr names[x, y]
+                item._y = point.y;
+            } else if(yVal.is_array()) { //区间柱状图
+                double x = xScale.Scale((*item.data)[fields_[0]]);
+                std::vector<double> rstY;
+                for(std::size_t index = 0; index < yVal.size(); ++index) {
+                    util::Point _point = coord.ConvertPoint(util::Point{x, yScale.Scale(yVal[index])});
+                    item._x  = _point.x;
+                    rstY.push_back(_point.y);
+                }
+                item._y0 = rstY;
+            }
+            else {
+                double x = xScale.Scale((*item.data)[fields_[0]]);
+                double y = yScale.Scale((*item.data)[fields_[1]]);
+                util::Point point = coord.ConvertPoint(util::Point(x, y));
+                item._x = point.x; // attr names[x, y]
+                item._y = point.y;
             }
         }
     }
@@ -99,15 +114,22 @@ class Color : public AttrBase {
 
     inline const string &GetColor(int index) const { return index < colors_.size() ? colors_[index] : colors_[0]; }
 
-    void Mapping(nlohmann::json &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
-        for(size_t i = start; i <= end; i++) {
-            auto &item = groupData[i];
-            if(!fields_.empty() && scale::IsCategory(xScale.GetType())) {
-                const scale::Category &cat = (scale::Category &)xScale;
-                std::size_t index = cat.Transform(item[fields_[0]]);
-                item["_color"] = colors_[index];
-            } else {
-                item["_color"] = colors_[0];
+    void Mapping(XDataArray &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
+        //设置的是一个固定的颜色
+        if (fields_.empty()) {
+            for(std::size_t index = start; index <= end; ++index) {
+                groupData[index]._color = colors_[0];
+            }
+        } else {
+            for(size_t i = start; i <= end; i++) {
+                auto &item = groupData[i];
+                if(!fields_.empty() && scale::IsCategory(xScale.GetType())) {
+                    const scale::Category &cat = (scale::Category &)xScale;
+                    std::size_t index = cat.Transform((*item.data)[fields_[0]]);
+                    item._color = colors_[index];
+                } else {
+                    item._color = colors_[0];
+                }
             }
         }
     }
@@ -126,15 +148,22 @@ class Size : public AttrBase {
 
     AttrType GetType() const override { return AttrType::Size; }
 
-    void Mapping(nlohmann::json &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
-        for(std::size_t index = start; index <= end; ++index) {
-            nlohmann::json &item = groupData[index];
-            if(scale::IsCategory(xScale.GetType())) {
-                std::size_t val = static_cast<scale::Category &>(xScale).Transform(item[xScale.field]);
-                item["_size"] = sizes_[val % sizes_.size()];
-            } else {
-                double percent = xScale.Scale(item[xScale.field]);
-                item["_size"] = sizes_[GetLinear(percent) % sizes_.size()];
+    void Mapping(XDataArray &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
+        //用户设置的是一个固定的size
+        if (fields_.empty()) {
+            for(std::size_t index = start; index <= end; ++index) {
+                groupData[index]._size = sizes_[0];
+            }
+        } else {
+            for(std::size_t index = start; index <= end; ++index) {
+                auto &item = groupData[index];
+                if(scale::IsCategory(xScale.GetType())) {
+                    std::size_t val = static_cast<scale::Category &>(xScale).Transform((*item.data)[xScale.field]);
+                    item._size = sizes_[val % sizes_.size()];
+                } else {
+                    double percent = xScale.Scale((*item.data)[xScale.field]);
+                    item._size = sizes_[GetLinear(percent) % sizes_.size()];
+                }
             }
         }
     }
@@ -164,12 +193,12 @@ class Shape : public AttrBase {
 
     // inline const string &GetShape(int index) const { return index < shapes_.size() ? shapes_[index] : shapes_[0]; }
 
-    void Mapping(nlohmann::json &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
+    void Mapping(XDataArray &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
         if(shapes_.empty()) {
             return;
         }
         for(std::size_t index = start; index <= end; ++index) {
-            groupData[index]["_shape"] = shapes_[0];
+            groupData[index]._shape = shapes_[0];
         }
     }
 
@@ -185,9 +214,9 @@ class Adjust : public AttrBase {
 
     inline const string &GetAdjust() const { return adjust_; }
 
-    void Mapping(nlohmann::json &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
+    void Mapping(XDataArray &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
         for(std::size_t index = start; index <= end; ++index) {
-            groupData[index]["_adjust"] = adjust_;
+            groupData[index]._adjust = adjust_;
         }
     }
 

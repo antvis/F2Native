@@ -1,35 +1,35 @@
 ---
-title: 图形语法
+title: Grammar of Graphics
 order: 0
 ---
 
-F2Native 同 G2 一样，基于《The Grammar of Graphics》(Leland Wilkinson 著)一书所提的图形理论。该理论是一套用来描述所有统计图形深层特性的语法规则，该语法回答了『什么是统计图形』这一问题，以自底向上的方式组织最基本的元素形成更高级的元素。
+F2Native, like G2, is based on the graphics theory presented in the book "The Grammar of Graphics" by Leland Wilkinson. The theory is a set of grammatical rules used to describe the deep properties of all statistical graphics. The grammar answers the question "what is a statistical graphics", organizing the most basic elements to form higher-level elements in a bottom-up manner.
 
-所以对于 F2Native 来说，**没有具体的图表类型的概念，所有的图表都是通过组合不同的图形语法元素形成的**，这些图形语法元素包括：
+So for F2Native, there is no specific concept of chart type, all charts are formed by combining different graphic syntax elements, these graphic syntax elements include:
 
-- 最基础的部分是你想要可视化的[数据](./data)以及一系列将数据中的变量对应到[图形属性](./attribute)的映射；
+- The most basic part is the [data](./data) you want to visualize and a series of mappings that map the variables in the data to the [graph attributes](./attribute);
 
-- [几何标记](./geometry)，可以理解为你在图表中实际看到的图形元素，如点、线、多边形等，每个几何标记对象含有多个图形属性，F2Native 图形语法的核心就是建立数据中的一系列变量到图形属性的映射；
+- [Geometry tag](./geometry), which can be understood as the graphic elements you actually see in the chart, such as points, lines, polygons, etc. Each geometry tag object contains multiple graphic attributes. The core of F2Native graphics syntax is Establish the mapping of a series of variables in the data to the graph attributes;
 
-- [度量](./scale)，作为数据空间到图形属性空间的转换桥梁，每一个图形属性都对应着一个或者多个度量；
+- [metrics](./scale), as a conversion bridge from data space to graphic attribute space, each graphic attribute corresponds to one or more metrics;
 
-- [坐标系](./coordinate)，描述了数据是如何映射到图形所在的平面的，一个几何标记在不同坐标系下会有不同的表现。目前 F2Native 提供了笛卡尔坐标系、极坐标系两种坐标系；
+- [Coordinate system](./coordinate), which describes how the data is mapped to the plane where the graphic is located. A geometric marker will behave differently in different coordinate systems. At present, F2Native provides two coordinate systems: Cartesian coordinate system and polar coordinate system;
 
-- 辅助元素是为了增强图表的可读性和可理解性，F2Native 中的辅助元素包含坐标轴 Axis、图例 Legend、提示信息 Tooltip、静态辅助标记 Guide。
+- Auxiliary elements are to enhance the readability and comprehensibility of the chart. The auxiliary elements in F2Native include Axis, Legend Legend, Tooltip for tooltip, and Guide for static auxiliary markers.
 
 
-所以，在 F2Native 中，我们通常这么描述一张图表：一张图表就是从数据到几何标记对象的图形属性的一个映射，此外图形中还可能包含数据的统计变换，最后绘制在某个特定的坐标系中。
+Therefore, in F2Native, we usually describe a graph as follows: a graph is a mapping from data to the graphical properties of geometric marker objects, in addition, the graph may also contain statistical transformations of the data, and finally drawn at a specific coordinate in the department.
 
-更多内容请阅读以下篇章：
+For more information, please read the following chapters:
 
-- [图表组成](./understanding)
+- [graph composition](./understanding)
 
-- [数据](./data)
+- [data](./data)
 
-- [度量](./scale)
+- [metric](./scale)
 
-- [几何标记](./geometry)
+- [geometry tag](./geometry)
 
-- [图形属性](./attribute)
+- [graphic attributes](./attribute)
 
-- [坐标系](./coordinate)
+- [coordinate system](./coordinate)

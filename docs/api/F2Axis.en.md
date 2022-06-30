@@ -4,78 +4,78 @@ order: 4
 ---
 
 # F2Axis
-坐标轴配置。F2Native 的坐标轴的组成如下:![](https://gw.alipayobjects.com/mdn/rms_04a9e5/afts/img/A*jJ9SR7YqPVUAAAAAAAAAAAAAARQnAQ)
+Axes configuration. The composition of the coordinate axes of F2Native is as follows: ![](https://gw.alipayobjects.com/mdn/rms_04a9e5/afts/img/A*jJ9SR7YqPVUAAAAAAAAAAAAAARQnAQ)
 
-| **术语** | **英文** |
+| **Terminology** | **English** |
 | --- | --- |
-| 坐标轴文本 | label |
-| 坐标轴线 | line |
-| 坐标轴网格线 | grid |
+| Axis text | label |
+| Coordinate axis | line |
+| Axis gridlines | grid |
 
 
 ## API
-### - axis
-设置坐标轴配置；F2Native 的坐标轴组成如下
+### - Axis
+Set the coordinate axis configuration; the coordinate axis composition of F2Native is as follows
 #### iOS
-```obj-c
+````obj-c
  chart.axis(@"date", @{ @"grid": @(NO) });
  chart.axis(@"value", @{
               @"line": @(NO),
               @"grid": @{
-                @"type": @"dash",     
-                @"lineWidth": @(1.0f), 
+                @"type": @"dash",
+                @"lineWidth": @(1.0f),
                 @"stroke": @"#E6E6E6",
                 @"lineDash": @[@(6),@(3)]
                },
               @"label": @{ @"textColor": @"#cccccc" ,@"textAlign":@"end",@"labelOffset":@(5)}
             });
-```
+````
 
 #### Android
-```java
+````java
 chart.setAxis("sales", new F2Chart.AxisConfigBuilder()
       .label(new F2Chart.AxisLabelConfigBuilder().labelOffset(5))
       .grid(new F2Chart.AxisGridConfigBuilder().type("dash"))
       .line(new F2Chart.AxisLineConfigBuilder().lineWidth(1).color("#E6E6E6").type("dash").lineDash(new double[]{6, 3}));
-```
-- 参数
+````
+- parameters
 
-| **属性名** |  **类型** | **解释** |
+| **Attribute Name** | **Type** | **Explanation** |
 | --- | --- | --- |
-| `field`| String | 当前坐标轴所代表的数据在 source 中的名称|
-| `config`| Dictionary | 坐标轴的具体配置信息 见下面 config |
+| `field`| String | The name of the data represented by the current axis in source|
+| `config`| Dictionary | For the specific configuration information of the coordinate axis, see below config |
 
-- config
+-config
 
-| **属性名** |  **类型** | **解释** |
+| **Attribute Name** | **Type** | **Explanation** |
 | --- | --- | --- |
-| `line`| Bool/Dictionary  | false - 坐标轴线隐藏 <br/>  配置见下面 line 定义|
-| `grid`| Bool/Dictionary | false - 坐标轴网格线隐藏 <br/> 配置见下面 grid 定义|
-| `label`| Bool/Dictionary | false - 坐标轴网格线隐藏 <br/> 配置见下面 label 定义 
+| `line`| Bool/Dictionary | false - axis hidden <br/> configuration see line definition below |
+| `grid`| Bool/Dictionary | false - axis grid lines are hidden <br/> configuration see grid definition below |
+| `label`| Bool/Dictionary | false - axis gridlines are hidden <br/> configuration see label definition below
 
 - line
 
-| **属性名** |  **类型** | **解释** | **默认值**
-| --- | --- | --- | --- | 
-| `type`| String | 线类型| "line"/"dash"
-| `color`| String | 线颜色 （Hex rgba）| "#999"
-| `lineWidth`| float | 线宽度 | 1.0f
+| **Property Name** | **Type** | **Explanation** | **Default Value**
+| --- | --- | --- | --- |
+| `type`| String | line type | "line"/"dash"
+| `color`| String | line color (Hex rgba) | "#999"
+| `lineWidth`| float | line width | 1.0f
 
 - grid
 
-| **属性名** |  **类型** | **解释** | **默认值**
-| --- | --- | --- | --- | 
-| `type`| String | 网格线类型 <br/> `line`- 直线 <br/> `dash`- 虚线| "line"
-| `stroke`| String | 网格线颜色 （Hex rgba）| "#999"
-| `lineWidth`| float | 网格线宽度 | 1.0f
-| `lineDash` | Array&lt;Number&gt;|虚线样式 | [2, 2]
+| **Property Name** | **Type** | **Explanation** | **Default Value**
+| --- | --- | --- | --- |
+| `type`| String | grid line type <br/> `line`- line <br/> `dash`- dashed line | "line"
+| `stroke`| String | grid line color (Hex rgba) | "#999"
+| `lineWidth`| float | grid line width | 1.0f
+| `lineDash` | Array&lt;Number&gt;|dash style | [2, 2]
 
 - label
 
-| **属性名** |  **类型** | **解释** | **默认值**
-| --- | --- | --- | --- | 
-| `textColor`| String | 字体颜色 （Hex rgba）| "#999"
-| `textAlign`| String | 对齐方式  | "start"
-| `lineDash` | Array&lt;Number&gt;|虚线样式 | [2, 2]
+| **Property Name** | **Type** | **Explanation** | **Default Value**
+| --- | --- | --- | --- |
+| `textColor`| String | font color (Hex rgba) | "#999"
+| `textAlign`| String | Alignment | "start"
+| `lineDash` | Array&lt;Number&gt;|dash style | [2, 2]
 
 <br/>

@@ -31,7 +31,7 @@ geom::Interval &geom::Interval::Tag(const std::string &json) {
     return *this;
 }
 
-nlohmann::json geom::Interval::CreateShapePointsCfg(XChart &chart, nlohmann::json &item, size_t index) {
+nlohmann::json geom::Interval::CreateShapePointsCfg(XChart &chart, XData &item, size_t index) {
 
     nlohmann::json rst;
     const std::string &xField = GetXScaleField();
@@ -39,11 +39,21 @@ nlohmann::json geom::Interval::CreateShapePointsCfg(XChart &chart, nlohmann::jso
 
     scale::AbstractScale &xScale = chart.GetScale(xField);
     scale::AbstractScale &yScale = chart.GetScale(yField);
+    
+    const nlohmann::json &data = (*item.data);
+    double x = item.dodge.size() >= 1 ? xScale.Scale(item.dodge[0]) : xScale.Scale(data[xField]);
 
-    double x = xScale.Scale(item[xField]);
-    if(item[yField].is_array()) {
+    if (!item.adjust.empty()) {
         vector<double> y;
-        vector<double> stack_item = item[yField];
+        for(size_t i = 0; i < item.adjust.size(); i++) {
+            double y_d = item.adjust[i];
+            double y_s = yScale.Scale(y_d);
+            y.push_back(y_s);
+        }
+        rst["y"] = y;
+    } else if(data[yField].is_array()) { //区间柱状图
+        vector<double> y;
+        vector<double> stack_item = data[yField];
         for(size_t i = 0; i < stack_item.size(); i++) {
             double y_d = stack_item[i];
             double y_s = yScale.Scale(y_d);
@@ -51,7 +61,7 @@ nlohmann::json geom::Interval::CreateShapePointsCfg(XChart &chart, nlohmann::jso
         }
         rst["y"] = y;
     } else {
-        double y = yScale.Scale(item[yField]);
+        double y = yScale.Scale(data[yField]);
         rst["y"] = y;
     }
     double y0 = yScale.Scale(this->GetYMinValue(chart));
@@ -112,7 +122,7 @@ nlohmann::json geom::Interval::getRectPoints(nlohmann::json &cfg) {
     return std::move(rst);
 }
 
-void geom::Interval::BeforeMapping(XChart &chart, nlohmann::json &dataArray) {
+void geom::Interval::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
     auto timestamp = xg::CurrentTimestampAtMM();
     const std::string &yField = this->GetYScaleField();
     auto &xScale = chart.GetScale(GetXScaleField());
@@ -123,7 +133,7 @@ void geom::Interval::BeforeMapping(XChart &chart, nlohmann::json &dataArray) {
 
     for(std::size_t index = 0; index < dataArray.size(); ++index) {
 
-        nlohmann::json &groupData = dataArray[index];
+        auto &groupData = dataArray[index];
 
         std::size_t start = 0, end = groupData.size() - 1;
         if(scale::IsCategory(xScale.GetType())) {
@@ -132,37 +142,34 @@ void geom::Interval::BeforeMapping(XChart &chart, nlohmann::json &dataArray) {
         }
 
         for(std::size_t position = start; position <= end; ++position) {
-            nlohmann::json &item = groupData[position];
+            auto &item = groupData[position];
 
-            if(!item.contains(yField)) {
-                // 无效点
-                continue;
-            }
-            nlohmann::json yValue = item[yField];
+     
+            const nlohmann::json &yValue = (*item.data)[yField];
             nlohmann::json cfg = CreateShapePointsCfg(chart, item, index);
             nlohmann::json points = getRectPoints(cfg);
-            item["_points"] = points;
+            item._points = points;
 
-            if(item.contains("_beforeMapped")) {
+            if(item._beforeMapped) {
                 continue;
             }
 
             if(this->tagConfig_.is_object()) {
-                item["_tag"] = tagConfig_;
-                item["_tag"]["content"] = yValue.dump();
+                item._tag = tagConfig_;
+                item._tag["content"] = yValue.dump();
             }
 
-            item["_style"] = styleConfig_;
-            item["_style"]["content"] = yValue.dump();
-            item["_beforeMapped"] = true;
+            item._style = styleConfig_;
+            item._style["content"] = yValue.dump();
+            item._beforeMapped = true;
         }
     }
     chart.GetLogTracer()->trace("Geom#%s Beforemapping duration: %lums", type_.data(), (CurrentTimestampAtMM() - timestamp));
 }
 
-void geom::Interval::Draw(XChart &chart, const nlohmann::json &groupData, std::size_t start, std::size_t end) const {
+void geom::Interval::Draw(XChart &chart, const XDataArray &groupData, std::size_t start, std::size_t end) const {
     for(std::size_t i = start; i <= end; ++i) {
-        const nlohmann::json &item = groupData[i];
+        const auto &item = groupData[i];
         chart.geomShapeFactory_->DrawGeomShape(chart, type_, shapeType_, item, i, i + 1, *this->container_, this->connectNulls_);
     }
 }

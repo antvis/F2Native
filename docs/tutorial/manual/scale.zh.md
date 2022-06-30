@@ -40,8 +40,8 @@ chart.scale('fieldName', {
 
 #### iOS
 ```obj-c
-  F2CanvasView *f2CanvasView = [F2CanvasView canvasWithFrame:CGRectMake(0, 0, 280, 280)];
-  F2Chart *chart = [F2Chart chart:f2CanvasView.bounds.size withName:@"F2chart"];
+  F2CanvasView *f2CanvasView = [F2CanvasView canvas:CGRectMake(0, 0, 280, 280)];
+  F2Chart *chart = [F2Chart chart:f2CanvasView.bounds.size name:@"F2chart"];
  chart.scale(@"date", @{@"type":@"identity" });
  chart.scale(@"value", @{ @"precision": @(1), @"max": @(200), @"min": @(0)});
 ```

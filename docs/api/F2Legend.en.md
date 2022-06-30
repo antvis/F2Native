@@ -4,14 +4,14 @@ order: 8
 ---
 
 
-F2Native 图例的生成是由图形语法中的图形属性决定的，我们会根据图形属性映射以及数据的类型自动生成不同类型的图例：color, size 这两个图形属性如果判断接收的参数是数据源的字段时，会自动生成不同的图例,也可手动进行设置
+The generation of F2Native legends is determined by the graphics attributes in the graphics grammar. We will automatically generate different types of legends according to the graphics attribute mapping and the type of data: color, size, these two graphics attributes, if it is judged that the received parameters are the fields of the data source When , different legends will be automatically generated, or you can set them manually
 
 
-## 方法
+## Method
 ### - chart.legend(filed,config)
 
 #### iOS
-```obj-c
+````obj-c
    chart.legend(@"type", @{
                            @"enable": @(YES)},
                            @"position": @"top"},
@@ -19,41 +19,41 @@ F2Native 图例的生成是由图形语法中的图形属性决定的，我们�
                            @"symbol": @"square"},
                            );
 }
-```
+````
 
 #### Android
-```java
+````java
 // TODO
-```
+````
 
-- 参数
+- parameters
 
-| **属性名** |  **类型** | **解释** |
+| **Attribute Name** | **Type** | **Explanation** |
 | --- | --- | --- |
-| `filed`| Stirng | 返回需要展示图例的对应字段名称|
-| `config`| Dictionary | 配置信息 |
+| `filed`| String | Returns the name of the corresponding field to display the legend|
+| `config`| Dictionary | Configuration Information |
 
-- config
+-config
 
-| **属性名** |  **类型** | **解释** |
+| **Attribute Name** | **Type** | **Explanation** |
 | --- | --- | --- |
-| `enable`| Boolean | 是否启用图例，默认为 true
-| `position`| String | 图例的位置 <br/>`top` - 顶部，默认为水平展示  <br/> `bottom` - 底部，默认为水平展示 <br/> `left` - 左侧，默认为垂直展示 <br/>`right` - 右侧，默认为垂直展示 <br/>
-| `layout`| String |  布局方式 <br/>`horizontal` - 水平布局  <br/> `vertical` - 垂直布局
-| `symbol`| String |  图例形状 <br/> `circle` - 圆形  <br/> `square` - 方形
-| `radius`| Number | symbol 对应的边长或半径 ，默认为3px
-| `lineBottom`| Number | 水平布局时的行间距
-| `nameStyle` | Dictionary | 文字样式配置
-| `wordSpace`| Number | 图形与文字之间的距离，默认为 6px
-| `itemMarginBottom`| Number | 图例与图表之间的距离，默认为 12px
+| `enable`| Boolean | Whether to enable the legend, the default is true
+| `position`| String | The position of the legend<br/>`top` - top, default is horizontal<br/> `bottom` - bottom, default is horizontal<br/> `left` - left, default for vertical display<br/>`right` - right side, default is vertical display<br/>
+| `layout`| String | Layout method <br/>`horizontal` - horizontal layout <br/> `vertical` - vertical layout
+| `symbol`| String | Legend shape <br/> `circle` - circle <br/> `square` - square
+| `radius`| Number | The side length or radius corresponding to the symbol, the default is 3px
+| `lineBottom`| Number | Line spacing for horizontal layout
+| `nameStyle` | Dictionary | Text style configuration
+| `wordSpace`| Number | The distance between the graphics and the text, the default is 6px
+| `itemMarginBottom`| Number | The distance between the legend and the chart, default is 12px
 <br/>
 
 
 - nameStyle
 
-| **属性名** |  **类型** | **解释** |
+| **Attribute Name** | **Type** | **Explanation** |
 | --- | --- | --- |
-| `fill`| String | 文字颜色
-| `textSize` | Number | 文字大小
-| `textAlign` | String | 对齐方式 <br/> `start` - 默认值 <br/> `end` <br/>  `center`
-| `textBaseline` | String | 基准线位置 <br/> `top` - 默认值 <br/> `bottom` <br/> `middle`
+| `fill`| String | Text color
+| `textSize` | Number | Text size
+| `textAlign` | String | Alignment <br/> `start` - default <br/> `end` <br/> `center`
+| `textBaseline` | String | Baseline position <br/> `top` - default <br/> `bottom` <br/> `middle`

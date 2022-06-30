@@ -3,80 +3,80 @@ title: F2Interval
 order: 6
 ---
 
-图形柱对象，用户绘制柱图
+Graphical column object, the user draws the column chart
 
-## 创建 F2Interval 实例
+## Create F2Interval instance
 #### iOS
-```obj-c
-  F2CanvasView *f2CanvasView = [F2CanvasView canvasWithFrame:CGRectMake(0, 0, 280, 280)];
-  F2Chart *chart = [F2Chart chart:f2CanvasView.bounds.size withName:@"F2chart"];
+````obj-c
+  F2CanvasView *f2CanvasView = [F2CanvasView CANVAS:CGRectMake(0, 0, 280, 280)];
+  F2Chart *chart = [F2Chart chart:f2CanvasView.bounds.size name:@"F2chart"];
   chart.interval();
-```
+````
 
 #### Android
-```java
+````java
   chart.interval();
-```
+````
 <br/>
 
-## 方法
-### - position 
-绘制柱图位置
+## Method
+### - position
+where to draw the column chart
 #### iOS
-```obj-c
+````obj-c
   chart.interval().position(@"date*value");
-```
+````
 #### Android
-```java
+````java
   chart.interval().position("date*value");
-```
-- 参数
+````
+- parameters
 
-| **属性名** |  **类型** | **解释** |
+| **Attribute Name** | **Type** | **Explanation** |
 | --- | --- | --- |
-| `attr`| String | X*Y：绘制的柱在 source 中对应的名称
+| `attr`| String | X*Y: The name of the drawn bar in source
 
 <br/>
 
-### - fixedColor 
-设置柱填充的颜色
+### - fixedColor
+Set column fill color
 #### iOS
-```obj-c
+````obj-c
   chart.interval().position(@"date*value").fixedColor(@"#108EE9");
-```
+````
 #### Android
-```java
+````java
   chart.interval().position("date*value").fixedColor("#108EE9");
-```
-- 参数
+````
+- parameters
 
-| **属性名** |  **类型** | **解释** |
+| **Attribute Name** | **Type** | **Explanation** |
 | --- | --- | --- |
-| `color`| String | 设置区域填充的颜色 （Hex rgb）
+| `color`| String | Set the color of the area fill (Hex rgb)
 <br/>
 
-### - color 
-设置分组柱填充的颜色
+### - color
+Set the color of the grouped column fill
 #### iOS
-```obj-c
+````obj-c
   chart.interval().position(@"date*value").color(@"type", @[@"#108EE9", @"#2FC25B"]);
-```
+````
 #### Android
-```java
+````java
   chart.interval().position("date*value").color("type", new String[]{"#108EE9", "#2FC25B"});
-```
-- 参数
+````
+- parameters
 
-| **属性名** |  **类型** | **解释** |
+| **Attribute Name** | **Type** | **Explanation** |
 | --- | --- | --- |
-| `field`| String | 数据分组字段
-| `color`| Array&lt;String&gt; | 设置区域填充的颜色 （Hex rgba)
+| `field`| String | Data grouping field
+| `color`| Array&lt;String&gt; | Set the color of the area fill (Hex rgba)
 <br/>
 
 ### - tag
-设置柱标签
+Set column labels
 #### iOS
-```obj-c
+````obj-c
   chart.interval().position(@"date*value").tag(
         @{
           @"fill": @"#999999",
@@ -87,16 +87,16 @@ order: 6
         }
   )
 ;
-```
+````
 #### Android
-```java
-```
-- 参数
+````java
+````
+- parameters
 
-| **属性名** |  **类型** | **解释** |
+| **Attribute Name** | **Type** | **Explanation** |
 | --- | --- | --- |
-| `fill`| String | 标签颜色 （Hex rgb）
-| `textAlign`| String | 对齐方式 <br/>`center`(默认)居中对齐  <br/>`start` 顶部对齐 <br/>`end` 底部对齐 <br/>`left` 左对齐 <br/>`right` 右对齐
-| `textBaseline`| String | 对齐基准线 <br/>`alphabetic`(默认)  <br/>`top`  <br/>`hanging` <br/>`middle` <br/>`ideographic` <br/>`bottom`
-| `textSize`| Number | 文字大小
-| `offset`| Number | y 方向和柱距离的偏移
+| `fill`| String | Label color (Hex rgb)
+| `textAlign`| String | Alignment<br/>`center`(default) center<br/>`start` top<br/>`end` bottom<br/>`left` left<br />`right` Align right
+| `textBaseline`| String | Alignment baseline<br/>`alphabetic` (default) <br/>`top` <br/>`hanging` <br/>`middle` <br/>`ideographic` <br />`bottom`
+| `textSize`| Number | Text size
+| `offset`| Number | Offset in y direction and column distance

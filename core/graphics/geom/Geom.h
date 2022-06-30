@@ -8,6 +8,7 @@
 #include "../canvas/Container.h"
 #include "../canvas/Coord.h"
 #include "../shape/Group.h"
+#include "../util/json_data.h"
 #include "../../utils/Tracer.h"
 
 
@@ -70,15 +71,15 @@ class AbstractGeom {
 
     bool ContainsAttr(attr::AttrType type);
 
-    nlohmann::json GetSnapRecords(XChart *chart, util::Point point);
-    const nlohmann::json &GetLastSnapRecord(XChart *chart);
-    const nlohmann::json &GetFirstSnapRecord(XChart *chart);
+    XDataArray GetSnapRecords(XChart *chart, util::Point point);
+    const XData &GetLastSnapRecord(XChart *chart);
+    const XData &GetFirstSnapRecord(XChart *chart);
 
     const std::unique_ptr<AttrBase> &GetAttr(AttrType type) { return attrs_[type]; }
 
     virtual void Clear();
 
-    const nlohmann::json &GetDataArray() { return dataArray_; }
+    const XDataGroup &GetDataArray() { return dataArray_; }
 
     virtual void SetAttrs(const std::string &_attrs) noexcept;
 #if defined(EMSCRIPTEN)
@@ -98,15 +99,15 @@ class AbstractGeom {
     // 数据分组
     void InitAttributes(XChart &chart);
     void ProcessData(XChart &chart);
-    nlohmann::json GroupData(XChart &chart);
+    XDataGroup GroupData(XChart &chart);
     const set<string> GetGroupFieldNames(XChart &chart);
     // void GetAttrValues(XChart &chart, const AttrBase &attr, AttrCfg &acfg, DrawCfg &dcfg);
 
-    virtual void Mapping(XChart &chart, nlohmann::json &data, std::size_t start, std::size_t end);
+    virtual void Mapping(XChart &chart, XDataArray &dataArray, std::size_t start, std::size_t end);
 
-    virtual void BeforeMapping(XChart &chart, nlohmann::json &dataArray) {}
+    virtual void BeforeMapping(XChart &chart, XDataGroup &groupData) {}
 
-    virtual void Draw(XChart &chart, const nlohmann::json &groupData, std::size_t start, std::size_t end) const;
+    virtual void Draw(XChart &chart, const XDataArray &dataArray, std::size_t start, std::size_t end) const;
 
     void updateStackRange(XChart &chart);
 
@@ -122,8 +123,8 @@ class AbstractGeom {
     string type_ = "";
     string shapeType_ = "";
     nlohmann::json styleConfig_ = {{"startOnZero", true}};
-
-    nlohmann::json dataArray_;
+    
+    XDataGroup dataArray_;
     map<AttrType, unique_ptr<AttrBase>> attrs_{};
 
     Group *container_ = nullptr;

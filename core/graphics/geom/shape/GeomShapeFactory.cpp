@@ -12,11 +12,28 @@ void geom::shape::GeomShapeFactory::UnregterShapeShape(std::string geomType) { g
 void geom::shape::GeomShapeFactory::DrawGeomShape(XChart &chart,
                                                   std::string geomType,
                                                   std::string shapeType,
-                                                  const nlohmann::json &data,
+                                                  const XDataArray &data,
                                                   std::size_t start,
                                                   std::size_t end,
                                                   xg::shape::Group &container,
                                                   bool connectNulls) {
+    auto got = geomShapes_.find(geomType);
+    if(got == geomShapes_.end()) {
+        // todo log
+        return;
+    }
+
+    got->second->Draw(shapeType, chart.GetCoord(), chart.GetCanvasContext(), data, start, end, container, connectNulls);
+}
+
+void geom::shape::GeomShapeFactory::DrawGeomShape(XChart &chart,
+                   std::string geomType,
+                   std::string shapeType,
+                   const XData &data,
+                   std::size_t start,
+                   std::size_t end,
+                   xg::shape::Group &container,
+                   bool connectNulls) {
     auto got = geomShapes_.find(geomType);
     if(got == geomShapes_.end()) {
         // todo log

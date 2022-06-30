@@ -9,7 +9,7 @@ F2Native 中两个基础的类是 F2CanvasView 和 F2Chart。在使用前需要�
 
 ## F2CanvasView
 
-[F2CanvasView](./F2CanvasView.md) 提供图表渲染引擎，底层对接 [GCanvans](https://github.com/alibaba/GCanvas) 进行绘制。F2CanvasView 进行了可插拔设计，也可对接其他绘制引擎。
+[F2CanvasView](./F2CanvasView.md) 提供图表渲染引擎，底层对接系统的CoreGraphics 和 Android Canvas 进行绘制。F2CanvasView 进行了可插拔设计，也可对接其他绘制引擎。
 
 
 ## F2Chart
@@ -28,9 +28,9 @@ F2Native 中两个基础的类是 F2CanvasView 和 F2Chart。在使用前需要�
 @implementation  F2Demo
 -(void)drawGraph {
      CGRect viewFrame = CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width, chartHeight);
-     self.canvasView = [F2CanvasView canvasWithFrame:viewFrame];
+     self.canvasView = [F2CanvasView canvas:viewFrame];
      [self.view addSubview:self.canvasView];
-     F2Chart *chart = [F2Chart chart:canvas.view.bounds.size withName:@"f2chart"];
+     F2Chart *chart = [F2Chart chart:canvas.view.bounds.size name:@"f2chart"];
      chart.canvas(self.canvasView).padding(10, 0, 0, 0.f).source([self jsonData]);
      chart.line().position(@"date*value").color(@"type", @[]).fixedSize(1).fixedShape(@"smooth");
      chart.render();

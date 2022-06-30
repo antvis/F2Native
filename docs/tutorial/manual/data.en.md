@@ -1,74 +1,74 @@
 ---
-title: 数据
+title: Data
 order: 2
 ---
 
-数据是绘制一张图表最基本的部分。F2Native 支持的数据格式为jsonString：
+Data is the most basic part of drawing a chart. The data format supported by F2Native is jsonString:
 
-``` json
+```` json
 [{"genre":"Sports", "sold":275},
  {"genre":"Strategy","sold":115},
  {"genre":"Action","sold":120},
  {"genre":"Shooter","sold":350},
  {"genre":"Other","sold":150}]
-```
+````
 
 
-``` obj-c
+```` obj-c
   NSString *jsonString = [NSString stringWithContentsOfFile:jsonPath encoding:NSUTF8StringEncoding error:nil];
   chart.source(jsonString);
-```
+````
 
-## 如何装载数据
+## How to Load Data
 
-当 chart 实例创建完毕之后，通过调用以下接口装载数据：
+After the chart instance is created, load the data by calling the following interface:
 
-```
+````
 chart.source(data);
-```
+````
 
-## 如何更新数据
+## How To Update Data
 
 
-1. 更新图表数据。
+1. Update the chart data.
 
-```
+````
 chart.source(data);
-```
+````
 
-2.在需要更新图表的时机调用重绘方法。
+2. Call the redraw method when the chart needs to be updated.
 
-```
-chart.source(newData); // 更新数据源
+````
+chart.source(newData); // update the data source
 
 // do something
 
-chart.repaint();  // 更新图表！
-```
+chart.repaint(); // Update the chart!
+````
 
-3. 更新数据时还可以重新定义图形语法，改变图表类型和各种配置。
+3. When updating data, you can redefine the graphics syntax, change the chart type and various configurations.
 
-```
-chart.source(newData); // 加载新数据
-chart.interval().position('x*y').color('z'); // 重新定义图形语法
+````
+chart.source(newData); // load new data
+chart.interval().position('x*y').color('z'); // redefine the graph syntax
 chart.repaint();
-```
+````
 
-## 特殊图表的数据说明
+## Data Description For Special Charts
 
-### 饼图
+### Pie Chart
 
-绘制饼图时，数据集中的每一条记录中**必须包含一个常量字段（并且必须是字符串类型）**，如下所示：
+When drawing a pie chart, each record in the dataset must contain a constant field (and must be of type string) as follows:
 
-```json
+````json
 [
-  { "name": "芳华", "percent": 0.4, "a": "1" },
-  { "name": "妖猫传", "percent": 0.2, "a": "1" },
-  { "name": "机器之血", "percent": 0.18, "a": "1"},
-  { "name": "心理罪", "percent": 0.15, "a": "1" },
-  { "name": "寻梦环游记", "percent": 0.05, "a": "1" },
-  { "name": "其他", "percent": 0.02, "a": "1" }
+  { "name": "Youth", "percent": 0.4, "a": "1" },
+  { "name": "The Legend of the Demon Cat", "percent": 0.2, "a": "1" },
+  { "name": "Blood of the Machine", "percent": 0.18, "a": "1"},
+  { "name": "Psychological Sin", "percent": 0.15, "a": "1" },
+  { "name": "Dream Travel", "percent": 0.05, "a": "1" },
+  { "name": "other", "percent": 0.02, "a": "1" }
 ]
-```
+````
 
-详见饼图[示例](/zh/examples/pie/basic)。
+See pie chart [example](/zh/examples/pie/basic).

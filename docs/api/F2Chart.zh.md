@@ -12,11 +12,11 @@ order: 2
 /// 快捷创建chart
 /// @param size dp为单位
 /// @param name 输出日志时会附加name
-+ (F2Chart *)chart:(CGSize)size withName:(NSString *)name;
++ (F2Chart *)chart:(CGSize)size name:(NSString *)name;
 
 // demo
 #import <F2/F2.h>
-F2Chart *chart = [F2Chart chart:f2Canvas.view.bounds.size withName:@"F2chart"];
+F2Chart *chart = [F2Chart chart:f2Canvas.view.bounds.size name:@"F2chart"];
 ```
 ### Android
 ```java
@@ -252,30 +252,6 @@ chart.legend("genre", new F2Chart.LegendConfigBuild().symbol("circle").setOption
   chart.render();
 ```
 <br/>
-
-### - getRenderDumpInfo
-获取渲染完成后的指令信息
-
-#### iOS
-```obj-c
-  chart.render()
-  NSString *jsonString = chart.getRenderDumpInfo();
-  // {"cmdCount":495, "duration": 7}
-```
-
-#### Android
-```java
-  chart.render()
-  String *jsonString = chart.getRenderDumpInfo();
-  // {"cmdCount":495, "duration": 7}
-```
-
-- 返回数据格式
-
-| **属性名** |  **类型** | **解释** |
-| --- | --- | --- |
-| `cmdCount`| Number | 渲染指令的个数<br/>-1表示环境有问题<br/> 0表示指令数为0<br/>>0表示正常的绘制指令个数|
-| `duration`| Number | 最近一次渲染耗时， 单位 MS|
 
 
 

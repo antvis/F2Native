@@ -16,19 +16,19 @@ class Candle : public GeomShapeBase {
     void Draw(std::string shapeType,
               canvas::coord::AbstractCoord &coord,
               canvas::CanvasContext &context,
-              const nlohmann::json &data,
+              const XData &data,
               std::size_t start,
               std::size_t end,
               xg::shape::Group &container,
               bool connectNulls) override {
-        if(!data.contains("_rect") || !data.contains("_line")) {
+        if(!data._rect.is_array() || !data._line.is_array()) {
             return;
         }
 
-        const nlohmann::json &_rect = data["_rect"];
-        const nlohmann::json &_line = data["_line"];
-        const int state = data["_state"];
-        const nlohmann::json &style = data["_style"];
+        const nlohmann::json &_rect = data._rect;
+        const nlohmann::json &_line = data._line;
+        const int state = data._state;
+        const nlohmann::json &style = data._style;
 
         std::vector<util::Point> points;
         for(std::size_t i = 0; i < _rect.size(); ++i) {
@@ -56,10 +56,7 @@ class Candle : public GeomShapeBase {
 
         canvas::CanvasFillStrokeStyle colorStyle = util::ColorParser(colors[state + 1]);
 
-        float lineWidth = 1.0;
-        if(data.contains("_size")) {
-            lineWidth = data["_size"];
-        }
+        float lineWidth = std::isnan(data._size) ? 1.0 : data._size;
         lineWidth *= context.GetDevicePixelRatio();
 
         util::Size size(fabs(points[2].x - points[0].x), fabs(points[2].y - points[0].y));

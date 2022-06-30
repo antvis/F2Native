@@ -9,7 +9,7 @@ redirect_from:
 
 
 
-## Demo
+## Example
 
 ### Data（jsonString）
 
@@ -26,9 +26,8 @@ jsonData
     <table style="margin-left: auto; margin-right: auto;">
         <tr>
             <td width="55%">
-             F2CanvasView *canvasView =[F2CanvasView canvasWithFrame:self.frame];<br/>
-             canvasView.delegate = self;<br/>
-             F2Chart *chart = [F2Chart chart:canvasView.bounds.size withName:NSStringFromClass([self class])];<br/>
+             F2CanvasView *canvasView =[F2CanvasView canvas:self.frame];<br/>
+             F2Chart *chart = [F2Chart chart:canvasView.bounds.size name:NSStringFromClass([self class])];<br/>
              chart.canvas(canvasView).padding(20, 10, 20, 0.f).source(jsonData);<br/>
              chart.scale(@"date", @{@"tickCount": @(5)});<br/>
              chart.scale(@"value", @{@"min": @(10), @"max": @(320)});<br/>

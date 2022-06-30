@@ -3,10 +3,10 @@ title: Bar Chart
 order: 0
 ---
 
-## 演示
+## Example
 
-### 数据（jsonString）
-下述 jsonData 对应数据
+### Data（jsonString）
+Prepare jsonData like this
 
 ```json
 [{"year": "1951 年","sales": 38}, {"year": "1952 年","sales": 52}, 
@@ -20,9 +20,8 @@ order: 0
     <table style="margin-left: auto; margin-right: auto;">
         <tr>
             <td width= 55%>
-            F2CanvasView *canvasView =[F2CanvasView canvasWithFrame:self.frame];<br/>
-             canvasView.delegate = self;<br/>
-             F2Chart *chart = [F2Chart chart:canvasView.bounds.size withName:NSStringFromClass([self class])];<br/>
+            F2CanvasView *canvasView =[F2CanvasView canvas:self.frame];<br/>
+             F2Chart *chart = [F2Chart chart:canvasView.bounds.size name:NSStringFromClass([self class])];<br/>
              chart.coord(@{@"transposed":@(YES)});<br/>
              chart.scale(@"sales",@{@"min":@(0)});<br/>
              chart.scale(@"year", @{ @"range": @[@(0.1), @(0.9)] });<br/>

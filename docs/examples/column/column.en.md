@@ -3,12 +3,10 @@ title: Basic Column Chart
 order: 0
 ---
 
-## 演示
+## Example
 
 
-### 数据（jsonString）
-下述 jsonData 对应数据
-
+### Data（jsonString）
 ```json
 [{"year": "1951 年","sales": 38}, {"year": "1952 年","sales": 52}, 
  {"year": "1956 年","sales": 61}, {"year": "1957 年","sales": 145}, 
@@ -23,9 +21,8 @@ order: 0
     <table style="margin-left: auto; margin-right: auto;">
         <tr>
              <td width="53%">
-            F2CanvasView *canvasView =[F2CanvasView canvasWithFrame:self.frame];<br/>
-             canvasView.delegate = self;<br/>
-             F2Chart *chart = [F2Chart chart:canvasView.bounds.size withName:NSStringFromClass([self class])];<br/>
+            F2CanvasView *canvasView =[F2CanvasView canvas:self.frame];<br/>
+             F2Chart *chart = [F2Chart chart:canvasView.bounds.size name:NSStringFromClass([self class])];<br/>
              chart.axis(@"year", @{@"grid": @(NO)});
              chart.axis(@"sales",@{
              @"grid":@{

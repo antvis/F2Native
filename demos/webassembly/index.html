@@ -4,13 +4,18 @@
 <script src="https://gw.alipayobjects.com/os/lib/antv/f2/3.7.0/dist/f2.min.js"></script>
 
 <body></body>
-<!-- Create the canvas that the C++ code will draw into -->
-<canvas id="f2wasmChart" width=600 height=400 oncontextmenu="event.preventDefault()"></canvas>
-<div id="f2wasmLoadCost" style="margin-left: 40px;">F2Wasm Load Module</div>
-<div id="f2wasmCost" style="margin-left: 40px;">F2Wasm Demo</div>
+<div style="display:flex; flex-direction: row; justify-content: space-around; ">
+  <div>
+    <canvas id="f2wasmChart" width=600 height=400 oncontextmenu="event.preventDefault()"></canvas>
+    <div id="f2wasmLoadCost" style="margin-left: 40px;">F2Wasm Load Module</div>
+    <div id="f2wasmCost" style="margin-left: 40px;">F2Wasm Demo</div>
+  </div>
 
-<canvas id="f2Chart" width="600" height="400"></canvas>
-<div id="f2cost" style="margin-left: 40px;">F2 Demo</div>
+  <div>
+    <canvas id="f2Chart" width="600" height="400"></canvas>
+    <div id="f2cost" style="margin-left: 40px;">F2 Demo</div>
+  </div>
+</div>
 <script>
   var scale = window.devicePixelRatio;
   var initTime = new Date().getTime();

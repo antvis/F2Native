@@ -28,7 +28,7 @@ class SingleIntervalChart_1 : F2CanvasView.Adapter {
         mChart!!.source(loadAssetFile(canvasView.context, "mockData_singleIntervalChart.json"))
         mChart!!.interval().position("year*sales").style(
             F2Config.Builder<F2Config.Builder<*>>()
-                .setOption("radius", floatArrayOf(3f, 3f, 0f, 0f)) // [tl, tr, bl, br]
+                .setOption("rounding", floatArrayOf(3f, 3f, 0f, 0f)) // [tl, tr, bl, br]
                 .build()
         )
         mChart!!.setAxis(

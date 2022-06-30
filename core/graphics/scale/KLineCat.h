@@ -10,32 +10,6 @@
 namespace xg {
 namespace scale {
 
-namespace kline {
-static nlohmann::json ConfigFromLineType(std::string klineType) {
-    std::vector<std::string> lineTypes;
-    StringUtil::Split(klineType, lineTypes, '-');
-
-    if(lineTypes.size() < 2) {
-        // throw error.
-        return {};
-    }
-
-    nlohmann::json config;
-
-    std::string type1 = lineTypes[1];
-    config["lineType"] = type1;
-    if(type1 != "minutes") {
-        // day/week/month
-    } else {
-        int minutes = std::stoi(lineTypes[2]);
-        config["minutes"] = minutes;
-    }
-
-    return config;
-}
-
-} // namespace kline
-
 class KLineCat : public Category {
   public:
     KLineCat(const std::string &_field, const nlohmann::json &_values, const nlohmann::json &config = {})
@@ -43,7 +17,13 @@ class KLineCat : public Category {
         // ["kline-day", "kline-week", "kline-month", "kline-minutes-1", "kline-minutes-5", "kline-minutes-15", "kline-minutes-30", "kline-minutes-60", "kline-minutes-120"]
         
         InitConfig(config);
-        nlohmann::json lineCfg = kline::ConfigFromLineType(kLineType_);
+            
+        std::vector<std::string> lineTypes;
+        StringUtil::Split(kLineType_, lineTypes, '-');
+        if (lineTypes.size() >= 3) {
+            kLineType_ = lineTypes[1];
+            minutes_ = std::stoi(lineTypes[2]);
+        }
         this->PreProcessTicks();
         this->ticks = this->CalculateTicks();
     }

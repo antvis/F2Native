@@ -17,17 +17,13 @@ class Interval : public GeomShapeBase {
     void Draw(std::string shapeType,
               canvas::coord::AbstractCoord &coord,
               canvas::CanvasContext &context,
-              const nlohmann::json &data,
+              const XData &data,
               std::size_t start,
               std::size_t end,
               xg::shape::Group &container,
               bool connectNulls) override {
-        if(!data.contains("_points")) {
-            return;
-        }
-
-        const nlohmann::json &_points = data["_points"];
-        nlohmann::json _style = data["_style"];
+        const nlohmann::json &_points = data._points;
+        const nlohmann::json &_style = data._style;
 
         std::vector<util::Point> points;
         for(std::size_t i = 0; i < _points.size(); ++i) {
@@ -36,13 +32,11 @@ class Interval : public GeomShapeBase {
             points.push_back(std::move(p));
         }
 
-        canvas::CanvasFillStrokeStyle colorStyle = util::ColorParser(data, "_color");
+        auto &color = (*data.data).contains("_color") ? (*data.data)["_color"].get<string>() : (data._color.empty() ? std::string(GLOBAL_COLORS[0]) : data._color);
 
         bool isFill = true;
-        if(data.contains("_shape") && data["_shape"].is_string()) {
-            if(data["_shape"] == "stroke") {
-                isFill = false;
-            }
+        if(data._shape == "stroke") {
+            isFill = false;
         }
 
         const float lineWidth = _style["lineWidth"].get<float>() * context.GetDevicePixelRatio();
@@ -68,7 +62,7 @@ class Interval : public GeomShapeBase {
             }
 
             auto fillRect = xg::make_unique<xg::shape::Rect>(coord.GetCenter(), r, r0, startAngle, endAngle, lineWidth);
-            fillRect->SetFillStyle(colorStyle);
+            fillRect->SetFillColor(color);
             container.AddElement(std::move(fillRect));
 
             if(lineWidth > 0) {
@@ -82,24 +76,25 @@ class Interval : public GeomShapeBase {
 
             auto rect = xg::make_unique<xg::shape::Rect>(points[0], size);
             if(isFill) {
-                rect->SetFillStyle(colorStyle);
+                rect->SetFillColor(color);
             } else {
-                rect->SetStorkStyle(colorStyle);
+                rect->SetStorkColor(color);
                 rect->SetLineWidth(lineWidth);
             }
-            if(_style.contains("radius")) {
+            
+            if(_style.contains("rounding")) {
                 float roundings[4] = {0, 0, 0, 0};
-                json::ParseRoundings(_style["radius"], &roundings[0], context.GetDevicePixelRatio());
+                json::ParseRoundings(_style["rounding"], &roundings[0], context.GetDevicePixelRatio());
                 rect->SetRoundings(roundings);
             }
 
             container.AddElement(std::move(rect));
-
-            if(!data.contains("_tag") || !data["_tag"].is_object()) {
+            
+            if (!data._tag.is_object()) {
                 return;
             }
 
-            const nlohmann::json &tagCfg = data["_tag"];
+            const nlohmann::json &tagCfg = data._tag;
 
             const std::string &content = tagCfg["content"];
             float textSize = tagCfg["textSize"].get<float>() * context.GetDevicePixelRatio();

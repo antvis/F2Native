@@ -18,11 +18,11 @@ class Candle : public AbstractGeom {
         };
     }
 
-    nlohmann::json CreateShapePointsCfg(XChart &chart, nlohmann::json &item, size_t index);
+    nlohmann::json CreateShapePointsCfg(XChart &chart, XData &item, size_t index);
 
-    void BeforeMapping(XChart &chart, nlohmann::json &dataArray) override;
+    void BeforeMapping(XChart &chart, XDataGroup &dataArray) override;
 
-    void Draw(XChart &chart, const nlohmann::json &groupData, std::size_t start, std::size_t end) const override;
+    void Draw(XChart &chart, const XDataArray &groupData, std::size_t start, std::size_t end) const override;
 
   private:
     nlohmann::json getRectPoints(nlohmann::json &cfg);

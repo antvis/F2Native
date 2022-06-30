@@ -451,12 +451,12 @@ bool XChart::Render() {
         std::for_each(geoms_.begin(), geoms_.end(), [this](auto &geom) -> void { geom->Init(this); });
         
         //调整interval中的min和max值
-        if (adjustScale_) {
+        if (config_.adjustScale_) {
             scaleController_->AdjustScale();
         }
 
         //调整interval中的rangeMin和rangeMax值
-        if (syncY_) {
+        if (config_.syncY_) {
             scaleController_->SyncYScale();
         }
         
@@ -574,8 +574,8 @@ void XChart::InitLayout() {
 }
 
 void XChart::InitCoord() {
-    bool _transposed = coordCfg_["transposed"];
-    const std::string &type = coordCfg_["type"];
+    bool _transposed = config_.transposed;
+    const std::string &type = config_.coordType;
     util::Point start = util::Point{this->margin_[0] + this->padding_[0], this->margin_[1] + this->height_ - this->padding_[3]};
     util::Point end = util::Point{this->margin_[0] + this->width_ - this->padding_[2], this->margin_[1] + this->padding_[1]};
     if(type == "polar") {
@@ -744,12 +744,10 @@ XChart &XChart::TooltipObject(const nlohmann::json &config) {
 
 XChart &XChart::CoordObject(const nlohmann::json &config) {
     this->logTracer_->trace("#coord ");
-    if(config.is_object()) {
-        this->coordCfg_.merge_patch(config);
-    }
-    bool _transposed = this->coordCfg_["transposed"];
+    config_.coordType = json::GetString(config, "type", config_.coordType);
+    config_.transposed = json::GetBool(config, "transposed", config_.transposed);
     if(this->coord_ != nullptr) {
-        this->coord_->SetTransposed(_transposed);
+        this->coord_->SetTransposed(config_.transposed);
     }
     return *this;
 }

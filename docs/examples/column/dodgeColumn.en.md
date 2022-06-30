@@ -4,8 +4,8 @@ order: 1
 ---
 
 
-### 数据（jsonString）
-下述 jsonData 对应数据
+### Data（jsonString）
+Prepare jsonData like this
 
 ```json
 [{"name": "London","month": "Jan.","value": 18.9}, 
@@ -28,16 +28,15 @@ order: 1
 ```
 
 
-## 演示
+## Example
 
 ### iOS
 <html>
     <table style="margin-left: auto; margin-right: auto;">
         <tr>
             <td width = 55%>
-            F2CanvasView *canvasView =[F2CanvasView canvasWithFrame:self.frame];<br/>
-             canvasView.delegate = self;<br/>
-             F2Chart *chart = [F2Chart chart:canvasView.bounds.size withName:NSStringFromClass([self class])];<br/>
+            F2CanvasView *canvasView =[F2CanvasView canvas:self.frame];<br/>
+             F2Chart *chart = [F2Chart chart:canvasView.bounds.size name:NSStringFromClass([self class])];<br/>
              chart.canvas(canvasView).padding(20, 10, 20, 0.f).source(jsonData);<br/>
              chart.axis(@"month", @{@"grid": @(NO)});<br/>
              chart.scale(@"month", @{@"range": @[@(0.1), @(0.9)]});<br/>

@@ -1,123 +1,121 @@
 ---
-title: 图形属性
+title: Graphic Properties
 order: 5
 ---
 
-图形属性对应视觉编码中的视觉通道，是图形语法元素中非常重要和灵活的一部分，每种几何标记都拥有自己的图形属性。F2Native 中支持的图形属性有下面几种：
+Graphical attributes correspond to visual channels in visual coding, and are a very important and flexible part of the graphic grammar elements. Each geometric mark has its own graphic attributes. The graphics properties supported in F2Native are as follows:
 
-1. **position**：位置，二维坐标系内映射至 x 轴、y 轴；
+1. **position**: position, mapped to the x-axis and y-axis in the two-dimensional coordinate system;
 
-2. **color**：颜色，包含了色调、饱和度和亮度；
+2. **color**: color, including hue, saturation and brightness;
 
-3. **size**：大小，不同的几何标记对大小的定义有差异；
+3. **size**: size, different geometric markers have different definitions of size;
 
-4. **shape**：形状，几何标记的形状决定了某个具体图表类型的表现形式，例如线图可以有折线、曲线、点线等表现形式；
+4. **shape**: Shape, the shape of the geometric mark determines the representation of a specific chart type, for example, a line diagram can have a polyline, a curve, a dotted line, etc.;
 
 
-## 如何使用
+## How To Use
 
-首先需要明确一点：**图形属性是属于每一个几何标记 geom（Geometry) 的**，所以我们先要声明几何标记，然后再在该几何标记对象上进行图形属性的映射，代码如下：
+First of all, it needs to be clear: **Graphic attributes belong to each geometry tag geom (Geometry)**, so we must declare the geometry tag first, and then map the graphic attributes on the geometry tag object. The code is as follows:
 
-```
+````
 chart.<geomType>().<attrType>(fields,config);
-```
+````
 
-其中：
+in:
 
-- geomType，几何标记类型，具体支持的类型请阅读[几何标记](./geometry)章节；
+- geomType, geometry marker type, please read the [Geometry Marker](./geometry) chapter for specific supported types;
 
-- attrType，图形属性类型，对应视觉通道；
+- attrType, graphic attribute type, corresponding to the visual channel;
 
-- fields，参与单个视觉通道映射的字段，可以是单个字段也可以是多个字段，多个字段使用 `*`分割
+- fields, the fields that participate in the mapping of a single visual channel, which can be a single field or multiple fields, and multiple fields are separated by `*`
 
-- config， 配置信息可能为 string 或者 array
+- config, configuration information may be string or array
 
 
-语法示例：
+Syntax example:
 
-```
+````
 chart.line().position(@"a*b").fixedColor(@"#ffffff");
 chart.interval().adjust(@"dodge")
                 .position(@"month*value")
                 .color(@"name", @[@"#ffffff",@"#1890FF"]);
 
-```
+````
 
-F2Native 对于每个图形属性的参数 `fields` 的解析规则如下：
+F2Native's parsing rules for the parameter `fields` of each graphics property are as follows:
 
-- 如果是单个单词，如 `color(@"a")` 会判断该属性是否是输入数据源的字段属性，如果不是则会将其解析为一个常量；
+- If it is a single word, such as `color(@"a")`, it will judge whether the attribute is a field attribute of the input data source, if not, it will be parsed as a constant;
 
-- 如果是多个属性的映射，需要使用 `*` 进行连接，F2Native 会依次对这些字段进行解析和映射，如 `position(@"cut*price")`；
+- If it is a mapping of multiple attributes, you need to use `*` to connect, F2Native will parse and map these fields in turn, such as `position(@"cut*price")`;
 
 
-<a name="4933d1a9"></a>
-## position 位置属性
+### Position  Property
 
-position 位置属性的映射，用于确定由数据中的哪几个字段来确定数据在平面坐标系的位置。通俗地解释，即确定 x 轴和 y 轴的数据字段。
+The mapping of the position attribute is used to determine which fields in the data determine the position of the data in the plane coordinate system. In layman's terms, the data fields that determine the x-axis and y-axis.
 
-以下面的语句为例，在 position 属性上，映射了两个属性： 'cut' 和 'price'，分别表示将 'cut' 数据值映射至 x 轴坐标点，'price' 数据值映射至 y 轴坐标点。
+Taking the following statement as an example, on the position attribute, two attributes are mapped: 'cut' and 'price', which respectively indicate that the 'cut' data value is mapped to the x-axis coordinate point, and the 'price' data value is mapped to the y-axis. Coordinate points.
 
-```
+````
 chart.line().position(@"cut*price");
-```
+````
 
-<a name="color"></a>
-## color
+### Color
 
-从可视化编码的角度对颜色进行分析，可以将颜色分为亮度、饱和度和色调三个视觉通道，其中前两个可以认为是用于编码定量和定序数据的视觉通道，而色调属于编码定性数据的视觉通道。而在 F2Native 中并不如此详细区分，统一使用 color 方法进行映射配置。
+From the perspective of visual coding, color can be divided into three visual channels: brightness, saturation and hue. The first two can be considered as visual channels for encoding quantitative and ordinal data, while hue belongs to encoding qualitative Visual channel for data. In F2Native, the distinction is not so detailed, and the color method is uniformly used for mapping configuration.
 
-color 支持的映射语法如下：
+The mapping syntax supported by color is as follows:
 
-- `fixedColor(color)` color 为设置的色值，此方法给不涉及分类的单一类型数据源的图形进行颜色属性设置；
+- `fixedColor(color)` color is the set color value, this method sets the color attribute for the graphics of a single type of data source that does not involve classification;
 
-- `color('field', colors)`，将数据值映射至指定的颜色值 colors（是数组），此时用于通常映射分类数据；
-
+- `color('field', colors)`, which maps data values ​​to the specified color values ​​colors (which are arrays), which are usually used to map categorical data;
 
 
-### 分类数据的颜色映射
 
-将 `city` 属性的数据值映射至制定的颜色来区分不同的城市。
+### Colormap For Categorical Data
+
+Map the data value of the `city` property to the specified color to distinguish different cities.
 
 `.color(@"city", @[ @"#40A9FF", @"#FF7875", @"#FFC069" ])`
 
 ![](https://gw.alipayobjects.com/zos/rmsportal/FPXEtZTmKGVleSoVTDSL.png#align=left&display=inline&height=260&originHeight=500&originWidth=720&status=done&width=375)
 
 
-## shape
+## Shape
 
-不同的几何标记有不同的 shape（图形形状）。shape 这个视觉通道受其他几个视觉通道影响，比如：line shape可以配置成`smooth`-平滑曲线  `dash`- 虚线 。
+Different geometric markers have different shapes. shape This visual channel is affected by several other visual channels, such as: line shape can be configured as `smooth`-smooth curve `dash`-dashed line .
 
-- `fixedShape(shape)`，此方法给不涉及分类的单一类型数据源的图形进行形状属性设置；
+- `fixedShape(shape)`, this method sets shape attributes for graphics of a single type of data source that do not involve classification;
 
-- `shape('field', shapes)`，将数据值映射至指定的形状 shapes（是数组），此时用于通常映射分类数据；
-
-
-
-## size
-
-对于不同的几何标记含义不完全一致：
-
-- 对于 line 线来说，size 对应着线的粗细；
-
-- 对于 interval 柱状图来说，size 对应着柱子的宽度。
+- `shape('field', shapes)`, which maps the data value to the specified shape shapes (which is an array), which is used to map categorical data in general;
 
 
-所以从可视化的角度分析，大小（size)是一个复杂的视觉通道。
 
-在 F2Native 中，支持如下几种方式的映射语法：
+## Size
 
-- `fixedSize(size)`，此方法给不涉及分类的单一类型数据源的图形进行size属性设置；
+The meanings of different geometric markers are not exactly the same:
 
-- `size('field', sizes)`，将数据值映射至指定的size sizes（是数组），此时用于通常映射分类数据；
+- For line lines, size corresponds to the thickness of the line;
+
+- For interval histograms, size corresponds to the width of the bars.
 
 
-## Geom 支持的图形属性
+So from the perspective of visualization, size is a complex visual channel.
 
-前面提到过，每种几何标记支持的视觉通道有所差异，数据和视觉通道的映射关系也不完全相同。 下表列出了各个 geom 几何标记对各个图形属性的支持情况：
+In F2Native, the following mapping syntaxes are supported:
 
-| **几何标记** | **position** | **color** | **size** | **shape** |
+- `fixedSize(size)`, this method sets the size attribute for graphics of a single type of data source that does not involve classification;
+
+- `size('field', sizes)`, which maps data values ​​to the specified size sizes (which are arrays), which is used to map categorical data in general;
+
+
+## Geom Supported Graphics Properties
+
+As mentioned earlier, the visual channels supported by each geometric marker are different, and the mapping relationship between data and visual channels is not exactly the same. The following table lists the support of each graph attribute for each geom geometry tag:
+
+| **Geometry Mark** | **Position** | **Color** | **Size** | **Shape** |
 | --- | --- | --- | --- | --- |
-| line | 支持 | 支持 | 支持 | 支持 |
-| area | 支持 | 支持 | `不支持` | `不支持` |
-| interval | 支持 | 支持 | 支持 | `不支持` |
-| point | 支持 | 支持 | 支持 | 支持 |
+| line | support | support | support | support |
+| area | Supported | Supported | `Not supported` | `Not supported` |
+| interval | supported | supported | supported | `not supported` |
+| point | support | support | support | support |

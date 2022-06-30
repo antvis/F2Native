@@ -143,7 +143,10 @@ void geom::Interval::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
 
         for(std::size_t position = start; position <= end; ++position) {
             auto &item = groupData[position];
-
+            
+            if (!(*item.data).contains(yField)) {
+                continue;;
+            }
      
             const nlohmann::json &yValue = (*item.data)[yField];
             nlohmann::json cfg = CreateShapePointsCfg(chart, item, index);

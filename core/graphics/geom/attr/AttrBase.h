@@ -50,10 +50,12 @@ class Position : public AttrBase {
     AttrType GetType() const override { return AttrType::Position; }
 
     void Mapping(XDataArray &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
+        auto &xField = fields_[0];
+        auto &yField = fields_[1];
         for(size_t i = start; i <= end; i++) {
             auto &item = groupData[i];
-            auto &xVal = (*item.data)[fields_[0]];
-            auto &yVal = (*item.data)[fields_[1]];
+            auto &xVal = (*item.data)[xField];
+            auto &yVal = (*item.data).contains(yField) ? (*item.data)[yField] : json::NullObject();
 
             if(xVal.is_null() && yVal.is_null()) {
                 item._x = std::nan("0"); // attr names[x, y]
@@ -63,7 +65,7 @@ class Position : public AttrBase {
             } else if(xVal.is_array()) {
                 // TODO
             } else if(item.adjust.size() >= 2) { //stack
-                double x = xScale.Scale((*item.data)[fields_[0]]);
+                double x = xScale.Scale((*item.data)[xField]);
 
                 std::vector<double> rstY;
                 for(std::size_t index = 0; index < item.adjust.size(); ++index) {
@@ -79,7 +81,7 @@ class Position : public AttrBase {
                 item._x = point.x; // attr names[x, y]
                 item._y = point.y;
             } else if(yVal.is_array()) { //区间柱状图
-                double x = xScale.Scale((*item.data)[fields_[0]]);
+                double x = xScale.Scale((*item.data)[xField]);
                 std::vector<double> rstY;
                 for(std::size_t index = 0; index < yVal.size(); ++index) {
                     util::Point _point = coord.ConvertPoint(util::Point{x, yScale.Scale(yVal[index])});
@@ -89,8 +91,8 @@ class Position : public AttrBase {
                 item._y0 = rstY;
             }
             else {
-                double x = xScale.Scale((*item.data)[fields_[0]]);
-                double y = yScale.Scale((*item.data)[fields_[1]]);
+                double x = xScale.Scale(xVal);
+                double y = yScale.Scale(yVal);
                 util::Point point = coord.ConvertPoint(util::Point(x, y));
                 item._x = point.x; // attr names[x, y]
                 item._y = point.y;

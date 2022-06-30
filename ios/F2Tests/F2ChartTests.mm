@@ -47,7 +47,7 @@
     e2e::Baseline::Case1(frame.size.width, frame.size.height, F2NativeScale, path.UTF8String, canvasView.canvasContext.context2d);
     
     //for baseline
-    //[self saveImage:canvasView.snapshot];
+//    [F2TestUtil saveImage:canvasView.snapshot name:@"baseLine.jpeg"];
     
     UIImage *diff;
     BOOL match = [F2PixelMatch match:canvasView.snapshot
@@ -65,7 +65,7 @@
     e2e::BaseInterval::Case1(frame.size.width, frame.size.height, F2NativeScale, path.UTF8String, canvasView.canvasContext.context2d);
     
     //for baseline
-//    [self saveImage:canvasView.snapshot];
+    [F2TestUtil saveImage:canvasView.snapshot name:@"baseInterval.jpeg"];
     
     UIImage *diff;
     BOOL match = [F2PixelMatch match:canvasView.snapshot
@@ -82,7 +82,7 @@
     e2e::MarketMoving::Case1(frame.size.width, frame.size.height, F2NativeScale, path.UTF8String, canvasView.canvasContext.context2d);
     
     //for baseline
-//    [self saveImage:canvasView.snapshot];
+    [F2TestUtil saveImage:canvasView.snapshot name:@"marketMoving.jpeg"];
     
     UIImage *diff;
     BOOL match = [F2PixelMatch match:canvasView.snapshot

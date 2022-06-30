@@ -23,7 +23,7 @@ class Category : public AbstractScale {
         : AbstractScale(_field, _values, _config) {
             
         InitConfig(_config);
-        //在initConfig中未传入ticks了
+        //在initConfig中未传入ticks
         if (!ticks.is_array() || ticks.size() == 0) {
             ticks = CalculateTicks();
         }

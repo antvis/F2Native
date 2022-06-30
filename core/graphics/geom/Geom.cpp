@@ -180,7 +180,19 @@ XDataGroup xg::geom::AbstractGeom::GroupData(XChart &chart) {
     const nlohmann::json &data = chart.GetData();
 
     const set<string> fields(GetGroupFieldNames(chart));
-    return util::JsonGroupByFields(data, fields);
+    if(fields.empty()) {
+        auto xField = chart.GetXScaleField();
+        XDataArray ary;
+        for(size_t index = 0, size = data.size(); index < size; ++index) {            
+            //过滤掉没有x轴key的数据
+            if(data[index].contains(xField)) {
+                ary.emplace_back(XData{.data = &data[index]});
+            }
+        }
+        return XDataGroup({std::move(ary)});
+    }else {
+        return util::JsonGroupByFields(data, fields);
+    }
 }
 
 const set<string> xg::geom::AbstractGeom::GetGroupFieldNames(XChart &chart) {

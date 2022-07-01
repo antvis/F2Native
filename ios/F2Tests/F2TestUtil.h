@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface F2TestUtil : NSObject
 
-+ (BOOL)saveImage:(UIImage *)image;
++ (BOOL)saveImage:(UIImage *)image name:(NSString *)name;
 
 + (UIImage *)readImage:(NSString *)imageName;
 

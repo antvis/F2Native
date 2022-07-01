@@ -38,7 +38,7 @@
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *path = [bundle pathForResource:@"res/chart_bridge.json" ofType:nil];
     BOOL ret = unit::ChartBridge::Render(path.UTF8String, cotenxt.context2d, 300, 150, cotenxt.nativeScale);
-//    [F2TestUtil saveImage:cotenxt.snapshot];
+//    [F2TestUtil saveImage:cotenxt.snapshot imageName:@"chartBridge.jpeg"];
     
     UIImage *diff;
     BOOL match = [F2PixelMatch match:cotenxt.snapshot

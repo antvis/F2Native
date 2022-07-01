@@ -8,7 +8,7 @@
 #include "../../canvas/Coord.h"
 #include "../../scale/Category.h"
 #include "../../scale/Scale.h"
-#include "../../util/json_data.h""
+#include "../../util/json_data.h"
 
 using namespace xg::canvas::coord;
 using namespace xg::scale;

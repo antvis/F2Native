@@ -14,8 +14,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: CD iOS
-        run: cd ios
+      - name: cd xcodeproj folder
+        run: |
+            cd ios
+            ls
       - name: Set Default Scheme
         run: |
           scheme_list=$(xcodebuild -list -json | tr -d "\n")

@@ -18,6 +18,4 @@ jobs:
         run: |
             cd ios
             ls
-      - name: Test
-        run: |
-           xcodebuild  test -project F2.xcodeproj -scheme F2Tests -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 12,OS=15.5' 
+            xcodebuild  test -project F2.xcodeproj -scheme F2Tests -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 12,OS=15.5' 

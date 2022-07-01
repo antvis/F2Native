@@ -1,4 +1,4 @@
-name: Android Test
+name: Android Tests
 
 on:
   push:
@@ -17,7 +17,7 @@ jobs:
       uses: actions/setup-java@v3
       with:
         java-version: '11'
-        ndk-version: r21e
+        ndk-version: r16
         distribution: 'temurin'
         cache: gradle
 

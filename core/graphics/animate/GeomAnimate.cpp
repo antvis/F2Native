@@ -50,7 +50,19 @@ void animate::action::GroupScaleIn(animate::TimeLine *timeLine,
     animate::DoAnimation(timeLine, container->clip_.get(), endState, cfg, [container]() -> void { container->clip_ = nullptr; });
 }
 
-static void animate::action::GroupWaveIn(animate::TimeLine *timeLine,
+void animate::action::GroupScaleInX(animate::TimeLine *timeLine, shape::Group *container, nlohmann::json &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY) {
+    GroupScaleIn(timeLine, container, cfg, coord, zeroY, "x");
+}
+
+void animate::action::GroupScaleInY(animate::TimeLine *timeLine, shape::Group *container, nlohmann::json &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY) {
+    GroupScaleIn(timeLine, container, cfg, coord, zeroY, "y");
+}
+
+void animate::action::GroupScaleInXY(animate::TimeLine *timeLine, shape::Group *container, nlohmann::json &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY) {
+    GroupScaleIn(timeLine, container, cfg, coord, zeroY, "xy");
+}
+
+void animate::action::GroupWaveIn(animate::TimeLine *timeLine,
                                          shape::Group *container,
                                          nlohmann::json &cfg,
                                          canvas::coord::AbstractCoord *coord,
@@ -79,7 +91,7 @@ static void animate::action::GroupWaveIn(animate::TimeLine *timeLine,
     animate::DoAnimation(timeLine, container->clip_.get(), endState, cfg, [container]() -> void { container->clip_ = nullptr; });
 }
 
-static void animate::action::DoGroupAnimate(std::string animateType,
+void animate::action::DoGroupAnimate(std::string animateType,
                                             animate::TimeLine *timeLine,
                                             shape::Group *container,
                                             nlohmann::json &cfg,
@@ -99,7 +111,7 @@ static void animate::action::DoGroupAnimate(std::string animateType,
 }
 
 #pragma aniamte static methods.
-static util::Matrix animate::GetScaledShapeMatrix(shape::Shape *shape, util::Vector2D *v, std::string direct) {
+util::Matrix animate::GetScaledShapeMatrix(shape::Shape *shape, util::Vector2D *v, std::string direct) {
     shape->Apply(v);
     double x = (*v)[0];
     double y = (*v)[1];
@@ -142,10 +154,10 @@ static util::Matrix animate::GetScaledShapeMatrix(shape::Shape *shape, util::Vec
                                                        {"t", util::Vector2D{-x, -y}},   //
                                                    });
     }
-    return std::move(scaledMatrix);
+    return scaledMatrix;
 }
 
-static void animate::DoAnimation(animate::TimeLine *timeLine_,
+void animate::DoAnimation(animate::TimeLine *timeLine_,
                                  shape::Shape *shape,
                                  const animate::AnimateState &endState,
                                  nlohmann::json &cfg,

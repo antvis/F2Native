@@ -22,8 +22,6 @@ class Element {
     Element &operator=(const Element &) = delete;
 
   protected:
-    /// cfg包含绘制各个shape需要的所有属性
-    /// @param cfg json
     Element();
 
   public:

@@ -13,7 +13,7 @@ class Text : public Shape {
     Text(const std::string &, const util::Point &, const float fontSize, const std::string &strokeColor, const std::string &fillColor);
 
     /// 获取包围盒，每一次都会计算，建议使用GetBox
-    /// @param context
+    /// @param context 上下文
     BBox CalculateBox(canvas::CanvasContext &context) const override;
 
     float GetTextHeight() const;
@@ -30,7 +30,6 @@ class Text : public Shape {
     int GetLineCount() const { return this->lineCount_; }
 
     const std::string &GetTextAlign() noexcept { return textAlign_; }
-
   protected:
     void DrawInner(canvas::CanvasContext &context) const override;
 
@@ -53,6 +52,12 @@ class Text : public Shape {
   public:
     nlohmann::json ext;
 };
+
+std::string CreateFontStyle(float fontSize = DEFAULT_FONTSIZE,
+                            const std::string &fontStyle = "normal",
+                            const std::string &fontVariant = "normal",
+                            const std::string &fontWeight = "normal",
+                            const std::string &fontFamily = "sans-serif");
 
 } // namespace shape
 } // namespace xg

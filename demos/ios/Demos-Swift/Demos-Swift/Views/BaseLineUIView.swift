@@ -14,9 +14,9 @@ class BaseLineUIView: UIView {
     
     required override init(frame: CGRect) {
         super.init(frame: frame)
-        self.canvasView = F2CanvasView.canvas(withFrame: frame)
+        self.canvasView = F2CanvasView.canvas(frame)
         self.addSubview(self.canvasView!)
-        self.chart = F2Chart.init(self.canvasView!.bounds.size, withName: "swiftdemo")
+        self.chart = F2Chart.init(self.canvasView!.bounds.size, name: "swiftdemo")
         self.chartRender();
     }
     

@@ -1,4 +1,4 @@
-package com.antgroup.antv.f2.kotlinsamples;
+package com.antgroup.antv.f2.samples;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

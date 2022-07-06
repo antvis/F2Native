@@ -1,4 +1,4 @@
-package com.antgroup.antv.f2.kotlinsamples.charts;
+package com.antgroup.antv.f2.samples.charts;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -13,7 +13,7 @@ import com.antgroup.antv.f2.F2Chart;
 import com.antgroup.antv.f2.F2Config;
 import com.antgroup.antv.f2.F2Function;
 import com.antgroup.antv.f2.F2Log;
-import com.antgroup.antv.f2.kotlinsamples.Utils;
+import com.antgroup.antv.f2.samples.Utils;
 
 import java.io.InputStream;
 

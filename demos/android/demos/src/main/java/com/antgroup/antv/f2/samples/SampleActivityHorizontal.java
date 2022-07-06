@@ -1,4 +1,4 @@
-package com.antgroup.antv.f2.kotlinsamples;
+package com.antgroup.antv.f2.samples;
 
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -7,7 +7,7 @@ import com.antgroup.antv.f2.F2CanvasView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class SampleActivity extends AppCompatActivity {
+public class SampleActivityHorizontal extends AppCompatActivity {
 
     private F2CanvasView mCanvasView;
 
@@ -15,9 +15,10 @@ public class SampleActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setContentView(R.layout.activity_sample);
-        mCanvasView = findViewById(R.id.canvasView);
 
+        setContentView(R.layout.activity_sample_horizontal);
+
+        mCanvasView = findViewById(R.id.canvasView);
         mCanvasView.initCanvasContext(new F2CanvasView.ConfigBuilder()
                 .setOption("canvasBizId", "F2NativeDemo")
                 .setOption("appId", "1000")

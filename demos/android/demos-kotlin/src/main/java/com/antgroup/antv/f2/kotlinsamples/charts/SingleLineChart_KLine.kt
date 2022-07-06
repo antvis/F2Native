@@ -45,9 +45,7 @@ class SingleLineChart_KLine : F2CanvasView.Adapter, OnCanvasTouchListener {
             .type("kline-day")
             .setOption("timeZoneOffset", 28800)
             .setOption("domain", doubleArrayOf(1.0, 20.0))
-        mChart!!.setScale("date", scaleConfigBuilder)
-        mChart!!.setAxis("date", AxisConfigBuilder()
-            .label(AxisLabelConfigBuilder().item(mChart, object : F2Function() {
+            .tick(mChart, object : F2Function() {
                 override fun execute(paramStr: String): F2Config {
                     val jsonObject = JSON.parseObject(paramStr)
                     val param = jsonObject.getString("content")
@@ -55,8 +53,8 @@ class SingleLineChart_KLine : F2CanvasView.Adapter, OnCanvasTouchListener {
                     val content = DateFormat.getDateInstance().format(Date(timestamp))
                     return F2Config.Builder<F2Config.Builder<*>>().setOption("content", content).build()
                 }
-            }))
-        )
+            })
+        mChart!!.setScale("date", scaleConfigBuilder)
         mChart!!.setScale(
             "price", ScaleConfigBuilder()
                 .tickCount(2).nice(true)

@@ -172,6 +172,8 @@ public class F2AndroidCanvasContext  {
         }
         setStrokePaint();
         this.bitmapCanvas.drawPath(this.path, this.paint);
+        //重置gradient
+        this.paint.setShader(null);
     }
 
     public void fill() {
@@ -181,6 +183,8 @@ public class F2AndroidCanvasContext  {
         }
         setFillPaint();
         this.bitmapCanvas.drawPath(this.path, this.paint);
+        //重置gradient
+        this.paint.setShader(null);
     }
 
     public void beginPath() {

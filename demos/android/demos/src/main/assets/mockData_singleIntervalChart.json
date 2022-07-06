@@ -1,1 +1,34 @@
-[{"year":"1950","sales":29},{"year":"1951","sales":30},{"year":"1952","sales":31},{"year":"1953","sales":32},{"year":"1954","sales":33},{"year":"1955","sales":34},{"year":"1956","sales":35},{"year":"1957","sales":36},{"year":"1958","sales":37},{"year":"1959","sales":38},{"year":"1960","sales":29}]
+[{
+  "year": "1950",
+  "sales": 29
+}, {
+  "year": "1951",
+  "sales": 30
+}, {
+  "year": "1952",
+  "sales": 31
+}, {
+  "year": "1953",
+  "sales": 32
+}, {
+  "year": "1954",
+  "sales": 33
+}, {
+  "year": "1955",
+  "sales": 34
+}, {
+  "year": "1956",
+  "sales": 35
+}, {
+  "year": "1957",
+  "sales": 36
+}, {
+  "year": "1958",
+  "sales": 37
+}, {
+  "year": "1959",
+  "sales": 38
+}, {
+  "year": "1960",
+  "sales": 29
+}]

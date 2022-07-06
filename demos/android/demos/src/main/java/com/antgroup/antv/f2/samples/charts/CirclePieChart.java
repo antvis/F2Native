@@ -1,17 +1,16 @@
-package com.antgroup.antv.f2.kotlinsamples.charts;
+package com.antgroup.antv.f2.samples.charts;
 
 import com.antgroup.antv.f2.F2CanvasView;
 import com.antgroup.antv.f2.F2Chart;
-import com.antgroup.antv.f2.F2Config;
-import com.antgroup.antv.f2.kotlinsamples.Utils;
+import com.antgroup.antv.f2.samples.Utils;
 
 /**
- * 饼图
+ * 环形图
  *
  * @author qingyuan.yl
  * @date 2020-09-27
  */
-public class PieChart implements F2CanvasView.Adapter {
+public class CirclePieChart implements F2CanvasView.Adapter {
     private F2Chart mChart;
 
     @Override
@@ -29,8 +28,8 @@ public class PieChart implements F2CanvasView.Adapter {
                 .gridHidden());
 
         mChart.setAxis("a", new F2Chart.AxisConfigBuilder().labelHidden().lineHidden().gridHidden());
-        mChart.setCoord(new F2Chart.CoordConfigBuilder().type("polar").transposed(true));
-        mChart.interval().position("a*percent").fixedSize(1).style(new F2Config.Builder().setOption("lineWidth", 3).build()).color("name").adjust("stack");
+        mChart.setCoord(new F2Chart.CoordConfigBuilder().type("polar"));
+        mChart.interval().position("a*percent").color("name").adjust("stack");
         mChart.render();
 }
 

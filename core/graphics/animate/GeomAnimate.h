@@ -11,32 +11,22 @@ namespace animate {
 
 namespace action {
 
-static void GroupScaleIn(animate::TimeLine *timeLine,
+void GroupScaleIn(animate::TimeLine *timeLine,
                          shape::Group *container,
                          nlohmann::json &cfg,
                          canvas::coord::AbstractCoord *coord,
                          util::Point zeroY,
                          std::string type);
 
-static void
-GroupScaleInX(animate::TimeLine *timeLine, shape::Group *container, nlohmann::json &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY) {
-    GroupScaleIn(timeLine, container, cfg, coord, zeroY, "x");
-}
+void GroupScaleInX(animate::TimeLine *timeLine, shape::Group *container, nlohmann::json &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY);
 
-static void
-GroupScaleInY(animate::TimeLine *timeLine, shape::Group *container, nlohmann::json &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY) {
-    GroupScaleIn(timeLine, container, cfg, coord, zeroY, "y");
-}
+void GroupScaleInY(animate::TimeLine *timeLine, shape::Group *container, nlohmann::json &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY);
 
-static void
-GroupScaleInXY(animate::TimeLine *timeLine, shape::Group *container, nlohmann::json &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY) {
-    GroupScaleIn(timeLine, container, cfg, coord, zeroY, "xy");
-}
+void GroupScaleInXY(animate::TimeLine *timeLine, shape::Group *container, nlohmann::json &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY);
 
-static void
-GroupWaveIn(animate::TimeLine *timeLine, shape::Group *container, nlohmann::json &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY);
+void GroupWaveIn(animate::TimeLine *timeLine, shape::Group *container, nlohmann::json &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY);
 
-static void DoGroupAnimate(std::string animateType,
+void DoGroupAnimate(std::string animateType,
                            animate::TimeLine *timeLine,
                            shape::Group *container,
                            nlohmann::json &cfg,
@@ -45,10 +35,9 @@ static void DoGroupAnimate(std::string animateType,
 
 } // namespace action
 
-static util::Matrix GetScaledShapeMatrix(shape::Shape *shape, util::Vector2D *v, std::string direct);
+util::Matrix GetScaledShapeMatrix(shape::Shape *shape, util::Vector2D *v, std::string direct);
 
-static void
-DoAnimation(TimeLine *timeLine_, shape::Shape *shape, const AnimateState &endState, nlohmann::json &cfg, std::function<void()> onEnd);
+void DoAnimation(TimeLine *timeLine_, shape::Shape *shape, const AnimateState &endState, nlohmann::json &cfg, std::function<void()> onEnd);
 
 class GeomAnimate {
   public:

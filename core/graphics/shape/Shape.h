@@ -15,7 +15,7 @@ class Shape : public Element {
     virtual ~Shape() override {}
 
     /// 获取包围盒，同一个shape只会一算一次
-    /// @param context
+    /// @param context 上下文
     const BBox &GetBBox(canvas::CanvasContext &context) override;
 
     /// 包围盒计算，每次都会计算

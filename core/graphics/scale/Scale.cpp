@@ -11,6 +11,13 @@
 
 using namespace xg::scale;
 
+bool xg::scale::IsCategory(ScaleType type) {
+    return type == ScaleType::Cat || type == ScaleType::TimeCat || type == ScaleType::Kline;
+}
+
+bool xg::scale::IsLinear(ScaleType type) { return type == ScaleType::Linear || type == ScaleType::TimeSharingLinear; }
+
+
 std::string AbstractScale::GetTickText(const nlohmann::json &item, XChart *chart) {
     if(!this->tickCallbackId.empty() && chart) {
         nlohmann::json content{{"content", item}};

@@ -24,6 +24,9 @@ class Interval : public GeomShapeBase {
               bool connectNulls) override {
         const nlohmann::json &_points = data._points;
         const nlohmann::json &_style = data._style;
+        if (!_points.is_array()) {
+            return;
+        }
 
         std::vector<util::Point> points;
         for(std::size_t i = 0; i < _points.size(); ++i) {
@@ -39,7 +42,7 @@ class Interval : public GeomShapeBase {
             isFill = false;
         }
 
-        const float lineWidth = _style["lineWidth"].get<float>() * context.GetDevicePixelRatio();
+        const float lineWidth = json::GetNumber(_style, "lineWidth") * context.GetDevicePixelRatio();
         // 扇形
         if(shapeType == "sector") {
             std::vector<util::Point> newPoints = points;

@@ -109,11 +109,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark 关于度量Scale的一些设置
 ///设置当geom中有interval的时候，是否调整max, min, range三个参数, 默认是true
-///@param adjust 是否调整，默认是调整的，可设置false 关闭
+///adjust 是否调整，默认是调整的，可设置false 关闭
 - (F2Chart * (^)(BOOL adjust))adjustScale;
 
-//是否同步多个y轴的最值，默认为true
-///@param sync 可设置false关闭
+///是否同步多个y轴的最值，默认为true
+///sync 可设置false关闭
 - (F2Chart * (^)(BOOL adjust))syncYScale;
 
 #pragma mark 获取引擎中的参数和对象

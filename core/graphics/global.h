@@ -32,13 +32,6 @@ constexpr float DEFAULT_FONTSIZE = 17.f;
 constexpr float DEFAULT_FONTSIZE = 10.f;
 #endif
 
-static std::string CreateFontStyle(float fontSize = DEFAULT_FONTSIZE,
-                                const std::string &fontStyle = "normal",
-                                const std::string &fontVariant = "normal",
-                                const std::string &fontWeight = "normal",
-                                const std::string &fontFamily = "sans-serif")  {
-    return fontStyle + " " + fontVariant + " " + fontWeight + " " + std::to_string(fontSize) + "px " + fontFamily;
-}
 } // namespace xg
 
 #endif // XG_GRAPHICS_GLOBAL_H

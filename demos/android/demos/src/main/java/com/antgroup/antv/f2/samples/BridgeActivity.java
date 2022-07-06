@@ -1,4 +1,4 @@
-package com.antgroup.antv.f2.kotlinsamples;
+package com.antgroup.antv.f2.samples;
 
 import java.util.HashMap;
 

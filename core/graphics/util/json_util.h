@@ -108,15 +108,6 @@ static std::string GenerateRowUniqueKey(const nlohmann::json &row, const std::se
 
 static XDataGroup JsonGroupByFields(const nlohmann::json &data, const std::set<std::string> &fields) {
     XDataGroup rst;
-    if(fields.empty()) {
-        XDataArray ary;
-        for(size_t index = 0, size = data.size(); index < size; ++index) {
-            ary.emplace_back(XData{.data = &data[index]});
-        }
-        rst.emplace_back(std::move(ary));
-        return rst;
-    }
-
     std::map<std::string, std::vector<XData>> group;
     std::set<std::string> rowKeys;
     std::vector<std::string> rowKeysOrder;

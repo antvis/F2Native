@@ -21,10 +21,8 @@ enum class ScaleType {
     TimeSharingLinear,
 };
 
-static bool IsCategory(ScaleType type) {
-    return type == ScaleType::Cat || type == ScaleType::TimeCat || type == ScaleType::Kline;
-}
-static bool IsLinear(ScaleType type) { return type == ScaleType::Linear || type == ScaleType::TimeSharingLinear; }
+bool IsCategory(ScaleType type);
+bool IsLinear(ScaleType type);
 
 class Tick {
   public:

@@ -111,3 +111,12 @@ float xg::shape::Text::GetTextWidth(canvas::CanvasContext &context) const {
         return context.MeasureTextWidth(text_);
     }
 }
+
+
+std::string xg::shape::CreateFontStyle(float fontSize,
+                                        const std::string &fontStyle,
+                                        const std::string &fontVariant,
+                                        const std::string &fontWeight,
+                                        const std::string &fontFamily)  {
+    return fontStyle + " " + fontVariant + " " + fontWeight + " " + std::to_string(fontSize) + "px " + fontFamily;
+}

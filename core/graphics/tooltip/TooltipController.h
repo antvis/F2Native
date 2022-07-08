@@ -43,7 +43,7 @@ class ToolTipController {
     nlohmann::json config_ = {{"alwaysShow", false},
                               {"showTitle", false},
                               {"showCrosshairs", true},
-                              {"crosshairsStyle", {{"stroke", "#1890FF"}, {"lineWidth", 1}, {"type", "dash"}, {"dash", {4, 4}}}},
+                              {"crosshairsStyle", {{"yCrosshair", true}, {"stroke", "#1890FF"}, {"lineWidth", 1}, {"type", "dash"}, {"dash", {4, 4}}}},
                               {"showTooltipMarker", true},
                               {"background", {{"radius", 1}, {"fill", "#1890FF"}, {"padding", {3, 3}}}},
                               {"xTip", {{"inner", false}, {"fontSize", 10}, {"fill", "#ffffff"}, {"textAlign", "center"}, {"textBaseline", "bottom"}}},

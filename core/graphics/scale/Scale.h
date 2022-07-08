@@ -93,6 +93,9 @@ class AbstractScale {
     size_t tickCount = 5;  // 刻度总数
     double min = NAN;
     double max = NAN;
+    bool containRange = false; //用户是否设置了range
+    bool containMin = false; //用户是否设置了min值
+    bool containMax = false; //用户是否设置了max值
 
   protected:
     virtual nlohmann::json CalculateTicks() = 0;

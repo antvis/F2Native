@@ -24,8 +24,8 @@ public:
         std::string jsonData((std::istreambuf_iterator<char>(jsonFile)), std::istreambuf_iterator<char>());
         chart.Source(jsonData);
         chart.SetCanvasContext(context).Padding(20, 10, 20, 0);
-        chart.Scale("date", "{\"tickCount\": 3}");
-        chart.Scale("value", "{\"nice\": true}");
+        chart.ScaleObject("date", {{"tickCount", 3} , {"range", {0, 1}}});
+        chart.ScaleObject("value", {{"nice", true}});
         chart.Interval().Position("date*value");
         chart.Render();
         return true;

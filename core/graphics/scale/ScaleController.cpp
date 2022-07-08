@@ -164,14 +164,16 @@ void scale::ScaleController::AdjustScale() {
     std::for_each(chart_->GetGeoms().begin(), chart_->GetGeoms().end(), [&](auto &geom) -> void {
         if (geom->GetType() == "interval") {
             auto &xScale = chart_->GetScale(geom->GetYScaleField());
-            if (xScale.min > 0) {
+            if (xScale.min > 0 && !xScale.containMin) {
                 xScale.Change({{"min", 0}});
-            } else if(xScale.max < 0) {
+            } else if(xScale.max < 0 && !xScale.containMax) {
                 xScale.Change({{"max", 0}});
             }
             
             auto &yScale = chart_->GetScale(geom->GetXScaleField());
-            yScale.Change({{"range", {0.1, 0.9}}});
+            if (!yScale.containRange) {
+                yScale.Change({{"range", {0.1, 0.9}}});
+            }
         }
     });
 }

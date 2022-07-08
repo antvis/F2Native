@@ -43,12 +43,15 @@ void AbstractScale::InitConfig(const nlohmann::json &cfg) {
     tickCount = json::GetIntNumber(cfg, "tickCount", int(tickCount));
     tickCount = fmax(2, tickCount);
 
+    containMin = cfg.contains("min");
+    containMax = cfg.contains("max");
     min = json::GetNumber(cfg, "min", min);
     max = json::GetNumber(cfg, "max", max);
     auto &range = json::GetArray(cfg, "range");
     if (range.size() >= 2) {
         rangeMin = range[0];
         rangeMax = range[1];
+        containRange = true;
     }
     
     tickCallbackId = xg::json::GetString(cfg, "tick");

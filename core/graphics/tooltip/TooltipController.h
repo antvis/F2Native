@@ -42,7 +42,7 @@ class ToolTipController {
     std::unique_ptr<ToolTip> toolTip_;
     nlohmann::json config_ = {{"alwaysShow", false},
                               {"showTitle", false},
-                              {"showCrosshairs", false},
+                              {"showCrosshairs", true},
                               {"crosshairsStyle", {{"stroke", "#1890FF"}, {"lineWidth", 1}, {"type", "dash"}, {"dash", {4, 4}}}},
                               {"showTooltipMarker", true},
                               {"background", {{"radius", 1}, {"fill", "#1890FF"}, {"padding", {3, 3}}}},

@@ -110,10 +110,6 @@ bool tooltip::ToolTipController::OnPressEnd(event::Event &event) {
 void tooltip::ToolTipController::OnRender() {
     if(this->toolTip_.get() != nullptr)
         return;
-
-    this->config_["maxLength"] = chart_->coord_->GetWidth();
-    // TODO contains [line, area, path, point]
-    config_["showCrosshairs"] = true;
     this->toolTip_ = std::make_unique<ToolTip>(container_, config_);
 }
 

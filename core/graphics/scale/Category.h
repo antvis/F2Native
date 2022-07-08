@@ -32,10 +32,11 @@ class Category : public AbstractScale {
     ScaleType GetType() const noexcept override { return ScaleType::Cat; }
 
     void Change(const nlohmann::json &cfg = {}) override {
+        config.merge_patch(cfg);
         values = json::GetArray(cfg, "values", values);
         
         //里面max和min的计算依赖上面的values
-        InitConfig(cfg);
+        InitConfig(config);
         this->ticks = this->CalculateTicks();
     }
 

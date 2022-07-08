@@ -39,7 +39,8 @@ class Linear : public AbstractScale {
     ScaleType GetType() const noexcept override { return ScaleType::Linear; }
 
     void Change(const nlohmann::json &cfg = {}) override {
-        InitConfig(cfg);
+        config.merge_patch(cfg);
+        InitConfig(config);
         this->ticks = this->CalculateTicks();
     }
 

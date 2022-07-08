@@ -38,7 +38,7 @@ class Tick {
  */
 class AbstractScale {
   public:
-    AbstractScale(const std::string &_field, const nlohmann::json &_values, const nlohmann::json &_cfg) : field(_field) {
+    AbstractScale(const std::string &_field, const nlohmann::json &_values, const nlohmann::json &_cfg) : field(_field), config(_cfg) {
         if(_values.is_array()) {
             this->values = _values;
         }
@@ -100,6 +100,7 @@ class AbstractScale {
     // 刻度值, 通过 wilkinson 算法计算得出
     nlohmann::json ticks; // 数组
     nlohmann::json values;
+    nlohmann::json config;
     std::string tickCallbackId;
 };
 } // namespace scale

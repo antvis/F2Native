@@ -45,6 +45,9 @@
     //图片
     self.chart.guide().image(@{@"position":@[@"median", @"max"], @"width": @30, @"height" : @(30), @"src":@"https://gw.alipayobjects.com/zos/antfincdn/FLrTNDvlna/antv.png", @"margin": @[@15, @-10]});
     
+    //圆
+    self.chart.guide().point(@{@"position":@[@"median", @"median"], @"fill":@"red", @"size":@(6)});
+    
     self.chart.animate(@(NO));
     
     self.chart.render();

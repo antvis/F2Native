@@ -26,6 +26,10 @@ NS_ASSUME_NONNULL_BEGIN
 ///@{@"position":@[@"median", @"median"], @"margin":@[top, right])}
 - (F2Guide * (^)(NSDictionary *config))image;
 
+/// 创建圆
+/// @{@"position": @[@"min", @"max"], @"fill":@"#A46FFE", @"size":@(2), @"offsetX": @(10), @"offsetY":@(10)}   size为半径
+- (F2Guide * (^)(NSDictionary *config))point;
+
 @end
 
 NS_ASSUME_NONNULL_END

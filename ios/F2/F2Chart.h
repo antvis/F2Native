@@ -1,5 +1,4 @@
 #import "F2Callback.h"
-#import "F2CanvasView.h"
 #import "F2Geom.h"
 #import "F2Guide.h"
 #import "F2Coordinate.h"
@@ -7,6 +6,8 @@
 #import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class F2CanvasView;
 
 @interface F2Chart : NSObject
 

@@ -2,6 +2,7 @@
 #import "F2Callback.h"
 #import "F2Utils.h"
 #import "XChart.h"
+#import "F2CanvasView.h"
 #if defined(__APPLE__)
 #import <TargetConditionals.h>
 #endif

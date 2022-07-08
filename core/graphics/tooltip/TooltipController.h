@@ -54,7 +54,9 @@ class ToolTipController {
                               {"showItemMarker", true},
                               {"itemMarkerStyle", {{"radius", 3}, {"symbol", "circle"}, {"lineWidth", 1}, {"stroke", "#ffffff"}}},
                               {"layout", "horizontal"},
+                              {"onPressStart", false},
                               {"onPress", false},
+                              {"onPressEnd", false},
                               {"snap", false},
                               {"hidden", false}};
     long long lastShowTimeStamp_ = 0;

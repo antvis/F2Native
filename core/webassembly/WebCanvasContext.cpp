@@ -274,8 +274,8 @@ void WebCanvasContext::BezierCurveTo(float cp1x, float cp1y, float cp2x, float c
 }
 
 void WebCanvasContext::Arc(float x, float y, float r, float sAngle, float eAngle, bool antiClockwise) {
-    EM_ASM({ document.getElementById(UTF8ToString($0)).getContext('2d').arc($1, $2, $3, $4, $5); }, canvasContext_.c_str(), x,
-           y, r, sAngle, eAngle);
+    EM_ASM({ document.getElementById(UTF8ToString($0)).getContext('2d').arc($1, $2, $3, $4, $5, $6); }, canvasContext_.c_str(), x,
+           y, r, sAngle, eAngle, antiClockwise);
 }
 
 void WebCanvasContext::ArcTo(float x1, float y1, float x2, float y2, float r) {

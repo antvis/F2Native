@@ -6,6 +6,7 @@
 #include "../../global.h"
 #include "../../shape/Polyline.h"
 #include "../../util/Point.h"
+#include "../../shape/Circle.h"
 
 using namespace xg::util;
 
@@ -25,12 +26,42 @@ class Line : public GeomShapeBase {
               std::size_t end,
               xg::shape::Group &container,
               bool connectNulls) override {
-        this->drawLines(coord, data, start, end, context, container, connectNulls);
+        this->DrawLines(coord, data, start, end, context, container, connectNulls);
     }
 
   private:
+    void DrawCircle(canvas::coord::AbstractCoord &coord,
+                    const XDataArray &data,
+                    std::size_t start,
+                    std::size_t end,
+                    canvas::CanvasContext &canvasContext,
+                    xg::shape::Group &container,
+                    bool connectNulls) {
+      
+        util::Point center(NAN, NAN);
+        if(!data[start]._y0.empty()) {
+            if(data[start]._y0.size() != 2) {
+                return;;
+            }
+            center = util::Point{data[start]._x, data[start]._y0[1]};
+        } else {
+            center = util::Point{ data[start]._x, data[start]._y};
+        }
+        
+        if (std::isnan(center.x) || std::isnan(center.y)) {
+            return;
+        }
+        
+        std::string color = data[start]._color.empty() ? GLOBAL_COLORS[0] : data[start]._color;
+        //使用线宽的一般作为半径来画点，避免出现第二个点的时候 有明显的大小变化的跳动感觉
+        float radius = (std::isnan(data[start]._size) ? 1 :data[start]._size) * canvasContext.GetDevicePixelRatio() / 2.0;
+        auto circle = std::make_unique<xg::shape::Circle>(center, radius);
+        circle->SetFillColor(color);
+        container.AddElement(std::move(circle));
+    }
+    
     // 还缺一个style
-    void drawLines(canvas::coord::AbstractCoord &coord,
+    void DrawLines(canvas::coord::AbstractCoord &coord,
                    const XDataArray &data,
                    std::size_t start,
                    std::size_t end,
@@ -38,8 +69,12 @@ class Line : public GeomShapeBase {
                    xg::shape::Group &container,
                    bool connectNulls) {
         size_t size = end - start + 1;
-        if(size <= 0)
+        if (size <= 0) {
             return;
+        } else if (size == 1) {
+            DrawCircle(coord, data, start, end, canvasContext, container, connectNulls);
+            return;
+        }
 
         std::string color = data[start]._color.empty() ? GLOBAL_COLORS[0] : data[start]._color;
 

@@ -35,6 +35,7 @@ class Image : public Shape {
   protected:
     void DrawInner(canvas::CanvasContext &context) const override;
 
+    void DrawImage(canvas::CanvasContext &context) const;
   public:
     std::string url_;
     util::Point point_;

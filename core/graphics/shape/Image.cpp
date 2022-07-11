@@ -27,16 +27,23 @@ BBox shape::Image::CalculateBox(canvas::CanvasContext &context) const {
 }
 
 void xg::shape::Image::DrawInner(canvas::CanvasContext &context) const {
-    image_->OnLoad([&](void) {
-        if (std::isnan(size_.width) || std::isnan(size_.height)) {
-            //todo size_赋值？
-            context.DrawImage(image_.get(), point_.x, point_.y);
-        } else {
-            context.DrawImage(image_.get(), point_.x, point_.y, size_.width, size_.height);
-        }
-        
-        if (callback_) {
-            callback_();
-        }
-    });
+    if (image_->IsValid()) {
+        DrawImage(context);
+    } else{
+        image_->OnLoad([&](void) {
+            DrawImage(context);
+            if (callback_) {
+                callback_();
+            }
+        });
+    }
+}
+
+void xg::shape::Image::DrawImage(canvas::CanvasContext &context) const {
+    if (std::isnan(size_.width) || std::isnan(size_.height)) {
+        //todo size_赋值？
+        context.DrawImage(image_.get(), point_.x, point_.y);
+    } else {
+        context.DrawImage(image_.get(), point_.x, point_.y, size_.width, size_.height);
+    }
 }

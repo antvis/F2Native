@@ -41,9 +41,11 @@
 }
 
 - (CGContextRef)contextWithSize:(CGSize)size {
+    CGFloat width = MAX(size.width, 1);
+    CGFloat height = MAX(size.height, 2);
     CGColorSpaceRef spaceRef = CGColorSpaceCreateDeviceRGB();
     //原点在左下
-    CGContextRef context = CGBitmapContextCreate(nil, size.width, size.height, 8, 0, spaceRef, kCGBitmapByteOrderDefault | kCGImageAlphaPremultipliedFirst);
+    CGContextRef context = CGBitmapContextCreate(nil, width, height, 8, 0, spaceRef, kCGBitmapByteOrderDefault | kCGImageAlphaPremultipliedFirst);
        
     NSCAssert(context, @"F2CanvasContext#error:CGContextRef is nil");
     if (!context) {
@@ -58,7 +60,7 @@
     CGColorSpaceRelease(spaceRef);
     
     //CGContext原点在左下角 翻转到左上角
-    CGContextTranslateCTM(context, 0, size.height);
+    CGContextTranslateCTM(context, 0, height);
     CGContextScaleCTM(context, 1, -1);
     return context;
 }

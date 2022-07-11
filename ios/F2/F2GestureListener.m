@@ -14,6 +14,8 @@ const double LONG_GESTURE_MINI_DURATION = 0.25f;
 - (instancetype)initWithView:(UIView *)view {
     if(self = [super init]) {
         _view = view;
+        _view.userInteractionEnabled = YES;
+        _view.multipleTouchEnabled = YES;
     }
     return self;
 }

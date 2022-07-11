@@ -23,19 +23,15 @@
     if(self = [super initWithFrame:frame]) {
         self.canvasContext = [[F2CanvasContext alloc] initWithFrame:frame];
         self.listener = [[F2GestureListener alloc] initWithView:self];
-        self.userInteractionEnabled = YES;
-        self.multipleTouchEnabled = YES;
     }
     return self;
 }
 
-- (BOOL)drawFrame {
-    UIImage *snapshot = self.canvasContext.snapshot;
-    if(snapshot) {
-        self.layer.contents = (__bridge id)snapshot.CGImage;
+- (void)drawRect:(CGRect)rect {
+    if(self.canvasContext.bitmap) {
+        CGContextRef ctx = UIGraphicsGetCurrentContext();
+        CGContextDrawImage(ctx, rect, self.canvasContext.bitmap);
     }
-    
-    return !!snapshot;
 }
 
 - (UIImage *)detectView {
@@ -47,7 +43,7 @@
 }
 
 - (UIImage *)snapshot {
-    return self.canvasContext.snapshot;
+    return [UIImage imageWithCGImage:self.canvasContext.bitmap];
 }
 
 - (void)logPerformance:(NSString *)chartId

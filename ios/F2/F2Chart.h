@@ -107,7 +107,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 当使用renderConfig方法时，在config方法中的functionId及param会通过这个callback回调出来
 - (F2Chart * (^)(FunctionItemCallback callback))callback;
-#pragma mark 数据活Size改变
+#pragma mark 改变数据 改变Size
 /// 改变画布和chart的大小，改变后需要重新设置并渲染
 - (F2Chart * (^)(CGSize size))changeSize;
 

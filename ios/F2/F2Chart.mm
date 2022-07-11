@@ -284,7 +284,8 @@ class IOSF2Function : public func::F2Function {
             long renderCmdCount = self.chart->GetRenderCmdCount();
 
             // 3.上屏是否成功
-            BOOL drawSuccess = [self.canvasView drawFrame];
+            [self.canvasView setNeedsDisplay];
+            BOOL drawSuccess = !!self.canvasView.canvasContext.bitmap;
 
             // 4.截bitmapview 分析
             long long start = xg::CurrentTimestampAtMM();
@@ -320,7 +321,7 @@ class IOSF2Function : public func::F2Function {
     return ^id() {
         if(!self.isBackground) {
             self.chart->Repaint();
-            [self.canvasView drawFrame];
+            [self.canvasView setNeedsDisplay];
         } else {
             self.cachedRepaint = YES;
         }
@@ -332,7 +333,7 @@ class IOSF2Function : public func::F2Function {
     return ^id(NSDictionary *config) {
         bool changed = self.chart->OnTouchEvent([F2SafeJson([F2Utils toJsonString:config]) UTF8String]);
         if(changed) {
-            [self.canvasView drawFrame];
+            [self.canvasView setNeedsDisplay];
         }
         return self;
     };

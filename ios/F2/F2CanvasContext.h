@@ -26,9 +26,9 @@ NS_ASSUME_NONNULL_BEGIN
 ///@return CGContextRef 渲染的上下文
 - (CGContextRef)context2d;
 
-///返回context2d上下文的截图
-///@return UIImage
-- (UIImage *)snapshot;
+/// 画布
+/// @return CGImageRef bitmap
+- (CGImageRef)bitmap;
 
 /// 返回画布的密度
 - (CGFloat)nativeScale;

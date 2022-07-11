@@ -426,4 +426,16 @@ class IOSF2Function : public func::F2Function {
     };
 }
 
+- (F2Chart * (^)(CGSize size))changeSize {
+    return ^id(CGSize size) {
+        return self;
+    };
+}
+
+- (F2Chart * (^)(NSArray *data))changeData {
+    return ^id(NSArray *data) {
+        return self;
+    };
+}
+
 @end

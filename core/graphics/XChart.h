@@ -192,7 +192,7 @@ class XChart {
     ///@param adjust 是否调整，默认是调整的，可设置false 关闭
     inline void AdjustScale(bool adjust) { config_.adjustScale_ = adjust; }
     
-    ///是否同步多个y轴的最值，默认为true
+    ///是否同步多个y轴的最值，默认为false
     ///@param sync 可设置false关闭
     inline void SyncYScale(bool sync) { config_.syncY_ = sync; }
     

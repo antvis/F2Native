@@ -64,6 +64,11 @@ class CoreGraphicsContext : public CanvasContext {
   }
 
   ~CoreGraphicsContext() { canvasContext_ = nullptr; }
+    
+  void ChangeSize(float width, float height) override {
+      width_ = width;
+      height_ = height;
+  }
 
   bool IsValid() override;
 

@@ -51,6 +51,11 @@ class GuideController {
         this->guides.clear();
         this->dangerRects.clear();
     }
+    
+    void ClearInner() {
+        this->container_->Clear();
+        this->backContainer_->Clear();
+    }
 
     void Render(XChart &chart, canvas::CanvasContext &context);
 

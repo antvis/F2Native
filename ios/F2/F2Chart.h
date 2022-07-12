@@ -2,6 +2,7 @@
 #import "F2Geom.h"
 #import "F2Guide.h"
 #import "F2Coordinate.h"
+
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
@@ -16,9 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param name 输出日志时会附加name
 + (F2Chart *)chart:(CGSize)size name:(NSString *)name;
 
-///  设置canvas。设置canvas时，需要先清屏，调用[[canvas getContext2D] clearScreen]
-///  gcanvas的创建和销毁需要业务自己完成，清理不干净会有内存泄露
-- (F2Chart * (^)(F2CanvasView *gcanvas))canvas;
+/// 设置chart的画布
+- (F2Chart * (^)(F2CanvasView *canvas))canvas;
 
 /// 设置chart的padding
 - (F2Chart * (^)(CGFloat left, CGFloat top, CGFloat right, CGFloat bottom))padding;
@@ -107,6 +107,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 当使用renderConfig方法时，在config方法中的functionId及param会通过这个callback回调出来
 - (F2Chart * (^)(FunctionItemCallback callback))callback;
+
 #pragma mark 改变数据 改变Size
 /// 改变画布和chart的大小，改变后需要重新设置并渲染
 - (F2Chart * (^)(CGSize size))changeSize;
@@ -138,7 +139,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark 内部使用的方法 非必要不要调用
 /// 把callback缓存到chart中
-- (void)bindF2CallbackObj:(F2Callback *)callback;
+- (void)bindCallback:(F2Callback *)callback;
 
 /// 内部分发functionId的方法 外部请勿调用
 /// @param functionId 方法名字

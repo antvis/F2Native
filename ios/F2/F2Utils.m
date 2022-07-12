@@ -46,7 +46,7 @@
         if([obj isKindOfClass:[F2Callback class]]) {
             F2Callback *callbackObj = obj;
             newDic[key] = callbackObj.functionId;
-            [chart bindF2CallbackObj:callbackObj];
+            [chart bindCallback:callbackObj];
         } else if([obj isKindOfClass:[NSDictionary class]]) {
             NSMutableDictionary *sub = [NSMutableDictionary dictionary];
             [self resetCallbacksFromOld:obj new:sub host:chart];
@@ -66,7 +66,7 @@
     [old enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if([obj isKindOfClass:[F2Callback class]]) {
             F2Callback *callbackObj = obj;
-            [chart bindF2CallbackObj:callbackObj];
+            [chart bindCallback:callbackObj];
             [newArray addObject:callbackObj];
         } else if([obj isKindOfClass:[NSDictionary class]]) {
             NSMutableDictionary *sub = [NSMutableDictionary dictionary];

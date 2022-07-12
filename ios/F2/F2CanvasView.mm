@@ -21,7 +21,7 @@
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if(self = [super initWithFrame:frame]) {
-        self.canvasContext = [[F2CanvasContext alloc] initWithFrame:frame];
+        self.canvasContext = [[F2CanvasContext alloc] initWithSize:frame.size];
         self.listener = [[F2GestureListener alloc] initWithView:self];
     }
     return self;
@@ -32,6 +32,11 @@
         CGContextRef ctx = UIGraphicsGetCurrentContext();
         CGContextDrawImage(ctx, rect, self.canvasContext.bitmap);
     }
+}
+
+- (void)changeSize:(CGSize)size {
+    [self.canvasContext changeSize:size];
+    [self setFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y, size.width, size.height)];
 }
 
 - (UIImage *)detectView {

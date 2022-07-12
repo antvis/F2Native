@@ -1,11 +1,12 @@
+#if defined(__APPLE__)
+#import <TargetConditionals.h>
+#endif
+
 #import "F2Chart.h"
 #import "F2Callback.h"
 #import "F2Utils.h"
 #import "XChart.h"
 #import "F2CanvasView.h"
-#if defined(__APPLE__)
-#import <TargetConditionals.h>
-#endif
 
 typedef const char *(*selector)(void *caller, const char *functionId, const char *parameter);
 const char *cexecute(void *caller, const char *functionId, const char *parameter) {
@@ -400,7 +401,7 @@ class IOSF2Function : public func::F2Function {
     }
 }
 
-- (void)bindF2CallbackObj:(F2Callback *)callback {
+- (void)bindCallback:(F2Callback *)callback {
     if(callback) {
         [self.callbackList setObject:callback forKey:callback.functionId];
     }
@@ -429,12 +430,25 @@ class IOSF2Function : public func::F2Function {
 
 - (F2Chart * (^)(CGSize size))changeSize {
     return ^id(CGSize size) {
+        self.chart->ChangeSize(size.width, size.height);
+        
+        //生成了新的canvasContext
+        [self.canvasView changeSize:size];
+        
+        //重新设置canvasContext
+        self.chart->SetCanvasContext(self.canvasView.canvasContext.context2d);                
         return self;
     };
 }
 
 - (F2Chart * (^)(NSArray *data))changeData {
     return ^id(NSArray *data) {
+        if ([data isKindOfClass:NSArray.class]) {
+            self.chart->ChangeData([F2SafeJson([F2Utils toJsonString:data]) UTF8String]);
+        }else if([data isKindOfClass:NSString.class]) {
+            NSString *dataStr = (NSString *)data;
+            self.chart->ChangeData([F2SafeJson(dataStr) UTF8String]);
+        }
         return self;
     };
 }

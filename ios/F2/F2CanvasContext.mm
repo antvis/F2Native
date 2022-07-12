@@ -21,19 +21,19 @@ void F2ProviderReleaseData (void *info, const void *data, size_t size) {
     free((void*)data);
 }
 
--(instancetype)initWithFrame:(CGRect)frame {
+-(instancetype)initWithSize:(CGSize)size {
     if (self = [super init]) {
-        int width = frame.size.width * F2NativeScale;
-        int height = frame.size.height * F2NativeScale;
+        int width = size.width * F2NativeScale;
+        int height = size.height * F2NativeScale;
         [self create:CGSizeMake(width, height)];
     }
     return self;
 }
 
-- (void)setFrame:(CGRect)frame {
+- (void)changeSize:(CGSize)size {
     //oriSize被F2NativeScale扩大过了, newSize也要扩大
     CGSize oriSize = CGSizeMake(CGBitmapContextGetWidth(self.cgContext), CGBitmapContextGetHeight(self.cgContext));
-    CGSize newSize = CGSizeMake(frame.size.width * F2NativeScale, frame.size.height * F2NativeScale);
+    CGSize newSize = CGSizeMake(size.width * F2NativeScale, size.height * F2NativeScale);
     if (!CGSizeEqualToSize(newSize, oriSize)) {
         [self destroy];
         [self create:newSize];

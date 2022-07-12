@@ -31,7 +31,7 @@
     NSString *jsonData = [NSString stringWithContentsOfFile:jsonPath encoding:NSUTF8StringEncoding error:nil];
     NSArray *jsonArray = [F2Utils toJsonArray:jsonData];
     self.chart.clear();
-    self.chart.canvas(self.canvasView).padding(0, 0, 0, 0.f).source(jsonArray);
+    self.chart.canvas(self.canvasView).padding(10, 10, 10, 10.f).source(jsonArray);
     self.chart.scale(@"date", @{@"tickCount": @(3)});
     self.chart.scale(@"value", @{@"nice": @(YES)});
     self.chart.axis(@"date", @{
@@ -52,7 +52,7 @@
     self.chart.guide().background(@{@"color":@"#FF00001D",@"leftBottom":@[@"min", @"min"], @"rightTop":@[@"max", @(80)]});
     self.chart.guide().background(@{@"color":@"#00FF001D",@"leftBottom":@[@"min", @(80)], @"rightTop":@[@"max", @(320)]});
     
-    self.chart.animate(@(YES ));
+    self.chart.animate(@(NO));
     
     self.chart.render();
 }

@@ -57,4 +57,5 @@ void AbstractScale::InitConfig(const nlohmann::json &cfg) {
     tickCallbackId = xg::json::GetString(cfg, "tick");
     
     ticks = json::GetArray(cfg, "ticks");
+    containTicks = !ticks.empty();
 }

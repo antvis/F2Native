@@ -96,6 +96,7 @@ class AbstractScale {
     bool containRange = false; //用户是否设置了range
     bool containMin = false; //用户是否设置了min值
     bool containMax = false; //用户是否设置了max值
+    bool containTicks = false;//用户是否设置了ticks
 
   protected:
     virtual nlohmann::json CalculateTicks() = 0;

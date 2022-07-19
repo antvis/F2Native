@@ -21,10 +21,9 @@ class Category : public AbstractScale {
   public:
     Category(const std::string &_field, const nlohmann::json &_values, const nlohmann::json &_config)
         : AbstractScale(_field, _values, _config) {
-            
+
         InitConfig(_config);
-        //在initConfig中未传入ticks
-        if (!ticks.is_array() || ticks.size() == 0) {
+        if (!containTicks) {
             ticks = CalculateTicks();
         }
     }

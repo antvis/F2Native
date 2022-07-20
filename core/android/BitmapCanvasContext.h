@@ -91,6 +91,8 @@ class BitmapCanvasContext : public CanvasContext {
 
     bool IsValid() override;
 
+    void ChangeSize(float width, float height) override;
+
     void SetFillStyle(const std::string &color) override;
 
     void SetFillStyle(const CanvasFillStrokeStyle &style) override;

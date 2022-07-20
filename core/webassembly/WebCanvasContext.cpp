@@ -27,6 +27,10 @@ bool WebCanvasContext::IsValid() {
     return !canvasContext_.empty();
 }
 
+void WebCanvasContext::ChangeSize(float width, float height) {
+
+}
+
 void WebCanvasContext::SetFillStyle(const std::string &color) {
     EM_ASM({ document.getElementById(UTF8ToString($0)).getContext('2d').fillStyle = UTF8ToString($1); }, canvasContext_.c_str(),
            color.c_str());

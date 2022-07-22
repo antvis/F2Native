@@ -315,10 +315,11 @@ class XChart {
     XChart &ScaleObject(const std::string &field, const nlohmann::json &json);
     XChart &AxisObject(const std::string &field, const nlohmann::json &json);
     XChart &LegendObject(const std::string &field, const nlohmann::json &json);
-    XChart &InteractionObject(const std::string &type, const nlohmann::json &json);
+    XChart &Interaction(const std::string &type, const interaction::PinchCfg &json);
+    XChart &Interaction(const std::string &type, const interaction::PanCfg &json);
     XChart &TooltipObject(const nlohmann::json &json);
     XChart &CoordObject(const nlohmann::json &json);
-    XChart &AnimateObject(const nlohmann::json &json);
+    XChart &AnimateObject(const animate::AnimateCfg &json);
 
   private:
     inline XChart &SetName(const std::string &name) {

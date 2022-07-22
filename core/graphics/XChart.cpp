@@ -260,7 +260,13 @@ bool XChart::ParseObject(const nlohmann::json &dsl) {
     
     const auto &interactions = json::GetArray(dsl, "interactions");
     for (auto it = interactions.begin(); it != interactions.end(); ++it) {
-        InteractionObject(json::GetString(*it, "type"), *it);
+        auto &type = json::GetString(*it, "type");
+        if (type == "pinch") {
+            Interaction(json::GetString(*it, "type"), (interaction::PinchCfg)*it);
+        } else if (type == "pan") {
+            Interaction(json::GetString(*it, "type"), (interaction::PanCfg)*it);
+        }
+        
     }
     return true;
 }
@@ -298,7 +304,15 @@ XChart &XChart::Axis(const std::string &field, const std::string &json) {
 }
 
 XChart &XChart::Interaction(const std::string &type, const std::string &json) {
-    return InteractionObject(type, xg::json::ParseString(json));
+    if (type == "pinch") {
+        return Interaction(type, (interaction::PinchCfg)xg::json::ParseString(json));
+    }
+    //pan
+    else if(type == "pan"){
+        return Interaction(type, (interaction::PanCfg)xg::json::ParseString(json));
+    }
+    
+    return * this;
 }
 
 XChart &XChart::Coord(const std::string &json) {
@@ -716,17 +730,22 @@ XChart &XChart::LegendObject(const std::string &field, const nlohmann::json &con
     return *this;
 }
 
-XChart &XChart::InteractionObject(const std::string &type, const nlohmann::json &config) {
+XChart &XChart::Interaction(const std::string &type, const interaction::PinchCfg &config) {
     if (!this->interactionContext_) {
         interactionContext_ = new interaction::InteractionContext(this);
     }
-    if(type == "pinch") {
-        std::unique_ptr<interaction::InteractionBase> pinch = std::make_unique<interaction::Pinch>(this);
-        interactions_.push_back(std::move(pinch));
-    } else if(type == "pan") {
-        std::unique_ptr<interaction::InteractionBase> pan = std::make_unique<interaction::Pan>(this);
-        interactions_.push_back(std::move(pan));
+    std::unique_ptr<interaction::InteractionBase> pinch = std::make_unique<interaction::Pinch>(this);
+    interactions_.push_back(std::move(pinch));
+    this->interactionContext_->SetTypeConfig(type, config);
+    return *this;
+}
+
+XChart &XChart::Interaction(const std::string &type, const interaction::PanCfg &config) {
+    if (!this->interactionContext_) {
+        interactionContext_ = new interaction::InteractionContext(this);
     }
+    std::unique_ptr<interaction::InteractionBase> pan = std::make_unique<interaction::Pan>(this);
+    interactions_.push_back(std::move(pan));
     this->interactionContext_->SetTypeConfig(type, config);
     return *this;
 }
@@ -753,11 +772,8 @@ XChart &XChart::CoordObject(const nlohmann::json &config) {
     return *this;
 }
 
-XChart &XChart::AnimateObject(const nlohmann::json &config) {
-    //config bool or object
-    if (config.is_boolean() || config.is_object()) {
-        geomAnimate_->SetAnimateConfig(config);
-    }
+XChart &XChart::AnimateObject(const animate::AnimateCfg &config) {
+    geomAnimate_->SetAnimateConfig(config);
     return *this;
 }
 

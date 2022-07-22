@@ -8,6 +8,22 @@
 namespace xg {
 class XChart;
 namespace interaction {
+
+struct PinchCfg {
+    float minCount = NAN;
+    float maxCount = NAN;
+    
+    //是否设置了pinch
+    bool enable = false;
+};
+extern void from_json(const nlohmann::json& j, PinchCfg& p);
+
+struct PanCfg {
+    //是否设置了pan
+    bool enable = false;
+};
+extern void from_json(const nlohmann::json& j, PanCfg& p);
+
 class InteractionContext {
   public:
     InteractionContext(XChart *chart);
@@ -29,7 +45,12 @@ class InteractionContext {
 
     void UpdateTicks();
 
-    void SetTypeConfig(std::string type, nlohmann::json config);
+    inline void SetTypeConfig(const std::string &type, const PinchCfg &config) {
+        pinch_ = config;
+    }
+    inline void SetTypeConfig(const std::string &type, const PanCfg &config) {
+        pan_ = config;
+    }
     
     void Clear() {}
 
@@ -42,9 +63,10 @@ class InteractionContext {
     int lastTickCount_ = 0;
     double minScale_ = .0;
     nlohmann::json values_;
-    nlohmann::json config_;
-    std::size_t minCount_ = 10; // 缩放最小点数
-    std::size_t maxCount_ = 0;
+    PinchCfg pinch_;
+    PanCfg pan_;
+    size_t minCount_ = 10;
+    size_t maxCount_ = 0;
 };
 } // namespace interaction
 } // namespace xg

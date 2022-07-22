@@ -172,6 +172,15 @@ void animate::DoAnimation(animate::TimeLine *timeLine_,
 }
 
 #pragma GeomAnimate
+
+void animate::from_json(const nlohmann::json& j, AnimateCfg& p) {
+    if (j.is_boolean()) {
+        p.enable = j;
+    } else {
+        p.enable = true;
+    }
+}
+
 std::string animate::GeomAnimate::GetGeomAnimateDefaultCfg(std::string geomType, canvas::coord::AbstractCoord *coord) {
     bool isPolar = coord->GetType() == canvas::coord::CoordType::Polar;
     if(geomType == "line") {
@@ -219,7 +228,7 @@ void animate::GeomAnimate::OnBeforeCanvasDraw() {
 
     isUpdate_ = true;
 
-    if(animateCfg_.is_boolean() && animateCfg_ == false) {
+    if(!animateCfg_.enable) {
         return;
     }
 

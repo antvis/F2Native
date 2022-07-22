@@ -5,6 +5,18 @@
 
 using namespace xg;
 
+void xg::interaction::from_json(const nlohmann::json& j, PinchCfg& p) {
+    PinchCfg d;
+    p.minCount = j.value("minCount", d.minCount);
+    p.maxCount = j.value("maxCount", d.maxCount);
+    p.enable = true;
+}
+
+void xg::interaction::from_json(const nlohmann::json& j, PanCfg& p) {
+    p.enable = true;
+}
+
+
 interaction::InteractionContext::InteractionContext(XChart *chart) {
     this->chart_ = chart;
     chart_->AddMonitor(ACTION_CHART_AFTER_INIT, XG_MEMBER_CALLBACK(interaction::InteractionContext::OnAfterChartInit));
@@ -12,10 +24,8 @@ interaction::InteractionContext::InteractionContext(XChart *chart) {
 
 interaction::InteractionContext::~InteractionContext() { this->chart_ = nullptr; }
 
-void interaction::InteractionContext::SetTypeConfig(std::string type, nlohmann::json config) { this->config_[type] = config; }
-
 void interaction::InteractionContext::OnAfterChartInit() {
-    if (config_.is_null()) {
+    if (!pinch_.enable && !pan_.enable) {
         return;
     }
     const std::string &xField = chart_->GetXScaleField();
@@ -27,15 +37,9 @@ void interaction::InteractionContext::OnAfterChartInit() {
     std::size_t _minCount = minCount_;
     std::size_t _maxCount = size;
 
-    if(config_.contains("pinch")) {
-        nlohmann::json &pinchCfg = config_["pinch"];
-        if(pinchCfg.contains("minCount")) {
-            _minCount = pinchCfg["minCount"];
-        }
-
-        if(pinchCfg.contains("maxCount")) {
-            _maxCount = pinchCfg["maxCount"];
-        }
+    if(pinch_.enable) {
+        _minCount = std::isnan(pinch_.minCount) ? _minCount : pinch_.minCount;
+        _maxCount = std::isnan(pinch_.maxCount) ? _maxCount : pinch_.maxCount;
     }
 
     range_[0] = (scale.min + 1) / size;

@@ -62,6 +62,13 @@
     });
     self.subChart.tooltip(@{@"yTip":@{@"inner":@(YES)}});
     self.subChart.render();
+    
+    //多个chart需要自行监听手势，并分发
+    F2WeakSelf;
+    [self.canvasView addGestureListener:@"longPress" callback:^(NSDictionary * _Nonnull info) {
+        F2StrongSelf;
+        [strongSelf handleGestureInfo:info];
+    }];
 }
 
 - (F2Chart *)priceChart {
@@ -86,7 +93,7 @@
     return @"TimeSharingUIView";
 }
 
-- (void)handleGestureInfo:(NSDictionary *)info sender:(nonnull UIGestureRecognizer *)gestureRecognizer {
+- (void)handleGestureInfo:(NSDictionary *)info {
     self.priceChart.postTouchEvent(info);
     self.subChart.postTouchEvent(info);
 }

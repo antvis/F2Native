@@ -39,6 +39,12 @@ util::Matrix GetScaledShapeMatrix(shape::Shape *shape, util::Vector2D *v, std::s
 
 void DoAnimation(TimeLine *timeLine_, shape::Shape *shape, const AnimateState &endState, nlohmann::json &cfg, std::function<void()> onEnd);
 
+
+struct AnimateCfg {
+    bool enable = false;
+};
+extern void from_json(const nlohmann::json& j, AnimateCfg& p);
+
 class GeomAnimate {
   public:
     GeomAnimate(XChart *chart_);
@@ -51,14 +57,14 @@ class GeomAnimate {
 
     void Clear();
     
-    inline void SetAnimateConfig(const nlohmann::json &cfg) {
+    inline void SetAnimateConfig(const AnimateCfg &cfg) {
         animateCfg_ = cfg;
     }
   private:
     TimeLine *timeLine_ = nullptr;
     XChart *chart_ = nullptr;
     bool isUpdate_ = false;
-    nlohmann::json animateCfg_ = false;
+    AnimateCfg animateCfg_;
 };
 } // namespace animate
 } // namespace xg

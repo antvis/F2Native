@@ -65,15 +65,9 @@ class Interval : public GeomShapeBase {
             }
 
             auto fillRect = xg::make_unique<xg::shape::Rect>(coord.GetCenter(), r, r0, startAngle, endAngle, lineWidth);
+            fillRect->SetStorkColor(_style["stroke"]);
             fillRect->SetFillColor(color);
             container.AddElement(std::move(fillRect));
-
-            if(lineWidth > 0) {
-                canvas::CanvasFillStrokeStyle strokeColor = canvas::CanvasFillStrokeStyle(_style["stroke"]);
-                auto strokeRect = xg::make_unique<xg::shape::Rect>(coord.GetCenter(), r, r0, startAngle, endAngle, lineWidth);
-                strokeRect->SetStorkStyle(strokeColor);
-                container.AddElement(std::move(strokeRect));
-            }
         } else {
             util::Size size(points[2].x - points[0].x, points[2].y - points[0].y);
 

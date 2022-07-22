@@ -16,12 +16,12 @@
 using namespace xg;
 using namespace std;
 
-XChart::XChart(const std::string &name, double width, double height, double ratio) : chartName_(name) {
+XChart::XChart(const std::string &name, double width, double height, double ratio, bool showLog) : chartName_(name) {
     SetName(name);
     width_ = width * ratio;
     height_ = height * ratio;
     ratio_ = ratio;
-    this->logTracer_ = new utils::Tracer(name + "@Chart");
+    this->logTracer_ = new utils::Tracer(name + "@Chart", showLog);
     this->logTracer_->trace("create xchart: %s %lf %lf %lf ", chartId_.c_str(), width_, height_, ratio_);
 
     geomShapeFactory_ = xg::make_unique<geom::shape::GeomShapeFactory>();

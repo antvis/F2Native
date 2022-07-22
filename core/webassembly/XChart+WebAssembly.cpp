@@ -26,7 +26,7 @@ using namespace utils;
 // graphics/XChart.h
 EMSCRIPTEN_BINDINGS(xchart) {
     class_<XChart>("F2Chart")
-        .constructor<std::string, double, double, double>()
+        .constructor<std::string, double, double, double, bool>()
         .function("source", &XChart::SourceWasm, allow_raw_pointers()) //普通类成员函数
         .function("padding", &XChart::PaddingWasm, allow_raw_pointers())
         .function("margin", &XChart::MarginWasm, allow_raw_pointers())

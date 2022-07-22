@@ -98,7 +98,7 @@ class XChart {
     friend animate::GeomAnimate;
 
   public:
-    XChart(const std::string &name, double width, double height, double ratio = 1.0);
+    XChart(const std::string &name, double width, double height, double ratio = 1.0, bool showLog = true);
     virtual ~XChart();
 
     // emscript 编译需要

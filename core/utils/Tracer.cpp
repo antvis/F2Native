@@ -6,6 +6,9 @@
 #endif
 
 void utils::Tracer::trace(const char *fmt, ...) {
+    if(!showLog_) {
+        return;
+    }
     char buffer[4096] = {0};
 
     va_list args;

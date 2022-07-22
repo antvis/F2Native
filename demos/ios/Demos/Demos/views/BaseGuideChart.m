@@ -6,7 +6,8 @@
     NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"Res/mockData_baseLine" ofType:@"json"];
     NSString *jsonData = [NSString stringWithContentsOfFile:jsonPath encoding:NSUTF8StringEncoding error:nil];
     self.chart.clear();
-    self.chart.canvas(self.canvasView).padding(20, 10, 20, 0.f).source(jsonData);
+    self.chart.canvas(self.canvasView).padding(20, 10, 20, 0.f);
+    self.chart.source([F2Utils toJsonArray:jsonData]);
     self.chart.scale(@"date", @{@"tickCount": @(3)});
     self.chart.scale(@"value", @{@"nice": @(YES)});
     self.chart.axis(@"date", @{
@@ -43,6 +44,9 @@
     
     //图片
     self.chart.guide().image(@{@"position":@[@"median", @"max"], @"width": @30, @"height" : @(30), @"src":@"https://gw.alipayobjects.com/zos/antfincdn/FLrTNDvlna/antv.png", @"margin": @[@15, @-10]});
+    
+    //圆
+    self.chart.guide().point(@{@"position":@[@"median", @"median"], @"fill":@"red", @"size":@(6)});
     
     self.chart.animate(@(NO));
     

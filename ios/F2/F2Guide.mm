@@ -52,4 +52,11 @@
     };
 }
 
+- (F2Guide * (^)(NSDictionary *config))point {
+    return ^id(NSDictionary *config) {
+        self->_guide->Point([F2SafeJson([F2Utils toJsonString:config]) UTF8String]);
+        return self;
+    };
+}
+
 @end

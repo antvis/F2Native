@@ -123,6 +123,9 @@
 		CC0912632834CB4D007A92F0 /* ChartBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC0912612834CB4D007A92F0 /* ChartBridge.cpp */; };
 		CC09127428377D12007A92F0 /* AbstractBridgeRailing.h in Headers */ = {isa = PBXBuildFile; fileRef = CC09127228377D12007A92F0 /* AbstractBridgeRailing.h */; };
 		CC195216250B76CA0000FBFA /* F2CanvasView.h in Headers */ = {isa = PBXBuildFile; fileRef = CC195214250B76C90000FBFA /* F2CanvasView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CC1A9629287811E20066AE7D /* Point.h in Headers */ = {isa = PBXBuildFile; fileRef = CC1A9627287811E20066AE7D /* Point.h */; };
+		CC1A962A287811E20066AE7D /* Point.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC1A9628287811E20066AE7D /* Point.cpp */; };
+		CC1A962F287812470066AE7D /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC1A962E287812470066AE7D /* common.cpp */; };
 		CC1C4118284896F8009C9322 /* Linear.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC895526284766C800AD24E0 /* Linear.cpp */; };
 		CC1C4119284896FD009C9322 /* Scale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC8955242847653100AD24E0 /* Scale.cpp */; };
 		CC1E0EE2275798A400C76359 /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC1E0EE0275798A400C76359 /* Color.cpp */; };
@@ -685,6 +688,9 @@
 		CC0912612834CB4D007A92F0 /* ChartBridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChartBridge.cpp; sourceTree = "<group>"; };
 		CC09127228377D12007A92F0 /* AbstractBridgeRailing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractBridgeRailing.h; sourceTree = "<group>"; };
 		CC195214250B76C90000FBFA /* F2CanvasView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F2CanvasView.h; sourceTree = "<group>"; };
+		CC1A9627287811E20066AE7D /* Point.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Point.h; sourceTree = "<group>"; };
+		CC1A9628287811E20066AE7D /* Point.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Point.cpp; sourceTree = "<group>"; };
+		CC1A962E287812470066AE7D /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = "<group>"; };
 		CC1E0EE0275798A400C76359 /* Color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Color.cpp; sourceTree = "<group>"; };
 		CC3C01E226A00E9300335A1C /* F2Logger.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = F2Logger.mm; sourceTree = "<group>"; };
 		CC3C01E326A00E9300335A1C /* F2Logger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F2Logger.h; sourceTree = "<group>"; };
@@ -818,6 +824,8 @@
 		9557237425ECBF7200D2FC07 /* guide */ = {
 			isa = PBXGroup;
 			children = (
+				CC1A9628287811E20066AE7D /* Point.cpp */,
+				CC1A9627287811E20066AE7D /* Point.h */,
 				CC8C620027968E3D00F540D7 /* Image.cpp */,
 				CC8C620127968E3D00F540D7 /* Image.h */,
 				9500DF962689D74A00025EF1 /* Background.cpp */,
@@ -1096,6 +1104,7 @@
 		CC611D12250A1D0800315124 /* utils */ = {
 			isa = PBXGroup;
 			children = (
+				CC1A962E287812470066AE7D /* common.cpp */,
 				CCC3F3AB275F118D008D3F06 /* Tracer.cpp */,
 				CC611D17250A1D0800315124 /* StringUtil.h */,
 				CC611D18250A1D0800315124 /* common.h */,
@@ -1279,6 +1288,7 @@
 				955723F425ECBF7200D2FC07 /* Text.h in Headers */,
 				CC612BF8250B2EF700315124 /* F2Geom.h in Headers */,
 				9557242225ECBF7200D2FC07 /* Linear.h in Headers */,
+				CC1A9629287811E20066AE7D /* Point.h in Headers */,
 				9557241D25ECBF7200D2FC07 /* TimeCategory.h in Headers */,
 				CC8955112844DAC400AD24E0 /* BridgeRailingIOS.h in Headers */,
 				CC8C620727968E4700F540D7 /* Image.h in Headers */,
@@ -1493,6 +1503,7 @@
 				CC1E0EE2275798A400C76359 /* Color.cpp in Sources */,
 				CC612BF5250B2EF700315124 /* F2Utils.m in Sources */,
 				9557243825ECBF7200D2FC07 /* Line.cpp in Sources */,
+				CC1A962F287812470066AE7D /* common.cpp in Sources */,
 				955723F225ECBF7200D2FC07 /* GuideBase.cpp in Sources */,
 				9557242E25ECBF7200D2FC07 /* XChart.cpp in Sources */,
 				955723F925ECBF7200D2FC07 /* Flag.cpp in Sources */,
@@ -1504,6 +1515,7 @@
 				CC8955122844DAC400AD24E0 /* BridgeRailingIOS.mm in Sources */,
 				9557244B25ECBF7200D2FC07 /* Interval.cpp in Sources */,
 				9557245725ECBF7200D2FC07 /* InteractionContext.cpp in Sources */,
+				CC1A962A287811E20066AE7D /* Point.cpp in Sources */,
 				9557241825ECBF7200D2FC07 /* Element.cpp in Sources */,
 				CCC3F4422760808A008D3F06 /* F2CanvasContext.mm in Sources */,
 				CC8955252847653100AD24E0 /* Scale.cpp in Sources */,

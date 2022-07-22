@@ -173,6 +173,12 @@ static jint SetChartGuideType(JNIEnv *env, jclass clazz, jlong chart, jstring ty
     } else if(_type == "background") {
         _chart->Guide().Background(std::move(_config));
         F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartGuideBackground");
+    } else if(_type == "point") {
+        _chart->Guide().Point(std::move(_config));
+        F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartGuidePoint");
+    } else if(_type == "image") {
+        _chart->Guide().Image(std::move(_config));
+        F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartGuideImage");
     }
     return 0;
 }

@@ -54,13 +54,12 @@ static time_t DateParserAtSecond(std::string date, std::string format = "%Y-%m-%
 /// 2020-01-01 14:00:00 --> std::tm
 static tm DateParserAtTM(std::string date, std::string format = "%Y-%m-%d %H:%M:%S") {
     tm tm_;
-    time_t t_;
     char buf[128] = {0};
 
     strcpy(buf, date.data());
     strptime(buf, format.data(), &tm_); //将字符串转换为tm时间
     tm_.tm_isdst = -1;
-    return std::move(tm_);
+    return tm_;
 }
 
 static tm DateParserTimeStamp(long long timestamp, bool timeZone = false) {
@@ -72,7 +71,7 @@ static tm DateParserTimeStamp(long long timestamp, bool timeZone = false) {
     } else {
         localtime_r(&t, &rt);
     }
-    return std::move(rt);
+    return rt;
 }
 
 } // namespace xg

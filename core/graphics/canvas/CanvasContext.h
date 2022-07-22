@@ -36,6 +36,8 @@ class CanvasContext {
     CanvasContext(float devicePixelRatio, utils::Tracer *tracer) : devicePixelRatio_(devicePixelRatio), tracer_(tracer) {}
 
     virtual ~CanvasContext() { tracer_ = nullptr; }
+    
+    virtual void ChangeSize(float width, float height) = 0;
 
     virtual bool IsValid() = 0;
 

@@ -42,8 +42,8 @@ class ToolTipController {
     std::unique_ptr<ToolTip> toolTip_;
     nlohmann::json config_ = {{"alwaysShow", false},
                               {"showTitle", false},
-                              {"showCrosshairs", false},
-                              {"crosshairsStyle", {{"stroke", "#1890FF"}, {"lineWidth", 1}, {"type", "dash"}, {"dash", {4, 4}}}},
+                              {"showCrosshairs", true},
+                              {"crosshairsStyle", {{"yCrosshair", true}, {"stroke", "#1890FF"}, {"lineWidth", 1}, {"type", "dash"}, {"dash", {4, 4}}}},
                               {"showTooltipMarker", true},
                               {"background", {{"radius", 1}, {"fill", "#1890FF"}, {"padding", {3, 3}}}},
                               {"xTip", {{"inner", false}, {"fontSize", 10}, {"fill", "#ffffff"}, {"textAlign", "center"}, {"textBaseline", "bottom"}}},
@@ -54,7 +54,9 @@ class ToolTipController {
                               {"showItemMarker", true},
                               {"itemMarkerStyle", {{"radius", 3}, {"symbol", "circle"}, {"lineWidth", 1}, {"stroke", "#ffffff"}}},
                               {"layout", "horizontal"},
+                              {"onPressStart", false},
                               {"onPress", false},
+                              {"onPressEnd", false},
                               {"snap", false},
                               {"hidden", false}};
     long long lastShowTimeStamp_ = 0;

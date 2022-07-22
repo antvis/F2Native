@@ -13,22 +13,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface F2CanvasContext : NSObject
 
-/// 创建渲染的canvas，因为AntG是异步创建canvas的，所以这里需要回调
-/// 解耦AntG后可以优化下方向的命名..
-/// @param frame  canvas的size
-- (instancetype)initWithFrame:(CGRect)frame;
+/// 创建渲染的canvas, 内部会创建CGContextRef
+/// @param size  canvas的size
+- (instancetype)initWithSize:(CGSize)size;
 
 /// 如果画布的大小与之前的不同，则更新画布的大小
-/// @param frame 画布的大小
-- (void)setFrame:(CGRect)frame;
+/// @param size 画布的大小
+- (void)changeSize:(CGSize)size;
 
 ///获取C++的context对象
 ///@return CGContextRef 渲染的上下文
 - (CGContextRef)context2d;
 
-///返回context2d上下文的截图
-///@return UIImage
-- (UIImage *)snapshot;
+/// 画布
+/// @return CGImageRef bitmap
+- (CGImageRef)bitmap;
 
 /// 返回画布的密度
 - (CGFloat)nativeScale;

@@ -21,7 +21,7 @@ class ToolTip {
     ~ToolTip() { container_ = nullptr; }
 
     void SetPosition(canvas::coord::AbstractCoord &coord, canvas::CanvasContext &canvasContext, util::Point point, const nlohmann::json &tooltipItems) {
-        this->_ShowCrosshairs(coord, canvasContext, point, true);
+        this->_ShowCrosshairs(coord, canvasContext, point);
         this->SetYTipContent(coord, canvasContext, tooltipItems, point);
     }
 
@@ -143,7 +143,7 @@ class ToolTip {
     void Hide() { container_->Hide(); }
 
   private:
-    void _ShowCrosshairs(canvas::coord::AbstractCoord &coord, canvas::CanvasContext &canvasContext, util::Point &point, bool showY) {
+    void _ShowCrosshairs(canvas::coord::AbstractCoord &coord, canvas::CanvasContext &canvasContext, util::Point &point) {
         if(config_["showCrosshairs"] == false) {
             return;
         }
@@ -152,6 +152,7 @@ class ToolTip {
         const std::string &lineColor = crosshairsStyle["stroke"];
         double lineWidth = crosshairsStyle["lineWidth"];
         const std::string &type = crosshairsStyle["type"];
+        bool showY = crosshairsStyle["yCrosshair"];
 
         lineWidth *= canvasContext.GetDevicePixelRatio();
 

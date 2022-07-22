@@ -34,6 +34,11 @@ public class F2Guide {
         mChart.getChartProxy().setGuideType("background", config.build().toJsonString());
     }
 
+    public void point(GuidePointConfigBuilder config) {
+        mChart.assertRenderThread();
+        mChart.getChartProxy().setGuideType("point", config.build().toJsonString());
+    }
+
     public static class GuideFlagConfigBuilder extends F2Chart.TextConfigBuilder<GuideFlagConfigBuilder> {
         private static final String KEY_CONTENT = "content";
         private static final String KEY_PADDING = "padding";
@@ -176,6 +181,37 @@ public class F2Guide {
         public GuideBackgroundConfigBuilder color(F2Util.ColorGradient color) {
             return setOption(KEY_COLOR, color);
         }
+    }
 
+    public static class GuidePointConfigBuilder extends F2Config.Builder<GuidePointConfigBuilder> {
+        private static final String KEY_POSITION = "position";
+        private static final String KEY_SIZE = "size";
+        private static final String KEY_FILL = "fill";
+        private static final String KEY_OFFSETX = "offsetX";
+        private static final String KEY_OFFSETY = "offsetY";
+
+        public GuidePointConfigBuilder position(String[] position ) {
+            return setOption(KEY_POSITION, position);
+        }
+
+        public GuidePointConfigBuilder position(JSONArray position ) {
+            return setOption(KEY_POSITION, position);
+        }
+
+        public GuidePointConfigBuilder size(float size) {
+            return setOption(KEY_SIZE, size);
+        }
+
+        public GuidePointConfigBuilder fill(String color) {
+            return setOption(KEY_FILL, color);
+        }
+
+        public GuidePointConfigBuilder offsetX(float offsetX) {
+            return setOption(KEY_OFFSETX, offsetX);
+        }
+
+        public GuidePointConfigBuilder offsetY(float offsetY) {
+            return setOption(KEY_OFFSETY, offsetY);
+        }
     }
 }

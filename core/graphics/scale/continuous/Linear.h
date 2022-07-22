@@ -20,9 +20,7 @@ class Linear : public AbstractScale {
   public:
     // 线性度量
     Linear(const std::string &_field, const nlohmann::json &_values, const nlohmann::json &_config = {}) : AbstractScale(_field, _values, _config) {
-        
         InitConfig(_config);
-        hasMaxMin = !std::isnan(max) && !std::isnan(min);
         if (std::isnan(max) || std::isnan(min)) {
             std::array<double, 2> range = util::JsonArrayRange(_values);
             if (std::isnan(max)) {
@@ -33,13 +31,17 @@ class Linear : public AbstractScale {
                 min = range[0];
             }
         }
-        ticks = CalculateTicks();
+        
+        if (!containTicks) {
+            ticks = CalculateTicks();
+        }        
     }
 
     ScaleType GetType() const noexcept override { return ScaleType::Linear; }
 
     void Change(const nlohmann::json &cfg = {}) override {
-        InitConfig(cfg);
+        config.merge_patch(cfg);
+        InitConfig(config);
         this->ticks = this->CalculateTicks();
     }
 
@@ -78,7 +80,7 @@ class Linear : public AbstractScale {
   protected:
     nlohmann::json CalculateTicks() override {
         //用户没有主动设置max和min，则使用nice算法
-        if ((nice == true && !hasMaxMin)) {
+        if ((nice == true && !containMin && !containMax)) {
             nlohmann::json _ticks = NiceCalculateTicks();
             //修改最值
             this->min = _ticks[0];
@@ -255,7 +257,6 @@ class Linear : public AbstractScale {
     double tickInterval = -1;
     int precision = 0; // tickText 小数点精度
     bool nice = true;
-    bool hasMaxMin = false; //用户设置了max和min则为true，只设置了其中一个则为false
 };
 } // namespace scale
 } // namespace xg

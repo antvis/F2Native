@@ -188,11 +188,20 @@ class XChart {
     /// 清除所有的配置项
     void Clear();
     
+    /// 改变chart的大小，会清理绘制的内容，但不会清理配置，所以可以在changeSize后直接调用render方法
+    /// @param width chart的宽度
+    /// @param height chart的高度
+    void ChangeSize(double width, double height);
+    
+    /// 改变数据源
+    /// @param json json数组
+    void ChangeData(const std::string &json);
+    
     ///设置当geom中有interval的时候，是否调整max, min, range三个参数, 默认是true
     ///@param adjust 是否调整，默认是调整的，可设置false 关闭
     inline void AdjustScale(bool adjust) { config_.adjustScale_ = adjust; }
     
-    ///是否同步多个y轴的最值，默认为true
+    ///是否同步多个y轴的最值，默认为false
     ///@param sync 可设置false关闭
     inline void SyncYScale(bool sync) { config_.syncY_ = sync; }
     

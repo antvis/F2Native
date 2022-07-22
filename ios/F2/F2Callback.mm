@@ -80,7 +80,7 @@
     xg::func::Command *command = reinterpret_cast<xg::func::Command *>(commandPointer);
     if (self.canvasView && self.canvasView.canvasContext) {
         command->run();
-        [self.canvasView drawFrame];
+        [self.canvasView setNeedsDisplay];
     }
     delete command;
 }

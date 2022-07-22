@@ -38,7 +38,7 @@ class Tick {
  */
 class AbstractScale {
   public:
-    AbstractScale(const std::string &_field, const nlohmann::json &_values, const nlohmann::json &_cfg) : field(_field) {
+    AbstractScale(const std::string &_field, const nlohmann::json &_values, const nlohmann::json &_cfg) : field(_field), config(_cfg) {
         if(_values.is_array()) {
             this->values = _values;
         }
@@ -93,6 +93,10 @@ class AbstractScale {
     size_t tickCount = 5;  // 刻度总数
     double min = NAN;
     double max = NAN;
+    bool containRange = false; //用户是否设置了range
+    bool containMin = false; //用户是否设置了min值
+    bool containMax = false; //用户是否设置了max值
+    bool containTicks = false;//用户是否设置了ticks
 
   protected:
     virtual nlohmann::json CalculateTicks() = 0;
@@ -100,6 +104,7 @@ class AbstractScale {
     // 刻度值, 通过 wilkinson 算法计算得出
     nlohmann::json ticks; // 数组
     nlohmann::json values;
+    nlohmann::json config;
     std::string tickCallbackId;
 };
 } // namespace scale

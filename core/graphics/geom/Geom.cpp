@@ -359,8 +359,7 @@ const XData &xg::geom::AbstractGeom::GetLastSnapRecord(XChart *chart) {
     auto &xScale = chart->GetScale(GetXScaleField());
     //说明分组了
     if (dataArray_.size() > 1) {
-        std::size_t end = scale::IsCategory(xScale.GetType()) ? fmax(0 , xScale.max): (dataArray_.back().size() - 1);
-        return dataArray_[end].back();
+        return dataArray_.back().back();
     } else {
         std::size_t end = scale::IsCategory(xScale.GetType()) ? fmax(0 , xScale.max): (dataArray_.front().size() - 1);
         return dataArray_.front()[end];

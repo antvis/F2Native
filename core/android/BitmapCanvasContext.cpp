@@ -155,6 +155,10 @@ BitmapCanvasContext::~BitmapCanvasContext() {
 
 bool BitmapCanvasContext::IsValid() { return canvasContext_->obj() != nullptr; };
 
+void BitmapCanvasContext::ChangeSize(float width, float height) {
+
+}
+
 void BitmapCanvasContext::SetFillStyle(const std::string &color) {
     TraceCommand("SetFillStyle: " + color);
     if(color != fillColorCache_ && CanvasColorParser::Parse(color, fillColor_)) {

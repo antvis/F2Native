@@ -78,6 +78,10 @@ class AbstractGeom {
     const std::unique_ptr<AttrBase> &GetAttr(AttrType type) { return attrs_[type]; }
 
     virtual void Clear();
+    
+    void ClearInner() {
+        dataArray_.clear();
+    }
 
     const XDataGroup &GetDataArray() { return dataArray_; }
 

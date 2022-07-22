@@ -608,6 +608,7 @@ void XChart::ClearInner() {
     std::for_each(geoms_.begin(), geoms_.end(), [this](auto &geom) { geom->Clear(); });
 
     this->legendController_->ClearInner();
+    this->guideController_->ClearInner();
 
     this->padding_ = userPadding_;
 
@@ -758,4 +759,27 @@ XChart &XChart::AnimateObject(const nlohmann::json &config) {
         geomAnimate_->SetAnimateConfig(config);
     }
     return *this;
+}
+
+void XChart::ChangeSize(double width, double height) {
+    width_ = width * ratio_;
+    height_ = height * ratio_;
+    canvasContext_->ChangeSize(width, height);
+    ClearInner();
+}
+
+void XChart::ChangeData(const std::string &json) {
+    SourceObject(xg::json::ParseString(json));
+    
+    //清理度量
+    scaleController_->Clear();
+    
+    //清理几何标记 里面会关联数据
+    std::for_each(geoms_.begin(), geoms_.end(), [this](auto &geom) -> void { geom->ClearInner(); });
+    
+    //清除画布
+    ClearInner();
+    
+    //标记重新渲染
+    rendered_ = false;
 }

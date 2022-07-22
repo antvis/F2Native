@@ -34,6 +34,7 @@ EMSCRIPTEN_BINDINGS(xchart) {
         .function("render", &XChart::Render)
         .function("clear", &XChart::Clear)
         .function("repaint", &XChart::Repaint)
+        .function("onTouchEvent", &XChart::OnTouchEvent)
         .function("callback", &XChart::SetInvokeFunction, allow_raw_pointers())
         .function("axis", &XChart::AxisWasm, allow_raw_pointers())
         .function("canvas", &XChart::SetCanvasContextWasm, allow_raw_pointers())
@@ -43,7 +44,8 @@ EMSCRIPTEN_BINDINGS(xchart) {
         .function("interval", &XChart::IntervalWasm, allow_raw_pointers())
         .function("area", &XChart::AreaWasm, allow_raw_pointers())
         .function("point", &XChart::PointWasm, allow_raw_pointers())
-        .function("candle", &XChart::CandleWasm, allow_raw_pointers());
+        .function("candle", &XChart::CandleWasm, allow_raw_pointers())
+        .function("interaction", &XChart::InteractionWasm, allow_raw_pointers());
 }
 ////////////////////////////////////////////////////////////////////////
 // graphics/geom/geom.h
@@ -75,7 +77,8 @@ EMSCRIPTEN_BINDINGS(guide) {
         .function("text", &guide::GuideController::Text)
         .function("line", &guide::GuideController::Line)
         .function("background", &guide::GuideController::Background)
-        .function("image", &guide::GuideController::Image);
+        .function("image", &guide::GuideController::Image)
+        .function("point", &guide::GuideController::Point);
 }
 
 ////////////////////////////////////////////////////////////////////////

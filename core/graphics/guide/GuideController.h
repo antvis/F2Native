@@ -4,7 +4,6 @@
 #include "GuideBase.h"
 #include "../shape/Group.h"
 
-
 namespace xg {
 class XChart;
 
@@ -35,18 +34,27 @@ class GuideController {
     
     // 图片
     void Image(const std::string &json = "");
+    
+    // 圆点
+    void Point(const std::string &json = "");
         
     void FlagObject(const nlohmann::json &config);
     void TextObject(const nlohmann::json &config);
     void LineObject(const nlohmann::json &config);
     void BackgroundObject(const nlohmann::json &config);
     void ImageObject(const nlohmann::json &config);
+    void PointObject(const nlohmann::json &config);
 
     void Clear() {
         this->container_->Clear();
         this->backContainer_->Clear();
         this->guides.clear();
         this->dangerRects.clear();
+    }
+    
+    void ClearInner() {
+        this->container_->Clear();
+        this->backContainer_->Clear();
     }
 
     void Render(XChart &chart, canvas::CanvasContext &context);

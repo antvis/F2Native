@@ -1,10 +1,12 @@
+#if defined(__APPLE__)
+#import <TargetConditionals.h>
+#endif
+
 #import "F2Chart.h"
 #import "F2Callback.h"
 #import "F2Utils.h"
 #import "XChart.h"
-#if defined(__APPLE__)
-#import <TargetConditionals.h>
-#endif
+#import "F2CanvasView.h"
 
 typedef const char *(*selector)(void *caller, const char *functionId, const char *parameter);
 const char *cexecute(void *caller, const char *functionId, const char *parameter) {
@@ -283,7 +285,8 @@ class IOSF2Function : public func::F2Function {
             long renderCmdCount = self.chart->GetRenderCmdCount();
 
             // 3.上屏是否成功
-            BOOL drawSuccess = [self.canvasView drawFrame];
+            [self.canvasView setNeedsDisplay];
+            BOOL drawSuccess = !!self.canvasView.canvasContext.bitmap;
 
             // 4.截bitmapview 分析
             long long start = xg::CurrentTimestampAtMM();
@@ -319,7 +322,7 @@ class IOSF2Function : public func::F2Function {
     return ^id() {
         if(!self.isBackground) {
             self.chart->Repaint();
-            [self.canvasView drawFrame];
+            [self.canvasView setNeedsDisplay];
         } else {
             self.cachedRepaint = YES;
         }
@@ -331,7 +334,7 @@ class IOSF2Function : public func::F2Function {
     return ^id(NSDictionary *config) {
         bool changed = self.chart->OnTouchEvent([F2SafeJson([F2Utils toJsonString:config]) UTF8String]);
         if(changed) {
-            [self.canvasView drawFrame];
+            [self.canvasView setNeedsDisplay];
         }
         return self;
     };
@@ -398,7 +401,7 @@ class IOSF2Function : public func::F2Function {
     }
 }
 
-- (void)bindF2CallbackObj:(F2Callback *)callback {
+- (void)bindCallback:(F2Callback *)callback {
     if(callback) {
         [self.callbackList setObject:callback forKey:callback.functionId];
     }
@@ -421,6 +424,31 @@ class IOSF2Function : public func::F2Function {
 - (F2Chart * (^)(BOOL sync))syncYScale {
     return ^id(BOOL sync) {
         self.chart->SyncYScale(sync);
+        return self;
+    };
+}
+
+- (F2Chart * (^)(CGSize size))changeSize {
+    return ^id(CGSize size) {
+        self.chart->ChangeSize(size.width, size.height);
+        
+        //生成了新的canvasContext
+        [self.canvasView changeSize:size];
+        
+        //重新设置canvasContext
+        self.chart->SetCanvasContext(self.canvasView.canvasContext.context2d);                
+        return self;
+    };
+}
+
+- (F2Chart * (^)(NSArray *data))changeData {
+    return ^id(NSArray *data) {
+        if ([data isKindOfClass:NSArray.class]) {
+            self.chart->ChangeData([F2SafeJson([F2Utils toJsonString:data]) UTF8String]);
+        }else if([data isKindOfClass:NSString.class]) {
+            NSString *dataStr = (NSString *)data;
+            self.chart->ChangeData([F2SafeJson(dataStr) UTF8String]);
+        }
         return self;
     };
 }

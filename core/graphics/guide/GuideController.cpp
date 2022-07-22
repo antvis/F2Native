@@ -4,6 +4,7 @@
 #include "Line.h"
 #include "Text.h"
 #include "Image.h"
+#include "Point.h"
 #include "../util/BBox.h"
 #include "../util/json.h"
 
@@ -42,6 +43,10 @@ void xg::guide::GuideController::Image(const std::string &json) {
     ImageObject(xg::json::ParseString(json));
 }
 
+void xg::guide::GuideController::Point(const std::string &json) {
+    PointObject(xg::json::ParseString(json));
+}
+
 void xg::guide::GuideController::FlagObject(const nlohmann::json &config) {
     if(!config.is_object())
         return;
@@ -75,4 +80,11 @@ void xg::guide::GuideController::ImageObject(const nlohmann::json &config) {
         return;
     auto image = xg::make_unique<xg::guide::Image>(config);
     this->guides.push_back(std::move(image));
+}
+
+void xg::guide::GuideController::PointObject(const nlohmann::json &config) {
+    if(!config.is_object())
+        return;
+    auto point = xg::make_unique<xg::guide::Point>(config);
+    this->guides.push_back(std::move(point));
 }

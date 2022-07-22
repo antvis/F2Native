@@ -231,11 +231,6 @@ bool XChart::ParseObject(const nlohmann::json &dsl) {
         if (style.is_object()) {
             geom->StyleObject(style);
         }
-
-        const auto &attrs  = json::GetObject(*it, "attrs");
-        if (attrs.is_object()) {
-            geom->AttrsObject(attrs);
-        }
     }
     
     const auto &guides = json::GetArray(dsl, "guides");

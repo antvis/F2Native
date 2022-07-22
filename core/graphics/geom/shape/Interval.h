@@ -21,9 +21,8 @@ class Interval : public GeomShapeBase {
               std::size_t start,
               std::size_t end,
               xg::shape::Group &container,
-              bool connectNulls) override {
+              const XStyle &style) override {
         const nlohmann::json &_points = data._points;
-        const nlohmann::json &_style = data._style;
         if (!_points.is_array()) {
             return;
         }
@@ -42,7 +41,7 @@ class Interval : public GeomShapeBase {
             isFill = false;
         }
 
-        const float lineWidth = json::GetNumber(_style, "lineWidth") * context.GetDevicePixelRatio();
+        const float lineWidth = style.lineWidth * context.GetDevicePixelRatio();
         // 扇形
         if(shapeType == "sector") {
             std::vector<util::Point> newPoints = points;
@@ -65,7 +64,7 @@ class Interval : public GeomShapeBase {
             }
 
             auto fillRect = xg::make_unique<xg::shape::Rect>(coord.GetCenter(), r, r0, startAngle, endAngle, lineWidth);
-            fillRect->SetStorkColor(_style["stroke"]);
+            fillRect->SetStorkColor(style.stroke);
             fillRect->SetFillColor(color);
             container.AddElement(std::move(fillRect));
         } else {
@@ -79,11 +78,12 @@ class Interval : public GeomShapeBase {
                 rect->SetLineWidth(lineWidth);
             }
             
-            if(_style.contains("rounding")) {
-                float roundings[4] = {0, 0, 0, 0};
-                json::ParseRoundings(_style["rounding"], &roundings[0], context.GetDevicePixelRatio());
-                rect->SetRoundings(roundings);
-            }
+            
+            std::array<float, 4> roundings =  style.roundings;
+            std::for_each(roundings.begin(), roundings.end(), [&context](auto &round) -> void {
+                round *= context.GetDevicePixelRatio();});
+            rect->SetRoundings(roundings);
+            
 
             container.AddElement(std::move(rect));
             

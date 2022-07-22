@@ -12,10 +12,8 @@ class Point : public AbstractGeom {
     Point(Group *_container, utils::Tracer *tracer) : AbstractGeom(_container, tracer) {
         type_ = "point";
         sortable_ = true;
-        this->styleConfig_ = {};
+//        this->styleConfig_ = {};
     }
-
-    void BeforeMapping(XChart &chart, XDataGroup &dataArray) override;
 
     void Draw(XChart &chart, const XDataArray &groupData, std::size_t start, std::size_t end) const override;
 };

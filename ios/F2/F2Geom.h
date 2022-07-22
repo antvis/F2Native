@@ -31,10 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// 设置数据是否进行累加处理  适合饼图 层叠柱状图
 - (F2Geom * (^)(NSString *adjust))adjust;
 
+///设置几何对象的样式
 - (F2Geom * (^)(NSDictionary *config))style;
-
-/// 单独设置某个属性
-- (F2Geom * (^)(NSDictionary *config))attrs;
 
 - (void *)getGeom;
 

@@ -35,6 +35,24 @@ std::vector<float> ParseDashArray(const nlohmann::json &json, float ratio, const
     return defVal;
 }
 
+std::vector<float> ScaleDash(const std::vector<float> &dash, float scale) {
+    std::vector<float> rst;
+    for(std::size_t i = 0; i < dash.size(); ++i) {
+            rst.push_back(dash[i] * scale);
+    }
+
+    return rst;
+}
+
+std::array<float, 4> ScaleRoundings(const std::array<float, 4> roundings, float scale) {
+    std::array<float, 4> rst;
+    rst[0] = roundings[0] * scale;
+    rst[1] = roundings[1] * scale;
+    rst[2] = roundings[2] * scale;
+    rst[3] = roundings[3] * scale;
+    return rst;
+}
+
 void ParseRoundings(const nlohmann::json &data, float *rst, float ratio) {
     if(data.is_array() && data.size() >= 4) {
         *rst = data[0].get<float>() * ratio;

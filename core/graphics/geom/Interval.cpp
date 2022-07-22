@@ -12,7 +12,7 @@ float geom::Interval::GetDefaultWidthRatio(XChart &chart) {
         size_t count = xScale.GetValuesSize();
         return (chart.coord_->IsTransposed() && count > 1) ? 0.75f : 1.0f;
     }
-    return this->styleConfig_["widthRatio"];
+    return this->styleConfig_.widthRatio;
     // return 0.5f;
 }
 
@@ -162,7 +162,6 @@ void geom::Interval::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
                 item._tag["content"] = yValue.dump();
             }
 
-            item._style = styleConfig_;
             item._style["content"] = yValue.dump();
             item._beforeMapped = true;
         }
@@ -173,6 +172,6 @@ void geom::Interval::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
 void geom::Interval::Draw(XChart &chart, const XDataArray &groupData, std::size_t start, std::size_t end) const {
     for(std::size_t i = start; i <= end; ++i) {
         const auto &item = groupData[i];
-        chart.geomShapeFactory_->DrawGeomShape(chart, type_, shapeType_, item, i, i + 1, *this->container_, this->connectNulls_);
+        chart.geomShapeFactory_->DrawGeomShape(chart, type_, shapeType_, item, i, i + 1, *this->container_, this->styleConfig_);
     }
 }

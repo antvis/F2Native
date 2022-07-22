@@ -101,13 +101,6 @@
     };
 }
 
-- (F2Geom * (^)(NSDictionary *config))attrs {
-    return ^id(NSDictionary *config) {
-        self->_geom->SetAttrs([F2SafeString([F2Utils toJsonString:config]) UTF8String]);
-        return self;
-    };
-}
-
 @end
 
 @implementation F2Line

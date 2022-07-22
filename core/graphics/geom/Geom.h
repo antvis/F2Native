@@ -32,6 +32,39 @@ class XChart;
 
 namespace geom {
 
+struct XStyle {
+    //虚线
+    std::vector<float> dash;
+    
+    //面积图是否从0开始
+    bool startOnZero = true;
+    
+    //线宽
+    float lineWidth = 1.0f;
+
+    //描边颜色
+    string stroke = "#ffffff";
+    //填充颜色
+    string fill = "";
+    
+    //candle的填充色
+    std::array<std::string, 3> candle = {"#1CAA3D", "#808080", "#F4333C"};
+    
+    //柱子占坐标系的比值
+    float widthRatio = 0.5f;
+    
+    //两点之间与null数据 是否链接
+    bool connectNulls = true;
+    
+    //圆角
+    std::array<float, 4> roundings = {0, 0, 0, 0};
+    
+    //圆半径
+    float size = 3.0f;
+};
+
+extern void from_json(const nlohmann::json& j, XStyle& x);
+
 class AbstractGeom {
     friend animate::GeomAnimate;
 
@@ -51,10 +84,7 @@ class AbstractGeom {
     AbstractGeom &Shape(const string &shape);
     AbstractGeom &Adjust(const string &adjust);
     AbstractGeom &Style(const std::string &json);
-    AbstractGeom &Attrs(const std::string &attrs);
-    
-    AbstractGeom &StyleObject(const nlohmann::json &cfg);
-    AbstractGeom &AttrsObject(const nlohmann::json &cfg);
+    AbstractGeom &StyleObject(const XStyle &cfg);
     
 
     const unique_ptr<attr::AttrBase> &GetColor();
@@ -85,7 +115,6 @@ class AbstractGeom {
 
     const XDataGroup &GetDataArray() { return dataArray_; }
 
-    virtual void SetAttrs(const std::string &_attrs) noexcept;
 #if defined(EMSCRIPTEN)
     // wasm 返回引用有问题，单独开接口返回指针
     AbstractGeom *PositionWasm(const string &field) { return &Position(field); }
@@ -126,7 +155,9 @@ class AbstractGeom {
     bool ignoreEmptyGroup_ = false;
     string type_ = "";
     string shapeType_ = "";
-    nlohmann::json styleConfig_ = {{"startOnZero", true}};
+//    nlohmann::json styleConfig_ = {{"startOnZero", true}};
+    
+    XStyle styleConfig_;
     
     XDataGroup dataArray_;
     map<AttrType, unique_ptr<AttrBase>> attrs_{};

@@ -22,7 +22,7 @@
         }
     });
     self.chart.axis(@"value", @{@"grid": @{@"type": @"dash", @"dash": @[@(15), @(15), @(5), @(5)]}});
-    self.chart.line().position(@"date*value").fixedSize(2).attrs(@{@"connectNulls": @(YES)});
+    self.chart.line().position(@"date*value").fixedSize(2);
     self.chart.tooltip(@{
         @"onPress": [F2Callback callback:^NSDictionary *_Nonnull(NSDictionary *_Nonnull param) {
             //可以修改param中的参数，然后按原来的格式返回回去

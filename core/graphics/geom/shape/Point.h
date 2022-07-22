@@ -18,29 +18,29 @@ class Point : public GeomShapeBase {
               std::size_t start,
               std::size_t end,
               xg::shape::Group &container,
-              bool connectNulls) override {
+              const XStyle &style) override {
         std::string shape = "circle";
         if(!data._shape.empty()) {
             shape = data._shape;
         }
 
         util::Point center = {data._x, data._y};
-        nlohmann::json style = data._style;
 
         std::string colorStyle = GLOBAL_COLORS[0];
-        if(style.contains("color")) {
-            colorStyle = style["color"];
-        } else if(!data._color.empty()) {
+        if(!data._color.empty()) {
             colorStyle = data._color;
+        } else {
+            colorStyle = style.fill;
+        }
+        
+        float radius = 3;
+        if(!std::isnan(data._size)) {
+            radius = data._size;
+        }else {
+            radius = style.size;
         }
 
-        if(shape == "circle") {
-            float radius = 3;
-            if(style.contains("size")) {
-                radius = style["size"].get<float>();
-            } else if(!std::isnan(data._size)) {
-                radius = data._size;
-            }
+        if(shape == "circle") {           
             radius *= context.GetDevicePixelRatio();
 
             auto circle = std::make_unique<xg::shape::Circle>(center, radius);

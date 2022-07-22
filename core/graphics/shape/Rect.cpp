@@ -15,26 +15,26 @@ void xg::shape::Rect::CreatePath(canvas::CanvasContext &context) const {
             float width = static_cast<float>(size_.width);
             float x = static_cast<float>(point_.x);
             float y = static_cast<float>(point_.y);
-            context.MoveTo(x + roundings[2], y);
-            context.LineTo(x + width - roundings[3], y);
+            context.MoveTo(x + roundings_[2], y);
+            context.LineTo(x + width - roundings_[3], y);
             if (height < 0) {
-                context.QuadraticCurveTo(x + width, y, x + width, y - roundings[3]);
-                context.LineTo(x + width, y + height + roundings[1]);
+                context.QuadraticCurveTo(x + width, y, x + width, y - roundings_[3]);
+                context.LineTo(x + width, y + height + roundings_[1]);
             }else {
-                context.QuadraticCurveTo(x + width, y, x + width, y + roundings[3]);
-                context.LineTo(x + width, y + height - roundings[1]);
+                context.QuadraticCurveTo(x + width, y, x + width, y + roundings_[3]);
+                context.LineTo(x + width, y + height - roundings_[1]);
             }
-            context.QuadraticCurveTo(x + width, y + height, x + width - roundings[1], y + height);
+            context.QuadraticCurveTo(x + width, y + height, x + width - roundings_[1], y + height);
             
-            context.LineTo(x + roundings[0], y + height);
+            context.LineTo(x + roundings_[0], y + height);
             if (height < 0) {
-                context.QuadraticCurveTo(x, y + height, x, y + height + roundings[0]);
-                context.LineTo(x, y - roundings[2]);
+                context.QuadraticCurveTo(x, y + height, x, y + height + roundings_[0]);
+                context.LineTo(x, y - roundings_[2]);
             }else {
-                context.QuadraticCurveTo(x, y + height, x, y + height - roundings[0]);
-                context.LineTo(x, y + roundings[2]);
+                context.QuadraticCurveTo(x, y + height, x, y + height - roundings_[0]);
+                context.LineTo(x, y + roundings_[2]);
             }
-            context.QuadraticCurveTo(x, y, x + roundings[2], y);
+            context.QuadraticCurveTo(x, y, x + roundings_[2], y);
         } else {
             context.Rect(point_.x, point_.y, size_.width, size_.height);
         }
@@ -66,17 +66,17 @@ void xg::shape::Rect::UpdateAttribute(std::string attrName, double val) {
     }
 }
 
-void xg::shape::Rect::SetRoundings(float (&_roundings)[4]) {
+void xg::shape::Rect::SetRoundings(std::array<float, 4> roundings) {
     float height = static_cast<float>(size_.height);//height < 0 柱朝上
     float width = static_cast<float>(size_.width);
-    float minWidth = max(_roundings[0] + _roundings[1], _roundings[2] + _roundings[3]);
-    float minHeight = max(_roundings[0] + _roundings[3], _roundings[1] + _roundings[2]);
+    float minWidth = max(roundings[0] + roundings[1], roundings[2] + roundings[3]);
+    float minHeight = max(roundings[0] + roundings[3], roundings[1] + roundings[2]);
     float scale = fabs(min(width / minWidth, height / minHeight));
+    roundings_ = roundings;
     if (scale < 1) {
-        _roundings[0] *= scale;
-        _roundings[1] *= scale;
-        _roundings[2] *= scale;
-        _roundings[3] *= scale;
+        roundings_[0] *= scale;
+        roundings_[1] *= scale;
+        roundings_[2] *= scale;
+        roundings_[3] *= scale;
     }
-    memcpy(roundings, _roundings, sizeof(float) * 4);
 }

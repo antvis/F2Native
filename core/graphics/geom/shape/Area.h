@@ -23,14 +23,14 @@ class Area : public GeomShapeBase {
               std::size_t start,
               std::size_t end,
               xg::shape::Group &container,
-              bool connectNulls) override {
+              const XStyle &style) override {
         vector<xg::util::Point> topPoints;
         vector<xg::util::Point> bottomPoints;
 
         for(std::size_t i = start; i <= end; i++) {
             const auto &item = data[i];
             const nlohmann::json &points = item._points;
-            if(connectNulls) {
+            if(style.connectNulls) {
                 if(!(std::isnan(points[0]["x"]) || std::isnan(points[0]["y"]) || std::isnan(points[1]["x"]) || std::isnan(points[1]["y"]))) {
                     util::Point bottom{points[0]["x"], points[0]["y"]};
                     util::Point top{points[1]["x"], points[1]["y"]};

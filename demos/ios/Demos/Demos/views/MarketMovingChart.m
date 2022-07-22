@@ -6,9 +6,10 @@
     NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"Res/mockData_marketMoving" ofType:@"json"];
     NSString *jsonData = [NSString stringWithContentsOfFile:jsonPath encoding:NSUTF8StringEncoding error:nil];
     NSTimeInterval start = [[NSDate date] timeIntervalSince1970] * 1000;
-    self.chart.canvas(self.canvasView).padding(15, 10, 15, 0.f).source(jsonData);
-    self.chart.line().position(@"date*price").fixedColor(@"#528EFF").attrs(@{@"connectNulls": @(YES)}).fixedShape(@"smooth");
-    self.chart.area().position(@"date*price").fixedColor(@"#108EE9").attrs(@{@"connectNulls": @(YES)}).fixedShape(@"smooth");
+    self.chart.canvas(self.canvasView).padding(15, 10, 15, 0.f);
+    self.chart.source([F2Utils toJsonArray:jsonData]);
+    self.chart.line().position(@"date*price").fixedColor(@"#528EFF").fixedShape(@"smooth");
+    self.chart.area().position(@"date*price").fixedColor(@"#108EE9").fixedShape(@"smooth");
 
     self.chart.scale(@"date", @{
         @"type": @"timeSharing",

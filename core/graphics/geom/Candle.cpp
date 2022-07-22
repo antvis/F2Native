@@ -117,9 +117,6 @@ void geom::Candle::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
             item._rect = rect;
             item._line = line;
             item._state = cfg["state"];
-            if(!item._style.is_object()) {
-                item._style = styleConfig_;
-            }
         }
     }
     chart.GetLogTracer()->trace("Geom#%s Beforemapping duration: %lums", type_.data(), (CurrentTimestampAtMM() - timestamp));
@@ -128,6 +125,6 @@ void geom::Candle::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
 void geom::Candle::Draw(XChart &chart, const XDataArray &groupData, std::size_t start, std::size_t end) const {
     for(std::size_t i = start; i <= end; ++i) {
         auto &item = groupData[i];
-        chart.geomShapeFactory_->DrawGeomShape(chart, type_, shapeType_, item, i, i + 1, *this->container_, this->connectNulls_);
+        chart.geomShapeFactory_->DrawGeomShape(chart, type_, shapeType_, item, i, i + 1, *this->container_, this->styleConfig_);
     }
 }

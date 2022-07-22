@@ -35,7 +35,7 @@ class GeomShapeFactory final {
                        std::size_t start,
                        std::size_t end,
                        xg::shape::Group &container,
-                       bool connectNulls);
+                       const XStyle &style);
     
     void DrawGeomShape(XChart &chart,
                        std::string geomType,
@@ -44,7 +44,7 @@ class GeomShapeFactory final {
                        std::size_t start,
                        std::size_t end,
                        xg::shape::Group &container,
-                       bool connectNulls);
+                       const XStyle &style);
 
   private:
     std::unordered_map<std::string, std::unique_ptr<GeomShapeBase>> geomShapes_;

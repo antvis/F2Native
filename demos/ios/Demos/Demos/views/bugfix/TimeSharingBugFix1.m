@@ -25,8 +25,8 @@
     NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"Res/bugfix/mockData_timeSharingBugfix1" ofType:@"json"];
     NSString *jsonData = [NSString stringWithContentsOfFile:jsonPath encoding:NSUTF8StringEncoding error:nil];
     self.priceChart.canvas(self.canvasView).padding(0, 0, 0, 0.f).source(jsonData);
-    self.priceChart.line().position(@"date*price").fixedColor(@"#E62C3B").attrs(@{@"connectNulls": @(YES)}).fixedShape(@"smooth").fixedSize(1);
-    self.priceChart.area().position(@"date*price").fixedColor(@"#E62C3B18").attrs(@{@"connectNulls": @(YES)}).fixedShape(@"smooth");
+    self.priceChart.line().position(@"date*price").fixedColor(@"#E62C3B").fixedShape(@"smooth").fixedSize(1);
+    self.priceChart.area().position(@"date*price").fixedColor(@"#E62C3B18").fixedShape(@"smooth");
 
     self.priceChart.scale(@"date", @{
         @"type": @"timeSharing",

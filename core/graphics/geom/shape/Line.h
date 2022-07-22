@@ -25,8 +25,8 @@ class Line : public GeomShapeBase {
               std::size_t start,
               std::size_t end,
               xg::shape::Group &container,
-              bool connectNulls) override {
-        this->DrawLines(coord, data, start, end, context, container, connectNulls);
+              const XStyle &style) override {
+        this->DrawLines(coord, data, start, end, context, container, style);
     }
 
   private:
@@ -36,7 +36,7 @@ class Line : public GeomShapeBase {
                     std::size_t end,
                     canvas::CanvasContext &canvasContext,
                     xg::shape::Group &container,
-                    bool connectNulls) {
+                    const XStyle &style) {
       
         util::Point center(NAN, NAN);
         if(!data[start]._y0.empty()) {
@@ -67,12 +67,12 @@ class Line : public GeomShapeBase {
                    std::size_t end,
                    canvas::CanvasContext &canvasContext,
                    xg::shape::Group &container,
-                   bool connectNulls) {
+                   const XStyle &style) {
         size_t size = end - start + 1;
         if (size <= 0) {
             return;
         } else if (size == 1) {
-            DrawCircle(coord, data, start, end, canvasContext, container, connectNulls);
+            DrawCircle(coord, data, start, end, canvasContext, container, style);
             return;
         }
 
@@ -87,6 +87,9 @@ class Line : public GeomShapeBase {
             // stack 下的多组线
             vector<xg::util::Point> topPoints;
             vector<xg::util::Point> bottomPoints;
+            topPoints.reserve(size);
+            bottomPoints.reserve(size);
+            
 
             for(std::size_t i = start; i <= end; i++) {
                 const auto &item = data[i];
@@ -100,8 +103,8 @@ class Line : public GeomShapeBase {
             }
 
             auto topLine = xg::make_unique<xg::shape::Polyline>(lineWidth * canvasContext.GetDevicePixelRatio(), topPoints, smooth);
-            if(data[start]._style.contains("dash")) {
-                topLine->SetDashLine(json::ParseDashArray(data[start]._style["dash"], canvasContext.GetDevicePixelRatio()));
+            if(!style.dash.empty()) {
+                topLine->SetDashLine(json::ScaleDash(style.dash, canvasContext.GetDevicePixelRatio()));
             }
 
             topLine->SetStorkColor(color);
@@ -118,11 +121,12 @@ class Line : public GeomShapeBase {
         }
 
         vector<xg::util::Point> points;
+        points.reserve(size);
 
         // todo 这里有一个判断 如果线是循环的 会将第一个点复制成新点插入队尾 形成循环 目前没有这个判断 后续添加
         for(std::size_t i = start; i <= end; i++) {
             const auto &item = data[i];
-            if(connectNulls) {
+            if(style.connectNulls) {
                 if(!std::isnan(item._x) && !std::isnan(item._y)) {
                     points.push_back(util::Point(item._x, item._y));
                 }
@@ -137,8 +141,8 @@ class Line : public GeomShapeBase {
         }
 
         auto l = xg::make_unique<xg::shape::Polyline>(lineWidth * canvasContext.GetDevicePixelRatio(), points, smooth);
-        if(data[start]._style.contains("dash")) {
-            l->SetDashLine(json::ParseDashArray(data[start]._style["dash"], canvasContext.GetDevicePixelRatio()));
+        if(!style.dash.empty()) {
+            l->SetDashLine(json::ScaleDash(style.dash, canvasContext.GetDevicePixelRatio()));
         }
         l->SetStorkColor(color);
         container.AddElement(std::move(l));

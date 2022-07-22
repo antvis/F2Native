@@ -148,7 +148,7 @@ void Flag::DrawFragContent(XChart &chart, shape::Group *container, canvas::Canva
     if(config_.contains("rounding")) {
         float roundings[4] = {0, 0, 0, 0};
         json::ParseRoundings(config_["rounding"], &roundings[0], context.GetDevicePixelRatio());
-        rect->SetRoundings(roundings);
+        rect->SetRoundings(std::array<float, 4> {roundings[0], roundings[1], roundings[2], roundings[3]});
     }
 
     

@@ -9,6 +9,20 @@
 
 using namespace std;
 
+void xg::geom::from_json(const nlohmann::json& j, XStyle& x) {
+    XStyle d;
+    x.dash = j.value("dash", d.dash);
+    x.startOnZero = j.value("startOnZero", d.startOnZero);
+    x.lineWidth = j.value("lineWidth", d.lineWidth);
+    x.stroke = j.value("stroke", d.stroke);
+    x.fill = j.value("fill", d.fill);
+    x.candle = j.value("candle", d.candle);
+    x.widthRatio = j.value("widthRatio", d.widthRatio);
+    x.connectNulls = j.value("connectNulls", d.connectNulls);
+    x.roundings = j.value("roundings", d.roundings);
+    x.size = j.value("size", d.size);
+}
+
 xg::geom::AbstractGeom::~AbstractGeom() {
     container_ = nullptr;
     attrs_.clear();
@@ -78,27 +92,10 @@ xg::geom::AbstractGeom &xg::geom::AbstractGeom::Style(const std::string &json) {
     return StyleObject(xg::json::ParseString(json));
 }
 
-xg::geom::AbstractGeom &xg::geom::AbstractGeom::Attrs(const std::string &attrs) {
-    return AttrsObject(xg::json::ParseString(attrs));
-}
-
-xg::geom::AbstractGeom &xg::geom::AbstractGeom::StyleObject(const nlohmann::json &cfg) {
-    if(cfg.is_object()) {
-        this->styleConfig_.merge_patch(cfg);
-    }
+xg::geom::AbstractGeom &xg::geom::AbstractGeom::StyleObject(const XStyle &cfg) {
+    this->styleConfig_ = cfg;
     return *this;
 }
-
-xg::geom::AbstractGeom &xg::geom::AbstractGeom::AttrsObject(const nlohmann::json &cfg) {
-    if(cfg.is_object() && cfg.size() > 0) {
-        if(cfg.contains("connectNulls") && cfg["connectNulls"].is_boolean()) {
-            this->connectNulls_ = cfg["connectNulls"];
-        }
-    }
-    return *this;
-}
-
-
 
 const unique_ptr<xg::attr::AttrBase> &xg::geom::AbstractGeom::GetColor() { return attrs_[xg::attr::AttrType::Color]; }
 
@@ -183,6 +180,7 @@ XDataGroup xg::geom::AbstractGeom::GroupData(XChart &chart) {
     if(fields.empty()) {
         auto xField = chart.GetXScaleField();
         XDataArray ary;
+        ary.reserve(data.size());
         for(size_t index = 0, size = data.size(); index < size; ++index) {            
             //过滤掉没有x轴key的数据
             if(data[index].contains(xField)) {
@@ -259,7 +257,7 @@ void xg::geom::AbstractGeom::Mapping(XChart &chart, XDataArray &dataArray, std::
 }
 
 void xg::geom::AbstractGeom::Draw(XChart &chart, const XDataArray &dataArray, std::size_t start, std::size_t end) const {
-    chart.geomShapeFactory_->DrawGeomShape(chart, this->type_, /*subShapeType*/ "", dataArray, start, end, *container_, this->connectNulls_);
+    chart.geomShapeFactory_->DrawGeomShape(chart, this->type_, /*subShapeType*/ "", dataArray, start, end, *container_, this->styleConfig_);
 }
 
 bool xg::geom::AbstractGeom::ContainsAttr(attr::AttrType type) {
@@ -280,7 +278,7 @@ double xg::geom::AbstractGeom::GetYMinValue(XChart &chart) {
     double _min = yScale.min;
     double _max = yScale.max;
     double value = _min;
-    if(styleConfig_.contains("startOnZero") && styleConfig_["startOnZero"] == true) {
+    if(styleConfig_.startOnZero == true) {
         if(_max <= 0 && _min <= 0) {
             value = _max;
         } else {
@@ -375,14 +373,5 @@ const XData &xg::geom::AbstractGeom::GetFirstSnapRecord(XChart *chart) {
 void xg::geom::AbstractGeom::Clear() {
     if(this->container_ != nullptr) {
         this->container_->Clear();
-    }
-}
-
-void xg::geom::AbstractGeom::SetAttrs(const std::string &_attrs) noexcept {
-    nlohmann::json cfg = xg::json::ParseString(_attrs);
-    if(cfg.is_object() && cfg.size() > 0) {
-        if(cfg.contains("connectNulls") && cfg["connectNulls"].is_boolean()) {
-            this->connectNulls_ = cfg["connectNulls"];
-        }
     }
 }

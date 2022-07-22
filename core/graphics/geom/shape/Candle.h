@@ -20,7 +20,7 @@ class Candle : public GeomShapeBase {
               std::size_t start,
               std::size_t end,
               xg::shape::Group &container,
-              bool connectNulls) override {
+              const XStyle &style) override {
         if(!data._rect.is_array() || !data._line.is_array()) {
             return;
         }
@@ -28,7 +28,6 @@ class Candle : public GeomShapeBase {
         const nlohmann::json &_rect = data._rect;
         const nlohmann::json &_line = data._line;
         const int state = data._state;
-        const nlohmann::json &style = data._style;
 
         std::vector<util::Point> points;
         for(std::size_t i = 0; i < _rect.size(); ++i) {
@@ -41,27 +40,14 @@ class Candle : public GeomShapeBase {
         lineYs[0] = ParsePoint(coord, util::Point(0, _line[0])).y;
         lineYs[1] = ParsePoint(coord, util::Point(0, _line[1])).y;
 
-        nlohmann::json colors;
-        bool fill = true;
-        if(style.contains("stroke")) {
-            colors = style["stroke"];
-            fill = false;
-        } else if(style.contains("fill")) {
-            colors = style["fill"];
-        }
-
-        if(!colors.is_array() || colors.size() < 3) {
-            colors = {"#1CAA3D", "#808080", "#F4333C"};
-        }
-
-        canvas::CanvasFillStrokeStyle colorStyle = util::ColorParser(colors[state + 1]);
+        canvas::CanvasFillStrokeStyle colorStyle = util::ColorParser(style.candle[state + 1]);
 
         float lineWidth = std::isnan(data._size) ? 1.0 : data._size;
         lineWidth *= context.GetDevicePixelRatio();
 
         util::Size size(fabs(points[2].x - points[0].x), fabs(points[2].y - points[0].y));
 
-        if(fill) {
+        if(!style.stroke.empty()) {
             auto line = xg::make_unique<xg::shape::Line>(util::Point{points[0].x + size.width / 2, lineYs[0]},
                                                          util::Point{points[0].x + size.width / 2, lineYs[1]});
             line->SetStorkStyle(colorStyle);

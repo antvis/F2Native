@@ -55,7 +55,7 @@ class Rect : public Shape {
 
     virtual void UpdateAttribute(std::string attrName, double val) override;
     
-    void SetRoundings(float (&roundings)[4]);
+    void SetRoundings(std::array<float, 4> roundings);
     
     void SetDashLine(const std::vector<float> &params) { this->dash_ = params; }
 
@@ -66,7 +66,7 @@ class Rect : public Shape {
     bool HasRounding() const {
         bool rst = false;
         for(std::size_t i = 0; i < 4; ++i) {
-            if(roundings[i] > XG_EPS) {
+            if(roundings_[i] > XG_EPS) {
                 rst = true;
                 break;
             }
@@ -81,7 +81,7 @@ class Rect : public Shape {
     double endAngle_ = 0.;
     double radius0_ = 0.f;
     // 圆角 [ tl, tr, bl, br ]
-    float roundings[4] = {0, 0, 0, 0};
+    std::array<float, 4> roundings_ = {0, 0, 0, 0};
 
     std::vector<float> dash_;
 };

@@ -4,6 +4,7 @@
 #include <array>
 #include <string>
 #include <vector>
+#include <array>
 #include "../canvas/CanvasContext.h"
 #include "../canvas/Coord.h"
 #include "../scale/Scale.h"
@@ -19,6 +20,52 @@ namespace xg {
 
 class XChart;
 namespace axis {
+
+struct AxisGridCfg {
+    string type = "line";
+    float lineWidth = .6f;
+    string stroke = "#E8E8E8";
+    std::vector<float> dash = {10, 10};
+    //雷达图轴上的背景色
+    std::vector<string> fill;
+    bool hidden = false;
+};
+extern void from_json(const nlohmann::json& j, AxisGridCfg& g);
+
+struct AxisLabelCfg {
+    string textColor = "#808080"; // 标签文字颜色
+    float textSize =  DEFAULT_FONTSIZE;       // 标签文字字号
+    float labelOffset = 5.f;     // 轴上标签的垂直方向偏移量。x 轴为上下的整体偏移量， y 轴为左右的整体偏移量
+    string textAlign = "center";  //文字水平对齐方式 start center end
+    string textBaseline = "bottom";//文字垂直对齐方式 top middle bottom
+    
+    vector<string> textAligns;  //文字水平对齐方式 start center end
+    vector<string> textBaselines;//文字垂直对齐方式 top middle bottom
+    bool inner = false;            //轴上的文字是否在图表内部
+    string item = "";//回调方法的id
+    float xOffset = 0;
+    float yOffset = 0;
+    string content = "";
+    bool hidden = false;
+};
+extern void from_json(const nlohmann::json& j, AxisLabelCfg& l);
+
+struct AxisLineCfg {
+    string type = "line";      // 网格线类型
+    float lineWidth = .6f;    // 网格线线宽
+    string stroke = "#E8E8E8"; // 网格线颜色
+    std::vector<float> dash =  {10, 10};
+    bool hidden = false;
+};
+extern void from_json(const nlohmann::json& j, AxisLineCfg& l);
+
+struct AxisCfg {
+    bool hidden = false;
+    AxisGridCfg grid;
+    AxisLabelCfg label;
+    AxisLineCfg line;
+};
+extern void from_json(const nlohmann::json& j, AxisCfg& a);
 
 class Axis {
   public:
@@ -36,9 +83,9 @@ class Axis {
     xg::util::Point start;
     xg::util::Point end;
     std::vector<std::vector<util::Point>> gridPoints{}; // 网格 grid 矩阵
-    nlohmann::json gridCfg;
-    nlohmann::json labelCfg;
-    nlohmann::json lineCfg;
+    AxisGridCfg gridCfg;
+    AxisLabelCfg labelCfg;
+    AxisLineCfg lineCfg;
     std::string field;
     std::string verticalField; // 相对垂直边 field
     std::vector<scale::Tick> ticks;
@@ -72,6 +119,7 @@ public:
     }
 };
 
+
 class AxisController {
   public:
     AxisController(shape::Group *_container) : container_(_container) {}
@@ -80,42 +128,9 @@ class AxisController {
 
     void DrawAxes(XChart *chart, canvas::CanvasContext &context);
 
-    void SetFieldConfig(const std::string &field, const nlohmann::json &config = {}) { axisConfig_[field] = MergeDefaultConfig(config); }
+    void SetFieldConfig(const std::string &field, const AxisCfg &config);
 
     void Clear();
-
-  protected:
-    static nlohmann::json MergeDefaultConfig(const nlohmann::json &config) {
-        nlohmann::json gridCfg = {{"type", "line"},      // 网格线类型
-                                  {"lineWidth", .6f},    // 网格线线宽
-                                  {"stroke", "#E8E8E8"}, // 网格线颜色
-                                  {"dash", {10, 10}}};
-
-        nlohmann::json line = {// 轴线配置
-                               {"color", "#999999"},
-                               {"lineWidth", .6f},
-                               {"type", "line"}, // 线类型
-                               {"dash", {10, 10}}};
-
-        nlohmann::json label = {
-            // 轴标签配置
-            {"textColor", "#808080"}, // 标签文字颜色
-            {"textSize", DEFAULT_FONTSIZE},       // 标签文字字号
-            {"labelOffset", 5.f},     // 轴上标签的垂直方向偏移量。x 轴为上下的整体偏移量， y 轴为左右的整体偏移量
-            {"textAlign", "center"},  //文字水平对齐方式 start center end
-            {"textBaseline", "bottom"},//文字垂直对齐方式 top middle bottom
-            {"inner", false}            //轴上的文字是否在图表内部
-        };
-
-        nlohmann::json cfg = {{"label", label},  // 标签
-                              {"grid", gridCfg}, // 网格
-                              {"line", line},    // 轴
-                              {"hidden", false}};
-        if(config.is_object()) {
-            cfg.merge_patch(config);
-        }
-        return cfg;
-    }
 
   private:
     void InitAxis(XChart &chart, const std::string &field, std::size_t index, const std::string &dimType, const std::string &verticalField);
@@ -125,7 +140,7 @@ class AxisController {
 
     void DrawLabel(XChart &chart, std::unique_ptr<Axis> &axis, canvas::CanvasContext &context);
 
-    void DrawLine(XChart &chart, std::array<util::Point, 2> &&line, const nlohmann::json &lineCfg);
+    void DrawLine(XChart &chart, std::array<util::Point, 2> &&line, const AxisLineCfg &lineCfg);
 
     void GetSidePoint(util::Point &point, double labelOffset, std::string type) {
         util::Point offset = GetOffsetVector(point, labelOffset, type);
@@ -199,7 +214,7 @@ class AxisController {
 
   private:
     std::vector<std::unique_ptr<Axis>> axes;
-    nlohmann::json axisConfig_;
+    std::unordered_map<string, AxisCfg> axisConfig_;
     shape::Group *container_ = nullptr;
 };
 } // namespace axis

@@ -74,11 +74,14 @@ struct XConfig final {
     //当geom中有过个图形时，是否同步他们的最值
     //默认为false 因为shape为stack的时候不能sync
     bool syncY_ = false;
-    
-    //coord setting
+};
+
+struct CoordCfg {
     std::string coordType = "cartesian";
     bool transposed = false;
 };
+
+extern void from_json(const nlohmann::json &j, CoordCfg &cfg);
 
 class XChart {
     friend axis::AxisController;
@@ -313,12 +316,12 @@ class XChart {
     bool ParseObject(const nlohmann::json &dsl);
     XChart &SourceObject(const nlohmann::json &data);
     XChart &ScaleObject(const std::string &field, const nlohmann::json &json);
-    XChart &AxisObject(const std::string &field, const nlohmann::json &json);
+    XChart &AxisObject(const std::string &field, const axis::AxisCfg &json);
     XChart &LegendObject(const std::string &field, const nlohmann::json &json);
     XChart &Interaction(const std::string &type, const interaction::PinchCfg &json);
     XChart &Interaction(const std::string &type, const interaction::PanCfg &json);
     XChart &TooltipObject(const nlohmann::json &json);
-    XChart &CoordObject(const nlohmann::json &json);
+    XChart &CoordObject(const CoordCfg &json);
     XChart &AnimateObject(const animate::AnimateCfg &json);
 
   private:
@@ -402,6 +405,7 @@ class XChart {
     std::string requestFrameHandleId_ = "";
     func::F2Function *invokeFunction_ = nullptr;
     XConfig config_;
+    CoordCfg coordConfig_;
 };
 } // namespace xg
 

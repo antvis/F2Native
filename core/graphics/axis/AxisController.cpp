@@ -10,6 +10,83 @@
 #include "../../utils/common.h"
 #include "../../utils/xtime.h"
 
+void xg::axis::from_json(const nlohmann::json& j, AxisGridCfg& a) {
+    AxisGridCfg d;
+    if(j.is_boolean()) {
+        a.hidden = true;
+    }else if(j.is_object()) {
+        a.type = j.value("type", d.type);
+        a.lineWidth = j.value("lineWidth", d.lineWidth);
+        a.stroke = j.value("stroke", d.stroke);
+        a.dash = j.value("dash", d.dash);
+        a.fill = j.value("fill", d.fill);
+        a.hidden = j.value("hidden", d.hidden);
+    } else {
+        F2ASSERT(false, "AxisGridCfg from_json error json type");
+    }
+}
+
+void xg::axis::from_json(const nlohmann::json& j, AxisLabelCfg& a) {
+    AxisLabelCfg d;
+    if(j.is_boolean()) {
+        a.hidden = true;
+    }else if(j.is_object()) {
+        a.textColor = j.value("textColor", d.textColor);
+        a.textSize = j.value("textSize", d.textSize);
+        a.labelOffset = j.value("labelOffset", d.labelOffset);
+        if(!json::GetArray(j, "textAlign").empty()) {
+            a.textAligns = j.value("textAlign", d.textAligns);
+        }else {
+            a.textAlign = j.value("textAlign", d.textAlign);
+        }
+        
+        if(!json::GetArray(j,"textBaseline").empty()) {
+            a.textBaselines = j.value("textBaselines", d.textBaselines);
+        }else {
+            a.textBaseline = j.value("textBaseline", d.textBaseline);
+        }
+        
+        a.inner = j.value("inner", d.inner);
+        //functionId 只要解析一次就可以了
+        string tempItem = j.value("item", d.item);
+        a.item = tempItem.empty() ? a.item : tempItem;
+        a.xOffset = j.value("xOffset", d.xOffset);
+        a.yOffset = j.value("yOffset", d.yOffset);
+        a.hidden = j.value("hidden", d.hidden);
+    } else {
+        F2ASSERT(false, "AxisLabelCfg from_json error json type");
+    }
+}
+
+void xg::axis::from_json(const nlohmann::json& j, AxisLineCfg& a) {
+    AxisLineCfg d;
+    if(j.is_boolean()) {
+        a.hidden = true;
+    }else if(j.is_object()) {
+        a.type = j.value("type", d.type);
+        a.lineWidth = j.value("lineWidth", d.lineWidth);
+        a.stroke = j.value("stroke", d.stroke);
+        a.dash = j.value("dash", d.dash);
+        a.hidden = j.value("hidden", d.hidden);
+    } else {
+        F2ASSERT(false, "AxisLineCfg from_json error json type");
+    }
+}
+
+void xg::axis::from_json(const nlohmann::json& j, AxisCfg& a) {
+    AxisCfg d;
+    if(j.is_boolean()) {
+        a.hidden = true;
+    }else if(j.is_object()) {
+        a.label = j.value("label", d.label);
+        a.line = j.value("line", d.line);
+        a.grid = j.value("grid", d.grid);
+        a.hidden = j.value("hidden", d.hidden);
+    } else {
+        F2ASSERT(false, "AxisLineCfg from_json error json type");
+    }
+}
+
 // 网格线绘制始终是从 0 - 1， 数据不足时主动补齐
 static std::vector<xg::scale::Tick> FormatTicks(std::vector<xg::scale::Tick> ticks) {
     std::vector<xg::scale::Tick> rst(ticks);
@@ -35,16 +112,8 @@ static std::vector<xg::scale::Tick> FormatTicks(std::vector<xg::scale::Tick> tic
     return rst;
 }
 
-static std::vector<std::string> GetFillColor(const nlohmann::json &config) {
-    std::vector<string> fill;
-    if (config.is_array()) {
-        for (int i = 0; i < config.size(); ++i) {
-            fill.push_back(config[i]);
-        }
-    }else if(config.is_string()) {
-        fill.push_back(config.get<string>());
-    }
-    return fill;
+void xg::axis::AxisController::SetFieldConfig(const std::string &field, const AxisCfg &config) {
+    axisConfig_[field] = config;
 }
 
 void xg::axis::AxisController::DrawAxes(xg::XChart *chart, canvas::CanvasContext &context) {
@@ -55,21 +124,13 @@ void xg::axis::AxisController::DrawAxes(xg::XChart *chart, canvas::CanvasContext
     std::vector<std::string> yFields = chart->getYScaleFields();
     tracer->trace("InitAxis xField: %s, yField: %s", xField.c_str(), yFields[0].c_str());
 
-    if(!axisConfig_.contains(xField)) {
-        axisConfig_[xField] = AxisController::MergeDefaultConfig({});
-    }
-
-    if(!axisConfig_[xField]["hidden"]) {
+    if(!axisConfig_[xField].hidden) {
         InitAxis(*chart, xField, 0, "x", yFields[0]);
     }
 
     for(std::size_t index = 0; index < yFields.size(); ++index) {
         const std::string &yField = yFields[index];
-        if(!axisConfig_.contains(yField)) {
-            axisConfig_[yField] = AxisController::MergeDefaultConfig({});
-        }
-
-        if(!axisConfig_[yField]["hidden"]) {
+        if(!axisConfig_[yField].hidden) {
             InitAxis(*chart, yField, index, "y", xField);
         }
     }
@@ -110,26 +171,12 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
     axis->field = field;
     axis->verticalField = verticalField;
 
-    nlohmann::json &fieldCfg = axisConfig_[axis->field];
+    auto &fieldCfg = axisConfig_[axis->field];
+    axis->gridCfg = fieldCfg.grid;
 
-    bool showGrid = axis->position == "bottom"; // bottom 默认显示轴
-    if(fieldCfg["grid"].is_object()) {
-        showGrid = true;
-        axis->gridCfg = fieldCfg["grid"];
-    }
+    axis->labelCfg = fieldCfg.label;
+    axis->lineCfg = fieldCfg.line;
 
-    if(fieldCfg["label"].is_object()) {
-        axis->labelCfg = fieldCfg["label"];
-        //            if(axis->key == "left") {
-        //                axis->labelCfg["textAlign"] = "end";
-        //            } else if(axis->key == "right") {
-        //                axis->labelCfg["textAlign"] = "start";
-        //            }
-    }
-
-    if(fieldCfg["line"].is_object()) {
-        axis->lineCfg = fieldCfg["line"];
-    }
 
     scale::AbstractScale &scale = chart.GetScale(axis->field);
     axis->ticks = scale.GetTicks(&chart);
@@ -139,61 +186,40 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
         ticksTmp = 200;
     }
 
-    if(axis->labelCfg.is_object()) {
-        float labelOffset = axis->labelCfg["labelOffset"];
+    if(!axis->labelCfg.hidden) {
+        float labelOffset = axis->labelCfg.labelOffset;
         labelOffset *= chart.GetCanvasContext().GetDevicePixelRatio();
 
-        const std::string &labelColor = axis->labelCfg["textColor"];
-        float labelFontSize = axis->labelCfg["textSize"];
-        labelFontSize *= chart.GetCanvasContext().GetDevicePixelRatio();
-
-        const auto &textAlign = axis->labelCfg["textAlign"];
-        const auto &textBaseline = axis->labelCfg["textBaseline"];
+        const std::string &labelColor = axis->labelCfg.textColor;
+        float labelFontSize = axis->labelCfg.textSize * chart.GetCanvasContext().GetDevicePixelRatio();
         
-        bool inner = json::GetBool(axis->labelCfg, "inner");
+        bool inner = axis->labelCfg.inner;
 
-        std::string labelItemFuncId;
-        if(axis->labelCfg.contains("item")) {
-            labelItemFuncId = axis->labelCfg["item"];
-        }
-
+        float ratio = chart.GetCanvasContext().GetDevicePixelRatio();
         for(std::size_t index = 0; index < axis->ticks.size(); ++index) {
             if(index == 0 || index == (axis->ticks.size() - 1) || index % ticksTmp == 0) {
                 const xg::scale::Tick &tick = axis->ticks[index];
-                if(!labelItemFuncId.empty()) {
-                    nlohmann::json itemStyle = axis->labelCfg;
-                    nlohmann::json param = {{"text", tick.text}, {"index", index}, {"count", axis->ticks.size()}, {"content", tick.text}};
-                    param.merge_patch(itemStyle);
+                if(!axis->labelCfg.item.empty()) {
+                    nlohmann::json param = {{"text", tick.text}, {"index", index}, {"count", axis->ticks.size()}, {"content", tick.text}, {"xOffset", 0}, {"yOffset", 0}};
+
+                    nlohmann::json itemStyleRst(xg::json::ParseString(chart.InvokeFunction(axis->labelCfg.item, param.dump())));
                     
-                    itemStyle["xOffset"] = 0;
-                    itemStyle["yOffset"] = 0;
+                    from_json(itemStyleRst, axis->labelCfg);
 
-                    nlohmann::json itemStyleRst = xg::json::ParseString(chart.InvokeFunction(labelItemFuncId, param.dump()));
-                    if(itemStyleRst.is_object()) {
-                        itemStyle.merge_patch(itemStyleRst);
-                    }
+                    float textSize = axis->labelCfg.textSize * ratio;
 
-                    float textSize = itemStyle["textSize"];
-                    textSize *= chart.GetCanvasContext().GetDevicePixelRatio();
+                    float xOffset = axis->labelCfg.xOffset *ratio;
+                    float yOffset = axis->labelCfg.yOffset *ratio;
 
-                    float xOffset = itemStyle["xOffset"];
-                    float yOffset = itemStyle["yOffset"];
-                    xOffset *= chart.GetCanvasContext().GetDevicePixelRatio();
-                    yOffset *= chart.GetCanvasContext().GetDevicePixelRatio();
-
-                    std::string textContent = json::GetString(itemStyle, "content", tick.text);
+                    std::string textContent = axis->labelCfg.content.empty() ? tick.text : axis->labelCfg.content;
 
                     std::unique_ptr<xg::shape::Text> text =
-                        xg::make_unique<xg::shape::Text>(textContent, util::Point{xOffset, yOffset}, textSize, "", itemStyle["textColor"]);
+                        xg::make_unique<xg::shape::Text>(textContent, util::Point{xOffset, yOffset}, textSize, "", axis->labelCfg.textColor);
 
                     text->ext["tickValue"] = tick.value;
-                    if(itemStyle["textAlign"].is_string()) {
-                        text->SetTextAlign(itemStyle["textAlign"]);
-                    }
+                    text->SetTextAlign(axis->labelCfg.textAlign);
                     
-                    if (itemStyle["textBaseline"].is_string()) {
-                        text->SetTextBaseline(itemStyle["textBaseline"]);
-                    }                    
+                    text->SetTextBaseline(axis->labelCfg.textBaseline);
                     xg::util::BBox bbox = text->GetBBox(chart.GetCanvasContext());
 
                     axis->maxWidth = inner ? 0 : fmax(axis->maxWidth, static_cast<double>(bbox.width));
@@ -204,16 +230,16 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
                     std::unique_ptr<xg::shape::Text> text =
                         xg::make_unique<xg::shape::Text>(tick.text, util::Point{0, 0}, labelFontSize, "", labelColor);
                     text->ext["tickValue"] = tick.value;
-                    if (textAlign.is_string()) {
-                        text->SetTextAlign(textAlign);
-                    }else if(textAlign.is_array() && textAlign.size() > index){
-                        text->SetTextAlign(textAlign[index]);
+                    if (!axis->labelCfg.textAligns.empty()) {
+                        text->SetTextAlign(axis->labelCfg.textAligns[index]);
+                    }else {
+                        text->SetTextAlign(axis->labelCfg.textAlign);
                     }
                     
-                    if (textBaseline.is_string()) {
-                        text->SetTextBaseline(textBaseline);
-                    }else if(textBaseline.is_array() && textBaseline.size() > index) {
-                        text->SetTextBaseline(textBaseline[index]);
+                    if (!axis->labelCfg.textBaselines.empty()) {
+                        text->SetTextBaseline(axis->labelCfg.textBaselines[index]);
+                    }else {
+                        text->SetTextBaseline(axis->labelCfg.textBaseline);
                     }
                         
                     xg::util::BBox bbox = text->GetBBox(chart.GetCanvasContext());
@@ -236,7 +262,7 @@ void xg::axis::AxisController::InitAxisConfig(xg::XChart &chart) {
         const std::vector<xg::scale::Tick> &ticks = axis->ticks;
 
         // grid Points
-        if(axis->gridCfg.is_object() && !axis->verticalField.empty()) {
+        if(!axis->verticalField.empty()) {
             std::vector<xg::scale::Tick> verticalTicks = FormatTicks(chart.GetScale(axis->verticalField).GetTicks(&chart));
 
             for(std::size_t index = 0; index < ticks.size(); ++index) {
@@ -277,7 +303,7 @@ void xg::axis::AxisController::UpdateLayout(xg::XChart &chart) {
         
         std::for_each(axes.begin(), axes.end(), [&](std::unique_ptr<xg::axis::Axis> &axis) {
             if (axis->type == "circle") {
-                float labelOffset = json::GetNumber(axis->labelCfg, "labelOffset") * chart.GetCanvasContext().GetDevicePixelRatio();
+                float labelOffset = axis->labelCfg.labelOffset * chart.GetCanvasContext().GetDevicePixelRatio();
                 newPadding[0] += axis->maxWidth + labelOffset;
                 newPadding[1] += axis->maxHeight + labelOffset;
                 newPadding[2] += axis->maxWidth + labelOffset;
@@ -287,11 +313,7 @@ void xg::axis::AxisController::UpdateLayout(xg::XChart &chart) {
         chart.UpdateLayout(newPadding);
     } else {
         std::for_each(axes.begin(), axes.end(), [&](std::unique_ptr<xg::axis::Axis> &axis) {
-            float labelOffset = 0.f;
-            if(axis->labelCfg.is_object()) {
-                labelOffset = axis->labelCfg["labelOffset"];
-            }
-            labelOffset *= chart.GetCanvasContext().GetDevicePixelRatio();
+            float labelOffset = axis->labelCfg.labelOffset * chart.GetCanvasContext().GetDevicePixelRatio();
 
             if(axis->key == "right") {
                 newPadding[2] += axis->maxWidth + static_cast<double>(labelOffset);
@@ -318,22 +340,21 @@ void xg::axis::AxisController::DrawAxis(xg::XChart &chart, std::unique_ptr<xg::a
     //  }
     //},
     auto &coord = chart.GetCoord();
-    bool hideGrid = coord.GetType() == coord::CoordType::Polar && axis->labelCfg.is_null() && axis->lineCfg.is_null();
+    bool hideGrid = coord.GetType() == coord::CoordType::Polar && axis->labelCfg.hidden && axis->lineCfg.hidden;
     // draw grid
     if(!hideGrid &&
-       axis->gridCfg.is_object() &&
        !axis->verticalField.empty() &&
        !axis->gridPoints.empty()) {
         tracer->trace("%s", "draw grid line");
-        float lineWidth = axis->gridCfg["lineWidth"].get<float>() * chart.GetCanvasContext().GetDevicePixelRatio();
-        auto &type = axis->gridCfg["type"] ;
+        float lineWidth = axis->gridCfg.lineWidth * chart.GetCanvasContext().GetDevicePixelRatio();
+        auto &type = axis->gridCfg.type;
         auto position = axis->position;
-        auto &stroke = json::GetString(axis->gridCfg, "stroke");
+        auto &stroke = axis->gridCfg.stroke;
        
-        std::vector<float> dash = xg::json::ParseDashArray(axis->gridCfg["dash"], context.GetDevicePixelRatio());
+        std::vector<float> dash = json::ScaleDash(axis->gridCfg.dash, context.GetDevicePixelRatio());
         
         //雷达图轴上的背景色
-        std::vector<string> fill = GetFillColor(axis->gridCfg["fill"]);
+        std::vector<string> fill = axis->gridCfg.fill;
         auto xAxis = coord.GetXAxis();
         int index = 0;
         int radius0 = 0;
@@ -400,8 +421,7 @@ void xg::axis::AxisController::DrawAxis(xg::XChart &chart, std::unique_ptr<xg::a
         axis->end.x = line[1].x;
         axis->end.y = line[1].y;
 
-        bool drawLine = axis->lineCfg.is_object();
-        if(drawLine) {
+        if(!axis->lineCfg.hidden) {
             tracer->trace("%s", "draw axis Line");
             DrawLine(chart, std::move(line), axis->lineCfg);
         }
@@ -426,17 +446,17 @@ void xg::axis::AxisController::DrawAxis(xg::XChart &chart, std::unique_ptr<xg::a
     tracer->trace("%s\n", "end draw axis;");
 }
 
-void xg::axis::AxisController::DrawLine(XChart &chart, std::array<util::Point, 2> &&line, const nlohmann::json &lineCfg) {
-    float lineWidth = lineCfg["lineWidth"].get<float>() * chart.GetCanvasContext().GetDevicePixelRatio();
-    if(lineCfg["type"] == "line") {
-        std::unique_ptr<xg::shape::Element> _line = xg::make_unique<xg::shape::Line>(line[0], line[1], lineWidth, lineCfg["color"]);
+void xg::axis::AxisController::DrawLine(XChart &chart, std::array<util::Point, 2> &&line, const AxisLineCfg &lineCfg) {
+    float lineWidth = lineCfg.lineWidth * chart.GetCanvasContext().GetDevicePixelRatio();
+    if(lineCfg.type == "line") {
+        std::unique_ptr<xg::shape::Element> _line = xg::make_unique<xg::shape::Line>(line[0], line[1], lineWidth, lineCfg.stroke);
         this->container_->AddElement(std::move(_line));
-    } else if(lineCfg["type"] == "dash") {
+    } else if(lineCfg.type == "dash") {
         std::vector<util::Point> _points = {line[0], line[1]};
         auto l = xg::make_unique<xg::shape::Polyline>(lineWidth, _points, false);
-        l->SetStorkColor(lineCfg["color"]);
+        l->SetStorkColor(lineCfg.stroke);
         l->SetZIndex(-1);
-        std::vector<float> dash = xg::json::ParseDashArray(lineCfg["dash"], chart.GetCanvasContext().GetDevicePixelRatio());
+        std::vector<float> dash = xg::json::ParseDashArray(lineCfg.dash, chart.GetCanvasContext().GetDevicePixelRatio());
         l->SetDashLine(dash);
         this->container_->AddElement(std::move(l));
     }
@@ -449,11 +469,7 @@ void xg::axis::AxisController::DrawLabel(XChart &chart, std::unique_ptr<xg::axis
     // std::unique_ptr<xg::shape::Text> text = xg::make_unique<xg::shape::Text>(label.text.c_str(), xg::util::Point(start.x,
     // start.y), label.fontSize, "", label.fill);
 
-    float labelOffset = 0.f;
-    if(axis->labelCfg.is_object()) {
-        labelOffset = axis->labelCfg["labelOffset"];
-    }
-    labelOffset *= context.GetDevicePixelRatio();
+    float labelOffset = axis->labelCfg.labelOffset * context.GetDevicePixelRatio();
 
     auto &coord = chart.GetCoord();
     
@@ -469,8 +485,6 @@ void xg::axis::AxisController::DrawLabel(XChart &chart, std::unique_ptr<xg::axis
         if(chart.GetCoord().IsTransposed()) {
             dimType = axis->dimType == "x" ? "y" : "x";
         }
-        
-        bool inner = json::GetBool(axis->labelCfg, "inner");
         xg::util::BBox bbox = text->GetBBox(context);
         
         //等于把pt.y轴下移了5个dp，textbaseline变成了middle

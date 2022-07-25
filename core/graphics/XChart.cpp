@@ -16,6 +16,12 @@
 using namespace xg;
 using namespace std;
 
+void xg::from_json(const nlohmann::json &j, CoordCfg &c) {
+    CoordCfg d;
+    c.coordType = j.value("type", d.coordType);
+    c.transposed = j.value("transposed", d.transposed);
+}
+
 XChart::XChart(const std::string &name, double width, double height, double ratio, bool showLog) : chartName_(name) {
     SetName(name);
     width_ = width * ratio;
@@ -454,47 +460,59 @@ bool XChart::Render() {
         // 1. init Coord
         this->logTracer_->trace("%s padding: [%lf, %lf, %lf, %lf]", "call InitCoord", padding_[0], padding_[1], padding_[2], padding_[3]);
         this->InitCoord();
+        logTracer_->trace("XChart#Performance InitCoord %lums", (xg::CurrentTimestampAtMM() - startTimeStamp));
         // 2. init Geoms
 
         this->logTracer_->trace("%s", "foreach geom init");
         std::for_each(geoms_.begin(), geoms_.end(), [this](auto &geom) -> void { geom->Init(this); });
+        logTracer_->trace("XChart#Performance GeomInit %lums", (xg::CurrentTimestampAtMM() - startTimeStamp));
         
         //调整interval中的min和max值
         if (config_.adjustScale_) {
             scaleController_->AdjustScale();
+            logTracer_->trace("XChart#Performance AdjustScale %lums", (xg::CurrentTimestampAtMM() - startTimeStamp));
         }
 
         //调整interval中的rangeMin和rangeMax值
         if (config_.syncY_) {
             scaleController_->SyncYScale();
+            logTracer_->trace("XChart#Performance SyncYScale %lums", (xg::CurrentTimestampAtMM() - startTimeStamp));
         }
         
         rendered_ = true;
 
         this->NotifyAction(ACTION_CHART_AFTER_INIT);
+        logTracer_->trace("XChart#Performance NotifyAction ACTION_CHART_AFTER_INIT %lums", (xg::CurrentTimestampAtMM() - startTimeStamp));
     }
     // 3. legend render
     this->logTracer_->trace("%s", "legendController render");
+    auto legendTimeStamp = xg::CurrentTimestampAtMM();
     legendController_->Render(*this);
+    logTracer_->trace("XChart#Performance LegendRender %lums", (xg::CurrentTimestampAtMM() - legendTimeStamp));
 
     // 4. render Axis
     this->logTracer_->trace("%s", "draw axies");
+    auto axisTimeStamp = xg::CurrentTimestampAtMM();
     axisController_->DrawAxes(this, *canvasContext_);
+    logTracer_->trace("XChart#Performance DrawAxes %lums", (xg::CurrentTimestampAtMM() - axisTimeStamp));
 
     // 5. geom paint
     this->logTracer_->trace("%s", "foreach geom paint");
 
     std::for_each(geoms_.begin(), geoms_.end(), [this](auto &geom) { geom->Paint(this); });
+    logTracer_->trace("XChart#Performance GeomPaint %lums", (xg::CurrentTimestampAtMM() - startTimeStamp));
     // 6. guide render
     this->NotifyAction(ACTION_CHART_AFTER_GEOM_DRAW);
 
     // 6.1 guide render
     this->logTracer_->trace("%s", "guideController render");
     guideController_->Render(*this, *canvasContext_);
+    logTracer_->trace("XChart#Performance GuideRender %lums", (xg::CurrentTimestampAtMM() - startTimeStamp));
 
     // 7. children sort
     this->logTracer_->trace("%s", "canvas#sort");
     this->canvas_->Sort();
+    logTracer_->trace("XChart#Performance CanvasSort %lums", (xg::CurrentTimestampAtMM() - startTimeStamp));
 
     // 图元元素限定在屏幕区域内绘制。当绘制元素很多时(K线)，这个操作耗时太大，先不执行这个操作。
     //     midLayout_->clip_ = std::make_unique<shape::Rect>(util::Point{coord_->GetXAxis().x, coord_->GetYAxis().y},
@@ -510,7 +528,7 @@ bool XChart::Render() {
     this->NotifyAction(ACTION_CHART_BEFORE_CANVAS_DRAW);
     this->canvas_->Draw(GetCanvasContext());
     this->NotifyAction(ACTION_CHART_AFTER_RENDER);
-
+    logTracer_->trace("XChart#Performance CanvasDraw %lums", (xg::CurrentTimestampAtMM() - startTimeStamp));
     renderDurationMM_ = xg::CurrentTimestampAtMM() - startTimeStamp;
 
     long count = this->canvasContext_->GetRenderCount();
@@ -583,8 +601,8 @@ void XChart::InitLayout() {
 }
 
 void XChart::InitCoord() {
-    bool _transposed = config_.transposed;
-    const std::string &type = config_.coordType;
+    bool _transposed = coordConfig_.transposed;
+    const std::string &type = coordConfig_.coordType;
     util::Point start = util::Point{this->margin_[0] + this->padding_[0], this->margin_[1] + this->height_ - this->padding_[3]};
     util::Point end = util::Point{this->margin_[0] + this->width_ - this->padding_[2], this->margin_[1] + this->padding_[1]};
     if(type == "polar") {
@@ -713,8 +731,8 @@ XChart &XChart::ScaleObject(const std::string &field, const nlohmann::json &conf
     return *this;
 }
 
-XChart &XChart::AxisObject(const std::string &field, const nlohmann::json &config) {
-    this->logTracer_->trace("#Axis field: %s config: %s", field.c_str(), config.dump().c_str());
+XChart &XChart::AxisObject(const std::string &field, const axis::AxisCfg &config) {
+    this->logTracer_->trace("#Axis field: %s config: %b", field.c_str(), config.hidden);
     this->axisController_->SetFieldConfig(field, config);
     return *this;
 }
@@ -757,12 +775,11 @@ XChart &XChart::TooltipObject(const nlohmann::json &config) {
     return *this;
 }
 
-XChart &XChart::CoordObject(const nlohmann::json &config) {
+XChart &XChart::CoordObject(const CoordCfg &config) {
     this->logTracer_->trace("#coord ");
-    config_.coordType = json::GetString(config, "type", config_.coordType);
-    config_.transposed = json::GetBool(config, "transposed", config_.transposed);
+    coordConfig_ = config;
     if(this->coord_ != nullptr) {
-        this->coord_->SetTransposed(config_.transposed);
+        this->coord_->SetTransposed(coordConfig_.transposed);
     }
     return *this;
 }

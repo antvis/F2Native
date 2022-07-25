@@ -20,6 +20,7 @@ enum class CoordType {
     Polar = 1,
     Cartesian,
 };
+
 // 坐标系
 class AbstractCoord {
   public:

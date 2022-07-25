@@ -763,7 +763,7 @@ XChart &XChart::Interaction(const std::string &type, const interaction::PanCfg &
     return *this;
 }
 
-XChart &XChart::TooltipObject(const nlohmann::json &config) {
+XChart &XChart::TooltipObject(const tooltip::ToolTipCfg &config) {
     if(this->tooltipController_ == nullptr) {
         this->tooltipController_ = new tooltip::ToolTipController(this);
 

@@ -14,7 +14,7 @@ typedef std::function<void(nlohmann::json &data)> ToolTipMarkerItemsCallback;
 class ToolTipController {
   public:
     ToolTipController(XChart *chart);
-    void Init(const nlohmann::json &config = {});
+    void Init(const ToolTipCfg &config);
 
     ~ToolTipController();
 
@@ -40,25 +40,7 @@ class ToolTipController {
     XChart *chart_;
 
     std::unique_ptr<ToolTip> toolTip_;
-    nlohmann::json config_ = {{"alwaysShow", false},
-                              {"showTitle", false},
-                              {"showCrosshairs", true},
-                              {"crosshairsStyle", {{"yCrosshair", true}, {"stroke", "#1890FF"}, {"lineWidth", 1}, {"type", "dash"}, {"dash", {4, 4}}}},
-                              {"showTooltipMarker", true},
-                              {"background", {{"radius", 1}, {"fill", "#1890FF"}, {"padding", {3, 3}}}},
-                              {"xTip", {{"inner", false}, {"fontSize", 10}, {"fill", "#ffffff"}, {"textAlign", "center"}, {"textBaseline", "bottom"}}},
-                              {"yTip", {{"inner", false}, {"fontSize", 10}, {"fill", "#ffffff"}, {"textAlign", "center"}, {"textBaseline", "bottom"}}},
-                              {"titleStyle", {{"fontSize", 12}, {"fill", "#ffffff"}, {"textAlign", "start"}, {"textBaseline", "top"}}},
-                              {"nameStyle", {{"fontSize", 12}, {"fill", "#ffffffa6"}, {"textAlign", "start"}, {"textBaseline", "top"}}},
-                              {"valueStyle", {{"fontSize", 12}, {"fill", "#ffffff"}, {"textAlign", "start"}, {"textBaseline", "middle"}}},
-                              {"showItemMarker", true},
-                              {"itemMarkerStyle", {{"radius", 3}, {"symbol", "circle"}, {"lineWidth", 1}, {"stroke", "#ffffff"}}},
-                              {"layout", "horizontal"},
-                              {"onPressStart", false},
-                              {"onPress", false},
-                              {"onPressEnd", false},
-                              {"snap", false},
-                              {"hidden", false}};
+    ToolTipCfg config_;
     long long lastShowTimeStamp_ = 0;
     std::vector<ToolTipMarkerItemsCallback> actionListeners_{};
     shape::Group *container_ = nullptr;

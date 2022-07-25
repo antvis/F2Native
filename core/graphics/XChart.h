@@ -320,7 +320,7 @@ class XChart {
     XChart &LegendObject(const std::string &field, const nlohmann::json &json);
     XChart &Interaction(const std::string &type, const interaction::PinchCfg &json);
     XChart &Interaction(const std::string &type, const interaction::PanCfg &json);
-    XChart &TooltipObject(const nlohmann::json &json);
+    XChart &TooltipObject(const tooltip::ToolTipCfg &json);
     XChart &CoordObject(const CoordCfg &json);
     XChart &AnimateObject(const animate::AnimateCfg &json);
 

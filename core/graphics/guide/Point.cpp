@@ -23,11 +23,13 @@ void guide::Point::Render(XChart &chart, shape::Group *container, canvas::Canvas
     double offsetY = json::GetNumber(config_, "offsetY");
     double size = json::GetNumber(config_, "size") * context.GetDevicePixelRatio();
     const std::string &color = json::GetString(config_, "fill");
+    const std::string &stroke = json::GetString(config_, "stroke");
+    const float lineWidth = json::GetNumber(config_, "lineWidth");
     
     position.x = position.x + offsetX * context.GetDevicePixelRatio();
     position.y = position.y + offsetY * context.GetDevicePixelRatio();
     
-    auto circle = xg::make_unique<shape::Circle>(position, size, color);
+    auto circle = xg::make_unique<shape::Circle>(position, size, color, stroke, lineWidth);
     bbox_ = circle->GetBBox(context);
     container->AddElement(std::move(circle));
 }

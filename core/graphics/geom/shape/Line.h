@@ -55,8 +55,7 @@ class Line : public GeomShapeBase {
         std::string color = data[start]._color.empty() ? GLOBAL_COLORS[0] : data[start]._color;
         //使用线宽的一般作为半径来画点，避免出现第二个点的时候 有明显的大小变化的跳动感觉
         float radius = (std::isnan(data[start]._size) ? 1 :data[start]._size) * canvasContext.GetDevicePixelRatio() / 2.0;
-        auto circle = std::make_unique<xg::shape::Circle>(center, radius);
-        circle->SetFillColor(color);
+        auto circle = std::make_unique<xg::shape::Circle>(center, radius, color, "", 1.0f);
         container.AddElement(std::move(circle));
     }
     

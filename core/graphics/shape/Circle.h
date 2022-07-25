@@ -13,11 +13,13 @@ class Circle : public Shape {
         point_ = center;
     }
 
-    Circle(const util::Point &center, const float radius, const std::string &fill) : radius_(radius) {
+    Circle(const util::Point &center, const float radius, const std::string &fill, const std::string &stroke, const float lineWidth) : radius_(radius) {
         type_ = "circle";
         point_ = center;
+        lineWidth_ = lineWidth;
 
         SetFillColor(fill);
+        SetStorkColor(stroke);
     }
 
     BBox CalculateBox(canvas::CanvasContext &context) const override;

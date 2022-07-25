@@ -121,7 +121,7 @@ void Flag::DrawFlagCircleAndLine(XChart &chart, shape::Group *container, canvas:
     const float radius = config_["radius"].get<float>() * context.GetDevicePixelRatio();
     std::string color = config_["color"];
 
-    auto circle = xg::make_unique<shape::Circle>(position, radius, color);
+    auto circle = xg::make_unique<shape::Circle>(position, radius, color, "", 1.0f);
     circle->SetZIndex(-10);
     container->AddElement(std::move(circle));
 

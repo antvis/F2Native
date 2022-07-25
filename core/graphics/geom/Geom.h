@@ -60,7 +60,7 @@ struct XStyle {
     std::array<float, 4> roundings = {0, 0, 0, 0};
     
     //圆半径
-    float size = 3.0f;
+    float size = NAN;
 };
 
 extern void from_json(const nlohmann::json& j, XStyle& x);

@@ -29,23 +29,26 @@ class Point : public GeomShapeBase {
         std::string colorStyle = GLOBAL_COLORS[0];
         if(!data._color.empty()) {
             colorStyle = data._color;
-        } else {
+        } else if(!style.fill.empty()){
             colorStyle = style.fill;
+        }
+        
+        std::string strokeColor = "";
+        if(!style.stroke.empty()){
+            strokeColor = style.stroke;
         }
         
         float radius = 3;
         if(!std::isnan(data._size)) {
             radius = data._size;
-        }else {
+        }else if(!std::isnan(style.size)){
             radius = style.size;
         }
 
         if(shape == "circle") {           
             radius *= context.GetDevicePixelRatio();
 
-            auto circle = std::make_unique<xg::shape::Circle>(center, radius);
-            // TODO 兼容 stroke 模式 & linear or radial 模式
-            circle->SetFillColor(colorStyle);
+            auto circle = std::make_unique<xg::shape::Circle>(center, radius, colorStyle, strokeColor, style.lineWidth);
             container.AddElement(std::move(circle));
         }
     }

@@ -19,31 +19,40 @@ namespace scale {
  */
 class Category : public AbstractScale {
   public:
-    Category(const std::string &_field, const nlohmann::json &_values, const nlohmann::json &_config)
+    Category(const std::string &_field, const nlohmann::json &_values, const ScaleCfg &_config)
         : AbstractScale(_field, _values, _config) {
-
-        InitConfig(_config);
-        if (!containTicks) {
-            ticks = CalculateTicks();
-        }
+        Change(_config);
     }
 
     ScaleType GetType() const noexcept override { return ScaleType::Cat; }
 
-    void Change(const nlohmann::json &cfg = {}) override {
-        config.merge_patch(cfg);
-        values = json::GetArray(cfg, "values", values);
+    void Change(const ScaleCfg &cfg) override {
+        config = cfg;
         
-        //里面max和min的计算依赖上面的values
-        InitConfig(config);
-        this->ticks = this->CalculateTicks();
+        if (config.HasDomain()) {
+            min = config.domain[0];
+            max = config.domain[1];
+        } else {
+            min = 0;
+            max = fmax(0, values.size() - 1);
+        }
+        
+        if (config.HasRange()) {
+            range = config.range;
+        }
+        
+        tickCount = std::isnan(config.tickCount) ? GetValuesSize() : config.tickCount;
+            
+        if (config.ticks.empty()) {
+            ticks = CalculateTicks();
+        }
     }
 
     double Scale(const nlohmann::json &key) override {
         double percent = 0;
         std::size_t index = this->Transform(key);
         if(index + 1 > 0) {
-            percent = CalculatePercent(static_cast<double>(index), this->min, this->max);
+            percent = CalculatePercent(static_cast<double>(index), min, max);
         } else {
             double kVal = 0.;
             if(key.is_number()) {
@@ -54,15 +63,15 @@ class Category : public AbstractScale {
             std::size_t divide = fmax(1, (int)GetValuesSize() - 1);
             percent = kVal / (static_cast<double>(divide));
         }
-        double value = CalculateValue(percent, this->rangeMin, this->rangeMax);
+        double value = CalculateValue(percent, range[0], range[1]);
         return value;
     }
 
     nlohmann::json Invert(double val) override {
-        double percent = CalculatePercent(val, this->rangeMin, this->rangeMax);
-        double domainRange = this->max - this->min;
-        int index = static_cast<int>(round(domainRange * percent) + this->min);
-        if(index < this->min || index > this->max) {
+        double percent = CalculatePercent(val, range[0], range[1]);
+        double domainRange = max - min;
+        int index = static_cast<int>(round(domainRange * percent) + min);
+        if(index < min || index > max) {
             return nlohmann::json();
         }
         return values[index];
@@ -84,22 +93,24 @@ class Category : public AbstractScale {
         return index;
     }
 
-    virtual inline std::size_t GetValuesSize() noexcept override { return this->max - this->min + 1; }
+    virtual inline std::size_t GetValuesSize() noexcept override { return max - min + 1; }
+    virtual inline double GetMax() noexcept override { return max; }
+    virtual inline double GetMin() noexcept override { return min; }
 
   protected:
-    virtual nlohmann::json CalculateTicks() override {
+    virtual vector<string> CalculateTicks() override {
             std::size_t valueSize = values.size();
             if(valueSize == 0) {
                 return {};
             }
-            nlohmann::json rst;
-            if (this->tickCount == 0) {
+            vector<string> rst;
+            if (tickCount == 0) {
                 return {};
-            }else if(this->tickCount == 1) {
+            }else if(tickCount == 1) {
                 //对齐f2的展示 tickCount为1的时候 = tickCount为values.size()
                 for (size_t index = 0; index < values.size(); ++index) {
                     const nlohmann::json &_item = values[index];
-                    rst.push_back(_item);
+                    rst.push_back(_item.get<string>());
                 }
                 return rst;
             }
@@ -109,7 +120,7 @@ class Category : public AbstractScale {
                 outlstep = fmax(outlstep, 1);
                 for (size_t index = 0; index < values.size(); index = index + outlstep) {
                     nlohmann::json &_item = values[index];
-                    rst.push_back(_item);
+                    rst.push_back(_item.get<string>());
                 }
                          
                 // 如果最后一个tick不等于原数据的最后一个
@@ -136,25 +147,9 @@ class Category : public AbstractScale {
     }
 
     static inline double CalculateValue(double percent, double min, double max) { return min + percent * (max - min); }
-
-    virtual void InitConfig(const nlohmann::json &config) override {
-        AbstractScale::InitConfig(config);
-
-        if(config.contains("domain") && config["domain"].is_array()) {
-            const nlohmann::json &domain = config["domain"];
-            this->min = domain[0];
-            this->max = domain[1];
-        } else {
-            this->min = 0.;
-            this->max = fmax(0, values.size() - 1);
-        }
-        
-        if(config.contains("tickCount")) {
-            this->tickCount = config["tickCount"];
-        } else {
-            this->tickCount = GetValuesSize();
-        }
-    }
+protected:
+    size_t min, max, tickCount;
+    array<float, 2> range = {0, 1};
 }; // namespace scale
 } // namespace scale
 } // namespace xg

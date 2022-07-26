@@ -10,7 +10,7 @@ class TimeCategory : public Category {
   public:
     TimeCategory(const std::string &_field,
                  const nlohmann::json &_values,
-                 const nlohmann::json &config,
+                 const ScaleCfg &config,
                  std::string mask = "HH::mm")
         : Category(_field, _values, config), mask(mask) {}
 

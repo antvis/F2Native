@@ -14,7 +14,7 @@
         "color": "#DDDDDD"
     }],
     "scales": [{
-        "ticks": [0, 5, 10, 15, 20],
+        "ticks": ["0", "5", "10", "15", "20"],
         "field": "date"
     }, {
         "precision": 2,

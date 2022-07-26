@@ -39,7 +39,7 @@ class InteractionContext {
 
     bool Repaint(nlohmann::json &newValues, std::size_t valueStart, std::size_t valueEnd);
 
-    void UpdateScale(const std::string &field, nlohmann::json cfg);
+    void UpdateScale(const std::string &field, const scale::ScaleCfg &cfg);
 
     void UpdateFollowScale(scale::AbstractScale &pinchScale, nlohmann::json &pinchValues, std::size_t valueStart, std::size_t valueEnd);
 

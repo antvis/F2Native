@@ -17,7 +17,7 @@
     self.chart.axis(@"tem", @{@"grid": @{@"stroke": @"#000"}});
 
     self.chart.line().position(@"month*value");
-    self.chart.area().position(@"month*value").fixedColor(@"#1890FF0F").style(@{@"startOnZero":@(NO)});
+    self.chart.area().position(@"month*value").fixedColor(@"#1890FF0F").style(@{@"startOnZero":@(YES)});
 
     self.chart.scale(@"value", @{@"nice": @(YES)});
     self.chart.render();

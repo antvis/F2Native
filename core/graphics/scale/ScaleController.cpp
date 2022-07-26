@@ -11,19 +11,18 @@
 using namespace xg;
 using namespace xg::scale;
 
-
-nlohmann::json xg::scale::AdjustRange(const nlohmann::json &fieldColumn, std::unique_ptr<canvas::coord::AbstractCoord> &coord) {
-    nlohmann::json cfg;
+array<float, 2> xg::scale::AdjustRange(const nlohmann::json &fieldColumn, std::unique_ptr<canvas::coord::AbstractCoord> &coord) {
+    array<float, 2> cfg = {NAN, NAN};
     const std::size_t size = fieldColumn.size();
     if(size <= 1) {
-        cfg["range"] = {0.5, 1.0};
+        cfg = {0.5, 1.0};
     } else {
         if(coord->GetType() == canvas::coord::CoordType::Polar) {
             if(!coord->IsTransposed()) {
-                cfg["range"] = {0, 1.0 - 1.0 / static_cast<float>(size)};
+                cfg = {0, 1.0f - 1.0f / static_cast<float>(size)};
             } else {
-                float offset = 1.0 / static_cast<float>(size) * 3.0 / 4.0;
-                cfg["range"] = {offset / 2.0, 1.0 - offset / 2.0};
+                float offset = 1.0f / static_cast<float>(size) * 3.0 / 4.0;
+                cfg = {offset / 2.0f, 1.0f - offset / 2.0f};
             }
         }
     }
@@ -31,25 +30,25 @@ nlohmann::json xg::scale::AdjustRange(const nlohmann::json &fieldColumn, std::un
 }
 
 std::unique_ptr<AbstractScale> xg::scale::MakeCategory(const std::string &field_,
-                                                const nlohmann::json &data,
-                                                nlohmann::json &config,
-                                                utils::Tracer *tracer,
-                                                std::unique_ptr<canvas::coord::AbstractCoord> &coord,
-                                                nlohmann::json &fieldColumn) {
-    nlohmann::json a_config = AdjustRange(fieldColumn, coord);
-    if(a_config.is_object()) {
-        config.merge_patch(a_config);
-    }
+                                                    const nlohmann::json &data,
+                                                    const ScaleCfg &config,
+                                                    utils::Tracer *tracer,
+                                                    std::unique_ptr<canvas::coord::AbstractCoord> &coord,
+                                                    const nlohmann::json &fieldColumn) {
     tracer->trace("MakeScale: %s, return Category. ", field_.c_str());
-    return xg::make_unique<Category>(field_, fieldColumn, config);
+    auto cat = xg::make_unique<Category>(field_, fieldColumn, config);
+    auto cfg = cat->GetConfig();
+    cfg.range = AdjustRange(fieldColumn, coord);
+    cat->Change(cfg);
+    return cat;
 }
 
 std::unique_ptr<AbstractScale> xg::scale::MakeLinear(const std::string &field_,
                                                 const nlohmann::json &data,
-                                                nlohmann::json &config,
+                                                const ScaleCfg &config,
                                                 utils::Tracer *tracer,
                                                 std::unique_ptr<canvas::coord::AbstractCoord> &coord,
-                                                nlohmann::json &fieldColumn) {
+                                                const nlohmann::json &fieldColumn) {
     tracer->trace("MakeScale: %s, return Linear. ", field_.c_str());
     return xg::make_unique<Linear>(field_, fieldColumn, config);
 }
@@ -57,7 +56,7 @@ std::unique_ptr<AbstractScale> xg::scale::MakeLinear(const std::string &field_,
 
 std::unique_ptr<AbstractScale> xg::scale::MakeScale(const std::string &field_,
                                                 const nlohmann::json &data,
-                                                nlohmann::json &config,
+                                                const ScaleCfg &config,
                                                 utils::Tracer *tracer,
                                                 std::unique_ptr<canvas::coord::AbstractCoord> &coord) {
 
@@ -68,11 +67,11 @@ std::unique_ptr<AbstractScale> xg::scale::MakeScale(const std::string &field_,
 
     nlohmann::json firstObj = data[0];
     nlohmann::json firstVal = firstObj[field_];
-    //如果field_对应的数据是数组的画，会把数组打平
+    //如果field_对应的数据是数组，会把数组打平
     nlohmann::json fieldColumn = util::JsonArrayByKey(data, field_);
 
-    if(config.contains("type")) {
-        std::string type = config["type"];
+    if(!config.type.empty()) {
+        const std::string &type = config.type;
         if(type == "timeCat") {
             tracer->trace("MakeScale: %s, return TimeCategory. ", field_.c_str());
             return xg::make_unique<TimeCategory>(field_, fieldColumn, config);
@@ -81,7 +80,6 @@ std::unique_ptr<AbstractScale> xg::scale::MakeScale(const std::string &field_,
             return xg::make_unique<TimeSharingLinear>(field_, fieldColumn, config);
         } else if(type.substr(0, 6) == "kline-") {
             tracer->trace("MakeScale: %s, return KlineCat. ", field_.c_str());
-            config["klineType"] = type;
             return xg::make_unique<KLineCat>(field_, fieldColumn, config);
         } else if(type == "cat") {
             return MakeCategory(field_, data, config, tracer, coord, fieldColumn);
@@ -105,25 +103,13 @@ const std::unique_ptr<AbstractScale> &scale::ScaleController::CreateScale(const 
                                                   const nlohmann::json &data,
                                                   utils::Tracer *tracer,
                                                   std::unique_ptr<canvas::coord::AbstractCoord> &coord) {
-    nlohmann::json fieldConfig = json::Get(colConfigs, field_);
-    if(!scales_.empty()) {
-        std::string _key = field_;
-        if(fieldConfig.contains("assign")) {
-            _key = fieldConfig["assign"];
-        }
-
-        std::vector<std::unique_ptr<AbstractScale>>::iterator it =
-            std::find_if(scales_.begin(), scales_.end(),
-                         [&](const std::unique_ptr<AbstractScale> &item) { return (item->field == _key); });
-
-        if(it != scales_.end()) {
-            // TODO 更新 scale config, 暂时没有什么 config
-            return (*it);
-        }
+    if(!scales_.empty() && scales_.count(field_) > 0) {
+        return scales_[field_];
     }
+    
     std::unique_ptr<AbstractScale> _target = MakeScale(field_, data, colConfigs[field_], tracer, coord);
-    scales_.push_back(std::move(_target));
-    return scales_[scales_.size() - 1];
+    scales_[field_] = std::move(_target);
+    return scales_[field_];
 }
 
 void scale::ScaleController::SyncYScale() {
@@ -147,12 +133,17 @@ void scale::ScaleController::SyncYScale(const size_t valueStart, const size_t va
     std::for_each(chart_->GetGeoms().begin(), chart_->GetGeoms().end(), [&](auto &geom) -> void {
         util::JsonRangeInGeomDataArray(geom->GetDataArray(), geom->GetYScaleField(), valueStart, valueEnd, &rangeMin, &rangeMax);
     });
+
     std::for_each(chart_->GetGeoms().begin(), chart_->GetGeoms().end(), [&](auto &geom) -> void {
-        UpdateScale(geom->GetYScaleField(), {{"min", rangeMin}, {"max", rangeMax}});
+        auto &scale = chart_->GetScale(geom->GetYScaleField());
+        auto config = scale.GetConfig();
+        config.min = rangeMin;
+        config.max = rangeMax;
+        UpdateScale(geom->GetYScaleField(), config);
     });
 }
     
-void scale::ScaleController::UpdateScale(const std::string &field, const nlohmann::json &cfg) {
+void scale::ScaleController::UpdateScale(const std::string &field, const ScaleCfg &cfg) {
     auto &scale = chart_->GetScale(field);
     scale.Change(cfg);
 }
@@ -163,16 +154,30 @@ void scale::ScaleController::AdjustScale() {
     }
     std::for_each(chart_->GetGeoms().begin(), chart_->GetGeoms().end(), [&](auto &geom) -> void {
         if (geom->GetType() == "interval") {
-            auto &xScale = chart_->GetScale(geom->GetYScaleField());
-            if (xScale.min > 0 && !xScale.containMin) {
-                xScale.Change({{"min", 0}});
-            } else if(xScale.max < 0 && !xScale.containMax) {
-                xScale.Change({{"max", 0}});
+            auto &yScale = chart_->GetScale(geom->GetYScaleField());
+            auto yConfig = yScale.GetConfig();
+            if (yScale.GetMin() > 0) {
+                yConfig.min = 0;
+                yScale.Change(yConfig);
+            } else if(yScale.GetMax() < 0) {
+                yConfig.max = 0;
+                yScale.Change(yConfig);
             }
-            
-            auto &yScale = chart_->GetScale(geom->GetXScaleField());
-            if (!yScale.containRange) {
-                yScale.Change({{"range", {0.1, 0.9}}});
+        }
+    });
+}
+
+void scale::ScaleController::AdjustRange() {
+    if (chart_->GetCoord().GetType() == CoordType::Polar) {
+        return;
+    }
+    std::for_each(chart_->GetGeoms().begin(), chart_->GetGeoms().end(), [&](auto &geom) -> void {
+        if (geom->GetType() == "interval") {
+            auto &xScale = chart_->GetScale(geom->GetXScaleField());
+            auto xConfig = xScale.GetConfig();
+            if (!xConfig.HasRange()) {
+                xConfig.range = {0.1, 0.9};
+                xScale.Change(xConfig);
             }
         }
     });

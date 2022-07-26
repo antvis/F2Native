@@ -1,7 +1,6 @@
 #ifndef XG_GRAPHICS_SCALE_LINEAR_H
 #define XG_GRAPHICS_SCALE_LINEAR_H
 
-#include <iomanip>
 #include <math.h>
 #include <sstream>
 #include <unordered_map>
@@ -19,10 +18,20 @@ namespace scale {
 class Linear : public AbstractScale {
   public:
     // 线性度量
-    Linear(const std::string &_field, const nlohmann::json &_values, const nlohmann::json &_config = {}) : AbstractScale(_field, _values, _config) {
-        InitConfig(_config);
+    Linear(const std::string &_field, const nlohmann::json &_values, const ScaleCfg &_config) : AbstractScale(_field, _values, _config) {
+        Change(_config);
+    }
+
+    ScaleType GetType() const noexcept override { return ScaleType::Linear; }
+
+    void Change(const ScaleCfg &cfg) override {
+        config = cfg;
+        max = config.max;
+        min = config.min;
+        
+        //内部改变max和min
         if (std::isnan(max) || std::isnan(min)) {
-            std::array<double, 2> range = util::JsonArrayRange(_values);
+            std::array<double, 2> range = util::JsonArrayRange(values);
             if (std::isnan(max)) {
                 max = range[1];
             }
@@ -32,34 +41,37 @@ class Linear : public AbstractScale {
             }
         }
         
-        if (!containTicks) {
+        if (config.HasRange()) {
+            range = config.range;
+        }
+
+        tickCount = std::isnan(config.tickCount) ? 5 : config.tickCount;
+        
+        if (config.ticks.empty()) {
             ticks = CalculateTicks();
-        }        
-    }
-
-    ScaleType GetType() const noexcept override { return ScaleType::Linear; }
-
-    void Change(const nlohmann::json &cfg = {}) override {
-        config.merge_patch(cfg);
-        InitConfig(config);
-        this->ticks = this->CalculateTicks();
+        }
     }
 
     double Scale(const nlohmann::json &key) override {
-        if(!key.is_number()) {
-            return std::nan("0.0");
+        double val = NAN;
+        if (key.is_string()) {
+            val = stod(key.get<string>());
+        } else if (key.is_number()) {
+            val = key.get<double>();
+        } else {
+            return NAN;
         }
         
         if (std::isnan(max) || std::isnan(min)) {
-            return std::nan("0.0");
+            return NAN;
         }
         
         if(xg::IsEqual(this->max, this->min)) {
-            return this->rangeMin;
+            return range[0];
         }
 
-        double percent = GetScalePercent(key);
-        double value = rangeMin + percent * (rangeMax - rangeMin);
+        double percent = GetScalePercent(val);
+        double value = range[0] + percent * (range[1] - range[0]);
         
         //tick范围的代码保护，限制在0~1
         value = fmin(value, 1.0);
@@ -76,33 +88,34 @@ class Linear : public AbstractScale {
     }
 
     std::string GetTickText(const nlohmann::json &item, XChart *chart) override;
+    
+    inline double GetMax() noexcept override {return max;}
+    inline double GetMin() noexcept override {return min;}
 
   protected:
-    nlohmann::json CalculateTicks() override {
+    vector<string> CalculateTicks() override {
         //用户没有主动设置max和min，则使用nice算法
-        if ((nice == true && !containMin && !containMax)) {
-            nlohmann::json _ticks = NiceCalculateTicks();
+        if (config.nice == true && std::isnan(config.min) && std::isnan(config.max)) {
+            auto _ticks = NiceCalculateTicks();
             //修改最值
             this->min = _ticks[0];
             this->max = _ticks[_ticks.size() - 1];
-            return _ticks;
+            return StringUtil::ToStringVector(_ticks);
         } else if (IsEqual(max, min)) {
-            nlohmann::json rst = {min};
-            return rst;
+            return StringUtil::ToStringVector({min});
         } else {
             if(tickCount <= 2) {
-                nlohmann::json rst = {min, max};
-                return rst;
+                return StringUtil::ToStringVector({min, max});
             }
 
-            double interval = (this->max - this->min) / (this->tickCount - 1);
+            double interval = (this->max - this->min) / (tickCount - 1);
             
-            nlohmann::json rst;
-            for(int i = 0; i < tickCount; ++i) {                
+            vector<double> rst;
+            for(int i = 0; i < tickCount; ++i) {
                 rst.push_back(this->min + i * interval);
             }
          
-            return rst;
+            return StringUtil::ToStringVector(rst);
         }
     }
 
@@ -143,7 +156,7 @@ class Linear : public AbstractScale {
 
     double GetScalePercent(double value) const { return (value - this->min) / (this->max - this->min); }
 
-    double GetInvertPercent(double value) const { return (value - this->rangeMin) / (this->rangeMax - this->rangeMin); }
+    double GetInvertPercent(double value) const { return (value - range[0]) / (range[1] - range[0]); }
 
     double GetBestInterval(const std::size_t tickCount, const double max, const double min) {
         // 如果最大最小相等，则直接按1处理
@@ -247,16 +260,18 @@ class Linear : public AbstractScale {
     double ToFixed(const double val, const int decimal) const { return val; }
 
   private:
-    void InitConfig(const nlohmann::json &cfg) override {
-        AbstractScale::InitConfig(cfg);
-        nice = json::GetBool(cfg, "nice", nice);
-        precision = json::GetIntNumber(cfg, "precision", precision);
-    }
+//    void InitConfig(const nlohmann::json &cfg) override {
+//        AbstractScale::InitConfig(cfg);
+//        nice = json::GetBool(cfg, "nice", nice);
+//        precision = json::GetIntNumber(cfg, "precision", precision);
+//    }
 
   public:
     double tickInterval = -1;
-    int precision = 0; // tickText 小数点精度
-    bool nice = true;
+    double max, min;
+    size_t tickCount = 5;
+    array<float, 2> range = {0, 1};
+    
 };
 } // namespace scale
 } // namespace xg

@@ -37,7 +37,7 @@ struct XStyle {
     std::vector<float> dash;
     
     //面积图是否从0开始
-    bool startOnZero = true;
+    bool startOnZero = false;
     
     //线宽
     float lineWidth = 1.0f;

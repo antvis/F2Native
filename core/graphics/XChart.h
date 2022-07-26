@@ -69,11 +69,14 @@ namespace xg {
 typedef std::function<void()> ChartActionCallback;
 
 struct XConfig final {
-    //当geom中有interval的时候自动调整max, min, range三个参数
-    bool adjustScale_ = true;
+    //当geom中有interval的时候自动调整max, min两个参数，使其中一个为0
+    bool adjustScale = true;
     //当geom中有过个图形时，是否同步他们的最值
     //默认为false 因为shape为stack的时候不能sync
-    bool syncY_ = false;
+    bool syncY = false;
+    
+    //当geom中有interval的时候自动调整range参数， 使range = {0.1, 0.9}
+    bool adjustRange = true;
 };
 
 struct CoordCfg {
@@ -200,13 +203,17 @@ class XChart {
     /// @param json json数组
     void ChangeData(const std::string &json);
     
-    ///设置当geom中有interval的时候，是否调整max, min, range三个参数, 默认是true
+    ///设置当geom中有interval的时候，是否调整max, min,两个参数, 使其中一个为0
     ///@param adjust 是否调整，默认是调整的，可设置false 关闭
-    inline void AdjustScale(bool adjust) { config_.adjustScale_ = adjust; }
+    inline void AdjustScale(bool adjust) { config_.adjustScale = adjust; }
     
     ///是否同步多个y轴的最值，默认为false
     ///@param sync 可设置false关闭
-    inline void SyncYScale(bool sync) { config_.syncY_ = sync; }
+    inline void SyncYScale(bool sync) { config_.syncY = sync; }
+    
+    ///设置当geom中有interval的时候，是否调整range两个参数, 使其为range = {0.1, 0.9}
+    ///@param range 是否调整，默认是调整的，可设置false 关闭
+    inline void AdjustRange(bool range) { config_.adjustRange = range; }
     
     /// 注册业务测的回调函数，所有回调都会通过这个callback回调
     /// @param callback 回调函数
@@ -315,7 +322,7 @@ class XChart {
     bool Parse(const std::string &dsl);
     bool ParseObject(const nlohmann::json &dsl);
     XChart &SourceObject(const nlohmann::json &data);
-    XChart &ScaleObject(const std::string &field, const nlohmann::json &json);
+    XChart &ScaleObject(const std::string &field, const ScaleCfg &json);
     XChart &AxisObject(const std::string &field, const axis::AxisCfg &json);
     XChart &LegendObject(const std::string &field, const nlohmann::json &json);
     XChart &Interaction(const std::string &type, const interaction::PinchCfg &json);

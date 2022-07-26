@@ -428,6 +428,13 @@ class IOSF2Function : public func::F2Function {
     };
 }
 
+- (F2Chart * (^)(BOOL adjust))adjustRange {
+    return ^id(BOOL adjust) {
+        self.chart->AdjustRange(adjust);
+        return self;
+    };
+}
+
 - (F2Chart * (^)(CGSize size))changeSize {
     return ^id(CGSize size) {
         self.chart->ChangeSize(size.width, size.height);

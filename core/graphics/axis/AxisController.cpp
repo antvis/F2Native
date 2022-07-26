@@ -21,8 +21,6 @@ void xg::axis::from_json(const nlohmann::json& j, AxisGridCfg& a) {
         a.dash = j.value("dash", d.dash);
         a.fill = j.value("fill", d.fill);
         a.hidden = j.value("hidden", d.hidden);
-    } else {
-        F2ASSERT(false, "AxisGridCfg from_json error json type");
     }
 }
 
@@ -53,8 +51,6 @@ void xg::axis::from_json(const nlohmann::json& j, AxisLabelCfg& a) {
         a.xOffset = j.value("xOffset", d.xOffset);
         a.yOffset = j.value("yOffset", d.yOffset);
         a.hidden = j.value("hidden", d.hidden);
-    } else {
-        F2ASSERT(false, "AxisLabelCfg from_json error json type");
     }
 }
 
@@ -68,8 +64,6 @@ void xg::axis::from_json(const nlohmann::json& j, AxisLineCfg& a) {
         a.stroke = j.value("stroke", d.stroke);
         a.dash = j.value("dash", d.dash);
         a.hidden = j.value("hidden", d.hidden);
-    } else {
-        F2ASSERT(false, "AxisLineCfg from_json error json type");
     }
 }
 
@@ -82,8 +76,6 @@ void xg::axis::from_json(const nlohmann::json& j, AxisCfg& a) {
         a.line = j.value("line", d.line);
         a.grid = j.value("grid", d.grid);
         a.hidden = j.value("hidden", d.hidden);
-    } else {
-        F2ASSERT(false, "AxisLineCfg from_json error json type");
     }
 }
 

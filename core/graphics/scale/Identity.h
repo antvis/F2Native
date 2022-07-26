@@ -16,13 +16,13 @@ class Identity : public AbstractScale {
 
     ScaleType GetType() const noexcept override { return ScaleType::Identity; }
 
-    void Change(const nlohmann::json &cfg = {}) override {}
+    void Change(const ScaleCfg &cfg) override {}
 
     double Scale(const nlohmann::json &key) override {
         if(values.size() > 0 && key.is_number() && values[0] == key) {
             return key;
         }
-        return this->rangeMin;
+        return config.range[0];
     }
 
     nlohmann::json Invert(double key) override {
@@ -34,7 +34,7 @@ class Identity : public AbstractScale {
     }
 
   protected:
-    nlohmann::json CalculateTicks() override { return values; }
+    vector<string> CalculateTicks() override { return {}; }
 };
 } // namespace scale
 } // namespace xg

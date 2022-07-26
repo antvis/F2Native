@@ -44,8 +44,8 @@ void geom::Area::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
 
         std::size_t start = 0, end = groupData.size() - 1;
         if(scale::IsCategory(xScale.GetType())) {
-            start = fmax(start, xScale.min);
-            end = fmin(end, xScale.max);
+            start = fmax(start, xScale.GetMin());
+            end = fmin(end, xScale.GetMax());
         }
 
         for(std::size_t index = start; index <= end; ++index) {

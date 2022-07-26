@@ -10,83 +10,58 @@ namespace scale {
 
 class TimeSharingLinear : public AbstractScale {
   public:
-    TimeSharingLinear(const std::string &_field, const nlohmann::json &_values, const nlohmann::json &_config)
+    TimeSharingLinear(const std::string &_field, const nlohmann::json &_values, const ScaleCfg &_config)
         : AbstractScale(_field, _values, _config) {
-        //入口检查 其它方法都判断这个变量
-        if (!(isTimeRangeValid_ = CheckValidTimeRange(_config))) {
-            return;
-        }
-            
-        nlohmann::json &timeRange = config["timeRange"];
-        nlohmann::json &first = timeRange[0];
-        nlohmann::json &last = timeRange[timeRange.size() - 1UL];
-            
-        min = first[0];
-        max = last[1];
-        this->valueSize_ = _GetValuesSize();
-        this->ticks = this->CalculateTicks();
+        Change(_config);
     }
     
     //timeRange格式 @[@[@(1608687000000), @(1608694200000)], @[@(1608699600000), @(1608706800000)]]
-    bool CheckValidTimeRange(const nlohmann::json &config) {
-        const nlohmann::json &timeRange = json::GetArray(config, "timeRange");
+    bool CheckValidTimeRange(const ScaleCfg &config) {
+        bool rst = true;
+        auto &timeRange = config.timeRange;
         for(std::size_t index = 0; index < timeRange.size(); ++index) {
-            const nlohmann::json &range = timeRange[index];
-            bool valid = range.is_array() && range.size() == 2 && range[0].is_number() && range[1].is_number();
-           
-            if (!valid) {
-                return false;
-            }
+            auto &range = timeRange[index];
+            rst &= !std::isnan(range[0]) && !std::isnan(range[1]);
         }
         
-        return timeRange.size();
+        return rst;
     }
 
     ScaleType GetType() const noexcept override { return ScaleType::TimeSharingLinear; }
 
-    virtual void Change(const nlohmann::json &cfg = {}) override {
-        if (!isTimeRangeValid_) {
+    virtual void Change(const ScaleCfg &cfg) override {
+        //入口检查 其它方法都判断这个变量
+        if (!(isTimeRangeValid_ = CheckValidTimeRange(config))) {
             return;
         }
-        
-        if(cfg.is_object()) {
-            config.merge_patch(cfg);
-        }
 
-        if(cfg.contains("values")) {
-            values = cfg["values"];
-        }
+        auto &timeRange = config.timeRange;
+        auto &first = timeRange[0];
+        auto &last = timeRange[timeRange.size() - 1UL];
 
-        nlohmann::json &timeRange = config["timeRange"];
-        nlohmann::json &first = timeRange[0];
-        nlohmann::json &last = timeRange[timeRange.size() - 1UL];
         min = first[0];
         max = last[1];
-
         this->valueSize_ = _GetValuesSize();
-        if(!cfg.contains("ticks")) {
-            this->ticks = this->CalculateTicks();
-        }
     }
 
     double Scale(const nlohmann::json &key) override {
         if (!isTimeRangeValid_) {
-            return std::nan("0");
+            return NAN;
         }
         
         if (!key.is_number()) {
-            return std::nan("0");
+            return NAN;
         }
         double time = key;
 
         if(time < min || time > max) {
-            return std::nan("0");
+            return NAN;
         }
 
         double index = 0;
-        const nlohmann::json &timeRange = config["timeRange"];
+        auto &timeRange = config.timeRange;
         for(std::size_t i = 0; i < timeRange.size(); ++i) {
-            const nlohmann::json &range = timeRange[i];
+            auto &range = timeRange[i];
             double range0 = range[0];
             double range1 = range[1];
             if(time >= range[1] && i == timeRange.size() - 1) {
@@ -117,9 +92,9 @@ class TimeSharingLinear : public AbstractScale {
             return 0;
         }
         std::size_t index = val * (valueSize_ -1);
-        nlohmann::json &timeRange = config["timeRange"];
+        auto &timeRange = config.timeRange;
         for(std::size_t i = 0; i < timeRange.size(); ++i) {
-            nlohmann::json &range = timeRange[i];
+            auto &range = timeRange[i];
             long long start = range[0];
             long long end = range[1];
             std::size_t count = (end - start) / (60 * 1000) + 1;
@@ -140,16 +115,16 @@ class TimeSharingLinear : public AbstractScale {
         if (!isTimeRangeValid_) {
             return "";
         }
-        nlohmann::json &timeRange = config["timeRange"];
+        auto &timeRange = config.timeRange;
         long long timeZoneOffset = 0;
         bool forceTimeZone = false;
-        if(config.contains("timeZoneOffset")) {
-            timeZoneOffset = config["timeZoneOffset"];
+        if(config.timeZoneOffset > 0) {
+            timeZoneOffset = config.timeZoneOffset;
             forceTimeZone = true;
         }
         timeZoneOffset *= 1000;
         for(std::size_t i = 0; i < timeRange.size(); ++i) {
-            nlohmann::json &range = timeRange[i];
+            auto &range = timeRange[i];
             
             //11:30/13:00 right case
             //11:30/13:00 wrong case
@@ -164,28 +139,14 @@ class TimeSharingLinear : public AbstractScale {
 
   protected:
     //未对外暴露 在入口处已经check过TimeRange了，这里不需要判断
-    nlohmann::json CalculateTicks() override {
-        nlohmann::json rst;
-        //timeRange格式为 @"timeRange": @[@[@(1608687000000), @(1608694200000)], @[@(1608699600000), @(1608706800000)]]
-        nlohmann::json &timeRange = config["timeRange"];
-        for(std::size_t i = 0; i < timeRange.size(); ++i) {
-            nlohmann::json &range = timeRange[i];
-            //size为n的情况下rst的组合为
-            //{timeRange[0][0], timeRange[0][1], timeRange[1][1],...timeRange[N][1]}
-            if (i == 0) {
-                rst.push_back(range[0]);
-            }
-            rst.push_back(range[1]);
-        }
-        return rst;
-    }
+    vector<string> CalculateTicks() override { return {}; }
 
   private:
     std::size_t _GetValuesSize() {
         std::size_t count = 0;
-        nlohmann::json &timeRange = config["timeRange"];
+        auto &timeRange = config.timeRange;
         for(std::size_t i = 0; i < timeRange.size(); ++i) {
-            nlohmann::json &range = timeRange[i];
+            auto &range = timeRange[i];
             long long start = range[0];
             long long end = range[1];
             count += (end - start) / (60 * 1000) + 1;
@@ -196,6 +157,7 @@ class TimeSharingLinear : public AbstractScale {
   private:
     std::size_t valueSize_ = 0;
     bool isTimeRangeValid_;
+    long long max, min;
 };
 } // namespace scale
 } // namespace xg

@@ -10,6 +10,7 @@
 using namespace std;
 
 void xg::geom::from_json(const nlohmann::json& j, XStyle& x) {
+    if (!j.is_object()) { return; }
     XStyle d;
     x.dash = j.value("dash", d.dash);
     x.startOnZero = j.value("startOnZero", d.startOnZero);
@@ -124,7 +125,11 @@ void xg::geom::AbstractGeom::InitAttributes(XChart &chart) {
     if(chart.GetCoord().IsTransposed() && chart.GetCoord().GetType() == xg::canvas::coord::CoordType::Polar && adjust->GetAdjust() == "stack") {
         auto &yScale = chart.GetScale(this->GetYScaleField());
         if(yScale.values.size() > 0) {
-            yScale.Change({{"nice", false}, {"min", 0}, {"max", xg::util::JsonArrayMax(yScale.values)}});
+            auto config = yScale.GetConfig();
+            config.nice = false;
+            config.min = 0;
+            config.max = xg::util::JsonArrayMax(yScale.values);
+            yScale.Change(config);
         }
     }
 }
@@ -229,8 +234,8 @@ void xg::geom::AbstractGeom::Paint(XChart *chart) {
 
         std::size_t start = 0, end = groupData.size() - 1;
         if(scale::IsCategory(xScale.GetType())) {
-            start = fmax(start, xScale.min);
-            end = fmin(end, xScale.max);
+            start = fmax(start, xScale.GetMin());
+            end = fmin(end, xScale.GetMax());
         }
 
         Mapping(*chart, groupData, start, end);
@@ -275,8 +280,8 @@ bool xg::geom::AbstractGeom::ContainsAttr(attr::AttrType type) {
 double xg::geom::AbstractGeom::GetYMinValue(XChart &chart) {
     const std::string &yField = GetYScaleField();
     auto &yScale = chart.GetScale(yField);
-    double _min = yScale.min;
-    double _max = yScale.max;
+    double _min = yScale.GetMin();
+    double _max = yScale.GetMax();
     double value = _min;
     if(styleConfig_.startOnZero == true) {
         if(_max <= 0 && _min <= 0) {
@@ -294,8 +299,8 @@ void xg::geom::AbstractGeom::updateStackRange(XChart &chart) {
     const std::string &xField = GetXScaleField();
     scale::AbstractScale &yScale = chart.GetScale(yField);
     adjust::Stack::processStack(xField, yField, dataArray_);
-    double min = yScale.min;
-    double max = yScale.max;
+    double min = yScale.GetMin();
+    double max = yScale.GetMax();
     for(size_t i = 0; i < dataArray_.size(); i++) {
         auto &data = dataArray_[i];
         for(size_t j = 0; j < data.size(); j++) {
@@ -306,8 +311,11 @@ void xg::geom::AbstractGeom::updateStackRange(XChart &chart) {
             }
         }
     }
-    if(min < yScale.min || max > yScale.max) {
-        yScale.Change({{"min", min}, {"max", max}});
+    if(min < yScale.GetMin() || max > yScale.GetMax()) {
+        auto config = yScale.GetConfig();
+        config.min = min;
+        config.max = max;
+        yScale.Change(config);
     }
 }
 
@@ -318,8 +326,8 @@ XDataArray xg::geom::AbstractGeom::GetSnapRecords(XChart *chart, util::Point poi
     //    auto &yScale = chart->GetScale(GetYScaleField());
 
     if(chart->GetCoord().GetType() == coord::CoordType::Polar && !chart->GetCoord().IsTransposed() &&
-       invertPoint.x > (xScale.rangeMax + 1) / 2) {
-        invertPoint.x = xScale.rangeMin;
+       invertPoint.x > (xScale.config.range[1] + 1) / 2) {
+        invertPoint.x = xScale.config.range[0];
     }
 
     nlohmann::json xValue = xScale.Invert(invertPoint.x);
@@ -336,8 +344,8 @@ XDataArray xg::geom::AbstractGeom::GetSnapRecords(XChart *chart, util::Point poi
 
         std::size_t start = 0, end = groupData.size() - 1;
         if(scale::IsCategory(xScale.GetType())) {
-            start = fmax(start, xScale.min);
-            end = fmin(end, xScale.max);
+            start = fmax(start, xScale.GetMin());
+            end = fmin(end, xScale.GetMax());
         }
 
         for(size_t index = start; index <= end; index++) {
@@ -359,14 +367,14 @@ const XData &xg::geom::AbstractGeom::GetLastSnapRecord(XChart *chart) {
     if (dataArray_.size() > 1) {
         return dataArray_.back().back();
     } else {
-        std::size_t end = scale::IsCategory(xScale.GetType()) ? fmax(0 , xScale.max): (dataArray_.front().size() - 1);
+        std::size_t end = scale::IsCategory(xScale.GetType()) ? fmax(0 , xScale.GetMax()): (dataArray_.front().size() - 1);
         return dataArray_.front()[end];
     }
 }
 
 const XData &xg::geom::AbstractGeom::GetFirstSnapRecord(XChart *chart) {
     auto &xScale = chart->GetScale(GetXScaleField());
-    std::size_t start = scale::IsCategory(xScale.GetType()) ? fmax(0, xScale.min) : 0;
+    std::size_t start = scale::IsCategory(xScale.GetType()) ? fmax(0, xScale.GetMin()) : 0;
     return dataArray_.front()[start];
 }
 

@@ -24,21 +24,57 @@ enum class ScaleType {
 bool IsCategory(ScaleType type);
 bool IsLinear(ScaleType type);
 
-class Tick {
-  public:
+struct Tick {
     // 转换后的 tick 值。
     // TODO 增加可以由用户自定义的转换函数。
     std::string text;
     nlohmann::json tickValue; // 原始 tick 值
-    double value;             // 值域值
+    float value;             // 值域值
 };
+
+struct ScaleCfg {
+    std::string type;
+    std::array<float, 2> range= {NAN, NAN};
+
+    float tickCount = NAN;  // 刻度总数
+    double min = NAN;
+    double max = NAN;
+    //回调方法
+    std::string tick;
+
+    vector<std::string> ticks;
+    
+    bool nice = true;
+    int precision = 0;
+    
+    //cat
+    std::array<float, 2> domain = {NAN, NAN};
+    
+    //分时
+    vector<array<size_t, 2>> timeRange;
+    long long timeZoneOffset = 0;
+    
+    //kline
+    std::string dateFormate = "";
+    
+    inline bool HasRange() {
+        return !std::isnan(range[0]) && !std::isnan(range[1]);
+    }
+    
+    inline bool HasDomain() {
+        return !std::isnan(domain[0]) && !std::isnan(domain[1]);
+    }
+};
+
+extern void from_json(const nlohmann::json &j, ScaleCfg &s);
+
 
 /**
  *  度量基类
  */
 class AbstractScale {
   public:
-    AbstractScale(const std::string &_field, const nlohmann::json &_values, const nlohmann::json &_cfg) : field(_field), config(_cfg) {
+    AbstractScale(const std::string &_field, const nlohmann::json &_values, const ScaleCfg &_cfg) : field(_field), config(_cfg) {
         if(_values.is_array()) {
             this->values = _values;
         }
@@ -48,12 +84,7 @@ class AbstractScale {
     // 度量类型 [Identity | Cat | TimeCat | Linear]
     virtual ScaleType GetType() const noexcept = 0;
 
-    virtual void Change(const nlohmann::json &cfg) = 0;
-
-    // double Scale(const nlohmann::json &key) {
-    //     util::Data _key = util::ConvertJsonToData(key);
-    //     return Scale(_key);
-    // }
+    virtual void Change(const ScaleCfg &cfg) = 0;
 
     // 将定义域值转换为值域值
     virtual double Scale(const nlohmann::json &key) = 0;
@@ -68,7 +99,7 @@ class AbstractScale {
         std::vector<Tick> ticks_;
 
         for(size_t i = 0; i < ticks.size(); i++) {
-            nlohmann::json &item = ticks[i];
+            std::string &item = ticks[i];
             scale::Tick tick;
             tick.text = this->GetTickText(item, chart);
             tick.value = this->Scale(item);
@@ -84,28 +115,22 @@ class AbstractScale {
 
     virtual std::string GetTickText(const nlohmann::json &item, XChart *chart);
     
-    virtual void InitConfig(const nlohmann::json &_cfg);
-    
+    virtual inline double GetMax() noexcept {return config.max;}
+    virtual inline double GetMin() noexcept {return config.min;}
+    inline const ScaleCfg &GetConfig() noexcept { return config;}
   public:
-    std::string field;     // 度量字段名称
-    double rangeMin = 0; // 取值范围
-    double rangeMax = 1; // 取值范围
-    size_t tickCount = 5;  // 刻度总数
-    double min = NAN;
-    double max = NAN;
-    bool containRange = false; //用户是否设置了range
-    bool containMin = false; //用户是否设置了min值
-    bool containMax = false; //用户是否设置了max值
-    bool containTicks = false;//用户是否设置了ticks
+    //轴上的标签
+    vector<std::string> ticks;
 
+    //配置的字段
+    ScaleCfg config;
+    
+    //度量字段名称
+    std::string field;
   protected:
-    virtual nlohmann::json CalculateTicks() = 0;
+    virtual vector<std::string> CalculateTicks() = 0;
   public:
-    // 刻度值, 通过 wilkinson 算法计算得出
-    nlohmann::json ticks; // 数组
     nlohmann::json values;
-    nlohmann::json config;
-    std::string tickCallbackId;
 };
 } // namespace scale
 } // namespace xg

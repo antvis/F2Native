@@ -103,13 +103,12 @@ void geom::Candle::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
 
         std::size_t start = 0, end = groupData.size() - 1;
         if(scale::IsCategory(xScale.GetType())) {
-            start = fmax(start, xScale.min);
-            end = fmin(end, xScale.max);
+            start = fmax(start, xScale.GetMin());
+            end = fmin(end, xScale.GetMax());
         }
 
         for(std::size_t position = start; position <= end; ++position) {
             auto &item = groupData[position];
-            auto &yValue = (*item.data)[yField];
             nlohmann::json cfg = CreateShapePointsCfg(chart, item, index);
             nlohmann::json rect = getRectPoints(cfg);
             nlohmann::json line = getLinePoints(cfg);

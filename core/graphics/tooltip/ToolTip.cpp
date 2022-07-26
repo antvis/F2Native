@@ -20,12 +20,11 @@ void tooltip::from_json(const nlohmann::json &j, CrosshairsStyle &c) {
         c.type = j.value("type", d.type);
         c.dash = j.value("type", d.dash);
         c.hidden = j.value("hidden", d.hidden);
-    }else {
-        F2ASSERT(false, "CrosshairsStyle from_json error json type");
     }
 }
 
 void tooltip::from_json(const nlohmann::json &j, BackgroundCfg &b) {
+    if (!j.is_object()) { return; }
     BackgroundCfg d;
     b.radius = j.value("radius", d.radius);
     b.fill = j.value("fill", d.fill);
@@ -43,8 +42,6 @@ void tooltip::from_json(const nlohmann::json &j, Tip &t) {
         t.textAlign = j.value("textAlign", d.textAlign);
         t.textBaseline = j.value("textBaseline", d.textBaseline);
         t.hidden = j.value("hidden", d.hidden);
-    } else {
-        F2ASSERT(false, "Tip from_json error json type");
     }
 }
 
@@ -53,6 +50,7 @@ void tooltip::to_json(nlohmann::json &j, const Tip &t) {
 }
 
 void tooltip::from_json(const nlohmann::json &j, ToolTipCfg &t) {
+    if (!j.is_object()) { return; }
     ToolTipCfg d;
     if (j.is_boolean()) {
         t.hidden = true;
@@ -64,12 +62,11 @@ void tooltip::from_json(const nlohmann::json &j, ToolTipCfg &t) {
         t.background = j.value("background", d.background);
         t.xTip = j.value("xTip", d.xTip);
         t.yTip = j.value("yTip", d.yTip);
-    }else {
-        F2ASSERT(false, "ToolTipCfg from_json error json type");
     }
 }
 
 void tooltip::from_json(const nlohmann::json &j, ToolTipItem &t) {
+    if (!j.is_object()) { return; }
     ToolTipItem d;
     t.x = j.value("x", d.x);
     t.y = j.value("y", d.y);
@@ -87,6 +84,7 @@ void tooltip::to_json(nlohmann::json &j, const ToolTipItem &t) {
 }
 
 void tooltip::from_json(const nlohmann::json &j, ToolTipItemList &t) {
+    if (!j.is_object()) { return; }
     ToolTipItemList d;
     t.items = j.value("tooltip", d.items);
 }

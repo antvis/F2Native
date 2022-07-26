@@ -17,6 +17,9 @@ using namespace xg;
 using namespace std;
 
 void xg::from_json(const nlohmann::json &j, CoordCfg &c) {
+    if (!j.is_object()) {
+        return;
+    }
     CoordCfg d;
     c.coordType = j.value("type", d.coordType);
     c.transposed = j.value("transposed", d.transposed);
@@ -468,15 +471,21 @@ bool XChart::Render() {
         logTracer_->trace("XChart#Performance GeomInit %lums", (xg::CurrentTimestampAtMM() - startTimeStamp));
         
         //调整interval中的min和max值
-        if (config_.adjustScale_) {
+        if (config_.adjustScale) {
             scaleController_->AdjustScale();
             logTracer_->trace("XChart#Performance AdjustScale %lums", (xg::CurrentTimestampAtMM() - startTimeStamp));
         }
 
-        //调整interval中的rangeMin和rangeMax值
-        if (config_.syncY_) {
+        //调整interval中的min和max值
+        if (config_.syncY) {
             scaleController_->SyncYScale();
             logTracer_->trace("XChart#Performance SyncYScale %lums", (xg::CurrentTimestampAtMM() - startTimeStamp));
+        }
+        
+        //调整interval中的range的值
+        if (config_.adjustRange) {
+            scaleController_->AdjustRange();
+            logTracer_->trace("XChart#Performance AdjustRange %lums", (xg::CurrentTimestampAtMM() - startTimeStamp));
         }
         
         rendered_ = true;
@@ -725,8 +734,8 @@ XChart &XChart::SourceObject(const nlohmann::json &_data) {
     return *this;
 }
     
-XChart &XChart::ScaleObject(const std::string &field, const nlohmann::json &config) {
-    this->logTracer_->trace("#Scale field: %s config: %s", field.c_str(), config.dump().c_str());
+XChart &XChart::ScaleObject(const std::string &field, const ScaleCfg &config) {
+    this->logTracer_->trace("#Scale field: %s config: %s", field.c_str(), config.type.c_str());
     this->scaleController_->UpdateColConfig(field, config);
     return *this;
 }

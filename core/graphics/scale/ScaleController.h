@@ -21,25 +21,25 @@ namespace xg {
 class XChart;
 namespace scale {
 
-nlohmann::json AdjustRange(const nlohmann::json &fieldColumn, std::unique_ptr<canvas::coord::AbstractCoord> &coord);
+array<float, 2> AdjustRange(const nlohmann::json &fieldColumn, std::unique_ptr<canvas::coord::AbstractCoord> &coord);
 
 std::unique_ptr<AbstractScale> MakeCategory(const std::string &field_,
                                             const nlohmann::json &data,
-                                            nlohmann::json &config,
+                                            const ScaleCfg &config,
                                             utils::Tracer *tracer,
                                             std::unique_ptr<canvas::coord::AbstractCoord> &coord,
-                                            nlohmann::json &fieldColumn);
+                                            const nlohmann::json &fieldColumn);
 
 std::unique_ptr<AbstractScale> MakeLinear(const std::string &field_,
                                           const nlohmann::json &data,
-                                          nlohmann::json &config,
+                                          const ScaleCfg &config,
                                           utils::Tracer *tracer,
                                           std::unique_ptr<canvas::coord::AbstractCoord> &coord,
-                                          nlohmann::json &fieldColumn);
+                                          const nlohmann::json &fieldColumn);
 
 std::unique_ptr<AbstractScale> MakeScale(const std::string &field_,
                                          const nlohmann::json &data,
-                                         nlohmann::json &config,
+                                         const ScaleCfg &config,
                                          utils::Tracer *tracer,
                                          std::unique_ptr<canvas::coord::AbstractCoord> &coord);
 
@@ -51,7 +51,7 @@ class ScaleController {
                                                       utils::Tracer *tracer,
                                                       std::unique_ptr<canvas::coord::AbstractCoord> &coord);
 
-    void UpdateColConfig(const std::string &field, nlohmann::json cfg) { colConfigs[field] = cfg; }
+    void UpdateColConfig(const std::string &field, const ScaleCfg &cfg) { colConfigs[field] = cfg; }
 
     inline bool Empty() { return scales_.empty(); }
 
@@ -66,12 +66,13 @@ class ScaleController {
     
     void SyncYScale();
     void SyncYScale(const size_t valueStart, const size_t valueEnd, bool nice);
-    void UpdateScale(const std::string &field, const nlohmann::json &cfg);
+    void UpdateScale(const std::string &field, const ScaleCfg &cfg);
     void AdjustScale();
+    void AdjustRange();
 
   private:
-    std::vector<std::unique_ptr<AbstractScale>> scales_{};
-    nlohmann::json colConfigs;
+    std::unordered_map<string, std::unique_ptr<AbstractScale>> scales_;
+    unordered_map<string, ScaleCfg> colConfigs;
     XChart *chart_ = nullptr;
 };
 } // namespace scale

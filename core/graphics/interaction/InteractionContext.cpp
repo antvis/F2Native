@@ -6,6 +6,7 @@
 using namespace xg;
 
 void xg::interaction::from_json(const nlohmann::json& j, PinchCfg& p) {
+    if (!j.is_object()) { return; }
     PinchCfg d;
     p.minCount = j.value("minCount", d.minCount);
     p.maxCount = j.value("maxCount", d.maxCount);
@@ -42,8 +43,8 @@ void interaction::InteractionContext::OnAfterChartInit() {
         _maxCount = std::isnan(pinch_.maxCount) ? _maxCount : pinch_.maxCount;
     }
 
-    range_[0] = (scale.min + 1) / size;
-    range_[1] = (scale.max + 1) / size;
+    range_[0] = (scale.GetMin() + 1) / size;
+    range_[1] = (scale.GetMax() + 1) / size;
 
     this->maxCount_ = fmin(size, _maxCount);
     this->minCount_ = fmax(minCount_, _minCount);
@@ -53,7 +54,7 @@ void interaction::InteractionContext::Start() {
     //    this->startRange_ = this->range_;
     const std::string &xField = chart_->GetXScaleField();
     auto &scale = chart_->GetScale(xField);
-    lastTickCount_ = scale.tickCount;
+    lastTickCount_ = scale.config.tickCount;
     chart_->GetLogTracer()->trace("InteractionContext#Start range:{%lf, %lf} ", range_[0], range_[1]);
 }
 
@@ -135,7 +136,9 @@ bool interaction::InteractionContext::Repaint(nlohmann::json &newValues, std::si
 
     // chart_->GetLogTracer()->trace("Repaint range: %lu", (valueEnd - valueStart));
     // TODO 平移或者缩放过程中，ticks 的变化应该由每个度量自行决定。 逻辑暂时保持 ticks 不变
-    UpdateScale(xField, {{"ticks", scale.ticks}, {"domain", {valueStart, valueEnd}}});
+    auto config = scale.GetConfig();
+    config.domain = {(float)valueStart, (float)valueEnd};
+    UpdateScale(xField, config);
     UpdateFollowScale(scale, newValues, valueStart, valueEnd);
     chart_->Repaint();
     return true;
@@ -176,7 +179,7 @@ void interaction::InteractionContext::UpdateFollowScale(scale::AbstractScale &pi
 //    UpdateScale(followField, {{"min", rangeMin}, {"max", rangeMax}, {"nice", true}});
 }
 
-void interaction::InteractionContext::UpdateScale(const std::string &field, nlohmann::json cfg) {
+void interaction::InteractionContext::UpdateScale(const std::string &field, const scale::ScaleCfg &cfg) {
     auto &scale = chart_->GetScale(field);
     scale.Change(cfg);
 }

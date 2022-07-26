@@ -12,38 +12,30 @@ namespace scale {
 
 class KLineCat : public Category {
   public:
-    KLineCat(const std::string &_field, const nlohmann::json &_values, const nlohmann::json &config = {})
+    KLineCat(const std::string &_field, const nlohmann::json &_values, const ScaleCfg &config)
         : Category(_field, _values, config) {
         // ["kline-day", "kline-week", "kline-month", "kline-minutes-1", "kline-minutes-5", "kline-minutes-15", "kline-minutes-30", "kline-minutes-60", "kline-minutes-120"]
-        
-        InitConfig(config);
             
         std::vector<std::string> lineTypes;
-        StringUtil::Split(kLineType_, lineTypes, '-');
+        StringUtil::Split(config.type, lineTypes, '-');
         if (lineTypes.size() >= 3) {
             kLineType_ = lineTypes[1];
             minutes_ = std::stoi(lineTypes[2]);
+        } else if(lineTypes.size() >= 2) {
+            kLineType_ = lineTypes[1];
         }
         this->PreProcessTicks();
-        this->ticks = this->CalculateTicks();
-    }
-    
-    virtual void InitConfig(const nlohmann::json &config) override {
-        Category::InitConfig(config);
-        kLineType_ = json::GetString(config, "klineType");
-        timeZoneOffset_ = json::GetNumber(config, "timeZoneOffset");
-        minutes_ = json::GetIntNumber(config, "minutes");
-        dateFormate_ = json::GetString(config, "dateFormate");
+        Change(config);
     }
 
     ScaleType GetType() const noexcept override { return ScaleType::Kline; }
 
-    void Change(const nlohmann::json &cfg = {}) override {
+    void Change(const ScaleCfg &cfg) override {
         Category::Change(cfg);
     }
 
   public:
-    nlohmann::json CalculateTicks() override {
+    vector<string> CalculateTicks() override {
         if(kLineType_ == "minutes") {
             return CalculateMinutesTicks();
         } else {
@@ -52,9 +44,9 @@ class KLineCat : public Category {
     }
 
   private:
-    nlohmann::json CalculateDaysTicks() {
-        std::size_t start = static_cast<std::size_t>(this->min);
-        std::size_t end = static_cast<std::size_t>(this->max);
+    vector<string> CalculateDaysTicks() {
+        std::size_t start = static_cast<std::size_t>(min);
+        std::size_t end = static_cast<std::size_t>(max);
 
         std::size_t intervalStep = 1;
         if(kLineType_ == "day") {
@@ -75,17 +67,17 @@ class KLineCat : public Category {
             }
         }
 
-        nlohmann::json rst;
+        vector<string> rst;
         for(std::size_t index = 0; index < indicators.size(); index += intervalStep) {
             rst.push_back(values[indicators[index]]);
         }
         return rst;
     }
 
-    nlohmann::json CalculateMinutesTicks() {
+    vector<string> CalculateMinutesTicks() {
         std::size_t columnCount = this->GetValuesSize();
-        std::size_t start = static_cast<std::size_t>(this->min);
-        std::size_t end = static_cast<std::size_t>(this->max);
+        std::size_t start = static_cast<std::size_t>(min);
+        std::size_t end = static_cast<std::size_t>(max);
 
         std::size_t timeRange = minutes_ * columnCount;
         std::size_t timeStep = 1;
@@ -110,7 +102,7 @@ class KLineCat : public Category {
             }
         }
 
-        nlohmann::json rst;
+        vector<string> rst;
         for(std::size_t index = 0; index < indicators.size(); index += timeStep) {
             rst.push_back(values[indicators[index]]);
         }
@@ -120,8 +112,8 @@ class KLineCat : public Category {
     std::tm ConvertDataToTS(nlohmann::json &data) {
         if(data.is_string()) {
             // date str
-            if(!dateFormate_.empty()) {
-                return DateParserAtTM(data.get<string>(), dateFormate_);
+            if(!config.dateFormate.empty()) {
+                return DateParserAtTM(data.get<string>(), config.dateFormate);
             }
             return DateParserAtTM(data.get<string>());
         } else if(data.is_number()) {
@@ -129,8 +121,8 @@ class KLineCat : public Category {
             long long t = data.get<long long>();
             long timeZoneOffset = 0;
             bool forceTimeZone = false;
-            if(timeZoneOffset_ != 0) {
-                timeZoneOffset = timeZoneOffset_;
+            if(config.timeZoneOffset != 0) {
+                timeZoneOffset = config.timeZoneOffset;
                 forceTimeZone = true;
             }
             timeZoneOffset *= 1000;
@@ -178,8 +170,6 @@ class KLineCat : public Category {
     std::unordered_map<std::size_t, std::tm> allTicksCache_;
     std::string kLineType_;
     std::size_t minutes_;
-    long timeZoneOffset_ = 0;
-    std::string dateFormate_ = "";
 };
 } // namespace scale
 } // namespace xg

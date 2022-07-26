@@ -77,7 +77,7 @@ nlohmann::json geom::Interval::CreateShapePointsCfg(XChart &chart, XData &item, 
     } else {
         normalizeSize = 1.0 / count;
         if(xScale.GetType() == scale::ScaleType::Linear || xScale.GetType() == scale::ScaleType::TimeSharingLinear) {
-            normalizeSize *= (xScale.rangeMax - xScale.rangeMin);
+            normalizeSize *= (xScale.config.range[1] - xScale.config.range[0]);
         }
     }
 
@@ -95,7 +95,7 @@ nlohmann::json geom::Interval::CreateShapePointsCfg(XChart &chart, XData &item, 
     rst["x"] = x;
     rst["y0"] = y0;
     rst["size"] = normalizeSize;
-    return std::move(rst);
+    return rst;
 }
 
 nlohmann::json geom::Interval::getRectPoints(nlohmann::json &cfg) {
@@ -119,7 +119,7 @@ nlohmann::json geom::Interval::getRectPoints(nlohmann::json &cfg) {
     rst.push_back({{"x", xMin}, {"y", yMax}});
     rst.push_back({{"x", xMax}, {"y", yMax}});
     rst.push_back({{"x", xMax}, {"y", yMin}});
-    return std::move(rst);
+    return rst;
 }
 
 void geom::Interval::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
@@ -137,8 +137,8 @@ void geom::Interval::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
 
         std::size_t start = 0, end = groupData.size() - 1;
         if(scale::IsCategory(xScale.GetType())) {
-            start = fmax(start, xScale.min);
-            end = fmin(end, xScale.max);
+            start = fmax(start, xScale.GetMin());
+            end = fmin(end, xScale.GetMax());
         }
 
         for(std::size_t position = start; position <= end; ++position) {

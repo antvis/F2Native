@@ -4,7 +4,6 @@
 #include <math.h>
 #include <sstream>
 #include <unordered_map>
-#include <iostream>
 #include "../Scale.h"
 #include "../../global.h"
 #include "../../util/json.h"

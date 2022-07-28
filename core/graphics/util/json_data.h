@@ -33,7 +33,7 @@ namespace util {
         //index 0 for xfiled, index 1 for yfield
         std::vector<double> dodge;
         
-        //area
+        //area interval
         std::vector<util::Point> points;
         
         //candle

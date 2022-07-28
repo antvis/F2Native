@@ -16,11 +16,12 @@ class Interval : public AbstractGeom {
 
     float GetDefaultWidthRatio(XChart &chart);
 
-    nlohmann::json CreateShapePointsCfg(XChart &chart, XData &item, size_t index); // {x, y, y0, size}
+    unordered_map<string, double> CreateShapePointsCfg(XChart &chart, XData &item, size_t index); // {x, y, y0, size}
+    vector<double> CreateShapePoints(XChart &chart, XData &item, size_t index);
 
     void BeforeMapping(XChart &chart, XDataGroup &dataArray) override;
 
-    nlohmann::json getRectPoints(nlohmann::json &cfg);
+    vector<util::Point> getRectPoints(const unordered_map<string, double> &cfg, const vector<double> &y);
 
     virtual void Draw(XChart &chart, const XDataArray &groupData, std::size_t start, std::size_t end) const override;
 

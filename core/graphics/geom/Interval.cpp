@@ -31,9 +31,7 @@ geom::Interval &geom::Interval::Tag(const std::string &json) {
     return *this;
 }
 
-nlohmann::json geom::Interval::CreateShapePointsCfg(XChart &chart, XData &item, size_t index) {
-
-    nlohmann::json rst;
+unordered_map<string, double> geom::Interval::CreateShapePointsCfg(XChart &chart, XData &item, size_t index) {
     const std::string &xField = GetXScaleField();
     const std::string &yField = GetYScaleField();
 
@@ -42,28 +40,6 @@ nlohmann::json geom::Interval::CreateShapePointsCfg(XChart &chart, XData &item, 
     
     const nlohmann::json &data = (*item.data);
     double x = item.dodge.size() >= 1 ? xScale.Scale(item.dodge[0]) : xScale.Scale(data[xField]);
-
-    if (!item.adjust.empty()) {
-        vector<double> y;
-        for(size_t i = 0; i < item.adjust.size(); i++) {
-            double y_d = item.adjust[i];
-            double y_s = yScale.Scale(y_d);
-            y.push_back(y_s);
-        }
-        rst["y"] = y;
-    } else if(data[yField].is_array()) { //区间柱状图
-        vector<double> y;
-        vector<double> stack_item = data[yField];
-        for(size_t i = 0; i < stack_item.size(); i++) {
-            double y_d = stack_item[i];
-            double y_s = yScale.Scale(y_d);
-            y.push_back(y_s);
-        }
-        rst["y"] = y;
-    } else {
-        double y = yScale.Scale(data[yField]);
-        rst["y"] = y;
-    }
     double y0 = yScale.Scale(this->GetYMinValue(chart));
 
     std::size_t count = fmax(xScale.GetValuesSize(), 1);
@@ -91,34 +67,55 @@ nlohmann::json geom::Interval::CreateShapePointsCfg(XChart &chart, XData &item, 
             normalizeSize = normalizeSize / size;
         }
     }
-
-    rst["x"] = x;
-    rst["y0"] = y0;
-    rst["size"] = normalizeSize;
-    return rst;
+    return {{"x", x} , {"y0", y0}, {"size", normalizeSize}};
 }
 
-nlohmann::json geom::Interval::getRectPoints(nlohmann::json &cfg) {
-    double x = cfg["x"];
-    auto y = cfg["y"];
-    double y0 = cfg["y0"];
-    double size = cfg["size"];
+vector<double> geom::Interval::CreateShapePoints(XChart &chart, XData &item, size_t index) {
+    const std::string &yField = GetYScaleField();
+    scale::AbstractScale &yScale = chart.GetScale(yField);
+    
+    const nlohmann::json &data = (*item.data);
+    vector<double> y;
+    if (!item.adjust.empty()) {
+        for(size_t i = 0; i < item.adjust.size(); i++) {
+            double y_d = item.adjust[i];
+            double y_s = yScale.Scale(y_d);
+            y.push_back(y_s);
+        }
+    } else if(data[yField].is_array()) { //区间柱状图
+        vector<double> stack_item = data[yField];
+        for(size_t i = 0; i < stack_item.size(); i++) {
+            double y_d = stack_item[i];
+            double y_s = yScale.Scale(y_d);
+            y.push_back(y_s);
+        }
+
+    } else {
+        y.push_back(yScale.Scale(data[yField]));
+    }
+    return y;
+}
+
+vector<util::Point> geom::Interval::getRectPoints(const unordered_map<string, double> &cfg, const vector<double> &y) {
+    double x = cfg.at("x");
+    double y0 = cfg.at("y0");
+    double size = cfg.at("size");
 
     double yMin = y0;
     double yMax;
-    if(y.is_array()) {
+    if(y.size() >= 2) {
         yMax = y[1];
         yMin = y[0];
     } else {
-        yMax = y;
+        yMax = y[0];
     }
-    nlohmann::json rst;
+    vector<util::Point> rst;
     double xMin = x - size / 2;
     double xMax = x + size / 2;
-    rst.push_back({{"x", xMin}, {"y", yMin}});
-    rst.push_back({{"x", xMin}, {"y", yMax}});
-    rst.push_back({{"x", xMax}, {"y", yMax}});
-    rst.push_back({{"x", xMax}, {"y", yMin}});
+    rst.push_back(util::Point {xMin, yMin});
+    rst.push_back(util::Point {xMin, yMax});
+    rst.push_back(util::Point {xMax, yMax});
+    rst.push_back(util::Point {xMax, yMin});
     return rst;
 }
 
@@ -149,9 +146,9 @@ void geom::Interval::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
             }
      
             const nlohmann::json &yValue = (*item.data)[yField];
-            nlohmann::json cfg = CreateShapePointsCfg(chart, item, index);
-            nlohmann::json points = getRectPoints(cfg);
-            item._points = points;
+            auto cfg = CreateShapePointsCfg(chart, item, index);
+            auto points = CreateShapePoints(chart, item, index);
+            item.points = getRectPoints(cfg, points);
 
             if(item._beforeMapped) {
                 continue;

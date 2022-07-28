@@ -22,15 +22,9 @@ class Interval : public GeomShapeBase {
               std::size_t end,
               xg::shape::Group &container,
               const XStyle &style) override {
-        const nlohmann::json &_points = data._points;
-        if (!_points.is_array()) {
-            return;
-        }
-
         std::vector<util::Point> points;
-        for(std::size_t i = 0; i < _points.size(); ++i) {
-            const nlohmann::json &item = _points[i];
-            util::Point p = this->ParsePoint(coord, util::Point(item["x"], item["y"]));
+        for(std::size_t i = 0; i < data.points.size(); ++i) {
+            util::Point p = this->ParsePoint(coord, data.points[i]);
             points.push_back(std::move(p));
         }
 

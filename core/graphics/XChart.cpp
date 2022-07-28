@@ -746,8 +746,8 @@ XChart &XChart::AxisObject(const std::string &field, const axis::AxisCfg &config
     return *this;
 }
 
-XChart &XChart::LegendObject(const std::string &field, const nlohmann::json &config) {
-    this->logTracer_->trace("#Legend field: %s config: %s", field.c_str(), config.dump().c_str());
+XChart &XChart::LegendObject(const std::string &field, const legend::LegendCfg &config) {
+    this->logTracer_->trace("#Legend field: %s config: %s", field.c_str(), config.position.c_str());
     this->legendController_->SetFieldConfig(field, config);
     return *this;
 }
@@ -777,7 +777,7 @@ XChart &XChart::TooltipObject(const tooltip::ToolTipCfg &config) {
         this->tooltipController_ = new tooltip::ToolTipController(this);
 
         this->tooltipController_->AddMonitor(
-            XG_MEMBER_OWNER_CALLBACK_1(legend::LegendController::OnToolTipMarkerItemsChanged, this->legendController_));
+            XG_MEMBER_OWNER_CALLBACK(legend::LegendController::OnToolTipMarkerItemsChanged, this->legendController_));
     }
 
     this->tooltipController_->Init(config);

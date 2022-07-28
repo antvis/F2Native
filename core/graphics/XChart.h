@@ -48,6 +48,7 @@
 
 #define XG_MEMBER_CALLBACK(funPtr) std::bind(&funPtr, this)
 #define XG_MEMBER_CALLBACK_1(funPtr) std::bind(&funPtr, this, std::placeholders::_1)
+#define XG_MEMBER_OWNER_CALLBACK(funPtr, owner) std::bind(&funPtr, owner)
 #define XG_MEMBER_OWNER_CALLBACK_1(funPtr, owner) std::bind(&funPtr, owner, std::placeholders::_1)
 
 #define XG_RELEASE_POINTER(ptr)                                                                                                \
@@ -324,7 +325,7 @@ class XChart {
     XChart &SourceObject(const nlohmann::json &data);
     XChart &ScaleObject(const std::string &field, const ScaleCfg &json);
     XChart &AxisObject(const std::string &field, const axis::AxisCfg &json);
-    XChart &LegendObject(const std::string &field, const nlohmann::json &json);
+    XChart &LegendObject(const std::string &field, const legend::LegendCfg &json);
     XChart &Interaction(const std::string &type, const interaction::PinchCfg &json);
     XChart &Interaction(const std::string &type, const interaction::PanCfg &json);
     XChart &TooltipObject(const tooltip::ToolTipCfg &json);

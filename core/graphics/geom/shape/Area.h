@@ -29,11 +29,11 @@ class Area : public GeomShapeBase {
 
         for(std::size_t i = start; i <= end; i++) {
             const auto &item = data[i];
-            const nlohmann::json &points = item._points;
+            const auto &points = item.points;
             if(style.connectNulls) {
-                if(!(std::isnan(points[0]["x"]) || std::isnan(points[0]["y"]) || std::isnan(points[1]["x"]) || std::isnan(points[1]["y"]))) {
-                    util::Point bottom{points[0]["x"], points[0]["y"]};
-                    util::Point top{points[1]["x"], points[1]["y"]};
+                if(!(std::isnan(points[0].x) || std::isnan(points[0].y) || std::isnan(points[1].x) || std::isnan(points[1].y))) {
+                    util::Point bottom{points[0].x, points[0].y};
+                    util::Point top{points[1].x, points[1].y};
                     top = coord.ConvertPoint(top);
                     bottom = coord.ConvertPoint(bottom);
 
@@ -41,8 +41,8 @@ class Area : public GeomShapeBase {
                     bottomPoints.emplace_back(bottom);
                 }
             } else {
-                util::Point bottom{points[0]["x"], points[0]["y"]};
-                util::Point top{points[1]["x"], points[1]["y"]};
+                util::Point bottom{points[0].x, points[0].y};
+                util::Point top{points[1].x, points[1].y};
                 top = coord.ConvertPoint(top);
                 bottom = coord.ConvertPoint(bottom);
 

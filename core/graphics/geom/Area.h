@@ -19,7 +19,7 @@ class Area : public AbstractGeom {
     void BeforeMapping(XChart &chart, XDataGroup &dataArray) override;
 
   private:
-    nlohmann::json CreateShapePointsCfg(XChart &chart, XData &data);
+    std::vector<util::Point> CreateShapePointsCfg(XChart &chart, XData &data);
 
     nlohmann::json GetAreaPoints(XChart &chart, XData &data, nlohmann::json &cfg);
 };

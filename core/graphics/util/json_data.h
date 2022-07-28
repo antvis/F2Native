@@ -32,6 +32,9 @@ namespace util {
         //for dodge
         //index 0 for xfiled, index 1 for yfield
         std::vector<double> dodge;
+        
+        //area
+        std::vector<util::Point> points;
     };
 
 using XDataArray = std::vector<XData>;

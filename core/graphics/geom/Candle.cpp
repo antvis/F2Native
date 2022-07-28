@@ -4,9 +4,7 @@
 
 using namespace xg;
 
-nlohmann::json geom::Candle::CreateShapePointsCfg(XChart &chart, XData &item, size_t index) {
-
-    nlohmann::json rst;
+unordered_map<string, double> geom::Candle::CreateShapePointsCfg(XChart &chart, XData &item, size_t index) {
     const std::string &xField = GetXScaleField();
     const std::string &yField = GetYScaleField();
 
@@ -18,10 +16,8 @@ nlohmann::json geom::Candle::CreateShapePointsCfg(XChart &chart, XData &item, si
 
     auto &yVal = (*item.data)[yField];
     if(!yVal.is_array() || yVal.empty() || yVal.size() < 4) {
-        return {{"x", x}, {"y0", 0}, {"y", 0}, {"size", 0}, {"state", 0}, {"max", 0}, {"min", 0}};
+        return {{"x", x}, {"y0", 0}, {"y1", 0}, {"size", 0}, {"state", 0}, {"max", 0}, {"min", 0}};
     }
-
-    vector<double> y;
     double start = yScale.Scale(yVal[0]); // 开盘
     double end = yScale.Scale(yVal[3]);   // 收盘
     double max = yScale.Scale(yVal[1]);   // 最高
@@ -38,64 +34,45 @@ nlohmann::json geom::Candle::CreateShapePointsCfg(XChart &chart, XData &item, si
         state = 1;
     }
 
-    y.push_back(start);
-    y.push_back(end);
-
     std::size_t count = fmax(xScale.GetValuesSize(), 1);
     double normalizeSize = 1.0 / count;
 
     normalizeSize *= 0.9;
-
-    rst["x"] = x;
-    rst["y"] = y;
-    rst["size"] = normalizeSize;
-    rst["state"] = state;
-    rst["max"] = max;
-    rst["min"] = min;
-
-    return rst;
+    return {{"x", x}, {"y0", start}, {"y1", end}, {"size", normalizeSize}, {"state", state}, {"max", max}, {"min", min}};
 }
 
-nlohmann::json geom::Candle::getRectPoints(nlohmann::json &cfg) {
+array<util::Point, 4> geom::Candle::getRectPoints(unordered_map<string, double> &cfg) {
     double x = cfg["x"];
-    auto y = cfg["y"];
     double size = cfg["size"];
-
     const int state = cfg["state"];
 
     double yMax;
     double yMin;
 
     if(state >= 0) { // 涨, 平
-        yMax = y[0];
-        yMin = y[1];
+        yMax = cfg["y0"];
+        yMin = cfg["y1"];
     } else { // 跌
-        yMax = y[1];
-        yMin = y[0];
+        yMax = cfg["y1"];
+        yMin = cfg["y0"];
     }
 
-    nlohmann::json rst;
+    array<util::Point, 4> rst;
     double xMin = x - size / 2;
     double xMax = x + size / 2;
-    rst.push_back({{"x", xMin}, {"y", yMin}});
-    rst.push_back({{"x", xMin}, {"y", yMax}});
-    rst.push_back({{"x", xMax}, {"y", yMax}});
-    rst.push_back({{"x", xMax}, {"y", yMin}});
+    rst[0] = util::Point{xMin, yMin};
+    rst[1] = util::Point{xMin, yMax};
+    rst[2] = util::Point{xMax, yMax};
+    rst[3] = util::Point{xMax, yMin};
     return rst;
 }
 
-nlohmann::json geom::Candle::getLinePoints(nlohmann::json &cfg) {
-    double max = cfg["max"];
-    double min = cfg["min"];
-    nlohmann::json rst;
-    rst.push_back(max);
-    rst.push_back(min);
-    return rst;
+array<double, 2> geom::Candle::getLinePoints(unordered_map<string, double> &cfg) {
+    return {cfg["max"], cfg["min"]};
 }
 
 void geom::Candle::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
     auto timestamp = xg::CurrentTimestampAtMM();
-    const std::string &yField = this->GetYScaleField();
     auto &xScale = chart.GetScale(GetXScaleField());
     for(std::size_t index = 0; index < dataArray.size(); ++index) {
 
@@ -109,13 +86,10 @@ void geom::Candle::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
 
         for(std::size_t position = start; position <= end; ++position) {
             auto &item = groupData[position];
-            nlohmann::json cfg = CreateShapePointsCfg(chart, item, index);
-            nlohmann::json rect = getRectPoints(cfg);
-            nlohmann::json line = getLinePoints(cfg);
-
-            item._rect = rect;
-            item._line = line;
-            item._state = cfg["state"];
+            auto cfg = CreateShapePointsCfg(chart, item, index);
+            item.rect = getRectPoints(cfg);
+            item.line = getLinePoints(cfg);
+            item.state = cfg["state"];
         }
     }
     chart.GetLogTracer()->trace("Geom#%s Beforemapping duration: %lums", type_.data(), (CurrentTimestampAtMM() - timestamp));

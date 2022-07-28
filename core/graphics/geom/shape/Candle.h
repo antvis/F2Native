@@ -21,26 +21,18 @@ class Candle : public GeomShapeBase {
               std::size_t end,
               xg::shape::Group &container,
               const XStyle &style) override {
-        if(!data._rect.is_array() || !data._line.is_array()) {
-            return;
-        }
-
-        const nlohmann::json &_rect = data._rect;
-        const nlohmann::json &_line = data._line;
-        const int state = data._state;
 
         std::vector<util::Point> points;
-        for(std::size_t i = 0; i < _rect.size(); ++i) {
-            const nlohmann::json &item = _rect[i];
-            util::Point p = this->ParsePoint(coord, util::Point(item["x"], item["y"]));
+        for(std::size_t i = 0; i < data.rect.size(); ++i) {
+            util::Point p = this->ParsePoint(coord, data.rect[i]);
             points.push_back(std::move(p));
         }
 
         double lineYs[2] = {0};
-        lineYs[0] = ParsePoint(coord, util::Point(0, _line[0])).y;
-        lineYs[1] = ParsePoint(coord, util::Point(0, _line[1])).y;
+        lineYs[0] = ParsePoint(coord, util::Point(0, data.line[0])).y;
+        lineYs[1] = ParsePoint(coord, util::Point(0, data.line[1])).y;
 
-        canvas::CanvasFillStrokeStyle colorStyle = util::ColorParser(style.candle[state + 1]);
+        canvas::CanvasFillStrokeStyle colorStyle = util::ColorParser(style.candle[data.state + 1]);
 
         float lineWidth = std::isnan(data._size) ? 1.0 : data._size;
         lineWidth *= context.GetDevicePixelRatio();

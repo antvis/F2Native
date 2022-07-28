@@ -35,6 +35,11 @@ namespace util {
         
         //area
         std::vector<util::Point> points;
+        
+        //candle
+        array<util::Point, 4> rect;
+        array<double, 2> line;
+        std::size_t state = 0; // 0 - 平, 1 涨， -1 跌
     };
 
 using XDataArray = std::vector<XData>;

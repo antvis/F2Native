@@ -111,7 +111,8 @@
 - (F2Interval * (^)(NSDictionary *config))tag {
     return ^id(NSDictionary *config) {
         xg::geom::Interval *interval = (xg::geom::Interval *)[super getGeom];
-        interval->Tag([F2SafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self.chart]]) UTF8String]);
+        auto cfg = [F2SafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self.chart]]) UTF8String];
+        interval->Tag(xg::json::ParseString(cfg));
         return self;
     };
 }

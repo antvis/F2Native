@@ -81,22 +81,19 @@ class Interval : public GeomShapeBase {
 
             container.AddElement(std::move(rect));
             
-            if (!data._tag.is_object()) {
+            if (data._tag.content.empty()) {
                 return;
             }
-
-            const nlohmann::json &tagCfg = data._tag;
-
-            const std::string &content = tagCfg["content"];
-            float textSize = tagCfg["textSize"].get<float>() * context.GetDevicePixelRatio();
-            const std::string &textColor = tagCfg["fill"];
-            int offset = tagCfg["offset"].get<float>() * context.GetDevicePixelRatio();
+            auto &tagCfg = data._tag;
+            float textSize = tagCfg.textSize * context.GetDevicePixelRatio();
+            const std::string &textColor = tagCfg.fill;
+            int offset = tagCfg.offset * context.GetDevicePixelRatio();
 
             util::Point tagPoint{points[1].x + size.width / 2, points[1].y + offset};
 
-            auto tag = xg::make_unique<xg::shape::Text>(content, tagPoint, textSize, textColor, textColor);
-            tag->SetTextAlign(tagCfg["textAlign"]);
-            tag->SetTextBaseline(tagCfg["textBaseline"]);
+            auto tag = xg::make_unique<xg::shape::Text>(data._tag.content, tagPoint, textSize, textColor, textColor);
+            tag->SetTextAlign(tagCfg.textAlign);
+            tag->SetTextBaseline(tagCfg.textBaseline);
 
             container.AddElement(std::move(tag));
         }

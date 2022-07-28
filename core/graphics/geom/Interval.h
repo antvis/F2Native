@@ -25,10 +25,9 @@ class Interval : public AbstractGeom {
 
     virtual void Draw(XChart &chart, const XDataArray &groupData, std::size_t start, std::size_t end) const override;
 
-    Interval &Tag(const std::string &json = "{}");
-
+    Interval &Tag(const TagCfg &cfg);
   private:
-    nlohmann::json tagConfig_;
+    TagCfg tagConfig_;
 };
 } // namespace geom
 } // namespace xg

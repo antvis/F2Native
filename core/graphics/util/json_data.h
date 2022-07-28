@@ -11,9 +11,22 @@
 #include <string>
 #include <vector>
 #include "Point.h"
+#include "../global.h"
 
 namespace xg {
 namespace util {
+    struct TagCfg {
+        float offset = -5; // 距离柱子顶部的偏移量
+        string textAlign = "center";
+        string textBaseline = "bottom";
+        string fill = "#808080";
+        size_t textSize = DEFAULT_FONTSIZE;
+        string content;
+        bool hiden = true;
+    };
+    //impl in interval.cpp
+    extern void from_json(const nlohmann::json &j, TagCfg &t);
+
     struct XData final {
         nlohmann::json::const_pointer data;
         double _x = NAN, _y = NAN;
@@ -23,7 +36,7 @@ namespace util {
         double _size = NAN;
         
         //for interval and candle
-        nlohmann::json _points, _tag, _rect, _line, _state;
+        TagCfg _tag;
         bool _beforeMapped = false;
         
         //for adjust

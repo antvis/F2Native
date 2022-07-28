@@ -5,6 +5,19 @@
 
 using namespace xg;
 
+void xg::util::from_json(const nlohmann::json &j, TagCfg &t) {
+    if (!j.is_object()) {
+        return;
+    }
+    TagCfg d;
+    t.offset = j.value("offset", d.offset);
+    t.textAlign = j.value("textAlign", d.textAlign);
+    t.textBaseline = j.value("textBaseline", d.textBaseline);
+    t.fill = j.value("fill", d.fill);
+    t.textSize = j.value("textSize", d.textSize);
+    t.hiden = false;
+}
+
 float geom::Interval::GetDefaultWidthRatio(XChart &chart) {
     if(chart.coord_->GetType() == coord::CoordType::Polar) {
         const std::string &xField = GetXScaleField();
@@ -16,18 +29,8 @@ float geom::Interval::GetDefaultWidthRatio(XChart &chart) {
     // return 0.5f;
 }
 
-geom::Interval &geom::Interval::Tag(const std::string &json) {
-    nlohmann::json config = xg::json::ParseString(json);
-    nlohmann::json defaultCfg = {{"offset", -5}, // 距离柱子顶部的偏移量
-                                 {"textAlign", "center"},
-                                 {"textBaseline", "bottom"},
-                                 {"fill", "#808080"},
-                                 {"textSize", DEFAULT_FONTSIZE}};
-
-    if(config.is_object()) {
-        defaultCfg.merge_patch(config);
-    }
-    tagConfig_ = defaultCfg;
+geom::Interval &geom::Interval::Tag(const TagCfg &cfg) {
+    tagConfig_ = cfg;
     return *this;
 }
 
@@ -153,13 +156,13 @@ void geom::Interval::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
             if(item._beforeMapped) {
                 continue;
             }
-
-            if(this->tagConfig_.is_object()) {
-                item._tag = tagConfig_;
-                item._tag["content"] = yValue.dump();
+            
+            if (tagConfig_.hiden) {
+                continue;
             }
 
-            item._style["content"] = yValue.dump();
+            item._tag = tagConfig_;
+            item._tag.content = yValue.dump();
             item._beforeMapped = true;
         }
     }

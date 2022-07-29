@@ -49,11 +49,14 @@ class TimeSharingLinear : public AbstractScale {
             return NAN;
         }
         
-        if (!key.is_number()) {
+        double time = 0;
+        if (key.is_string()) {
+            time = stod(key.get<string>());
+        } else if (key.is_number()) {
+            time = key.get<double>();
+        } else {
             return NAN;
         }
-        double time = key;
-
         if(time < min || time > max) {
             return NAN;
         }

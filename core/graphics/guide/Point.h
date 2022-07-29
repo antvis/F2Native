@@ -14,24 +14,29 @@
 namespace xg {
 namespace guide {
 
+struct PointCfg {
+    size_t size = 3;
+    string shape = "circle";
+    string fill = GLOBAL_COLORS[0];
+    string stroke;
+    float lineWidth;
+    array<string, 2> position;
+    bool top = false;
+    array<float, 2> margin = {0, 0};//left
+};
+
+extern void from_json(const nlohmann::json &j, PointCfg &c);
+
 class Point : public GuideBase {
   public:
-    Point(const nlohmann::json &config = {}) : GuideBase("point", MergeDefaultCfg(config)) {}
+    Point(const PointCfg &config) : GuideBase("point"), config_(config) {}
 
     void Render(XChart &chart, shape::Group *container, canvas::CanvasContext &context, const std::vector<util::Rect> &dangerRects) override;
 
     util::BBox GetBBox() override { return bbox_; }
-
+    bool IsTop() const noexcept override { return config_.top; }
   protected:
-    static nlohmann::json MergeDefaultCfg(const nlohmann::json &config) {
-        nlohmann::json defaultCfg = {
-            {"size", 3},  {"shape", "circle"}, {"fill", GLOBAL_COLORS[0]}, {"offsetX", 0}, {"offsetY", 0},
-        };
-        if(config.is_object()) {
-            defaultCfg.merge_patch(config);
-        }
-        return defaultCfg;
-    }
+    PointCfg config_;
 };
 } // namespace guide
 }

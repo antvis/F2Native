@@ -6,24 +6,27 @@
 namespace xg {
 namespace guide {
 
+struct LineCfg {
+    string color = "#1890FF";
+    float lineWidth = 1.f;
+    string orientation = "horizontal"; // [horizontal, vertical,
+    vector<float> dash;
+    array<string, 2> position;
+    bool top = false;
+};
+
+extern void from_json(const nlohmann::json &j, LineCfg &c);
+
 class Line : public GuideBase {
   public:
-    Line(nlohmann::json cfg = {}) : GuideBase("line", MergeDefaultCfg(cfg)) {}
+    Line(const LineCfg &cfg) : GuideBase("line"), config_(cfg) {}
 
     void Render(XChart &chart, shape::Group *container, canvas::CanvasContext &context, const std::vector<util::Rect> &dangerRects) override;
 
     util::BBox GetBBox() override { return bbox_; }
-
+    bool IsTop() const noexcept override { return config_.top; }
   protected:
-    static nlohmann::json MergeDefaultCfg(const nlohmann::json &config) {
-        nlohmann::json defaultCfg = {
-            {"color", "#1890FF"}, {"lineWidth", 1.f}, {"orientation", "horizontal"} // [horizontal, vertical, crossed]
-        };
-        if(config.is_object()) {
-            defaultCfg.merge_patch(config);
-        }
-        return defaultCfg;
-    }
+    LineCfg config_;
 };
 } // namespace guide
 } // namespace xg

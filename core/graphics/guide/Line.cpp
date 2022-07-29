@@ -4,49 +4,55 @@
 
 using namespace xg;
 
+void guide::from_json(const nlohmann::json &j, LineCfg &c) {
+    if (!j.is_object()) {
+        return;
+    }
+    LineCfg d;
+    c.color = j.value("color", d.color);
+    c.lineWidth = j.value("lineWidth", d.lineWidth);
+    c.orientation = j.value("orientation", d.orientation);
+    c.dash = j.value("dash", d.dash);
+    c.top = j.value("top", d.top);
+    auto &position = json::GetArray(j, "position");
+    if (position.size() >= 2) {
+        if (position[0].is_number()) {
+            c.position[0] = position[0].dump();
+        } else if(position[0].is_string()) {
+            c.position[0] = position[0];
+        }
+        
+        if (position[1].is_number()) {
+            c.position[1] = position[1].dump();
+        } else if(position[0].is_string()) {
+            c.position[1] = position[1];
+        }
+    }
+}
+
 void guide::Line::Render(XChart &chart, shape::Group *container, canvas::CanvasContext &context, const std::vector<util::Rect> &dangerRects) {
     const std::string &xField = chart.GetXScaleField();
-    std::vector<std::string> yFields = chart.getYScaleFields();
-    const std::string yField = yFields[0];
+    const std::vector<std::string> &yFields = chart.getYScaleFields();
+    const std::string &yField = yFields[0];
 
-    util::Point position = this->GetPosition(chart, json::Get(this->config_, "position"), xField, yField);
-
-    const std::string &orientation = json::GetString(config_, "orientation"); 
-    const std::string &color = json::GetString(config_, "color");
-    float lineWidth = config_["lineWidth"].get<float>() * context.GetDevicePixelRatio();
-
-    util::Point xAxis = chart.GetCoord().GetXAxis();
-    util::Point yAxis = chart.GetCoord().GetYAxis();
-
-    auto lambda = [&](std::vector<util::Point> &points) -> void {
+    util::Point position = this->GetPosition(chart, config_.position, xField, yField);
+    float lineWidth = config_.lineWidth * context.GetDevicePixelRatio();
+    auto lambda = [&](const std::vector<util::Point> &points) -> void {
         auto l = xg::make_unique<xg::shape::Polyline>(lineWidth, points, false);
-
-        if(config_.contains("dash")) {
-            l->SetDashLine(json::ParseDashArray(config_["dash"], context.GetDevicePixelRatio()));
-        }
-        l->SetStorkColor(color);
+        auto dash = json::ScaleDash(config_.dash, context.GetDevicePixelRatio());
+        l->SetDashLine(dash);
+        l->SetStorkColor(config_.color);
         container->AddElement(std::move(l));
     };
 
-    if(orientation == "horizontal") {
-        std::vector<util::Point> points;
-        points.push_back(util::Point{xAxis.x, position.y});
-        points.push_back(util::Point{xAxis.y, position.y});
-        lambda(points);
-    } else if(orientation == "vertical") {
-        std::vector<util::Point> points;
-        points.push_back(util::Point{position.x, yAxis.y});
-        points.push_back(util::Point{position.x, yAxis.x});
-        lambda(points);
-    } else if(orientation == "crossed") {
-        std::vector<util::Point> hPoints;
-        hPoints.push_back(util::Point{xAxis.x, position.y});
-        hPoints.push_back(util::Point{xAxis.y, position.y});
-        lambda(hPoints);
-
-        std::vector<util::Point> vPoints;
-        vPoints.push_back(util::Point{position.x, yAxis.y});
-        vPoints.push_back(util::Point{position.x, yAxis.x});
-        lambda(vPoints);
+    util::Point xAxis = chart.GetCoord().GetXAxis();
+    util::Point yAxis = chart.GetCoord().GetYAxis();
+    if(config_.orientation == "horizontal") {
+        lambda(std::vector<util::Point>{util::Point{xAxis.x, position.y}, util::Point{xAxis.y, position.y}});
+    } else if(config_.orientation == "vertical") {
+        lambda(std::vector<util::Point> {util::Point{position.x, yAxis.y}, util::Point{position.x, yAxis.x}});
+    } else if(config_.orientation == "crossed") {
+        lambda(std::vector<util::Point> {util::Point{xAxis.x, position.y}, util::Point{xAxis.y, position.y}});
+        lambda(std::vector<util::Point> {util::Point{position.x, yAxis.y}, util::Point{position.x, yAxis.x}});
     }
 }

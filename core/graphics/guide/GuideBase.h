@@ -14,7 +14,7 @@ namespace guide {
 
 class GuideBase {
   public:
-    GuideBase(std::string type, nlohmann::json config = {}) : type_(type), config_(config) {}
+    GuideBase(const std::string &type) : type_(type) {}
     virtual ~GuideBase() {}
     virtual void
     Render(XChart &chart, shape::Group *container, canvas::CanvasContext &context, const std::vector<util::Rect> &dangerRects) = 0;
@@ -22,20 +22,13 @@ class GuideBase {
     virtual util::BBox GetBBox() { return bbox_; }
 
     std::string GetType() const noexcept { return this->type_; }
-    
-    //是否绘制在最顶层
-    bool isTop() const noexcept {
-        if (config_.contains("top")) {
-            return config_["top"].get<bool>();
-        }
-        return true;
-    }
 
-    virtual util::Point GetPosition(XChart &chart, const nlohmann::json &position, const std::string &xField, const std::string &yField);
+    virtual bool IsTop() const noexcept = 0;
+    
+    virtual util::Point GetPosition(XChart &chart, const array<string, 2> &position, const std::string &xField, const std::string &yField);
 
   protected:
     std::string type_ = "";
-    nlohmann::json config_;
     util::BBox bbox_;
 };
 } // namespace guide

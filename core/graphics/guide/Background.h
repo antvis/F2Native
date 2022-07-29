@@ -7,21 +7,24 @@
 namespace xg {
 namespace guide {
 
+struct BackgroundCfg {
+    string color = "#1CAA3DB2";
+    array<string, 2> leftBottom, rightTop;
+    bool top = false;
+};
+extern void from_json(const nlohmann::json &j, BackgroundCfg &b);
+
+
 class Background : public GuideBase {
   public:
-    Background(nlohmann::json config = {}) : GuideBase("background", MergeDefaultCfg(config)) {}
+    Background(const BackgroundCfg &cfg) : GuideBase("background"), config_(cfg) {}
 
     void Render(XChart &chart, shape::Group *container, canvas::CanvasContext &context, const std::vector<util::Rect> &dangerRects) override;
     util::BBox GetBBox() override { return bbox_; }
+    bool IsTop() const noexcept override { return config_.top; }
 
   protected:
-    static nlohmann::json MergeDefaultCfg(const nlohmann::json &cfg) {
-        nlohmann::json defaultCfg = {{"color", "#1CAA3DB2"}};
-        if(cfg.is_object()) {
-            defaultCfg.merge_patch(cfg);
-        }
-        return defaultCfg;
-    }
+    BackgroundCfg config_;
 };
 
 } // namespace guide

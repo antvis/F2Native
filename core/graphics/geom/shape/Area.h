@@ -26,6 +26,8 @@ class Area : public GeomShapeBase {
               const XStyle &style) override {
         vector<xg::util::Point> topPoints;
         vector<xg::util::Point> bottomPoints;
+        topPoints.reserve(end - start);
+        bottomPoints.reserve(end - start);
 
         for(std::size_t i = start; i <= end; i++) {
             const auto &item = data[i];

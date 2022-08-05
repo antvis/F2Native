@@ -1,7 +1,12 @@
 #ifndef XG_GRAPHICS_GUIDE_CONTROLLER_H
 #define XG_GRAPHICS_GUIDE_CONTROLLER_H
 
-#include "GuideBase.h"
+#include "Background.h"
+#include "Flag.h"
+#include "Line.h"
+#include "Text.h"
+#include "Image.h"
+#include "Point.h"
 #include "../shape/Group.h"
 
 namespace xg {
@@ -36,14 +41,14 @@ class GuideController {
     void Image(const std::string &json = "");
     
     // 圆点
-    void Point(const std::string &json = "");
+//    void Point(const std::string &json = "");
         
-    void FlagObject(const nlohmann::json &config);
-    void TextObject(const nlohmann::json &config);
-    void LineObject(const nlohmann::json &config);
-    void BackgroundObject(const nlohmann::json &config);
-    void ImageObject(const nlohmann::json &config);
-    void PointObject(const nlohmann::json &config);
+    void FlagObject(const FlagCfg &config);
+    void TextObject(const TextCfg &config);
+    void LineObject(const LineCfg &config);
+    void BackgroundObject(const BackgroundCfg &config);
+    void ImageObject(const ImageCfg &config);
+    void PointObject(const PointCfg &config);
 
     void Clear() {
         this->container_->Clear();

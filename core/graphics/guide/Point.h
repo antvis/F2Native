@@ -10,22 +10,35 @@
 #define XG_GRAPHICS_GUIDE_POINT_H
 
 #include "GuideBase.h"
+#include "../../reflection/reflection.h"
 
 namespace xg {
 namespace guide {
 
 struct PointCfg {
-    size_t size = 3;
+    float size = 3;
     string shape = "circle";
     string fill = GLOBAL_COLORS[0];
     string stroke;
     float lineWidth;
-    array<string, 2> position;
     bool top = false;
-    array<float, 2> margin = {0, 0};//left
+    vector<string> position = {"median", "median"};
+    vector<float> margin = {0, 0};//left
+    
+//    BEGIN_TYPE(PointCfg)
+//        FIELDS(FIELD(&PointCfg::size),
+//               FIELD(&PointCfg::shape),
+//               FIELD(&PointCfg::fill),
+//               FIELD(&PointCfg::stroke),
+//               FIELD(&PointCfg::lineWidth),
+//               FIELD(&PointCfg::top),
+//               FIELD(&PointCfg::margin),
+//               FIELD(&PointCfg::position))
+//        CTORS(DEFAULT_CTOR(PointCfg))
+//    END_TYPE
 };
 
-extern void from_json(const nlohmann::json &j, PointCfg &c);
+//extern void from_json(const nlohmann::json &j, PointCfg &c);
 
 class Point : public GuideBase {
   public:

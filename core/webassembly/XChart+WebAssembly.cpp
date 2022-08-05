@@ -77,8 +77,7 @@ EMSCRIPTEN_BINDINGS(guide) {
         .function("text", &guide::GuideController::Text)
         .function("line", &guide::GuideController::Line)
         .function("background", &guide::GuideController::Background)
-        .function("image", &guide::GuideController::Image)
-        .function("point", &guide::GuideController::Point);
+        .function("image", &guide::GuideController::Image);
 }
 
 ////////////////////////////////////////////////////////////////////////

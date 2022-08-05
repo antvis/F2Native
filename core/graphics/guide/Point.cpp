@@ -13,33 +13,33 @@
 
 using namespace xg;
 
-void guide::from_json(const nlohmann::json &j, PointCfg &c) {
-    if (!j.is_object()) {
-        return;
-    }
-    PointCfg d;
-    c.size = j.value("size", d.size);
-    c.shape = j.value("shape", d.shape);
-    c.fill = j.value("fill", d.fill);
-    c.stroke = j.value("stroke", d.stroke);
-    c.lineWidth = j.value("lineWidth", d.lineWidth);
-    c.top = j.value("top", d.top);
-    c.margin = j.value("margin", d.margin);
-    auto &position = json::GetArray(j, "position");
-    if (position.size() >= 2) {
-        if (position[0].is_number()) {
-            c.position[0] = position[0].dump();
-        } else if(position[0].is_string()) {
-            c.position[0] = position[0];
-        }
-        
-        if (position[1].is_number()) {
-            c.position[1] = position[1].dump();
-        } else if(position[0].is_string()) {
-            c.position[1] = position[1];
-        }
-    }
-}
+//void guide::from_json(const nlohmann::json &j, PointCfg &c) {
+//    if (!j.is_object()) {
+//        return;
+//    }
+//    PointCfg d;
+//    c.size = j.value("size", d.size);
+//    c.shape = j.value("shape", d.shape);
+//    c.fill = j.value("fill", d.fill);
+//    c.stroke = j.value("stroke", d.stroke);
+//    c.lineWidth = j.value("lineWidth", d.lineWidth);
+//    c.top = j.value("top", d.top);
+//    c.margin = j.value("margin", d.margin);
+//    auto &position = json::GetArray(j, "position");
+//    if (position.size() >= 2) {
+//        if (position[0].is_number()) {
+//            c.position[0] = position[0].dump();
+//        } else if(position[0].is_string()) {
+//            c.position[0] = position[0];
+//        }
+//        
+//        if (position[1].is_number()) {
+//            c.position[1] = position[1].dump();
+//        } else if(position[0].is_string()) {
+//            c.position[1] = position[1];
+//        }
+//    }
+//}
 
 void guide::Point::Render(XChart &chart, shape::Group *container, canvas::CanvasContext &context, const std::vector<util::Rect> &dangerRects) {
     const std::string &xField = chart.GetXScaleField();

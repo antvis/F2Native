@@ -26,6 +26,8 @@ class GuideBase {
     virtual bool IsTop() const noexcept = 0;
     
     virtual util::Point GetPosition(XChart &chart, const array<string, 2> &position, const std::string &xField, const std::string &yField);
+    
+    virtual util::Point GetPosition(XChart &chart, const vector<string> &position, const std::string &xField, const std::string &yField);
 
   protected:
     std::string type_ = "";

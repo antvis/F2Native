@@ -46,7 +46,7 @@
     self.chart.guide().image(@{@"position":@[@"median", @"max"], @"width": @30, @"height" : @(30), @"src":@"https://gw.alipayobjects.com/zos/antfincdn/FLrTNDvlna/antv.png", @"margin": @[@15, @-10]});
     
     //圆
-    self.chart.guide().point(@{@"position":@[@"median", @"median"], @"fill":@"red", @"size":@(6)});
+    self.chart.guide().point(@{@"margin":@[@10, @10],@"position":@[@"median", @"median"], @"fill":@"red", @"size":@(6), @"top":@NO});
     
     self.chart.animate(@(NO));
     

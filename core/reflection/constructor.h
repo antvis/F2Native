@@ -18,7 +18,7 @@ protected:
     }
 
 public:
-    int GetParamCount() const{
+    size_t GetParamCount() const{
         return paramTypes.size();
     }
 

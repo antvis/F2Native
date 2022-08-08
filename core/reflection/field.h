@@ -143,3 +143,8 @@ public:
         return (Any)*field;
     }
 };
+
+template<class FieldType>
+class TemplateField : public Field{
+    
+};

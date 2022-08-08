@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_XCODE_ATTRIBUTE_MACOSX_DEPLOYMENT_TARGET "10.9")
 
 # -flto
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fno-rtti -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fno-rtti -fno-exceptions -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0")
 add_definitions(-ffunction-sections)
 add_definitions(-fdata-sections)
 
@@ -81,4 +81,4 @@ add_executable(${PROJECT_NAME} ${DIR_SRC})
 # -nostdlib 声明不要使用系统库
 # -s ENVIRONMENT='node'
 # -s FILESYSTEM=0 关闭文件系统 不能减小包大小
-set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "--bind  -Wall -Werror -s  ALLOW_MEMORY_GROWTH=1 -s ALLOW_TABLE_GROWTH -s -Oz -fno-rtti -s ENVIRONMENT='web' -s FILESYSTEM=0")
+set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "--bind  -Wall -Werror -s  ALLOW_MEMORY_GROWTH=1 -s ALLOW_TABLE_GROWTH -s -Oz -fno-rtti -fno-exceptions -s ENVIRONMENT='web' -s FILESYSTEM=0")

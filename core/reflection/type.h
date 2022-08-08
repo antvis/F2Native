@@ -27,7 +27,7 @@ protected:
     mutable std::unordered_map<std::string, std::vector<const Method*>> methodsMap;
 
     bool isEnum = false;
-    int templateCount;
+    int templateCount = 0;
     bool templated = false;
 
     static std::unordered_map<std::string, const Type*>& GetTypes(){
@@ -39,7 +39,7 @@ protected:
         if (src.size() != match.size())
             return false;
 
-        for (int i = 0, n = src.size(); i < n; i++){
+        for (size_t i = 0, n = src.size(); i < n; i++){
             if (match[i] == src[i]);
             else if (match[i].CanCast(src[i]));
             else return false;
@@ -50,6 +50,7 @@ protected:
 
 public:
     Type(int templateCount = 0){
+        this->templateCount = templateCount;
         this->name = "Unregistered_Type";
         this->baseType = nullptr;
     }
@@ -242,7 +243,7 @@ public:
         std::stringstream ss;
         ss << templateType->name << "<";
         ss << templates[0].ToString();
-        for (int i = 1, n = templates.size(); i < n; i++){
+        for (size_t i = 1, n = templates.size(); i < n; i++){
         ss << ", " << templates[i].ToString();
         }
         ss << ">";
@@ -261,7 +262,7 @@ public:
         return templates == this->templates;
     }
 
-    virtual bool Is(const Type* type) const;
+    virtual bool Is(const Type* type) const override;
 
 };
 
@@ -302,8 +303,7 @@ REFLECT_PRIMITIVE_TYPE(double)
 REFLECT_PRIMITIVE_TYPE(bool)
 REFLECT_PRIMITIVE_TYPE(std::string)
 REFLECT_PRIMITIVE_TYPE(std::wstring)
-REFLECT_PRIMITIVE_TYPE(std::vector<float>)
-REFLECT_PRIMITIVE_TYPE(std::vector<double>)
+//REFLECT_PRIMITIVE_TYPE(std::vector<std::string>)
 
 #undef REFLECT_PRIMITIVE_TYPE
 
@@ -347,16 +347,21 @@ struct TemplateType<T>{ \
 
 DEF_TMPL(std::shared_ptr, 1)
 DEF_TMPL(std::vector, 2)
+#undef DEF_TMPL
 
-#define DEF_CT1(C) \
+#define DEF_CT1(C,n) \
 template<class T> \
 struct ReflectType<C<T>>{ \
     static const Type* type; \
     static const Type* Value(){ \
-        static const Type* type = Type::RegisterType(new Type, #C "<" + qualified_typeof(T).ToString() + ">", nullptr); \
+        static const Type* type = Type::RegisterType(new Type(n), #C "<" + qualified_typeof(T).ToString() + ">", nullptr); \
         return type; \
     } \
 };
+
+
+DEF_CT1(std::shared_ptr, 1);
+DEF_CT1(std::vector, 2);
 #undef DEF_CT1
 
 #define DEF_CT1(C) \
@@ -371,6 +376,7 @@ struct ReflectType<C<T...>>{ \
 
 DEF_CT1(std::shared_ptr);
 DEF_CT1(std::vector);
+#undef DEF_CT1
 
 //template<class T>
 //struct ReflectType<std::vector<T>>{
@@ -380,30 +386,4 @@ DEF_CT1(std::vector);
 //            return type;
 //    }
 //};
-
-
-static const Type* int8Type = typeof(int8_t);
-static const Type* int16Type = typeof(int16_t);
-static const Type* int32Type = typeof(int32_t);
-static const Type* int64Type = typeof(int64_t);
-static const Type* uint8Type = typeof(uint8_t);
-static const Type* uint16Type = typeof(uint16_t);
-static const Type* uint32Type = typeof(uint32_t);
-static const Type* uint64Type = typeof(uint64_t);
-static const Type* intType = typeof(int);
-static const Type* longType = typeof(long);
-static const Type* longlongType = typeof(long long);
-static const Type* charType = typeof(char);
-static const Type* ucharType = typeof(unsigned char);
-static const Type* scharType = typeof(signed char);
-static const Type* uintType = typeof(unsigned int);
-static const Type* ulongType = typeof(unsigned long);
-static const Type* ulonglongType = typeof(unsigned long long);
-static const Type* floatType = typeof(float);
-static const Type* doubleType = typeof(double);
-static const Type* boolType = typeof(bool);
-static const Type* wcharType = typeof(wchar_t);
-static const Type* stringType = typeof(std::string);
-static const Type* numberArrayType = typeof(std::vector<double>);
-//static const Type* stringArrayType = typeof(std::vector<std::string>);
 

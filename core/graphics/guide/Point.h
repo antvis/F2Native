@@ -23,22 +23,20 @@ struct PointCfg {
     float lineWidth;
     bool top = false;
     vector<string> position = {"median", "median"};
-    vector<float> margin = {0, 0};//left
+    vector<float> margin = {0, 0};//left top
     
-//    BEGIN_TYPE(PointCfg)
-//        FIELDS(FIELD(&PointCfg::size),
-//               FIELD(&PointCfg::shape),
-//               FIELD(&PointCfg::fill),
-//               FIELD(&PointCfg::stroke),
-//               FIELD(&PointCfg::lineWidth),
-//               FIELD(&PointCfg::top),
-//               FIELD(&PointCfg::margin),
-//               FIELD(&PointCfg::position))
-//        CTORS(DEFAULT_CTOR(PointCfg))
-//    END_TYPE
+    BEGIN_TYPE(PointCfg)
+        FIELDS(FIELD(&PointCfg::size),
+               FIELD(&PointCfg::shape),
+               FIELD(&PointCfg::fill),
+               FIELD(&PointCfg::stroke),
+               FIELD(&PointCfg::lineWidth),
+               FIELD(&PointCfg::top),
+               FIELD(&PointCfg::margin),
+               FIELD(&PointCfg::position))
+        CTORS(DEFAULT_CTOR(PointCfg))
+    END_TYPE
 };
-
-//extern void from_json(const nlohmann::json &j, PointCfg &c);
 
 class Point : public GuideBase {
   public:

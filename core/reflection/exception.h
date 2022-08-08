@@ -2,7 +2,9 @@
 
 #include <string>
 
-#define THROW_EXCEPTION(name, msg) { name ex; ex.What() = msg; ex.Where() = std::string(__FILE__ " (" + std::to_string(__LINE__) + ")"); throw ex; }
+#define THROW_EXCEPTION(name, msg) std::abort()
+
+//#define THROW_EXCEPTION(name, msg) { name ex; ex.What() = msg; ex.Where() = std::string(__FILE__ " (" + std::to_string(__LINE__) + ")"); throw ex; }
 
 class Exception {
 protected:

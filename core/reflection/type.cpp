@@ -160,7 +160,7 @@ const Method* Type::GetMethod(const std::string& methodName, const std::vector<Q
     else if (matches.size() > 1){
         std::stringstream err;
         err << "method '" << name << "(";
-        for (int i = 0, n = paramTypes.size(); i < n; i++){
+        for (size_t i = 0, n = paramTypes.size(); i < n; i++){
             if (i != 0) err << ", ";
             err << paramTypes[i].ToString();
         }
@@ -208,8 +208,7 @@ IMPL_REFLECT_PRIMITIVE_TYPE(double)
 IMPL_REFLECT_PRIMITIVE_TYPE(bool)
 IMPL_REFLECT_PRIMITIVE_TYPE(std::string)
 IMPL_REFLECT_PRIMITIVE_TYPE(std::wstring)
-IMPL_REFLECT_PRIMITIVE_TYPE(std::vector<float>)
-IMPL_REFLECT_PRIMITIVE_TYPE(std::vector<double>)
+//IMPL_REFLECT_PRIMITIVE_TYPE(std::vector<std::string>)
 
 #if defined(CHAR_MIN) && (CHAR_MIN == 0)
 IMPL_REFLECT_ALIASED_PRIMITIVE_TYPE(char, uint8_t)
@@ -282,8 +281,6 @@ ____DUMMY_ADD_ALIASED::____DUMMY_ADD_ALIASED(){
     Type::AddAlias("String", typeof(std::string));
     Type::AddAlias("wstring", typeof(std::wstring));
     Type::AddAlias("WString", typeof(std::wstring));
-//    Type::AddAlias("NumberArray", typeof(std::vector<double>));
-//    Type::AddAlias("StringArray", typeof(std::vector<std::string>));
 
     const_cast<Type*>(typeof(std::string))->AddConstructors({ new ConstructorImpl<std::string>(), new ConstructorImpl<std::string, const char*>(), new ConstructorImpl<std::string, const std::string&>() });
 }

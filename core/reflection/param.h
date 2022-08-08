@@ -65,8 +65,6 @@ GET_TYPE_KIND(double);
 GET_TYPE_KIND(signed long);
 GET_TYPE_KIND(unsigned long);
 GET_TYPE_KIND(wchar_t);
-GET_TYPE_KIND(std::vector<float>);
-GET_TYPE_KIND(std::vector<double>);
 
 #undef GET_TYPE_KIND
 
@@ -207,7 +205,6 @@ public:
     /*Any(Any&& any){
         std::swap(value, any.value);
     }*/
-    Any():value(nullptr){}
 
     Any(const Any& any) : value(any.value ? any.value->Clone() : nullptr){
         
@@ -439,7 +436,5 @@ DEF_CAST(uint32_t);
 DEF_CAST(uint64_t);
 DEF_CAST(float);
 DEF_CAST(double);
-//DEF_CAST(std::vector<double>);
-//DEF_CAST(std::vector<std::string>);
 #undef CAST_
 #undef DEF_CAST

@@ -4,32 +4,6 @@
 
 using namespace xg;
 
-void guide::from_json(const nlohmann::json &j, LineCfg &c) {
-    if (!j.is_object()) {
-        return;
-    }
-    LineCfg d;
-    c.color = j.value("color", d.color);
-    c.lineWidth = j.value("lineWidth", d.lineWidth);
-    c.orientation = j.value("orientation", d.orientation);
-    c.dash = j.value("dash", d.dash);
-    c.top = j.value("top", d.top);
-    auto &position = json::GetArray(j, "position");
-    if (position.size() >= 2) {
-        if (position[0].is_number()) {
-            c.position[0] = position[0].dump();
-        } else if(position[0].is_string()) {
-            c.position[0] = position[0];
-        }
-        
-        if (position[1].is_number()) {
-            c.position[1] = position[1].dump();
-        } else if(position[0].is_string()) {
-            c.position[1] = position[1];
-        }
-    }
-}
-
 void guide::Line::Render(XChart &chart, shape::Group *container, canvas::CanvasContext &context, const std::vector<util::Rect> &dangerRects) {
     const std::string &xField = chart.GetXScaleField();
     const std::vector<std::string> &yFields = chart.getYScaleFields();

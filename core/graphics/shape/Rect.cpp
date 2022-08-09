@@ -80,3 +80,16 @@ void xg::shape::Rect::SetRoundings(std::array<float, 4> roundings) {
         roundings_[3] *= scale;
     }
 }
+
+void xg::shape::Rect::SetRoundings(const std::vector<float> &roundings) {
+    float height = static_cast<float>(size_.height);//height < 0 柱朝上
+    float width = static_cast<float>(size_.width);
+    float minWidth = max(roundings[0] + roundings[1], roundings[2] + roundings[3]);
+    float minHeight = max(roundings[0] + roundings[3], roundings[1] + roundings[2]);
+    float scale = fabs(min(width / minWidth, height / minHeight));
+    scale = min(scale, 1.f);
+    roundings_[0] *= scale;
+    roundings_[1] *= scale;
+    roundings_[2] *= scale;
+    roundings_[3] *= scale;
+}

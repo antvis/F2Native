@@ -20,14 +20,32 @@ struct FlagCfg {
     string textBaseline = "bottom";
     string content = "";
     float radius = 1.5f; //圆心半径
-    array<float, 4> padding =  {0.f, 0.f, 0.f, 0.f};
-    array<float, 4> rounding =  {0.f, 0.f, 0.f, 0.f};
+    vector<float> padding =  {0.f, 0.f, 0.f, 0.f};
+    vector<float> rounding =  {0.f, 0.f, 0.f, 0.f};
     float lineWidth =  1.0f;              // 旗子延长线线宽
     string backgroundColor = "#FFFFFF7D"; // 旗子方块背景色
-    array<string, 2> position;
+    vector<string> position;
     bool top = false;
+    
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(FlagCfg)
+        FIELDS(FIELD(&FlagCfg::color),
+               FIELD(&FlagCfg::textSize),
+               FIELD(&FlagCfg::textColor),
+               FIELD(&FlagCfg::textAlign),
+               FIELD(&FlagCfg::textBaseline),
+               FIELD(&FlagCfg::content),
+               FIELD(&FlagCfg::radius),
+               FIELD(&FlagCfg::padding),
+               FIELD(&FlagCfg::rounding),
+               FIELD(&FlagCfg::lineWidth),
+               FIELD(&FlagCfg::backgroundColor),
+               FIELD(&FlagCfg::position),
+               FIELD(&FlagCfg::top))
+        CTORS(DEFAULT_CTOR(FlagCfg))
+    END_TYPE
+#endif
 };
-extern void from_json(const nlohmann::json &j, FlagCfg &v);
 
 class Flag : public GuideBase {
   public:

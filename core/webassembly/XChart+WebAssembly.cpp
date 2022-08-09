@@ -45,7 +45,8 @@ EMSCRIPTEN_BINDINGS(xchart) {
         .function("area", &XChart::AreaWasm, allow_raw_pointers())
         .function("point", &XChart::PointWasm, allow_raw_pointers())
         .function("candle", &XChart::CandleWasm, allow_raw_pointers())
-        .function("interaction", &XChart::InteractionWasm, allow_raw_pointers());
+        .function("interaction", &XChart::InteractionWasm, allow_raw_pointers())
+        .function("guide", &XChart::GuideWasm, allow_raw_pointers());
 }
 ////////////////////////////////////////////////////////////////////////
 // graphics/geom/geom.h
@@ -70,20 +71,78 @@ EMSCRIPTEN_BINDINGS(geom) {
     class_<geom::Candle, base<geom::AbstractGeom>>("Candle").constructor<shape::Group *, utils::Tracer *>();
 }
 ////////////////////////////////////////////////////////////////////////
+EMSCRIPTEN_BINDINGS(guide_flagcfg) {
+    value_object<guide::FlagCfg>("GuideFlagCfg")
+            .field("color", &guide::FlagCfg::color)
+            .field("textSize", &guide::FlagCfg::textSize) 
+            .field("textColor", &guide::FlagCfg::textColor)
+            .field("textAlign", &guide::FlagCfg::textAlign)
+            .field("textBaseline", &guide::FlagCfg::textBaseline)
+            .field("top", &guide::FlagCfg::top)
+            .field("position", &guide::FlagCfg::position)
+            .field("content", &guide::FlagCfg::content)
+            .field("radius", &guide::FlagCfg::radius)
+            .field("padding", &guide::FlagCfg::padding)
+            .field("rounding", &guide::FlagCfg::rounding)
+            .field("lineWidth", &guide::FlagCfg::lineWidth)
+            .field("backgroundColor", &guide::FlagCfg::backgroundColor);
+}
+
+EMSCRIPTEN_BINDINGS(guide_textcfg) {
+    value_object<guide::TextCfg>("GuideTextCfg")
+            .field("content", &guide::TextCfg::content)
+            .field("textColor", &guide::TextCfg::textColor) 
+            .field("textSize", &guide::TextCfg::textSize)
+            .field("textAlign", &guide::TextCfg::textAlign)
+            .field("textBaseline", &guide::TextCfg::textBaseline)
+            .field("top", &guide::TextCfg::top)
+            .field("position", &guide::TextCfg::position)
+            .field("margin", &guide::TextCfg::margin);
+}
+
+EMSCRIPTEN_BINDINGS(guide_linecfg) {
+    value_object<guide::LineCfg>("GuideLineCfg")
+            .field("color", &guide::LineCfg::color)
+            .field("top", &guide::LineCfg::top)
+            .field("position", &guide::LineCfg::position)
+            .field("orientation", &guide::LineCfg::orientation)
+            .field("dash", &guide::LineCfg::dash)
+            .field("lineWidth", &guide::LineCfg::lineWidth);
+}
+
+EMSCRIPTEN_BINDINGS(guide_backgroundcfg) {
+    value_object<guide::BackgroundCfg>("GuideBackgroundCfg")
+            .field("color", &guide::BackgroundCfg::color)
+            .field("top", &guide::BackgroundCfg::top)
+            .field("leftBottom", &guide::BackgroundCfg::leftBottom)
+            .field("rightTop", &guide::BackgroundCfg::rightTop);
+}
+
+EMSCRIPTEN_BINDINGS(guide_imagecfg) {
+    value_object<guide::ImageCfg>("GuideImageCfg")
+            .field("margin", &guide::ImageCfg::margin)
+            .field("top", &guide::ImageCfg::top)
+            .field("width", &guide::ImageCfg::width)
+            .field("height", &guide::ImageCfg::height)
+            .field("src", &guide::ImageCfg::src);
+}
+
+
 // graphics/guide/GuideController.h
 EMSCRIPTEN_BINDINGS(guide) {
     class_<guide::GuideController>("Guide")
-        .function("flag", &guide::GuideController::Flag)
-        .function("text", &guide::GuideController::Text)
-        .function("line", &guide::GuideController::Line)
-        .function("background", &guide::GuideController::Background)
-        .function("image", &guide::GuideController::Image);
+        .function("flag", &guide::GuideController::FlagObject)
+        .function("text", &guide::GuideController::TextObject)
+        .function("line", &guide::GuideController::LineObject)
+        .function("background", &guide::GuideController::BackgroundObject)
+        .function("image", &guide::GuideController::ImageObject);
 }
 
 ////////////////////////////////////////////////////////////////////////
 // vector
 EMSCRIPTEN_BINDINGS(module) {
     emscripten::register_vector<std::string>("StringVector");
+    emscripten::register_vector<float>("NumberVector");
 }
 
 #endif

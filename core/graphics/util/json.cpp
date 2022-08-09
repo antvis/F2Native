@@ -53,6 +53,15 @@ std::array<float, 4> ScaleRoundings(const std::array<float, 4> roundings, float 
     return rst;
 }
 
+std::vector<float> ScaleRoundings(const std::vector<float> roundings, float scale) {
+    std::vector<float> rst;
+    rst[0] = roundings[0] * scale;
+    rst[1] = roundings[1] * scale;
+    rst[2] = roundings[2] * scale;
+    rst[3] = roundings[3] * scale;
+    return rst;
+}
+
 void ParseRoundings(const nlohmann::json &data, float *rst, float ratio) {
     if(data.is_array() && data.size() >= 4) {
         *rst = data[0].get<float>() * ratio;

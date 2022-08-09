@@ -15,14 +15,24 @@ namespace xg {
 namespace guide {
 
 struct ImageCfg {
-    array<float, 2> margin;
+    vector<float> margin; //left top
     float width, height;
     string src;
-    array<string, 2> position;
+    vector<string> position = {"median", "median"};
     bool top = false;
+    
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(ImageCfg)
+    FIELDS(FIELD(&ImageCfg::width),
+           FIELD(&ImageCfg::height),
+           FIELD(&ImageCfg::src),
+           FIELD(&ImageCfg::top),
+           FIELD(&ImageCfg::margin),
+           FIELD(&ImageCfg::position))
+    CTORS(DEFAULT_CTOR(ImageCfg))
+    END_TYPE
+#endif
 };
-
-extern void from_json(const nlohmann::json &j, ImageCfg &i);
 
 class Image : public GuideBase {
 public:

@@ -23,7 +23,13 @@ std::vector<std::string> F2Reflection::CreateStringArray(NSArray *array, const T
     __block std::vector<std::string> rst;
     rst.reserve(array.count);
     [array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        rst.push_back([obj UTF8String]);
+         if ([obj isKindOfClass:NSNumber.class]) {
+            rst.push_back([obj stringValue].UTF8String);
+         } else if ([obj isKindOfClass:NSString.class]) {
+            rst.push_back([obj UTF8String]);
+         }  else {
+            NSCAssert(NO, @"unsupported string type");
+         }
     }];
     return rst;
 }

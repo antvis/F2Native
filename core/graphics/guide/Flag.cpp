@@ -10,39 +10,6 @@
 using namespace xg;
 using namespace xg::guide;
 
-void guide::from_json(const nlohmann::json &j, FlagCfg &v) {
-    if (!j.is_object()) {
-        return;
-    }
-    FlagCfg d;
-    v.color = j.value("color", d.color);
-    v.textSize = j.value("textSize", d.textSize);
-    v.textColor = j.value("textColor", d.textColor);
-    v.textAlign = j.value("textAlign", d.textAlign);
-    v.textBaseline = j.value("textBaseline", d.textBaseline);
-    v.content = j.value("content", d.content);
-    v.radius = j.value("radius", d.radius);
-    v.padding = j.value("padding", d.padding);
-    v.rounding = j.value("padding", d.rounding);
-    v.lineWidth = j.value("lineWidth", d.lineWidth);
-    v.backgroundColor = j.value("backgroundColor", d.backgroundColor);
-    v.top = j.value("top", d.top);
-    auto &position = json::GetArray(j, "position");
-    if (position.size() >= 2) {
-        if (position[0].is_number()) {
-            v.position[0] = position[0].dump();
-        } else if(position[0].is_string()) {
-            v.position[0] = position[0];
-        }
-        
-        if (position[1].is_number()) {
-            v.position[1] = position[1].dump();
-        } else if(position[0].is_string()) {
-            v.position[1] = position[1];
-        }
-    }
-}
-
 void Flag::Render(XChart &chart, shape::Group *container, canvas::CanvasContext &context, const std::vector<util::Rect> &dangerRects) {
     const std::string &xField = chart.GetXScaleField();
     const std::vector<std::string> &yFields = chart.getYScaleFields();

@@ -10,7 +10,6 @@
 #define XG_GRAPHICS_GUIDE_POINT_H
 
 #include "GuideBase.h"
-#include "../../reflection/reflection.h"
 
 namespace xg {
 namespace guide {
@@ -24,7 +23,8 @@ struct PointCfg {
     bool top = false;
     vector<string> position = {"median", "median"};
     vector<float> margin = {0, 0};//left top
-    
+
+#if !defined(__EMSCRIPTEN__)
     BEGIN_TYPE(PointCfg)
         FIELDS(FIELD(&PointCfg::size),
                FIELD(&PointCfg::shape),
@@ -36,6 +36,7 @@ struct PointCfg {
                FIELD(&PointCfg::position))
         CTORS(DEFAULT_CTOR(PointCfg))
     END_TYPE
+#endif
 };
 
 class Point : public GuideBase {

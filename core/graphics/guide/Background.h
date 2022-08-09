@@ -9,11 +9,19 @@ namespace guide {
 
 struct BackgroundCfg {
     string color = "#1CAA3DB2";
-    array<string, 2> leftBottom, rightTop;
+    vector<string> leftBottom, rightTop;
     bool top = false;
-};
-extern void from_json(const nlohmann::json &j, BackgroundCfg &b);
 
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(BackgroundCfg)
+        FIELDS(FIELD(&BackgroundCfg::color),
+               FIELD(&BackgroundCfg::leftBottom),
+               FIELD(&BackgroundCfg::rightTop),
+               FIELD(&BackgroundCfg::top))
+        CTORS(DEFAULT_CTOR(BackgroundCfg))
+    END_TYPE
+#endif
+};
 
 class Background : public GuideBase {
   public:

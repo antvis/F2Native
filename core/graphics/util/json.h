@@ -33,6 +33,7 @@ void ParseRoundings(const nlohmann::json &data, float *rst, float ratio = 1.0f);
 
 std::vector<float> ScaleDash(const std::vector<float> &dash, float scale);
 std::array<float, 4> ScaleRoundings(const std::array<float, 4> roundings, float scale);
+std::vector<float> ScaleRoundings(const std::vector<float> roundings, float scale);
 
 inline nlohmann::json Get(const nlohmann::json &obj, const std::string &key) {
     return (obj.is_object() && obj.contains(key)) ? obj[key] : nlohmann::json();

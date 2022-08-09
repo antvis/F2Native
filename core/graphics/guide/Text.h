@@ -11,14 +11,25 @@ struct TextCfg {
     string textColor = "#808080";
     float textSize = DEFAULT_FONTSIZE;
     string content = "";
-    array<float, 2> margin = {0, 0}; // margin: left & top
+    vector<float> margin = {0, 0}; // margin: left & top
     string textAlign = "start";
     string textBaseline = "bottom";
-    array<string, 2> position;
+    vector<string> position = {"median", "median"};
     bool top = false;
+#if !defined(__EMSCRIPTEN__)
+   BEGIN_TYPE(TextCfg)
+       FIELDS(FIELD(&TextCfg::textColor),
+              FIELD(&TextCfg::textSize),
+              FIELD(&TextCfg::content),
+              FIELD(&TextCfg::margin),
+              FIELD(&TextCfg::textAlign),
+              FIELD(&TextCfg::textBaseline),
+              FIELD(&TextCfg::position),
+              FIELD(&TextCfg::top))
+       CTORS(DEFAULT_CTOR(TextCfg))
+   END_TYPE
+#endif
 };
-
-extern void from_json(const nlohmann::json &j, TextCfg &c);
 
 class Text : public GuideBase {
   public:

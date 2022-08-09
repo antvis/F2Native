@@ -5,7 +5,7 @@
 #include "../shape/Group.h"
 #include "../util/BBox.h"
 #include "../util/Point.h"
-#include "../../nlohmann/json.hpp"
+#include "../../reflection/reflection.h"
 
 namespace xg {
 class XChart;

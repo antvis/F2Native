@@ -57,6 +57,8 @@ class Rect : public Shape {
     
     void SetRoundings(std::array<float, 4> roundings);
     
+    void SetRoundings(const std::vector<float> &roundings);
+    
     void SetDashLine(const std::vector<float> &params) { this->dash_ = params; }
 
   protected:

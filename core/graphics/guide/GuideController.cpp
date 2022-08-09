@@ -17,25 +17,25 @@ void xg::guide::GuideController::Render(xg::XChart &chart, canvas::CanvasContext
     });
 }
 
-void xg::guide::GuideController::Flag(const std::string &json) {
-    FlagObject(xg::json::ParseString(json));
-}
+//void xg::guide::GuideController::Flag(const std::string &json) {
+//    FlagObject(xg::json::ParseString(json));
+//}
 
-void xg::guide::GuideController::Text(const std::string &json) {
-    TextObject(xg::json::ParseString(json));
-}
+//void xg::guide::GuideController::Text(const std::string &json) {
+//    TextObject(xg::json::ParseString(json));
+//}
 
-void xg::guide::GuideController::Line(const std::string &json) {
-    LineObject(xg::json::ParseString(json));
-}
+//void xg::guide::GuideController::Line(const std::string &json) {
+//    LineObject(xg::json::ParseString(json));
+//}
 
-void xg::guide::GuideController::Background(const std::string &json) {
-    BackgroundObject(xg::json::ParseString(json));
-}
+//void xg::guide::GuideController::Background(const std::string &json) {
+//    BackgroundObject(xg::json::ParseString(json));
+//}
 
-void xg::guide::GuideController::Image(const std::string &json) {
-    ImageObject(xg::json::ParseString(json));
-}
+//void xg::guide::GuideController::Image(const std::string &json) {
+//    ImageObject(xg::json::ParseString(json));
+//}
 
 //void xg::guide::GuideController::Point(const std::string &json) {
 //    PointObject(xg::json::ParseString(json));
@@ -47,6 +47,8 @@ void xg::guide::GuideController::FlagObject(const FlagCfg &config) {
 }
 
 void xg::guide::GuideController::TextObject(const TextCfg &config) {
+    logTracer_->trace("guide#text %s %s %f", config.content.c_str(), config.textColor.c_str(), config.textSize);
+    
     auto text = xg::make_unique<xg::guide::Text>(config);
     this->guides.push_back(std::move(text));
 }

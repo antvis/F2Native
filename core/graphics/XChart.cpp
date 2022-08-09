@@ -46,7 +46,7 @@ XChart::XChart(const std::string &name, double width, double height, double rati
 
     axisController_ = new axis::AxisController(backLayout_->AddGroup());
     this->logTracer_->trace("%s", "new axisController instance.");
-    guideController_ = new guide::GuideController(frontLayout_->AddGroup(), backLayout_->AddGroup());
+    guideController_ = new guide::GuideController(frontLayout_->AddGroup(), backLayout_->AddGroup(), GetLogTracer());
     this->logTracer_->trace("%s", "new guideController instance.");
     legendController_ = new legend::LegendController(backLayout_->AddGroup());
     this->logTracer_->trace("%s", "new legendController instance");
@@ -250,15 +250,15 @@ bool XChart::ParseObject(const nlohmann::json &dsl) {
         }
         
         if (type == "line") {
-            Guide().LineObject(*it);
+//            Guide().LineObject(*it);
         } else if (type == "text") {
-            Guide().TextObject(*it);
+//            Guide().TextObject(*it);
         } else if (type == "flag") {
-            Guide().FlagObject(*it);
+//            Guide().FlagObject(*it);
         } else if (type == "background") {
-            Guide().BackgroundObject(*it);
+//            Guide().BackgroundObject(*it);
         } else if (type == "image") {
-            Guide().ImageObject(*it);
+//            Guide().ImageObject(*it);
         }
     }
     

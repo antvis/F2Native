@@ -23,35 +23,45 @@
 
 - (F2Guide * (^)(NSDictionary *config))flag {
     return ^id(NSDictionary *config) {
-        self->_guide->Flag([F2SafeJson([F2Utils toJsonString:config]) UTF8String]);
+        auto cfg = F2Reflection::CreateStruct(config, typeof(xg::guide::FlagCfg));
+        auto cast = cfg.Cast<xg::guide::FlagCfg &>();
+        self->_guide->FlagObject(cast);
         return self;
     };
 }
 
 - (F2Guide * (^)(NSDictionary *config))text {
     return ^id(NSDictionary *config) {
-        self->_guide->Text([F2SafeJson([F2Utils toJsonString:config]) UTF8String]);
+        auto cfg = F2Reflection::CreateStruct(config, typeof(xg::guide::TextCfg));
+        auto cast = cfg.Cast<xg::guide::TextCfg &>();
+        self->_guide->TextObject(cast);
         return self;
     };
 }
 
 - (F2Guide * (^)(NSDictionary *config))line {
     return ^id(NSDictionary *config) {
-        self->_guide->Line([F2SafeJson([F2Utils toJsonString:config]) UTF8String]);
+        auto cfg = F2Reflection::CreateStruct(config, typeof(xg::guide::LineCfg));
+        auto cast = cfg.Cast<xg::guide::LineCfg &>();
+        self->_guide->LineObject(cast);
         return self;
     };
 }
 
 - (F2Guide * (^)(NSDictionary *config))background {
     return ^id(NSDictionary *config) {
-        self->_guide->Background([F2SafeJson([F2Utils toJsonString:config]) UTF8String]);
+        auto cfg = F2Reflection::CreateStruct(config, typeof(xg::guide::BackgroundCfg));
+        auto cast = cfg.Cast<xg::guide::BackgroundCfg &>();
+        self->_guide->BackgroundObject(cast);
         return self;
     };
 }
 
 - (F2Guide * (^)(NSDictionary *config))image {
     return ^id(NSDictionary *config) {
-        self->_guide->Image([F2SafeJson([F2Utils toJsonString:config]) UTF8String]);
+        auto cfg = F2Reflection::CreateStruct(config, typeof(xg::guide::ImageCfg));
+        auto cast = cfg.Cast<xg::guide::ImageCfg &>();
+        self->_guide->ImageObject(cast);
         return self;
     };
 }

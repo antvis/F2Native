@@ -42,14 +42,30 @@
     const vec = new Module.StringVector();
     let start = new Date().getTime()
     document.getElementById('f2wasmLoadCost').innerText = `F2Wasm Load Module: ${(start - initTime)}ms`
-    var chart = new Module.F2Chart("baseinterval", 600, 400, scale, false);
+    var chart = new Module.F2Chart("baseinterval", 600, 400, scale, true);
     chart.canvas("f2wasmChart").margin(0, 0, 0, 0).padding(10, 10, 20, 20);
     chart.source(JSON.stringify(data));
     chart.scale("sold", "{\"min\":0}");
     chart.scale("genre", "{\"range\":[0.1,0.9]}");
     chart.interval().position("genre*sold").color("genre", vec);
 
+    const position = new Module.StringVector();
+    position.push_back("median");
+    position.push_back("median");
+
+    const margin = new Module.NumberVector();
+    margin.push_back(10);
+    margin.push_back(10);
+    //需要写出完整的属性
+    chart.guide().text({
+      content: "median", textColor: "red", textSize: 20, textAlign: "start", textBaseline: "bottom", top: true, position, margin
+    });
+    delete position;
+    delete margin;
+
     chart.render();
+
+
     let end = new Date().getTime()
     var duration = chart.renderDuration();
     vec.delete();

@@ -16,8 +16,8 @@ namespace guide {
 
 class GuideController {
   public:
-    GuideController(shape::Group *container, shape::Group *backContainer)
-        : container_(container), backContainer_(backContainer) {}
+    GuideController(shape::Group *container, shape::Group *backContainer, utils::Tracer *logTracer)
+        : container_(container), backContainer_(backContainer), logTracer_(logTracer) {}
 
     ~GuideController() {
         Clear();
@@ -26,19 +26,19 @@ class GuideController {
     }
 
     // 分时图小旗子
-    void Flag(const std::string &json = "");
+//    void Flag(const std::string &json = "");
 
     // 文字
-    void Text(const std::string &json = "");
+//    void Text(const std::string &json = "");
 
     // 线
-    void Line(const std::string &json = "");
+//    void Line(const std::string &json = "");
 
     // 背景色
-    void Background(const std::string &json = "");
+//    void Background(const std::string &json = "");
     
     // 图片
-    void Image(const std::string &json = "");
+//    void Image(const std::string &json = "");
     
     // 圆点
 //    void Point(const std::string &json = "");
@@ -70,6 +70,7 @@ class GuideController {
     shape::Group *container_ = nullptr;
     // backLayout 层
     shape::Group *backContainer_ = nullptr;
+    utils::Tracer *logTracer_ = nullptr;
 };
 } // namespace guide
 } // namespace xg

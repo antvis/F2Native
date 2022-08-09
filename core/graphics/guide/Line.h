@@ -11,11 +11,21 @@ struct LineCfg {
     float lineWidth = 1.f;
     string orientation = "horizontal"; // [horizontal, vertical,
     vector<float> dash;
-    array<string, 2> position;
+    vector<string> position = {"median", "median"};
     bool top = false;
+    
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(LineCfg)
+        FIELDS(FIELD(&LineCfg::color),
+               FIELD(&LineCfg::lineWidth),
+               FIELD(&LineCfg::orientation),
+               FIELD(&LineCfg::dash),
+               FIELD(&LineCfg::position),
+               FIELD(&LineCfg::top))
+        CTORS(DEFAULT_CTOR(LineCfg))
+    END_TYPE
+#endif
 };
-
-extern void from_json(const nlohmann::json &j, LineCfg &c);
 
 class Line : public GuideBase {
   public:

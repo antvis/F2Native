@@ -31,7 +31,6 @@ namespace util {
         nlohmann::json::const_pointer data;
         double _x = NAN, _y = NAN;
         std::vector<double> _y0;
-        nlohmann::json _style;
         std::string _color, _shape, _adjust;
         double _size = NAN;
         

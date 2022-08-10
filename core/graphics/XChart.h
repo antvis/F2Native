@@ -69,7 +69,7 @@ namespace xg {
 
 typedef std::function<void()> ChartActionCallback;
 
-struct XConfig final {
+struct ChartConfig final {
     //当geom中有interval的时候自动调整max, min两个参数，使其中一个为0
     bool adjustScale = true;
     //当geom中有过个图形时，是否同步他们的最值
@@ -412,7 +412,7 @@ class XChart {
     std::string chartId_;
     std::string requestFrameHandleId_ = "";
     func::F2Function *invokeFunction_ = nullptr;
-    XConfig config_;
+    ChartConfig config_;
     CoordCfg coordConfig_;
 };
 } // namespace xg

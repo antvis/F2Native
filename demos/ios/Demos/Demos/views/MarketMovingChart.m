@@ -22,7 +22,7 @@
         }
     });
     self.chart.guide().flag(@{@"content":@"证券",
-                                   @"position": @[@1639099800000, @3656.9477],
+                                   @"position": @[@"1639099800000", @"3656.9477"],
                                    @"color": @"#108EE9",
                                    @"textColor":@"#108EE9",
                                    @"lineWidth": @(0.5),
@@ -30,7 +30,7 @@
                                    @"backgroundColor": @"#108EE920",
                                    @"padding": @[@5, @5, @5, @2]});
     self.chart.guide().flag(@{@"content":@"盐湖提锂",
-                                   @"position": @[@1639101240000, @3662.4675],
+                                   @"position": @[@"1639101240000", @"3662.4675"],
                                    @"color": @"#108EE9",
                                    @"textColor":@"#108EE9",
                                    @"lineWidth": @(0.5),
@@ -38,7 +38,7 @@
                                    @"backgroundColor": @"#108EE920",
                                    @"padding": @[@5, @5, @5, @2]});
     self.chart.guide().flag(@{@"content":@"汽车零部件",
-                                   @"position": @[@1639102800000, @3665.2538],
+                                   @"position": @[@"1639102800000", @"3665.2538"],
                                    @"color": @"#108EE9",
                                    @"textColor":@"#108EE9",
                                    @"lineWidth": @(0.5),
@@ -46,7 +46,7 @@
                                    @"backgroundColor": @"#108EE920",
                                    @"padding": @[@5, @5, @5, @2]});
     self.chart.guide().flag(@{@"content":@"银行",
-                                   @"position": @[@1639104900000, @3665.7622],
+                                   @"position": @[@"1639104900000", @"3665.7622"],
                                    @"color": @"#108EE9",
                                    @"textColor":@"#108EE9",
                                    @"lineWidth": @(0.5),
@@ -54,7 +54,7 @@
                                    @"backgroundColor": @"#108EE920",
                                    @"padding": @[@5, @5, @5, @2]});
     self.chart.guide().flag(@{@"content":@"元宇宙",
-                                   @"position": @[@1639106340000, @3659.8543],
+                                   @"position": @[@"1639106340000", @"3659.8543"],
                                    @"color": @"#108EE9",
                                    @"textColor":@"#108EE9",
                                    @"lineWidth": @(0.5),
@@ -62,7 +62,7 @@
                                    @"backgroundColor": @"#108EE920",
                                    @"padding": @[@5, @5, @5, @2]});
     self.chart.guide().flag(@{@"content":@"燃气",
-                                   @"position": @[@1639112940000, @3665.5504],
+                                   @"position": @[@"1639112940000", @"3665.5504"],
                                    @"color": @"#108EE9",
                                    @"textColor":@"#108EE9",
                                    @"lineWidth": @(0.5),
@@ -70,7 +70,7 @@
                                    @"backgroundColor": @"#108EE920",
                                    @"padding": @[@5, @5, @5, @2]});
     self.chart.guide().flag(@{@"content":@"煤炭开采",
-                                   @"position": @[@1639114800000, @3665.3084],
+                                   @"position": @[@"1639114800000", @"3665.3084"],
                                    @"color": @"#108EE9",
                                    @"textColor":@"#FFFFFF",
                                    @"lineWidth": @(0.5),

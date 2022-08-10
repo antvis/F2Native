@@ -54,11 +54,7 @@ std::array<float, 4> ScaleRoundings(const std::array<float, 4> roundings, float 
 }
 
 std::vector<float> ScaleRoundings(const std::vector<float> roundings, float scale) {
-    std::vector<float> rst;
-    rst[0] = roundings[0] * scale;
-    rst[1] = roundings[1] * scale;
-    rst[2] = roundings[2] * scale;
-    rst[3] = roundings[3] * scale;
+    std::vector<float> rst {roundings[0] * scale, roundings[1] * scale, roundings[2] * scale, roundings[3] * scale };
     return rst;
 }
 

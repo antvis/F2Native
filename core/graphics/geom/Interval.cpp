@@ -56,7 +56,7 @@ unordered_map<string, double> geom::Interval::CreateShapePointsCfg(XChart &chart
     } else {
         normalizeSize = 1.0 / count;
         if(xScale.GetType() == scale::ScaleType::Linear || xScale.GetType() == scale::ScaleType::TimeSharingLinear) {
-            normalizeSize *= (xScale.config.range[1] - xScale.config.range[0]);
+            normalizeSize *= xScale.config.HasRange() ? (xScale.config.range[1] - xScale.config.range[0]) : 1;
         }
     }
 

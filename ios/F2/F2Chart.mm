@@ -355,7 +355,15 @@ using namespace xg;
 
 - (F2Chart * (^)(NSDictionary *config))postTouchEvent {
     return ^id(NSDictionary *config) {
-        bool changed = self.chart->OnTouchEvent([F2SafeJson([F2Utils toJsonString:config]) UTF8String]);
+        __block event::Event event;
+        event.eventType = [config[@"eventType"] UTF8String];
+        NSArray *points = config[@"points"];
+        [points enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            CGFloat x = [obj[@"x"] floatValue];
+            CGFloat y = [obj[@"y"] floatValue];
+            event.points.push_back(util::Point {x, y});
+        }];
+        bool changed = self.chart->OnTouchEvent(event);
         if(changed) {
             [self.canvasView setNeedsDisplay];
         }

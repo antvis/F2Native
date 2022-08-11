@@ -94,8 +94,6 @@ struct CoordCfg {
 #endif
 };
 
-extern void from_json(const nlohmann::json &j, CoordCfg &cfg);
-
 class XChart {
     friend axis::AxisController;
     friend geom::AbstractGeom;
@@ -176,11 +174,10 @@ class XChart {
 
     XChart &Tooltip(const std::string &json = "");
 
-    XChart &Coord(const std::string &json = "");
-
     XChart &Animate(const std::string &json = "");
-
-    bool OnTouchEvent(const std::string &json = "");
+    
+    //会修改event 附加devicePixelRatio和timestamp信息
+    bool OnTouchEvent(event::Event &event);
 
     geom::Line &Line();
     geom::Interval &Interval();

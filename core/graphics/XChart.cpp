@@ -16,15 +16,6 @@
 using namespace xg;
 using namespace std;
 
-void xg::from_json(const nlohmann::json &j, CoordCfg &c) {
-    if (!j.is_object()) {
-        return;
-    }
-    CoordCfg d;
-    c.type = j.value("type", d.type);
-    c.transposed = j.value("transposed", d.transposed);
-}
-
 XChart::XChart(const std::string &name, double width, double height, double ratio, bool showLog) : chartName_(name) {
     SetName(name);
     width_ = width * ratio;
@@ -133,15 +124,15 @@ bool XChart::ParseObject(const nlohmann::json &dsl) {
     }
     
     const auto &coord = json::GetObject(dsl, "coord");
-    CoordObject(coord);
+//    CoordObject(coord);
     
     //一个chart只有一个legend
     const auto &legend = json::GetObject(dsl, "legend");
-    LegendObject(json::GetString(legend, "field"), legend);
+//    LegendObject(json::GetString(legend, "field"), legend);
     
     //可能是bool， 可能是object
     const auto &animate = json::Get(dsl, "animate");
-    AnimateObject(animate);
+//    AnimateObject(animate);
     
     const auto &axises = json::GetArray(dsl, "axises");
     for (auto it = axises.begin(); it != axises.end(); ++it) {
@@ -149,23 +140,23 @@ bool XChart::ParseObject(const nlohmann::json &dsl) {
         
         //兼容线上老的代码
         if (config.is_object()) {
-            AxisObject(json::GetString(*it, "field"), config);
+//            AxisObject(json::GetString(*it, "field"), config);
         } else {
-            AxisObject(json::GetString(*it, "field"), *it);
+//            AxisObject(json::GetString(*it, "field"), *it);
         }
     }
     
     const auto &tooltip = json::GetObject(dsl, "tooltip");
-    TooltipObject(tooltip);
+//    TooltipObject(tooltip);
     
     const auto &scales = json::GetArray(dsl, "scales");
     for (auto it = scales.begin(); it != scales.end(); ++it) {
         //todo config是否要去掉
         const auto &config = json::GetObject(*it, "config");
         if (config.is_object()) {
-            ScaleObject(json::GetString(*it, "field"), config);
+//            ScaleObject(json::GetString(*it, "field"), config);
         } else {
-            ScaleObject(json::GetString(*it, "field"), *it);
+//            ScaleObject(json::GetString(*it, "field"), *it);
         }
     }
     
@@ -266,9 +257,9 @@ bool XChart::ParseObject(const nlohmann::json &dsl) {
     for (auto it = interactions.begin(); it != interactions.end(); ++it) {
         auto &type = json::GetString(*it, "type");
         if (type == "pinch") {
-            Interaction(json::GetString(*it, "type"), (interaction::PinchCfg)*it);
+//            Interaction(json::GetString(*it, "type"), (interaction::PinchCfg)*it);
         } else if (type == "pan") {
-            Interaction(json::GetString(*it, "type"), (interaction::PanCfg)*it);
+//            Interaction(json::GetString(*it, "type"), (interaction::PanCfg)*it);
         }
         
     }
@@ -318,10 +309,6 @@ XChart &XChart::Interaction(const std::string &type, const std::string &json) {
     return * this;
 }
 
-XChart &XChart::Coord(const std::string &json) {
-    return CoordObject(xg::json::ParseString(json));
-}
-
 XChart &XChart::Animate(const std::string &json) {
     return AnimateObject(xg::json::ParseString(json));
 }
@@ -330,28 +317,12 @@ XChart &XChart::Legend(const std::string &field, const std::string &json) {
     return LegendObject(field, xg::json::ParseString(json));
 }
 
-bool XChart::OnTouchEvent(const std::string &json) {
+bool XChart::OnTouchEvent(event::Event &event) {
     if(!canvasContext_ || !canvasContext_->IsValid()) {
         return false;
     }
-    nlohmann::json cfg = xg::json::ParseString(json);
-    if(!cfg.is_object() || !cfg.contains("eventType") || !cfg.contains("points"))
-        return false;
-    event::Event event;
-    event.eventType = cfg["eventType"];
-    nlohmann::json &_points = cfg["points"];
-    if(!_points.is_array() || _points.empty()) {
-        return false;
-    }
-
-    for(std::size_t i = 0; i < _points.size(); ++i) {
-        nlohmann::json &_point = _points[i];
-        util::Point point{_point["x"], _point["y"]};
-        event.points.push_back(std::move(point));
-    }
     event.devicePixelRatio = ratio_;
     event.timeStamp = xg::CurrentTimestampAtMM();
-//    this->logTracer_->trace("#onTouchEvent: %s", json.data());
     return this->eventController_->OnTouchEvent(event);
 }
 

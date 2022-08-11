@@ -6,7 +6,7 @@
 #include <map>
 #include "../func/Func.h"
 #include "../util/json.h"
-#include "../../nlohmann/json.hpp"
+#include "../../reflection/param.h"
 
 namespace xg {
 class XChart;
@@ -28,8 +28,8 @@ struct Tick {
     // 转换后的 tick 值。
     // TODO 增加可以由用户自定义的转换函数。
     std::string text;
-    nlohmann::json tickValue; // 原始 tick 值
-    float value;             // 值域值
+    Any tickValue; // 原始 tick 值
+    double value;             // 值域值
 };
 
 struct ScaleCfg {
@@ -74,10 +74,8 @@ extern void from_json(const nlohmann::json &j, ScaleCfg &s);
  */
 class AbstractScale {
   public:
-    AbstractScale(const std::string &_field, const nlohmann::json &_values, const ScaleCfg &_cfg) : field(_field), config(_cfg) {
-        if(_values.is_array()) {
-            this->values = _values;
-        }
+    AbstractScale(const std::string &_field, const vector<Any> &_values, const ScaleCfg &_cfg) : field(_field), config(_cfg) {
+        this->values = _values;
     }
     virtual ~AbstractScale() {}
 
@@ -87,19 +85,20 @@ class AbstractScale {
     virtual void Change(const ScaleCfg &cfg) = 0;
 
     // 将定义域值转换为值域值
-    virtual double Scale(const nlohmann::json &key) = 0;
+    virtual double Scale(const Any &key) = 0;
 
     // 将值域值转换为定义域值
-    virtual nlohmann::json Invert(double key) = 0;
+    virtual Any Invert(double key) = 0;
 
     // 重置度量, 重新生成 ticks
     void Reset() { this->ticks = this->CalculateTicks(); }
 
     std::vector<Tick> GetTicks(XChart *chart) {
         std::vector<Tick> ticks_;
+        ticks_.reserve(ticks.size());
 
         for(size_t i = 0; i < ticks.size(); i++) {
-            std::string &item = ticks[i];
+            const std::string &item = ticks[i];
             scale::Tick tick;
             tick.text = this->GetTickText(item, chart);
             tick.value = this->Scale(item);
@@ -113,7 +112,7 @@ class AbstractScale {
 
     virtual inline std::size_t GetValuesSize() noexcept { return values.size(); }
 
-    virtual std::string GetTickText(const nlohmann::json &item, XChart *chart);
+    virtual std::string GetTickText(const Any &item, XChart *chart);
     
     virtual inline double GetMax() noexcept {return config.max;}
     virtual inline double GetMin() noexcept {return config.min;}
@@ -130,7 +129,7 @@ class AbstractScale {
   protected:
     virtual vector<std::string> CalculateTicks() = 0;
   public:
-    nlohmann::json values;
+    vector<Any> values;
 };
 } // namespace scale
 } // namespace xg

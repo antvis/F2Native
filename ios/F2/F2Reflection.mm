@@ -10,6 +10,8 @@
 #import "../../core/reflection/constructor.h"
 #import "../../core/reflection/field.h"
 
+using namespace xg;
+
 std::vector<float> F2Reflection::CreateNumberArray(NSArray *array, const Type *type) {
     __block std::vector<float> rst;
     rst.reserve(array.count);
@@ -63,4 +65,29 @@ Any F2Reflection::CreateStruct(NSDictionary *config, const Type *type) {
          }
     }];
     return cfg;
+}
+
+util::XSourceItem F2Reflection::CreateaSourceItem(NSDictionary *obj) {
+    __block util::XSourceItem item;
+    [obj enumerateKeysAndObjectsUsingBlock:^(NSString  *_Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        if ([obj isKindOfClass:NSString.class]) {
+            item[key.UTF8String] = Any(std::string([obj UTF8String]));
+        } else if ([obj isKindOfClass:NSNumber.class]) {
+            item[key.UTF8String] = Any([obj doubleValue]);
+        } else if ([obj isKindOfClass:NSNumber.class]) {
+            item[key.UTF8String] = Any([obj integerValue]);
+        } else  if([obj isKindOfClass:NSArray.class]) {
+            __block std::vector<Any> vals;
+            NSArray *array = (NSArray *)obj;
+            [array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj isKindOfClass:NSNumber.class]) {
+                    vals.push_back(Any([obj doubleValue]));
+                } else {
+                    NSCAssert(NO, @"unsuportd type");
+                }
+            }];
+            item[key.UTF8String] = Any(vals);
+        }
+    }];
+    return item;
 }

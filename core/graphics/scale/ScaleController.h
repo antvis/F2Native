@@ -21,24 +21,24 @@ namespace xg {
 class XChart;
 namespace scale {
 
-array<float, 2> AdjustRange(const nlohmann::json &fieldColumn, std::unique_ptr<canvas::coord::AbstractCoord> &coord);
+array<float, 2> AdjustRange(const vector<Any> &fieldColumn, std::unique_ptr<canvas::coord::AbstractCoord> &coord);
 
 std::unique_ptr<AbstractScale> MakeCategory(const std::string &field_,
-                                            const nlohmann::json &data,
+                                            const util::XSourceArray &data,
                                             const ScaleCfg &config,
                                             utils::Tracer *tracer,
                                             std::unique_ptr<canvas::coord::AbstractCoord> &coord,
-                                            const nlohmann::json &fieldColumn);
+                                            const vector<Any> &fieldColumn);
 
 std::unique_ptr<AbstractScale> MakeLinear(const std::string &field_,
-                                          const nlohmann::json &data,
+                                          const util::XSourceArray &data,
                                           const ScaleCfg &config,
                                           utils::Tracer *tracer,
                                           std::unique_ptr<canvas::coord::AbstractCoord> &coord,
-                                          const nlohmann::json &fieldColumn);
+                                          const vector<Any> &fieldColumn);
 
 std::unique_ptr<AbstractScale> MakeScale(const std::string &field_,
-                                         const nlohmann::json &data,
+                                         const util::XSourceArray &data,
                                          const ScaleCfg &config,
                                          utils::Tracer *tracer,
                                          std::unique_ptr<canvas::coord::AbstractCoord> &coord);
@@ -47,7 +47,7 @@ class ScaleController {
   public:
     ScaleController(XChart *chart): chart_(chart) {}
     const std::unique_ptr<AbstractScale> &CreateScale(const std::string &field_,
-                                                      const nlohmann::json &data,
+                                                      const util::XSourceArray &data,
                                                       utils::Tracer *tracer,
                                                       std::unique_ptr<canvas::coord::AbstractCoord> &coord);
 

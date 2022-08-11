@@ -198,6 +198,15 @@ private:
     Any(Value* value) : value(value){ }
 
 public:
+    static const Type* StaticType(){
+        static const Type* type = nullptr;
+        if (type == nullptr){
+            type = new Type();
+            type = Type::RegisterType(const_cast<Type*>(typeof(Any)), "Any", nullptr);
+        }
+        return type;
+    }
+    
     /*Any(const Any& any) : value(any.value ? any.value->Clone() : nullptr){
 
     }*/
@@ -205,7 +214,7 @@ public:
     /*Any(Any&& any){
         std::swap(value, any.value);
     }*/
-
+    Any():value(nullptr) {};
     Any(const Any& any) : value(any.value ? any.value->Clone() : nullptr){
         
     }
@@ -253,8 +262,24 @@ public:
         return GetType().IsPointer() && static_cast<_Holder<void*>*>(value)->data == nullptr;
     }
 
-    const QualifiedType& GetType() const{
+    inline const QualifiedType& GetType() const{
         return value->GetType();
+    }
+    
+    inline bool IsArray() const {
+        return GetType().IsArray();
+    }
+    
+    inline bool IsFloatingNumber() const {
+        return GetType().IsFloatingNumber();
+    }
+    
+    inline bool IsNumber() const {
+        return GetType().IsNumber();
+    }
+    
+    inline bool IsString() const {
+        return GetType().IsString();
     }
 
     Any& Swap(Any& any){
@@ -362,6 +387,29 @@ public:
     template<class T>
     operator T() const{
         return Cast<T>();
+    }
+    
+    std::size_t hash() const {
+        if(GetType().IsNumber()) {
+            return std::hash<double>{}(static_cast<_Holder<double>*>(value)->data);
+        } else if(GetType().IsString()) {
+            return std::hash<std::string>{}(static_cast<_Holder<std::string>*>(value)->data);
+        }
+        return 0;
+    }
+    
+    bool IsEqual(const Any &other) const {
+        if (GetType() != other.GetType()) {
+            return false;
+        }
+        
+        if (GetType().IsNumber()) {
+            return static_cast<_Holder<double>*>(value)->data == static_cast<_Holder<double>*>(other.value)->data;
+        } else if (GetType().IsString()) {
+            return static_cast<_Holder<std::string>*>(value)->data == static_cast<_Holder<std::string>*>(other.value)->data;
+        } else {
+            return false;
+        }
     }
 
     std::string ToString();

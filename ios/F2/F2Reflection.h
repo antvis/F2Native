@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "../../core/reflection/type.h"
 #import "../../core/reflection/param.h"
+#import "../../core/graphics/util/json_data.h"
 
 class F2Reflection {
 public:
@@ -16,5 +17,6 @@ public:
     static std::vector<std::string> CreateStringArray(NSArray *array, const Type *type);
     static std::vector<float> CreateNumberArray(NSArray *array, const Type *type);
     static Any CreateStruct(NSDictionary *config, const Type *type);
+    static xg::util::XSourceItem CreateaSourceItem(NSDictionary *data);
 };
 

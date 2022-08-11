@@ -10,7 +10,7 @@ namespace scale {
 
 class TimeSharingLinear : public AbstractScale {
   public:
-    TimeSharingLinear(const std::string &_field, const nlohmann::json &_values, const ScaleCfg &_config)
+    TimeSharingLinear(const std::string &_field, const vector<Any> &_values, const ScaleCfg &_config)
         : AbstractScale(_field, _values, _config) {
         Change(_config);
     }
@@ -44,16 +44,16 @@ class TimeSharingLinear : public AbstractScale {
         this->valueSize_ = _GetValuesSize();
     }
 
-    double Scale(const nlohmann::json &key) override {
+    double Scale(const Any &key) override {
         if (!isTimeRangeValid_) {
             return NAN;
         }
         
         double time = 0;
-        if (key.is_string()) {
-            time = stod(key.get<string>());
-        } else if (key.is_number()) {
-            time = key.get<double>();
+        if (key.GetType().IsString()) {
+            time = stod(key.Cast<string>());
+        } else if (key.GetType().IsNumber()) {
+            time = key.Cast<double>();
         } else {
             return NAN;
         }
@@ -90,7 +90,7 @@ class TimeSharingLinear : public AbstractScale {
         return rst;
     }
     
-    nlohmann::json Invert(double val) override {
+    Any Invert(double val) override {
         if (!isTimeRangeValid_) {
             return 0;
         }
@@ -114,7 +114,7 @@ class TimeSharingLinear : public AbstractScale {
 
     //timeRange格式为[[9:30, 11:30] [13:00, 16:00]]
     //返回的tick应该是9:30, 11.30/13:00 16:00
-    std::string GetTickText(const nlohmann::json &item, XChart *chart) override {
+    std::string GetTickText(const Any &item, XChart *chart) override {
         if (!isTimeRangeValid_) {
             return "";
         }
@@ -128,16 +128,17 @@ class TimeSharingLinear : public AbstractScale {
         timeZoneOffset *= 1000;
         for(std::size_t i = 0; i < timeRange.size(); ++i) {
             auto &range = timeRange[i];
+            auto val = item.Cast<long long>();
             
             //11:30/13:00 right case
             //11:30/13:00 wrong case
-            if(item == range[1] && (i + 1) < timeRange.size() && item != timeRange[i + 1][0]) {
+            if(val == range[1] && (i + 1) < timeRange.size() && val != timeRange[i + 1][0]) {
                 long long lastFirst = timeRange[i + 1][0];
-                return xg::TimeStampToHHmm(item.get<long long>() + timeZoneOffset, forceTimeZone) + "/" + xg::TimeStampToHHmm(lastFirst + timeZoneOffset, forceTimeZone);
+                return xg::TimeStampToHHmm(val + timeZoneOffset, forceTimeZone) + "/" + xg::TimeStampToHHmm(lastFirst + timeZoneOffset, forceTimeZone);
                        
             }
         }
-        return xg::TimeStampToHHmm(item.get<long long>() + timeZoneOffset, forceTimeZone);
+        return xg::TimeStampToHHmm(item.Cast<long long>() + timeZoneOffset, forceTimeZone);
     }
 
   protected:

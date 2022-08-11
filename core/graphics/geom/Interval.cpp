@@ -41,7 +41,7 @@ unordered_map<string, double> geom::Interval::CreateShapePointsCfg(XChart &chart
     scale::AbstractScale &xScale = chart.GetScale(xField);
     scale::AbstractScale &yScale = chart.GetScale(yField);
     
-    const nlohmann::json &data = (*item.data);
+    auto &data = item.data;
     double x = item.dodge.size() >= 1 ? xScale.Scale(item.dodge[0]) : xScale.Scale(data[xField]);
     double y0 = yScale.Scale(this->GetYMinValue(chart));
 
@@ -77,7 +77,7 @@ vector<double> geom::Interval::CreateShapePoints(XChart &chart, XData &item, siz
     const std::string &yField = GetYScaleField();
     scale::AbstractScale &yScale = chart.GetScale(yField);
     
-    const nlohmann::json &data = (*item.data);
+    auto &data = item.data;
     vector<double> y;
     if (!item.adjust.empty()) {
         for(size_t i = 0; i < item.adjust.size(); i++) {
@@ -85,8 +85,8 @@ vector<double> geom::Interval::CreateShapePoints(XChart &chart, XData &item, siz
             double y_s = yScale.Scale(y_d);
             y.push_back(y_s);
         }
-    } else if(data[yField].is_array()) { //区间柱状图
-        vector<double> stack_item = data[yField];
+    } else if(data[yField].GetType().IsArray()) { //区间柱状图
+        vector<double> stack_item = data[yField].Cast<vector<double>>();
         for(size_t i = 0; i < stack_item.size(); i++) {
             double y_d = stack_item[i];
             double y_s = yScale.Scale(y_d);
@@ -144,11 +144,11 @@ void geom::Interval::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
         for(std::size_t position = start; position <= end; ++position) {
             auto &item = groupData[position];
             
-            if (!(*item.data).contains(yField)) {
+            if (!item.data.count(yField)) {
                 continue;;
             }
      
-            const nlohmann::json &yValue = (*item.data)[yField];
+            const auto &yValue = item.data[yField];
             auto cfg = CreateShapePointsCfg(chart, item, index);
             auto points = CreateShapePoints(chart, item, index);
             item.points = getRectPoints(cfg, points);
@@ -162,7 +162,15 @@ void geom::Interval::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
             }
 
             item._tag = tagConfig_;
-            item._tag.content = yValue.dump();
+            if (yValue.IsFloatingNumber()) {
+                item._tag.content = std::to_string(yValue.Cast<double>());
+            } else if (yValue.IsNumber()) {
+                item._tag.content = std::to_string(yValue.Cast<long>());
+            } else if (yValue.IsString()) {
+                item._tag.content = yValue.Cast<std::string>();
+            } else {
+                F2ASSERT(false, "interval tag has wrong type");
+            }
             item._beforeMapped = true;
         }
     }

@@ -7,8 +7,8 @@ std::vector<util::Point> geom::Area::CreateShapePointsCfg(XChart &chart, XData &
     auto &xScale = chart.GetScale(GetXScaleField());
     auto &yScale = chart.GetScale(GetYScaleField());
 
-    auto &xVal = (*data.data)[GetXScaleField()];
-    auto &yVal = (*data.data)[GetYScaleField()];
+    auto &xVal = data.data[GetXScaleField()];
+    auto &yVal = data.data[GetYScaleField()];
 
 
     auto x = xScale.Scale(xVal);

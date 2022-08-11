@@ -11,9 +11,9 @@
 
 using namespace xg::scale;
 
-std::string Linear::GetTickText(const nlohmann::json &item, XChart *chart) {
+std::string Linear::GetTickText(const Any &item, XChart *chart) {
     if(!config.tick.empty() && chart) {
-        nlohmann::json content{{"content", item.dump()}};
+        nlohmann::json content{{"content", item.Cast<string>()}};
         auto rst = xg::json::ParseString((chart->InvokeFunction(config.tick, content.dump())));
         if(rst.is_object() && rst.contains("content")) {
             return rst["content"];
@@ -21,12 +21,12 @@ std::string Linear::GetTickText(const nlohmann::json &item, XChart *chart) {
     }
     
     // 处理 TickText 数值精度
-    if(item.is_string()) {
-        return StringUtil::ToFixed(stod(item.get<std::string>()), config.precision);
-    } else if(item.is_number_integer()) {
-        return std::to_string(item.get<int>());
-    } else if(item.is_number_float()) {
-        return StringUtil::ToFixed(item.get<float>(), config.precision);
+    if(item.GetType().IsString()) {
+        return StringUtil::ToFixed(stod(item.Cast<std::string>()), config.precision);
+    } else if(item.GetType().IsFloatingNumber()) {
+        return StringUtil::ToFixed(item.Cast<float>(), config.precision);
+    } else if(item.GetType().IsNumber()) {
+        return std::to_string(item.Cast<int>());
     } else {
         return ""; // TODO get Tick text from callback
     }

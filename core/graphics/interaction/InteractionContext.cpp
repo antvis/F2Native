@@ -127,7 +127,7 @@ bool interaction::InteractionContext::UpdateRange(std::array<double, 2> newRange
     return this->Repaint(newValue, valueStart, valueEnd);
 }
 
-bool interaction::InteractionContext::Repaint(nlohmann::json &newValues, std::size_t valueStart, std::size_t valueEnd) {
+bool interaction::InteractionContext::Repaint(const vector<Any> &newValues, std::size_t valueStart, std::size_t valueEnd) {
     const std::string &xField = chart_->GetXScaleField();
     auto &scale = chart_->GetScale(xField);
 
@@ -145,7 +145,7 @@ bool interaction::InteractionContext::Repaint(nlohmann::json &newValues, std::si
 }
 
 void interaction::InteractionContext::UpdateFollowScale(scale::AbstractScale &pinchScale,
-                                                        nlohmann::json &pinchValues,
+                                                        const vector<Any> &pinchValues,
                                                         std::size_t valueStart,
                                                         std::size_t valueEnd) {
 

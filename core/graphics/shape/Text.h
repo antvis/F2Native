@@ -50,7 +50,7 @@ class Text : public Shape {
     vector<std::string> textArr_; //\n分割后的字符串
 
   public:
-    nlohmann::json ext;
+    unordered_map<string, double> ext;
 };
 
 std::string CreateFontStyle(float fontSize = DEFAULT_FONTSIZE,

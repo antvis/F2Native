@@ -42,6 +42,7 @@
 #include "legend/LegendController.h"
 #include "scale/ScaleController.h"
 #include "tooltip/TooltipController.h"
+#include "util/json_data.h"
 #include "../utils/Tracer.h"
 #include "../nlohmann/json.hpp"
 
@@ -113,6 +114,7 @@ class XChart {
 
     //设置源数据
     XChart &Source(const std::string &json);
+    XChart &Source(const std::vector<XSourceItem> &data);
 
     //context设置
 #if defined(ANDROID)
@@ -245,7 +247,7 @@ class XChart {
     scale::AbstractScale &GetScale(const std::string &field);
 
     /// 暴露共有属性
-    inline nlohmann::json &GetData() { return data_; }
+    inline vector<XSourceItem> &GetData() { return data_; }
     inline canvas::coord::AbstractCoord &GetCoord() { return *(coord_.get()); }
     inline void SetColDefs() {}
 
@@ -266,7 +268,7 @@ class XChart {
     std::string GetScaleTicks(const std::string &field) noexcept;
 
     // 计算某一项数据对应的坐标位置
-    const util::Point GetPosition(const nlohmann::json &item);
+    const util::Point GetPosition(const XSourceItem &item);
 
     canvas::CanvasContext &GetCanvasContext() const { return *canvasContext_; }
 
@@ -370,7 +372,8 @@ class XChart {
   protected:
     
     bool rendered_ = false;
-    nlohmann::json data_;
+//    nlohmann::json data_;
+    std::vector<XSourceItem> data_;
     std::unique_ptr<canvas::coord::AbstractCoord> coord_ = nullptr;
     scale::ScaleController *scaleController_ = nullptr;
     canvas::Canvas *canvas_ = nullptr;

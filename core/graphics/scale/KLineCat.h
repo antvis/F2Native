@@ -12,7 +12,7 @@ namespace scale {
 
 class KLineCat : public Category {
   public:
-    KLineCat(const std::string &_field, const nlohmann::json &_values, const ScaleCfg &config)
+    KLineCat(const std::string &_field, const vector<Any> &_values, const ScaleCfg &config)
         : Category(_field, _values, config) {
         // ["kline-day", "kline-week", "kline-month", "kline-minutes-1", "kline-minutes-5", "kline-minutes-15", "kline-minutes-30", "kline-minutes-60", "kline-minutes-120"]
             
@@ -59,9 +59,9 @@ class KLineCat : public Category {
 
         std::vector<std::size_t> indicators;
         for(std::size_t index = start; index <= end; ++index) {
-            nlohmann::json &item = values[index];
+            auto &item = values[index];
 
-            std::size_t itemHash = nlohmann::detail::hash(item);
+            std::size_t itemHash = item.hash();
             if(allTicksCache_.find(itemHash) != allTicksCache_.end()) {
                 indicators.emplace_back(index);
             }
@@ -94,9 +94,9 @@ class KLineCat : public Category {
 
         std::vector<std::size_t> indicators;
         for(std::size_t index = start; index <= end; index++) {
-            nlohmann::json &item = values[index];
+            auto &item = values[index];
 
-            std::size_t itemHash = nlohmann::detail::hash(item);
+            std::size_t itemHash = item.hash();
             if(allTicksCache_.find(itemHash) != allTicksCache_.end()) {
                 indicators.emplace_back(index);
             }
@@ -109,16 +109,16 @@ class KLineCat : public Category {
         return rst;
     }
 
-    std::tm ConvertDataToTS(nlohmann::json &data) {
-        if(data.is_string()) {
+    std::tm ConvertDataToTS(Any &data) {
+        if(data.GetType().IsString()) {
             // date str
             if(!config.dateFormate.empty()) {
-                return DateParserAtTM(data.get<string>(), config.dateFormate);
+                return DateParserAtTM(data.Cast<std::string>(), config.dateFormate);
             }
-            return DateParserAtTM(data.get<string>());
-        } else if(data.is_number()) {
+            return DateParserAtTM(data.Cast<std::string>());
+        } else if(data.GetType().IsNumber()) {
             // timestamp
-            long long t = data.get<long long>();
+            long long t = data.Cast<long long>();
             long timeZoneOffset = 0;
             bool forceTimeZone = false;
             if(config.timeZoneOffset != 0) {
@@ -135,17 +135,17 @@ class KLineCat : public Category {
     void PreProcessTicks() {
         if(kLineType_ == "minutes") {
             for(std::size_t step = 0; step < values.size() - 1; step++) {
-                nlohmann::json &cur = values[step];
-                nlohmann::json &next = values[step + 1];
+                auto &cur = values[step];
+                auto &next = values[step + 1];
 
                 std::tm curTime = ConvertDataToTS(cur);
                 std::tm nextTime = ConvertDataToTS(next);
                 if(curTime.tm_mday != nextTime.tm_mday) {
-                    allTicksCache_[nlohmann::detail::hash(next)] = nextTime;
+                    allTicksCache_[next.hash()] = nextTime;
                     step++;
                 } else {
                     if(curTime.tm_min % 30 == 0) {
-                        allTicksCache_[nlohmann::detail::hash(cur)] = curTime;
+                        allTicksCache_[cur.hash()] = curTime;
                     } else {
                         continue;
                     }
@@ -153,13 +153,13 @@ class KLineCat : public Category {
             }
         } else {
             for(std::size_t step = 0; step < values.size() - 1; step++) {
-                nlohmann::json &cur = values[step];
-                nlohmann::json &next = values[step + 1];
+                auto &cur = values[step];
+                auto &next = values[step + 1];
 
                 std::tm curTime = ConvertDataToTS(cur);
                 std::tm nextTime = ConvertDataToTS(next);
                 if(curTime.tm_mon != nextTime.tm_mon) {
-                    allTicksCache_[nlohmann::detail::hash(next)] = nextTime;
+                    allTicksCache_[next.hash()] = nextTime;
                     step++;
                 }
             }

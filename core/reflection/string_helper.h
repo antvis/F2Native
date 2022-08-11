@@ -7,7 +7,7 @@ public:
 
     static std::vector<std::string> Split(const std::string& str, char splitChar){
         std::vector<std::string> ret;
-        int start = 0;
+        size_t start = 0;
         for (size_t i = 0, len = str.length(); i < len; i++){
             if (str[i] == splitChar){
                 ret.push_back(str.substr(start, i - start));

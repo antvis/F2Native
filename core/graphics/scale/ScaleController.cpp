@@ -11,7 +11,7 @@
 using namespace xg;
 using namespace xg::scale;
 
-array<float, 2> xg::scale::AdjustRange(const nlohmann::json &fieldColumn, std::unique_ptr<canvas::coord::AbstractCoord> &coord) {
+array<float, 2> xg::scale::AdjustRange(const vector<Any> &fieldColumn, std::unique_ptr<canvas::coord::AbstractCoord> &coord) {
     array<float, 2> cfg = {NAN, NAN};
     const std::size_t size = fieldColumn.size();
     if(size <= 1) {
@@ -30,11 +30,11 @@ array<float, 2> xg::scale::AdjustRange(const nlohmann::json &fieldColumn, std::u
 }
 
 std::unique_ptr<AbstractScale> xg::scale::MakeCategory(const std::string &field_,
-                                                    const nlohmann::json &data,
+                                                    const XSourceArray &data,
                                                     const ScaleCfg &config,
                                                     utils::Tracer *tracer,
                                                     std::unique_ptr<canvas::coord::AbstractCoord> &coord,
-                                                    const nlohmann::json &fieldColumn) {
+                                                    const vector<Any> &fieldColumn) {
     tracer->trace("MakeScale: %s, return Category. ", field_.c_str());
     auto cat = xg::make_unique<Category>(field_, fieldColumn, config);
     auto cfg = cat->GetConfig();
@@ -44,31 +44,31 @@ std::unique_ptr<AbstractScale> xg::scale::MakeCategory(const std::string &field_
 }
 
 std::unique_ptr<AbstractScale> xg::scale::MakeLinear(const std::string &field_,
-                                                const nlohmann::json &data,
+                                                const XSourceArray &data,
                                                 const ScaleCfg &config,
                                                 utils::Tracer *tracer,
                                                 std::unique_ptr<canvas::coord::AbstractCoord> &coord,
-                                                const nlohmann::json &fieldColumn) {
+                                                const vector<Any> &fieldColumn) {
     tracer->trace("MakeScale: %s, return Linear. ", field_.c_str());
     return xg::make_unique<Linear>(field_, fieldColumn, config);
 }
 
 
 std::unique_ptr<AbstractScale> xg::scale::MakeScale(const std::string &field_,
-                                                const nlohmann::json &data,
+                                                const XSourceArray &data,
                                                 const ScaleCfg &config,
                                                 utils::Tracer *tracer,
                                                 std::unique_ptr<canvas::coord::AbstractCoord> &coord) {
 
-    if(!data.is_array() || data.size() <= 0) {
+    if(data.size() <= 0 || field_.empty()) {
         tracer->trace("MakeScale: %s, return Identity. data is empty", field_.c_str());
-        return xg::make_unique<Identity>(field_, nlohmann::json());
+        return xg::make_unique<Identity>(field_, vector<Any>{});
     }
 
-    nlohmann::json firstObj = data[0];
-    nlohmann::json firstVal = firstObj[field_];
+    auto &firstObj = data[0];
+    auto &firstVal = firstObj.find(field_)->second;
     //如果field_对应的数据是数组，会把数组打平
-    nlohmann::json fieldColumn = util::JsonArrayByKey(data, field_);
+    auto fieldColumn = util::JsonArrayByKey(data, field_);
 
     if(!config.type.empty()) {
         const std::string &type = config.type;
@@ -88,9 +88,9 @@ std::unique_ptr<AbstractScale> xg::scale::MakeScale(const std::string &field_,
         }
     }
 
-    if(firstVal.is_string()) {
+    if(firstVal.GetType().IsString()) {
         return MakeCategory(field_, data, config, tracer, coord, fieldColumn);
-    } else if(firstVal.is_number() || firstVal.is_array()) {
+    } else if(firstVal.GetType().IsNumber() || firstVal.GetType().IsArray()) {
         return MakeLinear(field_, data, config, tracer, coord, fieldColumn);
     }
 
@@ -100,7 +100,7 @@ std::unique_ptr<AbstractScale> xg::scale::MakeScale(const std::string &field_,
 
 
 const std::unique_ptr<AbstractScale> &scale::ScaleController::CreateScale(const std::string &field_,
-                                                  const nlohmann::json &data,
+                                                  const XSourceArray &data,
                                                   utils::Tracer *tracer,
                                                   std::unique_ptr<canvas::coord::AbstractCoord> &coord) {
     if(!scales_.empty() && scales_.count(field_) > 0) {

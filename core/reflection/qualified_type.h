@@ -52,6 +52,8 @@ public:
     bool IsString() const;
 
     bool IsEnum() const;
+    
+    bool IsArray() const;
 
     QualifiedType RemoveCV() const{
         QualifiedType t = *this;

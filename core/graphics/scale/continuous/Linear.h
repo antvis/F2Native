@@ -17,7 +17,7 @@ namespace scale {
 class Linear : public AbstractScale {
   public:
     // 线性度量
-    Linear(const std::string &_field, const nlohmann::json &_values, const ScaleCfg &_config) : AbstractScale(_field, _values, _config) {
+    Linear(const std::string &_field, const vector<Any> &_values, const ScaleCfg &_config) : AbstractScale(_field, _values, _config) {
         Change(_config);
     }
 
@@ -51,12 +51,12 @@ class Linear : public AbstractScale {
         }
     }
 
-    double Scale(const nlohmann::json &key) override {
+    double Scale(const Any &key) override {
         double val = NAN;
-        if (key.is_string()) {
-            val = stod(key.get<string>());
-        } else if (key.is_number()) {
-            val = key.get<double>();
+        if (key.GetType().IsString()) {
+            val = stod(key.Cast<string>());
+        } else if (key.GetType().IsNumber()) {
+            val = key.Cast<double>();
         } else {
             return NAN;
         }
@@ -79,14 +79,13 @@ class Linear : public AbstractScale {
         return value;
     }
 
-    nlohmann::json Invert(double val) override {
+    Any Invert(double val) override {
         double percent = this->GetInvertPercent(val);
         double rt = this->min + percent * (this->max - this->min);
-        nlohmann::json rst = rt;
-        return rst;
+        return rt;
     }
 
-    std::string GetTickText(const nlohmann::json &item, XChart *chart) override;
+    std::string GetTickText(const Any &item, XChart *chart) override;
     
     inline double GetMax() noexcept override {return max;}
     inline double GetMin() noexcept override {return min;}
@@ -257,13 +256,6 @@ class Linear : public AbstractScale {
     }
 
     double ToFixed(const double val, const int decimal) const { return val; }
-
-  private:
-//    void InitConfig(const nlohmann::json &cfg) override {
-//        AbstractScale::InitConfig(cfg);
-//        nice = json::GetBool(cfg, "nice", nice);
-//        precision = json::GetIntNumber(cfg, "precision", precision);
-//    }
 
   public:
     double tickInterval = -1;

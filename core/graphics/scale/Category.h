@@ -19,7 +19,7 @@ namespace scale {
  */
 class Category : public AbstractScale {
   public:
-    Category(const std::string &_field, const nlohmann::json &_values, const ScaleCfg &_config)
+    Category(const std::string &_field, const vector<Any> &_values, const ScaleCfg &_config)
         : AbstractScale(_field, _values, _config) {
         Change(_config);
     }
@@ -48,14 +48,14 @@ class Category : public AbstractScale {
         }
     }
 
-    double Scale(const nlohmann::json &key) override {
+    double Scale(const Any &key) override {
         double percent = 0;
         std::size_t index = this->Transform(key);
         if(index + 1 > 0) {
             percent = CalculatePercent(static_cast<double>(index), min, max);
         } else {
             double kVal = 0.;
-            if(key.is_number()) {
+            if(key.GetType().IsNumber()) {
                 kVal = key;
             }
             //GetValuesSize()是unsigned long,当等于0的时候GetValuesSize()-1会越界
@@ -67,24 +67,24 @@ class Category : public AbstractScale {
         return value;
     }
 
-    nlohmann::json Invert(double val) override {
+    Any Invert(double val) override {
         double percent = CalculatePercent(val, range[0], range[1]);
         double domainRange = max - min;
         int index = static_cast<int>(round(domainRange * percent) + min);
         if(index < min || index > max) {
-            return nlohmann::json();
+            return Any();
         }
         return values[index];
     }
 
-    virtual std::size_t Transform(const nlohmann::json &key) const {
+    virtual std::size_t Transform(const Any &key) const {
         if(values.empty()) {
             return -1;
         }
 
         std::size_t index = -1;
         for(size_t i = 0; i < values.size(); i++) {
-            if(values[i] == key) {
+            if(values[i].IsEqual(key)) {
                 index = i;
                 break;
             }
@@ -109,8 +109,8 @@ class Category : public AbstractScale {
             }else if(tickCount == 1) {
                 //对齐f2的展示 tickCount为1的时候 = tickCount为values.size()
                 for (size_t index = 0; index < values.size(); ++index) {
-                    const nlohmann::json &_item = values[index];
-                    rst.push_back(_item.get<string>());
+                    auto &_item = values[index];
+                    rst.push_back(_item.Cast<string>());
                 }
                 return rst;
             }
@@ -119,16 +119,16 @@ class Category : public AbstractScale {
                 size_t outlstep = values.size() / (tickCount - 1);
                 outlstep = fmax(outlstep, 1);
                 for (size_t index = 0; index < values.size(); index = index + outlstep) {
-                    nlohmann::json &_item = values[index];
-                    rst.push_back(_item.get<string>());
+                    auto &_item = values[index];
+                    rst.push_back(_item.Cast<std::string>());
                 }
                          
                 // 如果最后一个tick不等于原数据的最后一个
                 auto &last = values[values.size() - 1];
-                if(rst[rst.size() -1] != last) {
+                if(rst[rst.size() -1] != last.Cast<std::string>()) {
                     //if 逻辑如何走到？
                     if(rst.size() >= tickCount) {
-                        rst[rst.size() - 1] = last;
+                        rst[rst.size() - 1] = last.Cast<std::string>();
                     }else {
                         rst.push_back(last);
                     }

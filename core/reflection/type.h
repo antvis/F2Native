@@ -66,8 +66,10 @@ public:
     std::string GetDescription() const;
 
     static Type* RegisterEnum(Type* type, const std::string& name, const Type* underlyingType){
-        if (GetTypes().find(name) != GetTypes().end())
-            THROW_EXCEPTION(TypeAlreadyExists, "there is already a type named '" + name + "'");
+        if (GetTypes().find(name) != GetTypes().end()) {
+            return const_cast<Type *>(GetTypes().find(name)->second);
+        }
+            
 
         //std::cout << "register enum " << name << std::endl;
 
@@ -78,10 +80,26 @@ public:
 
         return type;
     }
+    
+    static Type* RegisterTemplate(Type* type, const std::string& name, const Type* underlyingType){
+        if (GetTypes().find(name) != GetTypes().end()){
+            return const_cast<Type *>(GetTypes().find(name)->second);
+        }
+
+        //std::cout << "register enum " << name << std::endl;
+
+        const_cast<Type*>(type)->name = name;
+        const_cast<Type*>(type)->isEnum = false;
+        GetTypes().insert(std::make_pair(name, type));
+        type->underlyingType = underlyingType;
+
+        return type;
+    }
 
     static Type* RegisterType(Type* type, const std::string& name, const Type* baseType){
-        if (GetTypes().find(name) != GetTypes().end())
-            THROW_EXCEPTION(TypeAlreadyExists, "there is already a type named '" + name + "'");
+        if (GetTypes().find(name) != GetTypes().end()) {
+            return const_cast<Type *>(GetTypes().find(name)->second);
+        }
 
         //std::cout << "register class " << name << std::endl;
 
@@ -340,7 +358,7 @@ template<> \
 struct TemplateType<T>{ \
     static const Type* type; \
     static const Type* Value(){ \
-        static const Type* type = Type::RegisterType(new Type(n), #T, nullptr); \
+        static const Type* type = Type::RegisterTemplate(new Type(n), #T, nullptr); \
         return type; \
     } \
 };
@@ -354,7 +372,7 @@ template<class T> \
 struct ReflectType<C<T>>{ \
     static const Type* type; \
     static const Type* Value(){ \
-        static const Type* type = Type::RegisterType(new Type(n), #C "<" + qualified_typeof(T).ToString() + ">", nullptr); \
+        static const Type* type = Type::RegisterTemplate(new Type(n), #C, nullptr); \
         return type; \
     } \
 };

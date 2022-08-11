@@ -10,7 +10,7 @@ namespace scale {
  */
 class Identity : public AbstractScale {
   public:
-    Identity(const std::string &_field, const nlohmann::json &_values) : AbstractScale(_field, _values, {}) {
+    Identity(const std::string &_field, const vector<Any> &_values) : AbstractScale(_field, _values, {}) {
         this->ticks = this->CalculateTicks();
     }
 
@@ -18,19 +18,18 @@ class Identity : public AbstractScale {
 
     void Change(const ScaleCfg &cfg) override {}
 
-    double Scale(const nlohmann::json &key) override {
-        if(values.size() > 0 && key.is_number() && values[0] == key) {
-            return key;
+    double Scale(const Any &key) override {
+        if(values.size() > 0 && key.GetType().IsNumber()) {
+            return key.Cast<double>();
         }
         return config.range[0];
     }
 
-    nlohmann::json Invert(double key) override {
+    Any Invert(double key) override {
         if(values.size() > 0) {
             return values[0];
         }
-        nlohmann::json ret;
-        return ret;
+        return Any();
     }
 
   protected:

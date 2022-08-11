@@ -9,7 +9,6 @@
 #include <string>
 #include <unordered_map>
 #include "json_data.h"
-#include "../../nlohmann/json.hpp"
 
 using namespace std;
 
@@ -17,37 +16,38 @@ namespace xg {
 namespace util {
 
 // 从原始数组中查找出所有指定的 key 字段值组成新的数组返回
-static nlohmann::json JsonArrayByKey(const nlohmann::json &data, const std::string &key) {
-    if(!data.is_array() || data.size() <= 0) {
-        return nlohmann::json();
+static vector<Any> JsonArrayByKey(const XSourceArray &data, const std::string &key) {
+    if(data.empty()) {
+        return {};
     }
 
-    nlohmann::json rst;
+    vector<Any> rst;
     std::set<std::size_t> _keysFilters;
 
     for(std::size_t i = 0; i < data.size(); ++i) {
-        auto &item = data[i];
-        if(item == key || !item.is_object() || !item.contains(key)) {
+        const XSourceItem &item = data[i];
+        if(!item.count(key)) {
             continue;
         }
-        const nlohmann::json &val = item[key];
-        if(val.is_string() || val.is_number()) {
-            std::size_t valHash = nlohmann::detail::hash(val);
+        const Any &val = item.at(key);
+        if(val.GetType().IsString() || val.GetType().IsNumber()) {
+            std::size_t valHash = val.hash();
             if(_keysFilters.find(valHash) != _keysFilters.end()) {
                 continue;
             }
             _keysFilters.emplace(valHash);
             rst.push_back(val);
-        } else if(val.is_array()) {
-            for(size_t i = 0; i < val.size(); i++) {
-                const nlohmann::json &item = val[i];
-                std::size_t itemHash = nlohmann::detail::hash(item);
+        } else if(val.GetType().IsArray()) {
+            auto valArray = val.Cast<std::vector<Any>>();
+            for(size_t i = 0; i < valArray.size(); i++) {
+                auto &item = valArray[i];
+                std::size_t itemHash = item.hash();
                 if(_keysFilters.find(itemHash) != _keysFilters.end()) {
                     continue;
                 }
                 _keysFilters.emplace(itemHash);
 
-                if(item.is_number() || item.is_string()) {
+                if(item.GetType().IsNumber() || item.GetType().IsString()) {
                     rst.push_back(item);
                 }
             }
@@ -56,8 +56,8 @@ static nlohmann::json JsonArrayByKey(const nlohmann::json &data, const std::stri
     return rst;
 }
 
-static std::array<double, 2> JsonArrayRange(const nlohmann::json &data) {
-    if(!data.is_array() || data.size() <= 0) {
+static std::array<double, 2> JsonArrayRange(const vector<Any> &data) {
+    if(data.empty()) {
         return std::array<double, 2>{0, 0};
     }
     double _min = std::numeric_limits<double>::max();
@@ -66,16 +66,17 @@ static std::array<double, 2> JsonArrayRange(const nlohmann::json &data) {
     bool checked = false;
     for(size_t i = 0; i < data.size(); ++i) {
         auto &item = data[i];
-        if(item.is_number()) {
-            double t = item;
+        if(item.GetType().IsNumber()) {
+            double t = item.Cast<double>();
             _min = fmin(_min, t);
             _max = fmax(_max, t);
             checked = true;
-        } else if(item.is_array()) {
-            for(std::size_t index = 0; index < item.size(); ++index) {
-                auto &subItem = item[index];
-                if(subItem.is_number()) {
-                    double t = subItem;
+        } else if(item.GetType().IsArray()) {
+            auto &array = item.Cast<vector<Any> &>();
+            for(std::size_t index = 0; index < array.size(); ++index) {
+                auto &subItem = array[index];
+                if(subItem.IsNumber()) {
+                    double t = subItem.Cast<double>();
                     _min = fmin(_min, t);
                     _max = fmax(_max, t);
                     checked = true;
@@ -91,21 +92,21 @@ static std::array<double, 2> JsonArrayRange(const nlohmann::json &data) {
     return std::array<double, 2>{_min, _max};
 }
 
-static std::string GenerateRowUniqueKey(const nlohmann::json &row, const std::set<std::string> &fields) {
+static std::string GenerateRowUniqueKey(const XSourceItem &row, const std::set<std::string> &fields) {
 
     std::string unique = "_";
 
     for(auto it = fields.begin(); it != fields.end(); ++it) {
-        std::string field = *it;
-        if(row.contains(field)) {
+        const std::string &field = *it;
+        if(row.count(field)) {
             // unique += row[field].dump();
-            unique += std::to_string(nlohmann::detail::hash(row[field]));
+            unique += std::to_string(row.at(field).hash());
         }
     }
     return unique;
 }
 
-static XDataGroup JsonGroupByFields(const nlohmann::json &data, const std::set<std::string> &fields) {
+static XDataGroup JsonGroupByFields(const XSourceArray &data, const std::set<std::string> &fields) {
     XDataGroup rst;
     std::map<std::string, std::vector<XData>> group;
     std::set<std::string> rowKeys;
@@ -113,14 +114,14 @@ static XDataGroup JsonGroupByFields(const nlohmann::json &data, const std::set<s
 
     size_t size = data.size();
     for(size_t index = 0; index < size; ++index) {
-        const nlohmann::json &row = data[index];
+        auto &row = data[index];
 
         std::string key = GenerateRowUniqueKey(row, fields);
         if(group.count(key)) {
-            group[key].push_back({&row});
+            group[key].push_back({.data = row});
         } else {
             std::vector<XData> array;
-            array.push_back({&row});
+            array.push_back({.data = row});
             group[key] = std::move(array);
         }
 
@@ -136,12 +137,12 @@ static XDataGroup JsonGroupByFields(const nlohmann::json &data, const std::set<s
     return rst;
 }
 
-static nlohmann::json JsonArraySlice(const nlohmann::json &source, std::size_t start, std::size_t end) {
-    nlohmann::json rst;
+static vector<Any> JsonArraySlice(const vector<Any> &source, std::size_t start, std::size_t end) {
+    vector<Any> rst;
     if(start > end || end >= source.size()) {
         return rst;
     }
-
+    
     for(std::size_t i = start; i <= end; i++) {
         rst.push_back(source[i]);
     }
@@ -149,11 +150,7 @@ static nlohmann::json JsonArraySlice(const nlohmann::json &source, std::size_t s
     return rst;
 }
 
-static bool isEqualsQuick(nlohmann::json &data1, nlohmann::json &data2) {
-    if(data1.type() != data2.type()) {
-        return false;
-    }
-
+static bool isEqualsQuick(const vector<Any> &data1, const vector<Any> &data2) {
     if(data1.size() != data2.size()) {
         return false;
     }
@@ -162,7 +159,7 @@ static bool isEqualsQuick(nlohmann::json &data1, nlohmann::json &data2) {
         return true;
 
     std::size_t lastIndex = fmin(data1.size(), data2.size()) - 1;
-    return (data1[0] == data2[0] && data1[lastIndex] == data2[lastIndex]);
+    return (data1[0].IsEqual(data2[0]) && data1[lastIndex].IsEqual(data2[lastIndex]));
 }
 
 static void JsonRangeInGeomDataArray(const XDataGroup &geomDataArray,
@@ -178,20 +175,19 @@ static void JsonRangeInGeomDataArray(const XDataGroup &geomDataArray,
             std::size_t _end = fmin(end, groupData.size() - 1);
             if(_end > start) {
                 for(std::size_t column = start; column <= _end; ++column) {
-                    auto &item = (*groupData[column].data);
-                    if(item.contains(field)) {
-                        if(item[field].is_number()) {
-                            double val = item[field];
+                    auto &item = groupData[column].data;
+                    if(item.count(field)) {
+                        auto fieldVal = item.find(field)->second;
+                        if(fieldVal.GetType().IsNumber()) {
+                            double val = fieldVal.Cast<double>();
                             (*rangeMin) = fmin(val, (*rangeMin));
                             (*rangeMax) = fmax(val, (*rangeMax));
-                        } else if(item[field].is_array()) {
-                            const nlohmann::json &arr = item[field];
+                        } else if(fieldVal.GetType().IsArray()) {
+                            auto &arr = fieldVal.Cast<std::vector<double> &>();
                             for(std::size_t i = 0; i < arr.size(); ++i) {
-                                if(arr[i].is_number()) {
                                     double val = arr[i];
                                     (*rangeMin) = fmin(val, (*rangeMin));
                                     (*rangeMax) = fmax(val, (*rangeMax));
-                                }
                             }
                         }
                     }
@@ -201,8 +197,13 @@ static void JsonRangeInGeomDataArray(const XDataGroup &geomDataArray,
     }
 }
 
-static double JsonArrayMax(const nlohmann::json &dataArray) {
-    std::vector<double> array = dataArray;
+static double JsonArrayMax(const vector<Any> &dataArray) {
+    std::vector<double> array;
+    array.reserve(dataArray.size());
+    for (auto &val: dataArray) {
+        array.push_back(val.Cast<double>());
+    }
+    
     auto it = std::max_element(array.begin(), array.end());
     return array[std::distance(array.begin(), it)];
 }

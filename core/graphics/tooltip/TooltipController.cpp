@@ -155,7 +155,7 @@ bool tooltip::ToolTipController::ShowToolTip(const util::Point &point) {
 
                 _point.x = record._x;
                 tooltipItem.value = InvertYTip(_point, yScale);
-                tooltipItem.title = chart_->GetScale(geom->GetXScaleField()).GetTickText((*record.data)[geom->GetXScaleField()], chart_);
+                tooltipItem.title = chart_->GetScale(geom->GetXScaleField()).GetTickText(record.data[geom->GetXScaleField()], chart_);
                 
                 tooltipItem.touchX = _point.x;
                 tooltipItem.touchY = _point.y;
@@ -216,6 +216,6 @@ bool tooltip::ToolTipController::HideToolTip() {
 
 std::string tooltip::ToolTipController::InvertYTip(const util::Point &p, xg::scale::AbstractScale &yScale) {
     util::Point invertPoint = chart_->GetCoord().InvertPoint(p);
-    nlohmann::json yVal = yScale.Invert(invertPoint.y);
+    Any yVal = yScale.Invert(invertPoint.y);
     return yScale.GetTickText(yVal, chart_);
 }

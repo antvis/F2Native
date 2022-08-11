@@ -27,8 +27,13 @@ class Interval : public GeomShapeBase {
             util::Point p = this->ParsePoint(coord, data.points[i]);
             points.push_back(std::move(p));
         }
-
-        auto &color = (*data.data).contains("_color") ? (*data.data)["_color"].get<string>() : (data._color.empty() ? std::string(GLOBAL_COLORS[0]) : data._color);
+        
+        auto color = std::string(GLOBAL_COLORS[0]);
+        if (data.data.count("_color")) {
+            color = data.data.at("_color").Cast<std::string>();
+        } else if (!data._color.empty()) {
+            color = data._color;
+        }
 
         bool isFill = true;
         if(data._shape == "stroke") {

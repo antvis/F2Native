@@ -7,6 +7,7 @@
 #import "F2Utils.h"
 #import "XChart.h"
 #import "F2CanvasView.h"
+#import "F2Reflection.h"
 
 typedef const char *(*selector)(void *caller, const char *functionId, const char *parameter);
 const char *cexecute(void *caller, const char *functionId, const char *parameter) {
@@ -142,16 +143,20 @@ class IOSF2Function : public func::F2Function {
     };
 }
 
-- (F2Chart * (^)(NSArray *data))source {
-    return ^id(NSArray *data) {
-        if ([data isKindOfClass:NSArray.class]) {
-            self.chart->Source([F2SafeJson([F2Utils toJsonString:data]) UTF8String]);
-        }else if([data isKindOfClass:NSString.class]) {
-            NSString *dataStr = (NSString *)data;
-            self.chart->Source([F2SafeJson(dataStr) UTF8String]);
-        }        
-        return self;
-    };
+-(F2Chart * (^)(NSArray<NSDictionary *> *data))source {
+   return ^id(NSArray *data) {
+       NSArray *source = data;
+       if([data isKindOfClass:NSString.class]) {
+           source = [F2Utils toJsonArray:(NSString *)data];
+       }
+       __block XSourceArray list;
+       [source enumerateObjectsUsingBlock:^(NSDictionary * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+           XSourceItem item = F2Reflection::CreateaSourceItem(obj);
+           list.push_back(std::move(item));
+       }];
+       self.chart->Source(list);
+       return self;
+   };
 }
 
 - (F2Chart * (^)(NSString *field, NSDictionary *config))scale {
@@ -342,8 +347,9 @@ class IOSF2Function : public func::F2Function {
 
 - (CGPoint (^)(NSDictionary *itemData))getPosition {
     return ^CGPoint(NSDictionary *itemData) {
+        auto item = F2Reflection::CreateaSourceItem(itemData);
         const xg::util::Point point =
-            self.chart->GetPosition(xg::json::ParseString([F2SafeJson([F2Utils toJsonString:itemData]) UTF8String]));
+            self.chart->GetPosition(item);
 
         return CGPointMake(point.x / F2NativeScale, point.y / F2NativeScale);
     };

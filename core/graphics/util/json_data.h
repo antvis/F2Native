@@ -12,23 +12,26 @@
 #include <vector>
 #include "Point.h"
 #include "../global.h"
+#include "../../reflection/param.h"
+#include "../../nlohmann/json.hpp"
 
 namespace xg {
 namespace util {
     struct TagCfg {
         float offset = -5; // 距离柱子顶部的偏移量
-        string textAlign = "center";
-        string textBaseline = "bottom";
-        string fill = "#808080";
+        std::string textAlign = "center";
+        std::string textBaseline = "bottom";
+        std::string fill = "#808080";
         size_t textSize = DEFAULT_FONTSIZE;
-        string content;
+        std::string content = "";
         bool hiden = true;
     };
     //impl in interval.cpp
     extern void from_json(const nlohmann::json &j, TagCfg &t);
 
     struct XData final {
-        nlohmann::json::const_pointer data;
+//        nlohmann::json::const_pointer data;
+        std::unordered_map<std::string, Any> data;
         double _x = NAN, _y = NAN;
         std::vector<double> _y0;
         std::string _color, _shape, _adjust;
@@ -49,10 +52,13 @@ namespace util {
         std::vector<util::Point> points;
         
         //candle
-        array<util::Point, 4> rect;
-        array<double, 2> line;
+        std::array<util::Point, 4> rect;
+        std::array<double, 2> line;
         std::size_t state = 0; // 0 - 平, 1 涨， -1 跌
     };
+
+using XSourceItem = std::unordered_map<std::string, Any>;
+using XSourceArray = std::vector<std::unordered_map<std::string, Any>>;
 
 using XDataArray = std::vector<XData>;
 using XDataGroup = std::vector<std::vector<XData>>;

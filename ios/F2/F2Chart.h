@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 设置chart的元数据
 /// data json数组格式的数据
-- (F2Chart * (^)(NSArray *data))source;
+- (F2Chart * (^)(NSArray<NSDictionary *> *data))source;
 
 /// 设置度量，
 /// field 需要设置度量的字段

@@ -112,6 +112,11 @@ inline const Type *stringType() {
     return stringType;
 }
 
+inline const Type *arrayType() {
+    static const Type* arrayType = template_typeof(std::vector);
+    return arrayType;
+}
+
 
 std::string QualifiedType::ToString() const{
     if (!type) return "(null)";
@@ -167,4 +172,8 @@ bool QualifiedType::IsString() const{
 
 bool QualifiedType::IsEnum() const{
     return type->IsEnum();
+}
+
+bool QualifiedType::IsArray() const{
+    return type == arrayType();
 }

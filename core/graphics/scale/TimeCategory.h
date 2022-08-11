@@ -9,20 +9,20 @@ namespace scale {
 class TimeCategory : public Category {
   public:
     TimeCategory(const std::string &_field,
-                 const nlohmann::json &_values,
+                 const vector<Any> &_values,
                  const ScaleCfg &config,
                  std::string mask = "HH::mm")
         : Category(_field, _values, config), mask(mask) {}
 
     ScaleType GetType() const noexcept override { return ScaleType::TimeCat; }
 
-    std::string GetTickText(const nlohmann::json &item, XChart *chart) override {
-        if(item.is_string()) {
-            return item.get<std::string>();
-        } else if(item.is_number()) {
+    std::string GetTickText(const Any &item, XChart *chart) override {
+        if(item.GetType().IsString()) {
+            return item.Cast<std::string>();
+        } else if(item.GetType().IsArray()) {
             struct tm *p;
             time_t t;
-            t = item.get<int>();
+            t = item.Cast<int>();
             p = gmtime(&t);
             char s[100];
             strftime(s, 100, "%H:%M", p);

@@ -114,8 +114,8 @@ bool XChart::ParseObject(const nlohmann::json &dsl) {
         SourceObject(data);
     }
     
-    if (!data_.is_array() || (data_.is_array() && data_.size() == 0)) {
-        this->logTracer_->trace("#Parse data json is invalid");
+    if (data_.size() == 0) {
+        this->logTracer_->trace("#Parse data length is 0");
         return false;
     }
 
@@ -277,6 +277,11 @@ bool XChart::ParseObject(const nlohmann::json &dsl) {
 
 XChart &XChart::Source(const std::string &json) {
     return SourceObject(xg::json::ParseString(json));
+}
+
+XChart &XChart::Source(const std::vector<XSourceItem> &data) {
+    this->data_ = data;
+    return *this;
 }
 
 XChart &XChart::Padding(double left, double top, double right, double bottom) {
@@ -452,7 +457,7 @@ bool XChart::Render() {
         return false;
     }
 
-    if(!this->data_.is_array() || this->data_.size() == 0) {
+    if(this->data_.size() == 0) {
         this->logTracer_->trace("error: %s", "data is not array or size is zero, render end.");
         return false;
     }
@@ -621,20 +626,20 @@ void XChart::InitCoord() {
     }
 }
 
-const util::Point XChart::GetPosition(const nlohmann::json &item) {
-    if(!canvasContext_ || !canvasContext_->IsValid() || scaleController_->Empty() || !item.is_object() || item.size() < 2) {
+const util::Point XChart::GetPosition(const XSourceItem &item) {
+    if(!canvasContext_ || !canvasContext_->IsValid() || scaleController_->Empty()) {
         return util::Point{0, 0};
     }
 
     std::string xField = this->GetXScaleField();
     std::string yField = this->getYScaleFields()[0];
 
-    if(!item.contains(xField) || !item.contains(yField)) {
+    if(!item.count(xField) || !item.count(yField)) {
         return util::Point{0, 0};
     }
 
-    double x = this->GetScale(xField).Scale(item[xField]);
-    double y = this->GetScale(yField).Scale(item[yField]);
+    double x = this->GetScale(xField).Scale(item.find(xField)->second);
+    double y = this->GetScale(yField).Scale(item.find(yField)->second);
     util::Point ret = this->GetCoord().ConvertPoint(util::Point{x, y});
     return ret;
 }
@@ -723,14 +728,14 @@ std::map<std::string, std::vector<legend::LegendItem>> XChart::GetLegendItems() 
     
 #pragma mark -
 XChart &XChart::SourceObject(const nlohmann::json &_data) {
-    if(!_data.is_array()) {
-        // 有问题先抛出来
-        this->logTracer_->trace("#Source json is invalid");
-        // throw std::runtime_error("json is invalid.");
-        return *this;
-    }
-
-    this->data_ = _data;
+//    if(!_data.is_array()) {
+//        // 有问题先抛出来
+//        this->logTracer_->trace("#Source json is invalid");
+//        // throw std::runtime_error("json is invalid.");
+//        return *this;
+//    }
+//
+//    this->data_ = _data;
     return *this;
 }
     

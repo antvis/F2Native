@@ -65,12 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (F2Chart * (^)(NSDictionary *config))tooltip;
 
 /// 配置动画功能
-/// config    @(false) 为关闭动画
-///       @{@"type":@"GroupWaveIn", @"duration": @(800), @"erasing":@"linear"}
-///       type 动画类型  GroupWaveIn GroupScaleInXY GroupScaleInX GroupScaleInY
-///       duration 时间 毫秒
-///       earsing 动画效果 linear quadraticIn quadraticOut quadraticInOut cubicIn cubicOut elasticIn elasticOut elasticInOut backIn backOut backInOut bounceOut bounceIn bounceInOut
-- (F2Chart * (^)(id config))animate;
+- (F2Chart * (^)(bool enable))animate;
 
 /// 开始渲染
 - (F2Chart * (^)(void))render;
@@ -113,7 +108,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (F2Chart * (^)(CGSize size))changeSize;
 
 /// 改变引擎中的数据，改变后可以直接渲染，会使用上次的配置进行渲染
-- (F2Chart * (^)(NSArray *data))changeData;
+- (F2Chart * (^)(NSArray<NSDictionary *> *data))changeData;
 
 #pragma mark 关于度量Scale的一些设置
 ///设置当geom中有interval的时候，是否调整max, min,两个参数, 使其其中一个为0

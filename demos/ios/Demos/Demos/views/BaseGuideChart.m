@@ -14,7 +14,7 @@
         @"grid": @(NO),
         @"label": @{
             @"labelOffset": @(5),
-            @"textAlign": @[@"start", @"center", @"end"],
+            @"textAligns": @[@"start", @"center", @"end"],
             @"item": [F2Callback callback:^NSDictionary *_Nonnull(NSDictionary *_Nonnull param) {
                 NSNumber *index = [param objectForKey:@"index"];
                 return @{@"textColor": index.integerValue % 2 == 0 ? @"#000000" : @"#DC143C"};

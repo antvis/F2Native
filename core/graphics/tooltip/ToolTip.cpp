@@ -23,9 +23,9 @@ void tooltip::from_json(const nlohmann::json &j, CrosshairsStyle &c) {
     }
 }
 
-void tooltip::from_json(const nlohmann::json &j, BackgroundCfg &b) {
+void tooltip::from_json(const nlohmann::json &j, RectCfg &b) {
     if (!j.is_object()) { return; }
-    BackgroundCfg d;
+    RectCfg d;
     b.radius = j.value("radius", d.radius);
     b.fill = j.value("fill", d.fill);
     b.padding = j.value("padding", d.padding);

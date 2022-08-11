@@ -11,6 +11,7 @@
 #include "../shape/Text.h"
 #include "../util/Point.h"
 #include "../util/json.h"
+#include "../../reflection/reflection.h"
 #include "../../nlohmann/json.hpp"
 
 namespace xg {
@@ -23,15 +24,34 @@ struct CrosshairsStyle {
     string type = "dash";
     vector<float> dash = {4, 4};
     bool hidden = false;
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(CrosshairsStyle)
+        FIELDS(FIELD(&CrosshairsStyle::yCrosshair),
+               FIELD(&CrosshairsStyle::stroke),
+               FIELD(&CrosshairsStyle::lineWidth),
+               FIELD(&CrosshairsStyle::type),
+               FIELD(&CrosshairsStyle::dash),
+               FIELD(&CrosshairsStyle::hidden))
+        CTORS(DEFAULT_CTOR(CrosshairsStyle))
+    END_TYPE
+#endif
 };
 extern void from_json(const nlohmann::json &j, CrosshairsStyle &c);
 
-struct BackgroundCfg {
+struct RectCfg {
     float radius = 1.f;
     string fill = "#1890FF";
-    array<float, 2> padding =  {3, 3};
+    vector<float> padding =  {3, 3};
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(RectCfg)
+        FIELDS(FIELD(&RectCfg::radius),
+               FIELD(&RectCfg::fill),
+               FIELD(&RectCfg::padding))
+        CTORS(DEFAULT_CTOR(RectCfg))
+    END_TYPE
+#endif
 };
-extern void from_json(const nlohmann::json &j, BackgroundCfg &b);
+extern void from_json(const nlohmann::json &j, RectCfg &b);
 
 struct Tip {
     bool inner = false;
@@ -40,6 +60,17 @@ struct Tip {
     string textAlign = "center";
     string textBaseline = "bottom";
     bool hidden = false;
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(Tip)
+        FIELDS(FIELD(&Tip::inner),
+               FIELD(&Tip::fontSize),
+               FIELD(&Tip::fill),
+               FIELD(&Tip::textAlign),
+               FIELD(&Tip::textBaseline),
+               FIELD(&Tip::hidden))
+        CTORS(DEFAULT_CTOR(Tip))
+    END_TYPE
+#endif
 };
 extern void from_json(const nlohmann::json &j, Tip &t);
 extern void to_json(nlohmann::json &j, const Tip &t);
@@ -47,9 +78,22 @@ extern void to_json(nlohmann::json &j, const Tip &t);
 struct ToolTipCfg {
     string onPressStart, onPress, onPressEnd;
     CrosshairsStyle crosshairsStyle;
-    BackgroundCfg background;
+    RectCfg background;
     Tip xTip, yTip;
     bool hidden = false;
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(ToolTipCfg)
+        FIELDS(FIELD(&ToolTipCfg::onPressStart),
+               FIELD(&ToolTipCfg::onPress),
+               FIELD(&ToolTipCfg::onPressEnd),
+               FIELD(&ToolTipCfg::crosshairsStyle),
+               FIELD(&ToolTipCfg::background),
+               FIELD(&ToolTipCfg::xTip),
+               FIELD(&ToolTipCfg::yTip),
+               FIELD(&ToolTipCfg::hidden))
+        CTORS(DEFAULT_CTOR(ToolTipCfg))
+    END_TYPE
+#endif
 };
 extern void from_json(const nlohmann::json &j, ToolTipCfg &t);
 

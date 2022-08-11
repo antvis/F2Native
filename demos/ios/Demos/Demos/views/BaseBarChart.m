@@ -8,7 +8,7 @@
     self.chart.canvas(self.canvasView).padding(20, 10, 20, 10.f);
     self.chart.source([F2Utils toJsonArray:jsonData]);
     self.chart.axis(@"year", @{@"grid": @(NO)});
-    self.chart.axis(@"sales", @{@"grid": @{@"type": @"dash", @"lineWidth": @(2), @"lineDash": @[@(6), @(2)]}});
+    self.chart.axis(@"sales", @{@"grid": @{@"type": @"dash", @"lineWidth": @(2), @"dash": @[@(6), @(2)]}});
     self.chart.scale(@"year", @{@"range": @[@(0.1), @(0.9)]});
     self.chart.scale(@"sales", @{@"nice": @(YES)});
     self.chart.interval().position(@"year*sales").style(@{

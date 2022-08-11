@@ -4,6 +4,7 @@
 #include "TimeLine.h"
 #include "../canvas/Coord.h"
 #include "../shape/Group.h"
+#include "../../reflection/reflection.h"
 
 namespace xg {
 class XChart;

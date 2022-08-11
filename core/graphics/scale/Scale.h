@@ -6,7 +6,7 @@
 #include <map>
 #include "../func/Func.h"
 #include "../util/json.h"
-#include "../../reflection/param.h"
+#include "../../reflection/reflection.h"
 
 namespace xg {
 class XChart;
@@ -34,7 +34,7 @@ struct Tick {
 
 struct ScaleCfg {
     std::string type;
-    std::array<float, 2> range= {NAN, NAN};
+    std::vector<float> range= {NAN, NAN};
 
     float tickCount = NAN;  // 刻度总数
     double min = NAN;
@@ -48,10 +48,10 @@ struct ScaleCfg {
     int precision = 0;
     
     //cat
-    std::array<float, 2> domain = {NAN, NAN};
+    std::vector<float> domain = {NAN, NAN};
     
     //分时
-    vector<array<size_t, 2>> timeRange;
+    vector<vector<long long>> timeRange;
     long long timeZoneOffset = 0;
     
     //kline
@@ -64,6 +64,25 @@ struct ScaleCfg {
     inline bool HasDomain() {
         return !std::isnan(domain[0]) && !std::isnan(domain[1]);
     }
+    
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(ScaleCfg)
+        FIELDS(FIELD(&ScaleCfg::type),
+               FIELD(&ScaleCfg::range),
+               FIELD(&ScaleCfg::tickCount),
+               FIELD(&ScaleCfg::min),
+               FIELD(&ScaleCfg::max),
+               FIELD(&ScaleCfg::tick),
+               FIELD(&ScaleCfg::ticks),
+               FIELD(&ScaleCfg::nice),
+               FIELD(&ScaleCfg::precision),
+               FIELD(&ScaleCfg::domain),
+               FIELD(&ScaleCfg::timeRange),
+               FIELD(&ScaleCfg::timeZoneOffset),
+               FIELD(&ScaleCfg::dateFormate))
+        CTORS(DEFAULT_CTOR(ScaleCfg))
+    END_TYPE
+#endif
 };
 
 extern void from_json(const nlohmann::json &j, ScaleCfg &s);

@@ -149,7 +149,7 @@ class Category : public AbstractScale {
     static inline double CalculateValue(double percent, double min, double max) { return min + percent * (max - min); }
 protected:
     size_t min, max, tickCount;
-    array<float, 2> range = {0, 1};
+    vector<float> range = {0, 1};
 }; // namespace scale
 } // namespace scale
 } // namespace xg

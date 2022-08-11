@@ -7,6 +7,7 @@
 #include "../shape/Marker.h"
 #include "../shape/Text.h"
 #include "../../nlohmann/json.hpp"
+#include "../../reflection/reflection.h"
 
 namespace xg {
 class XChart;
@@ -18,6 +19,15 @@ struct LegendStyle {
     string fill = "#808080";
     string textAlign = "start";
     string textBaseline = "top";
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(LegendStyle)
+        FIELDS(FIELD(&LegendStyle::textSize),
+               FIELD(&LegendStyle::fill),
+               FIELD(&LegendStyle::textAlign),
+               FIELD(&LegendStyle::textBaseline))
+        CTORS(DEFAULT_CTOR(LegendStyle))
+    END_TYPE
+#endif
 };
 extern void from_json(const nlohmann::json &j, LegendStyle &n);
 
@@ -36,6 +46,25 @@ struct LegendCfg {
     string verticalAlign;
     bool hidden = false;
     
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(LegendCfg)
+        FIELDS(FIELD(&LegendCfg::horizontalItems),
+               FIELD(&LegendCfg::itemMarginBottom),
+               FIELD(&LegendCfg::lineBottom),
+               FIELD(&LegendCfg::itemGap),
+               FIELD(&LegendCfg::wordSpace),
+               FIELD(&LegendCfg::nameStyle),
+               FIELD(&LegendCfg::symbol),
+               FIELD(&LegendCfg::radius),
+               FIELD(&LegendCfg::position),
+               FIELD(&LegendCfg::layout),
+               FIELD(&LegendCfg::align),
+               FIELD(&LegendCfg::verticalAlign),
+               FIELD(&LegendCfg::hidden))
+        CTORS(DEFAULT_CTOR(LegendCfg))
+    END_TYPE
+#endif
+public:
     void Reset(const std::string &position_) {        
         if (position_ == "top" || position_ == "bottom") {
             layout = layout.empty() ? "horizontal" : layout;

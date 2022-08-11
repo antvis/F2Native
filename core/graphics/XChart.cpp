@@ -21,7 +21,7 @@ void xg::from_json(const nlohmann::json &j, CoordCfg &c) {
         return;
     }
     CoordCfg d;
-    c.coordType = j.value("type", d.coordType);
+    c.type = j.value("type", d.type);
     c.transposed = j.value("transposed", d.transposed);
 }
 
@@ -105,13 +105,13 @@ bool XChart::ParseObject(const nlohmann::json &dsl) {
     }
     if (dsl[sourceKey].is_array()) {
         const auto &data = json::GetArray(dsl, sourceKey);
-        SourceObject(data);
+//        SourceObject(data);
     }
     //线上的老代码data部分是string
     else if(dsl[sourceKey].is_string()) {
         const auto &dataStr = json::GetString(dsl, sourceKey);
         const auto data = json::ParseString(dataStr);
-        SourceObject(data);
+//        SourceObject(data);
     }
     
     if (data_.size() == 0) {
@@ -275,10 +275,6 @@ bool XChart::ParseObject(const nlohmann::json &dsl) {
     return true;
 }
 
-XChart &XChart::Source(const std::string &json) {
-    return SourceObject(xg::json::ParseString(json));
-}
-
 XChart &XChart::Source(const std::vector<XSourceItem> &data) {
     this->data_ = data;
     return *this;
@@ -315,9 +311,7 @@ XChart &XChart::Axis(const std::string &field, const std::string &json) {
 XChart &XChart::Interaction(const std::string &type, const std::string &json) {
     if (type == "pinch") {
         return Interaction(type, (interaction::PinchCfg)xg::json::ParseString(json));
-    }
-    //pan
-    else if(type == "pan"){
+    } else if(type == "pan"){
         return Interaction(type, (interaction::PanCfg)xg::json::ParseString(json));
     }
     
@@ -616,7 +610,7 @@ void XChart::InitLayout() {
 
 void XChart::InitCoord() {
     bool _transposed = coordConfig_.transposed;
-    const std::string &type = coordConfig_.coordType;
+    const std::string &type = coordConfig_.type;
     util::Point start = util::Point{this->margin_[0] + this->padding_[0], this->margin_[1] + this->height_ - this->padding_[3]};
     util::Point end = util::Point{this->margin_[0] + this->width_ - this->padding_[2], this->margin_[1] + this->padding_[1]};
     if(type == "polar") {
@@ -727,18 +721,6 @@ std::map<std::string, std::vector<legend::LegendItem>> XChart::GetLegendItems() 
 
     
 #pragma mark -
-XChart &XChart::SourceObject(const nlohmann::json &_data) {
-//    if(!_data.is_array()) {
-//        // 有问题先抛出来
-//        this->logTracer_->trace("#Source json is invalid");
-//        // throw std::runtime_error("json is invalid.");
-//        return *this;
-//    }
-//
-//    this->data_ = _data;
-    return *this;
-}
-    
 XChart &XChart::ScaleObject(const std::string &field, const ScaleCfg &config) {
     this->logTracer_->trace("#Scale field: %s config: %s", field.c_str(), config.type.c_str());
     this->scaleController_->UpdateColConfig(field, config);
@@ -810,8 +792,8 @@ void XChart::ChangeSize(double width, double height) {
     ClearInner();
 }
 
-void XChart::ChangeData(const std::string &json) {
-    SourceObject(xg::json::ParseString(json));
+void XChart::ChangeData(const std::vector<XSourceItem> &data) {
+    Source(data);
     
     //清理度量
     scaleController_->Clear();

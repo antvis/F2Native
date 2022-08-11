@@ -15,7 +15,7 @@
         @"type": @"timeSharing",
         @"timeRange": @[@[@(1639099800000), @(1639107000000)], @[@(1639112400000), @(1639119600000)]]
     });
-    self.chart.axis(@"price", @{@"hidden": @(YES), @"max":@(3582.115), @"min":@(3543.2786000000006)});
+    self.chart.axis(@"price", @{@"hidden": @(YES)});
     self.chart.axis(@"date", @{
         @"label": @{            
             @"textColor": @"#999999",            

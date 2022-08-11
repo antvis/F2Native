@@ -261,7 +261,7 @@ class Linear : public AbstractScale {
     double tickInterval = -1;
     double max, min;
     size_t tickCount = 5;
-    array<float, 2> range = {0, 1};
+    vector<float> range = {0, 1};
     
 };
 } // namespace scale

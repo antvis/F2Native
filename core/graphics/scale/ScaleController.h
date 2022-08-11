@@ -21,7 +21,7 @@ namespace xg {
 class XChart;
 namespace scale {
 
-array<float, 2> AdjustRange(const vector<Any> &fieldColumn, std::unique_ptr<canvas::coord::AbstractCoord> &coord);
+vector<float> AdjustRange(const vector<Any> &fieldColumn, std::unique_ptr<canvas::coord::AbstractCoord> &coord);
 
 std::unique_ptr<AbstractScale> MakeCategory(const std::string &field_,
                                             const util::XSourceArray &data,

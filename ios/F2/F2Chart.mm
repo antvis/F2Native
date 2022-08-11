@@ -8,6 +8,7 @@
 #import "XChart.h"
 #import "F2CanvasView.h"
 #import "F2Reflection.h"
+#import "F2Reflection.h"
 
 typedef const char *(*selector)(void *caller, const char *functionId, const char *parameter);
 const char *cexecute(void *caller, const char *functionId, const char *parameter) {
@@ -49,6 +50,8 @@ class IOSF2Function : public func::F2Function {
 @end
 
 @implementation F2Chart
+
+using namespace xg;
 
 + (F2Chart *)chart:(CGSize)size name:(NSString *)name {
     return [[F2Chart alloc] initWithSize:size name:name];
@@ -161,48 +164,63 @@ class IOSF2Function : public func::F2Function {
 
 - (F2Chart * (^)(NSString *field, NSDictionary *config))scale {
     return ^id(NSString *field, NSDictionary *config) {
-        self.chart->Scale([F2SafeString(field) UTF8String],
-                          [F2SafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self]]) UTF8String]);
+        NSDictionary *reset = [F2Utils resetCallbacksFromOld:config host:self];
+        auto cfg = F2Reflection::CreateStruct(reset, typeof(scale::ScaleCfg));
+        auto cast = cfg.Cast<scale::ScaleCfg &>();
+        self.chart->ScaleObject([F2SafeString(field) UTF8String], cast);
         return self;
     };
 }
 
 - (F2Chart * (^)(NSString *field, NSDictionary *config))axis {
     return ^id(NSString *field, NSDictionary *config) {
-        self.chart->Axis([F2SafeString(field) UTF8String],
-                         [F2SafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self]]) UTF8String]);
-
+        NSDictionary *reset = [F2Utils resetCallbacksFromOld:config host:self];
+        auto cfg = F2Reflection::CreateStruct(reset, typeof(axis::AxisCfg));
+        auto cast = cfg.Cast<axis::AxisCfg &>();
+        self.chart->AxisObject([F2SafeString(field) UTF8String], cast);
         return self;
     };
 }
 
 - (F2Chart * (^)(NSString *field, NSDictionary *config))legend {
     return ^id(NSString *field, NSDictionary *config) {
-        self.chart->Legend([F2SafeString(field) UTF8String],
-                           [F2SafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self]]) UTF8String]);
+        NSDictionary *reset = [F2Utils resetCallbacksFromOld:config host:self];
+        auto cfg = F2Reflection::CreateStruct(reset, typeof(legend::LegendCfg));
+        auto cast = cfg.Cast<legend::LegendCfg &>();
+        self.chart->LegendObject([F2SafeString(field) UTF8String], cast);
         return self;
     };
 }
 
 - (F2Chart * (^)(NSDictionary *config))coord {
     return ^id(NSDictionary *config) {
-        self.chart->Coord([F2SafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self]]) UTF8String]);
+        NSDictionary *reset = [F2Utils resetCallbacksFromOld:config host:self];
+        auto cfg = F2Reflection::CreateStruct(reset, typeof(xg::CoordCfg));
+        auto cast = cfg.Cast<xg::CoordCfg &>();
+        self.chart->CoordObject(cast);
         return self;
     };
 }
 
 - (F2Chart * (^)(NSString *type, NSDictionary *config))interaction {
     return ^id(NSString *type, NSDictionary *config) {
-        self.chart->Interaction([F2SafeString(type) UTF8String],
-                                [F2SafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config
-                                                                                                                  host:self]]) UTF8String]);
+        NSDictionary *rest = [F2Utils resetCallbacksFromOld:config
+                                                     host:self];
         if ([type isEqualToString:@"pan"]) {
+            auto cfg = F2Reflection::CreateStruct(rest, typeof(interaction::PanCfg));
+            auto cast = cfg.Cast<interaction::PanCfg &>();
+            self.chart->Interaction([F2SafeString(type) UTF8String], cast);
+            
             F2WeakSelf
             [self.canvasView addGestureListener:@"pan" callback:^(NSDictionary * _Nonnull info) {
                 F2StrongSelf;
                 strongSelf.postTouchEvent(info);
             }];
         } else if([type isEqualToString:@"pinch"]) {
+            auto cfg = F2Reflection::CreateStruct(rest, typeof(interaction::PinchCfg));
+            auto cast = cfg.Cast<interaction::PinchCfg &>();
+            self.chart->Interaction([F2SafeString(type) UTF8String], cast);
+            
             F2WeakSelf
             [self.canvasView addGestureListener:@"pinch" callback:^(NSDictionary * _Nonnull info) {
                 F2StrongSelf;
@@ -215,7 +233,11 @@ class IOSF2Function : public func::F2Function {
 
 - (F2Chart * (^)(NSDictionary *config))tooltip {
     return ^id(NSDictionary *config) {
-        self.chart->Tooltip([F2SafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self]]) UTF8String]);
+        NSDictionary *reset = [F2Utils resetCallbacksFromOld:config host:self];
+        auto cfg = F2Reflection::CreateStruct(reset, typeof(tooltip::ToolTipCfg));
+        auto cast = cfg.Cast<tooltip::ToolTipCfg &>();
+        self.chart->TooltipObject(cast);
+        
         F2WeakSelf
         [self.canvasView addGestureListener:@"longPress" callback:^(NSDictionary * _Nonnull info) {
             F2StrongSelf;
@@ -225,13 +247,9 @@ class IOSF2Function : public func::F2Function {
     };
 }
 
-- (F2Chart * (^)(id config))animate {
-    return ^id(id config) {
-        if([config isKindOfClass:[NSNumber class]]) {
-            self.chart->Animate([config boolValue] ? "true" : "false");
-        } else if([config isKindOfClass:[NSDictionary class]]) {
-            self.chart->Animate([F2SafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self]]) UTF8String]);
-        }
+- (F2Chart * (^)(bool config))animate {
+    return ^id(bool config) {
+        self.chart->AnimateObject({.enable = config});
         return self;
     };
 }
@@ -454,14 +472,18 @@ class IOSF2Function : public func::F2Function {
     };
 }
 
-- (F2Chart * (^)(NSArray *data))changeData {
+- (F2Chart * (^)(NSArray<NSDictionary *> *data))changeData {
     return ^id(NSArray *data) {
-        if ([data isKindOfClass:NSArray.class]) {
-            self.chart->ChangeData([F2SafeJson([F2Utils toJsonString:data]) UTF8String]);
-        }else if([data isKindOfClass:NSString.class]) {
-            NSString *dataStr = (NSString *)data;
-            self.chart->ChangeData([F2SafeJson(dataStr) UTF8String]);
+        NSArray *source = data;
+        if([data isKindOfClass:NSString.class]) {
+            source = [F2Utils toJsonArray:(NSString *)data];
         }
+        __block XSourceArray list;
+        [source enumerateObjectsUsingBlock:^(NSDictionary * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            XSourceItem item = F2Reflection::CreateaSourceItem(obj);
+            list.push_back(std::move(item));
+        }];
+        self.chart->ChangeData(list);
         return self;
     };
 }

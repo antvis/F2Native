@@ -4,6 +4,7 @@
 #include <array>
 #include "../scale/Scale.h"
 #include "../../nlohmann/json.hpp"
+#include "../../reflection/reflection.h"
 
 namespace xg {
 class XChart;
@@ -15,12 +16,26 @@ struct PinchCfg {
     
     //是否设置了pinch
     bool enable = false;
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(PinchCfg)
+        FIELDS(FIELD(&PinchCfg::minCount),
+               FIELD(&PinchCfg::maxCount),
+               FIELD(&PinchCfg::enable))
+        CTORS(DEFAULT_CTOR(PinchCfg))
+    END_TYPE
+#endif
 };
 extern void from_json(const nlohmann::json& j, PinchCfg& p);
 
 struct PanCfg {
     //是否设置了pan
     bool enable = false;
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(PanCfg)
+        FIELDS(FIELD(&PanCfg::enable))
+        CTORS(DEFAULT_CTOR(PanCfg))
+    END_TYPE
+#endif
 };
 extern void from_json(const nlohmann::json& j, PanCfg& p);
 

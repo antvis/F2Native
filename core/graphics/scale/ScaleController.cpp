@@ -11,8 +11,8 @@
 using namespace xg;
 using namespace xg::scale;
 
-array<float, 2> xg::scale::AdjustRange(const vector<Any> &fieldColumn, std::unique_ptr<canvas::coord::AbstractCoord> &coord) {
-    array<float, 2> cfg = {NAN, NAN};
+vector<float> xg::scale::AdjustRange(const vector<Any> &fieldColumn, std::unique_ptr<canvas::coord::AbstractCoord> &coord) {
+    vector<float> cfg = {NAN, NAN};
     const std::size_t size = fieldColumn.size();
     if(size <= 1) {
         cfg = {0.5, 1.0};

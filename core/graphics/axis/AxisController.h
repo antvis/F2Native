@@ -13,6 +13,7 @@
 #include "../util/Point.h"
 #include "../../utils/common.h"
 #include "../../nlohmann/json.hpp"
+#include "../../reflection/reflection.h"
 
 using namespace xg::util;
 
@@ -29,6 +30,18 @@ struct AxisGridCfg {
     //雷达图轴上的背景色
     std::vector<string> fill;
     bool hidden = false;
+    
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(AxisGridCfg)
+        FIELDS(FIELD(&AxisGridCfg::type),
+               FIELD(&AxisGridCfg::lineWidth),
+               FIELD(&AxisGridCfg::stroke),
+               FIELD(&AxisGridCfg::dash),
+               FIELD(&AxisGridCfg::fill),
+               FIELD(&AxisGridCfg::hidden))
+        CTORS(DEFAULT_CTOR(AxisGridCfg))
+    END_TYPE
+#endif
 };
 extern void from_json(const nlohmann::json& j, AxisGridCfg& g);
 
@@ -47,6 +60,24 @@ struct AxisLabelCfg {
     float yOffset = 0;
     string content = "";
     bool hidden = false;
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(AxisLabelCfg)
+        FIELDS(FIELD(&AxisLabelCfg::textColor),
+               FIELD(&AxisLabelCfg::textSize),
+               FIELD(&AxisLabelCfg::labelOffset),
+               FIELD(&AxisLabelCfg::textAlign),
+               FIELD(&AxisLabelCfg::textBaseline),
+               FIELD(&AxisLabelCfg::textAligns),
+               FIELD(&AxisLabelCfg::textBaselines),
+               FIELD(&AxisLabelCfg::inner),
+               FIELD(&AxisLabelCfg::item),
+               FIELD(&AxisLabelCfg::xOffset),
+               FIELD(&AxisLabelCfg::yOffset),
+               FIELD(&AxisLabelCfg::content),
+               FIELD(&AxisLabelCfg::hidden))
+        CTORS(DEFAULT_CTOR(AxisLabelCfg))
+    END_TYPE
+#endif
 };
 extern void from_json(const nlohmann::json& j, AxisLabelCfg& l);
 
@@ -56,6 +87,16 @@ struct AxisLineCfg {
     string stroke = "#E8E8E8"; // 网格线颜色
     std::vector<float> dash =  {10, 10};
     bool hidden = false;
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(AxisLineCfg)
+        FIELDS(FIELD(&AxisLineCfg::type),
+               FIELD(&AxisLineCfg::lineWidth),
+               FIELD(&AxisLineCfg::stroke),
+               FIELD(&AxisLineCfg::dash),
+               FIELD(&AxisLineCfg::hidden))
+        CTORS(DEFAULT_CTOR(AxisLineCfg))
+    END_TYPE
+#endif
 };
 extern void from_json(const nlohmann::json& j, AxisLineCfg& l);
 
@@ -64,6 +105,16 @@ struct AxisCfg {
     AxisGridCfg grid;
     AxisLabelCfg label;
     AxisLineCfg line;
+    
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(AxisCfg)
+        FIELDS(FIELD(&AxisCfg::grid),
+               FIELD(&AxisCfg::label),
+               FIELD(&AxisCfg::line),
+               FIELD(&AxisCfg::hidden))
+        CTORS(DEFAULT_CTOR(AxisCfg))
+    END_TYPE
+#endif
 };
 extern void from_json(const nlohmann::json& j, AxisCfg& a);
 

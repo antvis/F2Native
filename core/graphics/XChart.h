@@ -82,8 +82,16 @@ struct ChartConfig final {
 };
 
 struct CoordCfg {
-    std::string coordType = "cartesian";
+    std::string type = "cartesian";
     bool transposed = false;
+    
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(CoordCfg)
+        FIELDS(FIELD(&CoordCfg::type),
+               FIELD(&CoordCfg::transposed))
+        CTORS(DEFAULT_CTOR(CoordCfg))
+    END_TYPE
+#endif
 };
 
 extern void from_json(const nlohmann::json &j, CoordCfg &cfg);
@@ -113,7 +121,6 @@ class XChart {
     XChart(const XChart &){};
 
     //设置源数据
-    XChart &Source(const std::string &json);
     XChart &Source(const std::vector<XSourceItem> &data);
 
     //context设置
@@ -203,8 +210,8 @@ class XChart {
     void ChangeSize(double width, double height);
     
     /// 改变数据源
-    /// @param json json数组
-    void ChangeData(const std::string &json);
+    /// @param data vector数组
+    void ChangeData(const std::vector<XSourceItem> &data);
     
     ///设置当geom中有interval的时候，是否调整max, min,两个参数, 使其中一个为0
     ///@param adjust 是否调整，默认是调整的，可设置false 关闭
@@ -372,7 +379,6 @@ class XChart {
   protected:
     
     bool rendered_ = false;
-//    nlohmann::json data_;
     std::vector<XSourceItem> data_;
     std::unique_ptr<canvas::coord::AbstractCoord> coord_ = nullptr;
     scale::ScaleController *scaleController_ = nullptr;

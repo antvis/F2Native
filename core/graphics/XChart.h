@@ -161,20 +161,7 @@ class XChart {
     XChart &Padding(double left = 0.f, double top = 0.f, double right = 0.0, double bottom = 0.);
     XChart &Margin(double left = 0.f, double top = 0.f, double right = 0.0, double bottom = 0.);
 
-    //图形语法设置
-    XChart &Scale(const std::string &field, const std::string &json);
-
-    XChart &Axis(const std::string &field, const std::string &json = "");
-
-    XChart &Legend(const std::string &field, const std::string &json = "");
-
     guide::GuideController &Guide() { return *this->guideController_; }
-
-    XChart &Interaction(const std::string &type, const std::string &json = "");
-
-    XChart &Tooltip(const std::string &json = "");
-
-    XChart &Animate(const std::string &json = "");
     
     //会修改event 附加devicePixelRatio和timestamp信息
     bool OnTouchEvent(event::Event &event);
@@ -300,7 +287,7 @@ class XChart {
      */
 #if defined(__EMSCRIPTEN__)
     XChart *SetCanvasContextWasm(const std::string &canvasName) { return &SetCanvasContext(canvasName); }
-    XChart *SourceWasm(const std::string &json) { return &Source(json); }
+    XChart *SourceWasm(const std::vector<XSourceItem> &json) { return &Source(json); }
     canvas::CanvasContext *GetCanvasContextWasm() const { return canvasContext_; }
     XChart *PaddingWasm(double left = 0.f, double top = 0.f, double right = 0.0, double bottom = 0.) {
         return &Padding(left, top, right, bottom);
@@ -308,14 +295,14 @@ class XChart {
     XChart *MarginWasm(double left = 0.f, double top = 0.f, double right = 0.0, double bottom = 0.) {
         return &Margin(left, top, right, bottom);
     }
-    XChart *ScaleWasm(const std::string &field, const std::string &json) { return &Scale(field, json); }
-    XChart *AxisWasm(const std::string &field, const std::string &json) { return &Axis(field, json); }
-    XChart *LegendWasm(const std::string &field, const std::string &json) { return &Legend(field, json); }
+    XChart *ScaleWasm(const std::string &field, const ScaleCfg &json) { return &ScaleObject(field, json); }
+    XChart *AxisWasm(const std::string &field, const axis::AxisCfg &json) { return &AxisObject(field, json); }
+    XChart *LegendWasm(const std::string &field, const legend::LegendCfg &json) { return &LegendObject(field, json); }
     guide::GuideController *GuideWasm() { return &Guide(); }
-    XChart *InteractionWasm(const std::string &type, const std::string &json) { return &Interaction(type, json); }
-    XChart *TooltipWasm(const std::string &json) { return &Tooltip(json); }
-    XChart *CoordWasm(const std::string &json) { return &Coord(json); }
-    XChart *AnimateWasm(const std::string &json) { return &Animate(json); }
+    XChart *InteractionWasm(const std::string &type, const interaction::PanCfg &json) { return &Interaction(type, json); }
+    XChart *TooltipWasm(const tooltip::ToolTipCfg &json) { return &TooltipObject(json); }
+    XChart *CoordWasm(const CoordCfg &json) { return &CoordObject(json); }
+    XChart *AnimateWasm(const animate::AnimateCfg &json) { return &AnimateObject(json); }
     geom::Line *LineWasm() { return &Line(); }
     geom::Interval *IntervalWasm() { return &Interval(); }
     geom::Area *AreaWasm() { return &Area(); }

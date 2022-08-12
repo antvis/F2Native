@@ -23,7 +23,7 @@ class Area : public GeomShapeBase {
               std::size_t start,
               std::size_t end,
               xg::shape::Group &container,
-              const XStyle &style) override {
+              const StyleCfg &style) override {
         vector<xg::util::Point> topPoints;
         vector<xg::util::Point> bottomPoints;
         topPoints.reserve(end - start);

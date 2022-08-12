@@ -44,7 +44,6 @@ void DoAnimation(TimeLine *timeLine_, shape::Shape *shape, const AnimateState &e
 struct AnimateCfg {
     bool enable = false;
 };
-extern void from_json(const nlohmann::json& j, AnimateCfg& p);
 
 class GeomAnimate {
   public:

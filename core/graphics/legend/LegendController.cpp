@@ -6,37 +6,6 @@
 
 using namespace xg;
 
-void legend::from_json(const nlohmann::json &j, LegendStyle &n) {
-    if (!j.is_object()) {
-        return;
-    }
-    LegendStyle d;
-    n.textSize = j.value("textSize", d.textSize);
-    n.fill = j.value("fill", d.fill);
-    n.textAlign = j.value("textAlign", d.textAlign);
-    n.textBaseline = j.value("textBaseline", d.textBaseline);
-}
-
-void legend::from_json(const nlohmann::json &j, LegendCfg &n) {
-    if (j.is_boolean()) {
-        n.hidden = true;
-    } else if (j.is_object()) {
-        LegendCfg d;
-        n.horizontalItems = j.value("horizontalItems", d.horizontalItems);
-        n.itemMarginBottom = j.value("itemMarginBottom", d.itemMarginBottom);
-        n.lineBottom = j.value("lineBottom", d.lineBottom);
-        n.itemGap = j.value("itemGap", d.itemGap);
-        n.wordSpace = j.value("wordSpace", d.wordSpace);
-        n.nameStyle = j.value("nameStyle", d.nameStyle);
-        n.symbol = j.value("symbol", d.symbol);
-        n.position = j.value("position", d.position);
-        n.layout = j.value("layout", d.layout);
-        n.align = j.value("align", d.align);
-        n.radius = j.value("align", d.radius);
-    }
-}
-
-
 void legend::Legend::CreateShape(XChart &chart, shape::Group *container, const util::Point &originPoint) {
     // draw
     util::Point currPoint = Point(originPoint.x, originPoint.y);

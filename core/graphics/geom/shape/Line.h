@@ -25,7 +25,7 @@ class Line : public GeomShapeBase {
               std::size_t start,
               std::size_t end,
               xg::shape::Group &container,
-              const XStyle &style) override {
+              const StyleCfg &style) override {
         this->DrawLines(coord, data, start, end, context, container, style);
     }
 
@@ -36,7 +36,7 @@ class Line : public GeomShapeBase {
                     std::size_t end,
                     canvas::CanvasContext &canvasContext,
                     xg::shape::Group &container,
-                    const XStyle &style) {
+                    const StyleCfg &style) {
       
         util::Point center(NAN, NAN);
         if(!data[start]._y0.empty()) {
@@ -66,7 +66,7 @@ class Line : public GeomShapeBase {
                    std::size_t end,
                    canvas::CanvasContext &canvasContext,
                    xg::shape::Group &container,
-                   const XStyle &style) {
+                   const StyleCfg &style) {
         size_t size = end - start + 1;
         if (size <= 0) {
             return;

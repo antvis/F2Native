@@ -16,7 +16,7 @@ void geom::shape::GeomShapeFactory::DrawGeomShape(XChart &chart,
                                                   std::size_t start,
                                                   std::size_t end,
                                                   xg::shape::Group &container,
-                                                  const XStyle &style) {
+                                                  const StyleCfg &style) {
     auto got = geomShapes_.find(geomType);
     if(got == geomShapes_.end()) {
         // todo log
@@ -33,7 +33,7 @@ void geom::shape::GeomShapeFactory::DrawGeomShape(XChart &chart,
                    std::size_t start,
                    std::size_t end,
                    xg::shape::Group &container,
-                   const XStyle &style) {
+                   const StyleCfg &style) {
     auto got = geomShapes_.find(geomType);
     if(got == geomShapes_.end()) {
         // todo log

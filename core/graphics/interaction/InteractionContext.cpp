@@ -5,18 +5,6 @@
 
 using namespace xg;
 
-void xg::interaction::from_json(const nlohmann::json& j, PinchCfg& p) {
-    if (!j.is_object()) { return; }
-    PinchCfg d;
-    p.minCount = j.value("minCount", d.minCount);
-    p.maxCount = j.value("maxCount", d.maxCount);
-    p.enable = true;
-}
-
-void xg::interaction::from_json(const nlohmann::json& j, PanCfg& p) {
-    p.enable = true;
-}
-
 
 interaction::InteractionContext::InteractionContext(XChart *chart) {
     this->chart_ = chart;

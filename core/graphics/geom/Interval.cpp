@@ -5,19 +5,6 @@
 
 using namespace xg;
 
-void xg::util::from_json(const nlohmann::json &j, TagCfg &t) {
-    if (!j.is_object()) {
-        return;
-    }
-    TagCfg d;
-    t.offset = j.value("offset", d.offset);
-    t.textAlign = j.value("textAlign", d.textAlign);
-    t.textBaseline = j.value("textBaseline", d.textBaseline);
-    t.fill = j.value("fill", d.fill);
-    t.textSize = j.value("textSize", d.textSize);
-    t.hiden = false;
-}
-
 float geom::Interval::GetDefaultWidthRatio(XChart &chart) {
     if(chart.coord_->GetType() == coord::CoordType::Polar) {
         const std::string &xField = GetXScaleField();

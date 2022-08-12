@@ -18,7 +18,7 @@ class Point : public GeomShapeBase {
               std::size_t start,
               std::size_t end,
               xg::shape::Group &container,
-              const XStyle &style) override {
+              const StyleCfg &style) override {
         std::string shape = "circle";
         if(!data._shape.empty()) {
             shape = data._shape;

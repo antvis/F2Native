@@ -229,7 +229,7 @@ bool XChart::ParseObject(const nlohmann::json &dsl) {
 
         const auto &style = json::GetObject(*it, "style");
         if (style.is_object()) {
-            geom->StyleObject(style);
+//            geom->StyleObject(style);
         }
     }
     
@@ -295,28 +295,6 @@ void XChart::UpdateLayout(std::array<double, 4> newPadding) {
     this->padding_ = newPadding;
 }
 
-XChart &XChart::Axis(const std::string &field, const std::string &json) {
-    return AxisObject(field, xg::json::ParseString(json));
-}
-
-XChart &XChart::Interaction(const std::string &type, const std::string &json) {
-    if (type == "pinch") {
-        return Interaction(type, (interaction::PinchCfg)xg::json::ParseString(json));
-    } else if(type == "pan"){
-        return Interaction(type, (interaction::PanCfg)xg::json::ParseString(json));
-    }
-    
-    return * this;
-}
-
-XChart &XChart::Animate(const std::string &json) {
-    return AnimateObject(xg::json::ParseString(json));
-}
-
-XChart &XChart::Legend(const std::string &field, const std::string &json) {
-    return LegendObject(field, xg::json::ParseString(json));
-}
-
 bool XChart::OnTouchEvent(event::Event &event) {
     if(!canvasContext_ || !canvasContext_->IsValid()) {
         return false;
@@ -324,10 +302,6 @@ bool XChart::OnTouchEvent(event::Event &event) {
     event.devicePixelRatio = ratio_;
     event.timeStamp = xg::CurrentTimestampAtMM();
     return this->eventController_->OnTouchEvent(event);
-}
-
-XChart &XChart::Scale(const std::string &field, const std::string &json) {
-    return ScaleObject(field, xg::json::ParseString(json));
 }
 
 scale::AbstractScale &XChart::GetScale(const std::string &field) {
@@ -562,10 +536,6 @@ std::size_t XChart::RequestAnimationFrame(func::Command *c, long delay) {
         delete c;
         return 0;
     }
-}
-
-XChart &XChart::Tooltip(const std::string &json) {
-    return TooltipObject(xg::json::ParseString(json));
 }
 
 void XChart::InitLayout() {

@@ -32,7 +32,7 @@ class XChart;
 
 namespace geom {
 
-struct XStyle {
+struct StyleCfg {
     //虚线
     std::vector<float> dash;
     
@@ -48,7 +48,7 @@ struct XStyle {
     string fill = "";
     
     //candle的填充色
-    std::array<std::string, 3> candle = {"#1CAA3D", "#808080", "#F4333C"};
+    std::vector<std::string> candle = {"#1CAA3D", "#808080", "#F4333C"};
     
     //柱子占坐标系的比值
     float widthRatio = 0.5f;
@@ -57,13 +57,27 @@ struct XStyle {
     bool connectNulls = true;
     
     //圆角
-    std::array<float, 4> roundings = {0, 0, 0, 0};
+    std::vector<float> roundings = {0, 0, 0, 0};
     
     //圆半径
     float size = NAN;
+    
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(StyleCfg)
+        FIELDS(FIELD(&StyleCfg::dash),
+               FIELD(&StyleCfg::startOnZero),
+               FIELD(&StyleCfg::lineWidth),
+               FIELD(&StyleCfg::stroke),
+               FIELD(&StyleCfg::fill),
+               FIELD(&StyleCfg::candle),
+               FIELD(&StyleCfg::widthRatio),
+               FIELD(&StyleCfg::connectNulls),
+               FIELD(&StyleCfg::roundings),
+               FIELD(&StyleCfg::size))
+        CTORS(DEFAULT_CTOR(StyleCfg))
+    END_TYPE
+#endif
 };
-
-extern void from_json(const nlohmann::json& j, XStyle& x);
 
 class AbstractGeom {
     friend animate::GeomAnimate;
@@ -83,8 +97,8 @@ class AbstractGeom {
     AbstractGeom &Shape(const string &field, const vector<string> &shapes);
     AbstractGeom &Shape(const string &shape);
     AbstractGeom &Adjust(const string &adjust);
-    AbstractGeom &Style(const std::string &json);
-    AbstractGeom &StyleObject(const XStyle &cfg);
+//    AbstractGeom &Style(const std::string &json);
+    AbstractGeom &StyleObject(const StyleCfg &cfg);
     
 
     const unique_ptr<attr::AttrBase> &GetColor();
@@ -125,7 +139,7 @@ class AbstractGeom {
     AbstractGeom *ShapeWasm(const string &field, const vector<string> &shapes) { return &Shape(field, shapes); }
     AbstractGeom *ShapeWasm(const string &shape) { return &Shape(shape); }
     AbstractGeom *AdjustWasm(const string &adjust) { return &Adjust(adjust); }
-    AbstractGeom *StyleWasm(const std::string &json) { return &Style(json); }
+    AbstractGeom *StyleWasm(const StyleCfg &json) { return &StyleObject(json); }
 #endif //EMSCRIPTEN
   protected:
     AbstractGeom(Group *_container, utils::Tracer *tracer) : container_(_container), tracker_(tracer){};
@@ -157,7 +171,7 @@ class AbstractGeom {
     string shapeType_ = "";
 //    nlohmann::json styleConfig_ = {{"startOnZero", true}};
     
-    XStyle styleConfig_;
+    StyleCfg styleConfig_;
     
     XDataGroup dataArray_;
     map<AttrType, unique_ptr<AttrBase>> attrs_{};

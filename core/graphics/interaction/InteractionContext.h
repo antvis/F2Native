@@ -25,7 +25,6 @@ struct PinchCfg {
     END_TYPE
 #endif
 };
-extern void from_json(const nlohmann::json& j, PinchCfg& p);
 
 struct PanCfg {
     //是否设置了pan
@@ -37,7 +36,6 @@ struct PanCfg {
     END_TYPE
 #endif
 };
-extern void from_json(const nlohmann::json& j, PanCfg& p);
 
 class InteractionContext {
   public:

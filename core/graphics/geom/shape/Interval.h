@@ -21,7 +21,7 @@ class Interval : public GeomShapeBase {
               std::size_t start,
               std::size_t end,
               xg::shape::Group &container,
-              const XStyle &style) override {
+              const StyleCfg &style) override {
         std::vector<util::Point> points;
         for(std::size_t i = 0; i < data.points.size(); ++i) {
             util::Point p = this->ParsePoint(coord, data.points[i]);
@@ -78,9 +78,10 @@ class Interval : public GeomShapeBase {
             }
             
             
-            std::array<float, 4> roundings =  style.roundings;
-            std::for_each(roundings.begin(), roundings.end(), [&context](auto &round) -> void {
-                round *= context.GetDevicePixelRatio();});
+            std::vector<float> roundings =  style.roundings;
+            for (size_t i = 0; i < style.roundings.size(); ++i) {
+                roundings[i] *= context.GetDevicePixelRatio();
+            }
             rect->SetRoundings(roundings);
             
 

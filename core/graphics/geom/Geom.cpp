@@ -9,21 +9,6 @@
 
 using namespace std;
 
-void xg::geom::from_json(const nlohmann::json& j, XStyle& x) {
-    if (!j.is_object()) { return; }
-    XStyle d;
-    x.dash = j.value("dash", d.dash);
-    x.startOnZero = j.value("startOnZero", d.startOnZero);
-    x.lineWidth = j.value("lineWidth", d.lineWidth);
-    x.stroke = j.value("stroke", d.stroke);
-    x.fill = j.value("fill", d.fill);
-    x.candle = j.value("candle", d.candle);
-    x.widthRatio = j.value("widthRatio", d.widthRatio);
-    x.connectNulls = j.value("connectNulls", d.connectNulls);
-    x.roundings = j.value("roundings", d.roundings);
-    x.size = j.value("size", d.size);
-}
-
 xg::geom::AbstractGeom::~AbstractGeom() {
     container_ = nullptr;
     attrs_.clear();
@@ -89,11 +74,11 @@ xg::geom::AbstractGeom &xg::geom::AbstractGeom::Adjust(const string &adjust) {
     return *this;
 }
 
-xg::geom::AbstractGeom &xg::geom::AbstractGeom::Style(const std::string &json) {
-    return StyleObject(xg::json::ParseString(json));
-}
+//xg::geom::AbstractGeom &xg::geom::AbstractGeom::Style(const std::string &json) {
+//    return StyleObject(xg::json::ParseString(json));
+//}
 
-xg::geom::AbstractGeom &xg::geom::AbstractGeom::StyleObject(const XStyle &cfg) {
+xg::geom::AbstractGeom &xg::geom::AbstractGeom::StyleObject(const StyleCfg &cfg) {
     this->styleConfig_ = cfg;
     return *this;
 }

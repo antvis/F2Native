@@ -12,7 +12,7 @@
 #include <vector>
 #include "Point.h"
 #include "../global.h"
-#include "../../reflection/param.h"
+#include "../../reflection/reflection.h"
 #include "../../nlohmann/json.hpp"
 
 namespace xg {
@@ -25,12 +25,22 @@ namespace util {
         size_t textSize = DEFAULT_FONTSIZE;
         std::string content = "";
         bool hiden = true;
+        
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(TagCfg)
+        FIELDS(FIELD(&TagCfg::offset),
+               FIELD(&TagCfg::textAlign),
+               FIELD(&TagCfg::textBaseline),
+               FIELD(&TagCfg::fill),
+               FIELD(&TagCfg::textSize),
+               FIELD(&TagCfg::content),
+               FIELD(&TagCfg::hiden))
+        CTORS(DEFAULT_CTOR(TagCfg))
+    END_TYPE
+#endif
     };
-    //impl in interval.cpp
-    extern void from_json(const nlohmann::json &j, TagCfg &t);
 
     struct XData final {
-//        nlohmann::json::const_pointer data;
         std::unordered_map<std::string, Any> data;
         double _x = NAN, _y = NAN;
         std::vector<double> _y0;

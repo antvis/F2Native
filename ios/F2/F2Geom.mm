@@ -2,6 +2,7 @@
 #import "F2Callback.h"
 #import "F2Chart.h"
 #import "F2Utils.h"
+#import "F2Reflection.h"
 #import "../../core/graphics/geom/Area.h"
 #import "../../core/graphics/geom/Interval.h"
 #import "../../core/graphics/geom/Line.h"
@@ -96,7 +97,10 @@
 
 - (F2Geom * (^)(NSDictionary *config))style {
     return ^id(NSDictionary *config) {
-        self->_geom->Style([F2SafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self.chart]]) UTF8String]);
+        NSDictionary *reset = [F2Utils resetCallbacksFromOld:config host:self.chart];
+        auto cfg = F2Reflection::CreateStruct(reset, typeof(xg::geom::StyleCfg));
+        auto cast = cfg.Cast<xg::geom::StyleCfg &>();
+        self->_geom->StyleObject(cast);
         return self;
     };
 }
@@ -111,8 +115,10 @@
 - (F2Interval * (^)(NSDictionary *config))tag {
     return ^id(NSDictionary *config) {
         xg::geom::Interval *interval = (xg::geom::Interval *)[super getGeom];
-        auto cfg = [F2SafeJson([F2Utils toJsonString:[F2Utils resetCallbacksFromOld:config host:self.chart]]) UTF8String];
-        interval->Tag(xg::json::ParseString(cfg));
+        NSDictionary *reset = [F2Utils resetCallbacksFromOld:config host:self.chart];
+        auto cfg = F2Reflection::CreateStruct(reset, typeof(xg::util::TagCfg));
+        auto cast = cfg.Cast<xg::util::TagCfg &>();
+        interval->Tag(cast);
         return self;
     };
 }

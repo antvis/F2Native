@@ -30,7 +30,7 @@ class GeomShapeBase {
                       std::size_t start,
                       std::size_t end,
                       xg::shape::Group &container,
-                      const XStyle &style) {};
+                      const StyleCfg &style) {};
     
     //绘制一个数据 比如柱
     virtual void Draw(std::string shapeType,
@@ -40,7 +40,7 @@ class GeomShapeBase {
                       std::size_t start,
                       std::size_t end,
                       xg::shape::Group &container,
-                      const XStyle &style) {};
+                      const StyleCfg &style) {};
 
     // // line暂未用到
     util::Point ParsePoint(canvas::coord::AbstractCoord &coord, const util::Point &point) {

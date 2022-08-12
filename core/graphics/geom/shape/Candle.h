@@ -20,7 +20,7 @@ class Candle : public GeomShapeBase {
               std::size_t start,
               std::size_t end,
               xg::shape::Group &container,
-              const XStyle &style) override {
+              const StyleCfg &style) override {
 
         std::vector<util::Point> points;
         for(std::size_t i = 0; i < data.rect.size(); ++i) {

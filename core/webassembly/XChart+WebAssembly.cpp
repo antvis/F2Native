@@ -38,7 +38,7 @@ EMSCRIPTEN_BINDINGS(xchart) {
         .function("callback", &XChart::SetInvokeFunction, allow_raw_pointers())
         .function("axis", &XChart::AxisWasm, allow_raw_pointers())
         .function("canvas", &XChart::SetCanvasContextWasm, allow_raw_pointers())
-        .function("scale", &XChart::Scale, allow_raw_pointers())
+        .function("scale", &XChart::ScaleWasm, allow_raw_pointers())
         .function("renderDuration", &XChart::GetRenderDurationMM)
         .function("line", &XChart::LineWasm, allow_raw_pointers())
         .function("interval", &XChart::IntervalWasm, allow_raw_pointers())

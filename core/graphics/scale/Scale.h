@@ -85,8 +85,6 @@ struct ScaleCfg {
 #endif
 };
 
-extern void from_json(const nlohmann::json &j, ScaleCfg &s);
-
 
 /**
  *  度量基类
@@ -117,6 +115,7 @@ class AbstractScale {
         ticks_.reserve(ticks.size());
 
         for(size_t i = 0; i < ticks.size(); i++) {
+            //warning must be const std::string &
             const std::string &item = ticks[i];
             scale::Tick tick;
             tick.text = this->GetTickText(item, chart);

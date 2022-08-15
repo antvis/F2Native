@@ -12,7 +12,6 @@
 #include "../util/Point.h"
 #include "../util/json.h"
 #include "../../reflection/reflection.h"
-#include "../../nlohmann/json.hpp"
 
 namespace xg {
 namespace tooltip {
@@ -36,7 +35,6 @@ struct CrosshairsStyle {
     END_TYPE
 #endif
 };
-extern void from_json(const nlohmann::json &j, CrosshairsStyle &c);
 
 struct RectCfg {
     float radius = 1.f;
@@ -51,7 +49,6 @@ struct RectCfg {
     END_TYPE
 #endif
 };
-extern void from_json(const nlohmann::json &j, RectCfg &b);
 
 struct Tip {
     bool inner = false;
@@ -60,6 +57,22 @@ struct Tip {
     string textAlign = "center";
     string textBaseline = "bottom";
     bool hidden = false;
+    
+    
+    string ToJson() {
+        std::stringstream ss;
+        ss << "{";
+        ss << "\"inner\":" << inner <<",";
+        ss << "\"fontSize\":" << fontSize <<",";
+        if(!fill.empty()) ss << "\"fill\":\"" <<fill <<"\",";
+        if(!textAlign.empty())  ss << "\"textAlign\":\"" << textAlign <<"\",";
+        if(!textBaseline.empty()) ss << "\"textBaseline\":\"" << textBaseline <<"\",";
+        ss << "\"hidden\":" << hidden ;
+        //todo xtip ytip
+        ss << "}";
+        return ss.str();
+    }
+    
 #if !defined(__EMSCRIPTEN__)
     BEGIN_TYPE(Tip)
         FIELDS(FIELD(&Tip::inner),
@@ -72,8 +85,6 @@ struct Tip {
     END_TYPE
 #endif
 };
-extern void from_json(const nlohmann::json &j, Tip &t);
-extern void to_json(nlohmann::json &j, const Tip &t);
 
 struct ToolTipCfg {
     string onPressStart, onPress, onPressEnd;
@@ -95,7 +106,6 @@ struct ToolTipCfg {
     END_TYPE
 #endif
 };
-extern void from_json(const nlohmann::json &j, ToolTipCfg &t);
 
 struct ToolTipItem {
     double x, y;
@@ -105,15 +115,63 @@ struct ToolTipItem {
     std::string title;
     double touchX, touchY;
     Tip xTip, yTip;
+    
+    string ToJson() {
+        std::stringstream ss;
+        ss << "{";
+        ss << "\"x\":" << x <<",";
+        ss << "\"y\":" << y <<",";
+        if(!color.empty()) ss << "\"color\":\"" <<color <<"\",";
+        if(!name.empty())  ss << "\"name\":\"" << name <<"\",";
+        if(!value.empty()) ss << "\"value\":\"" << value <<"\",";
+        if(!title.empty()) ss << "\"title\":\"" << title <<"\",";
+        ss << "\"touchX\":" << touchX <<",";
+        ss << "\"touchY\":" << touchY <<",";
+        ss << "\"xTip\":" << xTip.ToJson() <<",";
+        ss << "\"yTip\":" << yTip.ToJson();
+        ss << "}";
+        return ss.str();
+    }
+    
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(ToolTipItem)
+        FIELDS(FIELD(&ToolTipItem::x),
+               FIELD(&ToolTipItem::y),
+               FIELD(&ToolTipItem::color),
+               FIELD(&ToolTipItem::name),
+               FIELD(&ToolTipItem::value),
+               FIELD(&ToolTipItem::title),
+               FIELD(&ToolTipItem::touchX),
+               FIELD(&ToolTipItem::touchY),
+               FIELD(&ToolTipItem::xTip),
+               FIELD(&ToolTipItem::yTip))
+        CTORS(DEFAULT_CTOR(ToolTipItem))
+    END_TYPE
+#endif
 };
-extern void from_json(const nlohmann::json &j, ToolTipItem &t);
-extern void to_json(nlohmann::json &j, const ToolTipItem &t);
 
 struct ToolTipItemList {
-    vector<ToolTipItem> items;
+    vector<ToolTipItem> tooltip;
+    
+    string ToJson() {
+        std::stringstream ss;
+        ss << "{" << "\"tooltip\":";
+        
+        for (auto &item : tooltip) {
+            ss << "[" << item.ToJson() << "],";
+        }
+        ss.seekp(-1, ss.cur);
+        ss << "}";
+        return ss.str();
+    }
+    
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(ToolTipItemList)
+        FIELDS(FIELD(&ToolTipItemList::tooltip))
+        CTORS(DEFAULT_CTOR(ToolTipItemList))
+    END_TYPE
+#endif
 };
-extern void from_json(const nlohmann::json &j, ToolTipItemList &t);
-extern void to_json(nlohmann::json &j, const ToolTipItemList &t);
 
 class ToolTip {
   public:

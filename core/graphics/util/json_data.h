@@ -10,10 +10,10 @@
 
 #include <string>
 #include <vector>
+#include <array>
 #include "Point.h"
 #include "../global.h"
 #include "../../reflection/reflection.h"
-#include "../../nlohmann/json.hpp"
 
 namespace xg {
 namespace util {

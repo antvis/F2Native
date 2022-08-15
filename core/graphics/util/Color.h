@@ -3,18 +3,15 @@
 
 #include <string>
 #include <vector>
-#include "../../nlohmann/json.hpp"
 #include "../canvas/CanvasFillStrokeStyle.h"
 #include "../global.h"
 
 namespace xg {
 namespace util {
 
-canvas::CanvasFillStrokeStyle ColorParser(const nlohmann::json &color);
-canvas::CanvasFillStrokeStyle ColorParser(const nlohmann::json &data, const std::string &key);
+canvas::CanvasFillStrokeStyle ColorParser(const std::string &color);
 float OpacityParserString(const std::string &color);
-float OpacityParser(const nlohmann::json &color);
-float OpacityParser(const nlohmann::json &data, const std::string &key);
+float OpacityParser(const std::string &color);
 
 } // namespace util
 } // namespace xg

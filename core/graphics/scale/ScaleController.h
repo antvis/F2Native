@@ -15,7 +15,6 @@
 #include "../util/json_util.h"
 #include "../../utils/Tracer.h"
 #include "../../utils/common.h"
-#include "../../nlohmann/json.hpp"
 
 namespace xg {
 class XChart;

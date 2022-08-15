@@ -20,8 +20,6 @@ class Area : public AbstractGeom {
 
   private:
     std::vector<util::Point> CreateShapePointsCfg(XChart &chart, XData &data);
-
-    nlohmann::json GetAreaPoints(XChart &chart, XData &data, nlohmann::json &cfg);
 };
 } // namespace geom
 } // namespace xg

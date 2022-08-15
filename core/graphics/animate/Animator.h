@@ -2,6 +2,7 @@
 #define XG_GRAPHICS_ANIMATE_ANIMATOR_H
 
 #include <math.h>
+#include <unordered_map>
 #include "../shape/Shape.h"
 
 namespace xg {
@@ -83,7 +84,7 @@ struct Interpolator {
     std::unique_ptr<InterpolateMatrix> matrix = nullptr;
     std::unique_ptr<InterpolateArray> points = nullptr;
     // numbers
-    std::map<std::string, std::unique_ptr<InterpolateNumber>> attrs;
+    std::unordered_map<std::string, std::unique_ptr<InterpolateNumber>> attrs;
 };
 
 struct AnimInfo {
@@ -101,11 +102,11 @@ struct AnimInfo {
     std::function<void()> onEnd = nullptr;
 };
 
-static AnimInfo CreateAnimInfo(shape::Shape *shape, const AnimateState &source, const AnimateState &end, nlohmann::json &cfg) {
+static AnimInfo CreateAnimInfo(shape::Shape *shape, const AnimateState &source, const AnimateState &end, long delay, long duration, const string &erasing) {
     AnimInfo animInfo;
-    animInfo.delay = cfg["delay"];
-    animInfo.duration = cfg["duration"];
-    animInfo.erasing = cfg["erasing"];
+    animInfo.delay = delay;
+    animInfo.duration = duration;
+    animInfo.erasing = erasing;
 
     Interpolator interpolator;
     if(!MatrixUtil::IsUnchanged(source.matrix)) {

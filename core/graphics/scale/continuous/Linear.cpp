@@ -13,10 +13,10 @@ using namespace xg::scale;
 
 std::string Linear::GetTickText(const Any &item, XChart *chart) {
     if(!config.tick.empty() && chart) {
-        nlohmann::json content{{"content", item.Cast<string>()}};
-        auto rst = xg::json::ParseString((chart->InvokeFunction(config.tick, content.dump())));
-        if(rst.is_object() && rst.contains("content")) {
-            return rst["content"];
+        std::string content = "{\"content\"," +  item.Cast<string>() + "}";
+        auto rst = chart->InvokeFunction(config.tick, content);
+        if(rst.count("content")) {
+            return rst["content"].Cast<string>();
         }
     }
     

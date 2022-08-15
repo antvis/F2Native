@@ -10,75 +10,6 @@
 #include "../../utils/common.h"
 #include "../../utils/xtime.h"
 
-void xg::axis::from_json(const nlohmann::json& j, AxisGridCfg& a) {
-    AxisGridCfg d;
-    if(j.is_boolean()) {
-        a.hidden = true;
-    }else if(j.is_object()) {
-        a.type = j.value("type", d.type);
-        a.lineWidth = j.value("lineWidth", d.lineWidth);
-        a.stroke = j.value("stroke", d.stroke);
-        a.dash = j.value("dash", d.dash);
-        a.fill = j.value("fill", d.fill);
-        a.hidden = j.value("hidden", d.hidden);
-    }
-}
-
-void xg::axis::from_json(const nlohmann::json& j, AxisLabelCfg& a) {
-    AxisLabelCfg d;
-    if(j.is_boolean()) {
-        a.hidden = true;
-    }else if(j.is_object()) {
-        a.textColor = j.value("textColor", d.textColor);
-        a.textSize = j.value("textSize", d.textSize);
-        a.labelOffset = j.value("labelOffset", d.labelOffset);
-        if(!json::GetArray(j, "textAlign").empty()) {
-            a.textAligns = j.value("textAlign", d.textAligns);
-        }else {
-            a.textAlign = j.value("textAlign", d.textAlign);
-        }
-        
-        if(!json::GetArray(j,"textBaseline").empty()) {
-            a.textBaselines = j.value("textBaselines", d.textBaselines);
-        }else {
-            a.textBaseline = j.value("textBaseline", d.textBaseline);
-        }
-        
-        a.inner = j.value("inner", d.inner);
-        //functionId 只要解析一次就可以了
-        string tempItem = j.value("item", d.item);
-        a.item = tempItem.empty() ? a.item : tempItem;
-        a.xOffset = j.value("xOffset", d.xOffset);
-        a.yOffset = j.value("yOffset", d.yOffset);
-        a.hidden = j.value("hidden", d.hidden);
-    }
-}
-
-void xg::axis::from_json(const nlohmann::json& j, AxisLineCfg& a) {
-    AxisLineCfg d;
-    if(j.is_boolean()) {
-        a.hidden = true;
-    }else if(j.is_object()) {
-        a.type = j.value("type", d.type);
-        a.lineWidth = j.value("lineWidth", d.lineWidth);
-        a.stroke = j.value("stroke", d.stroke);
-        a.dash = j.value("dash", d.dash);
-        a.hidden = j.value("hidden", d.hidden);
-    }
-}
-
-void xg::axis::from_json(const nlohmann::json& j, AxisCfg& a) {
-    AxisCfg d;
-    if(j.is_boolean()) {
-        a.hidden = true;
-    }else if(j.is_object()) {
-        a.label = j.value("label", d.label);
-        a.line = j.value("line", d.line);
-        a.grid = j.value("grid", d.grid);
-        a.hidden = j.value("hidden", d.hidden);
-    }
-}
-
 // 网格线绘制始终是从 0 - 1， 数据不足时主动补齐
 static std::vector<xg::scale::Tick> FormatTicks(std::vector<xg::scale::Tick> ticks) {
     std::vector<xg::scale::Tick> rst(ticks);
@@ -179,9 +110,6 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
     }
 
     if(!axis->labelCfg.hidden) {
-        float labelOffset = axis->labelCfg.labelOffset;
-        labelOffset *= chart.GetCanvasContext().GetDevicePixelRatio();
-
         const std::string &labelColor = axis->labelCfg.textColor;
         float labelFontSize = axis->labelCfg.textSize * chart.GetCanvasContext().GetDevicePixelRatio();
         
@@ -192,11 +120,12 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
             if(index == 0 || index == (axis->ticks.size() - 1) || index % ticksTmp == 0) {
                 const xg::scale::Tick &tick = axis->ticks[index];
                 if(!axis->labelCfg.item.empty()) {
-                    nlohmann::json param = {{"text", tick.text}, {"index", index}, {"count", axis->ticks.size()}, {"content", tick.text}, {"xOffset", 0}, {"yOffset", 0}};
+                    string param = "{\"text\":\"" + tick.text + "\",\"index\":" + std::to_string(index) + ",\"count\":" + std::to_string(axis->ticks.size()) +",\"content\":\"" + tick.text  +"\", \"xOffset\":" + "0" +",\"yOffset\":" + "0}";
 
-                    nlohmann::json itemStyleRst(xg::json::ParseString(chart.InvokeFunction(axis->labelCfg.item, param.dump())));
-                    
-                    from_json(itemStyleRst, axis->labelCfg);
+                    //必须使用&
+                    Any labelCfg(&axis->labelCfg);
+                    auto rst = chart.InvokeFunction(axis->labelCfg.item, param);
+                    axis->labelCfg = json::FromMapByObj(rst, labelCfg).Cast<AxisLabelCfg>();
 
                     float textSize = axis->labelCfg.textSize * ratio;
 
@@ -448,7 +377,7 @@ void xg::axis::AxisController::DrawLine(XChart &chart, std::array<util::Point, 2
         auto l = xg::make_unique<xg::shape::Polyline>(lineWidth, _points, false);
         l->SetStorkColor(lineCfg.stroke);
         l->SetZIndex(-1);
-        std::vector<float> dash = xg::json::ParseDashArray(lineCfg.dash, chart.GetCanvasContext().GetDevicePixelRatio());
+        std::vector<float> dash = xg::json::ScaleDash(lineCfg.dash, chart.GetCanvasContext().GetDevicePixelRatio());
         l->SetDashLine(dash);
         this->container_->AddElement(std::move(l));
     }

@@ -144,7 +144,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param functionId 方法名字
 /// @param param 参数 json格式
 /// @return const char * json格式
-- (const char *)execute:(const char *)functionId param:(const char *)param;
+//- (std::unordered_map<std::string, Any>)execute:(const char *)functionId param:(const char *)param;
 
 @end
 

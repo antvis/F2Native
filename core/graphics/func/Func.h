@@ -5,7 +5,7 @@
 #include <string>
 #include <unordered_map>
 #include "../../utils/xtime.h"
-#include "../../nlohmann/json.hpp"
+#include "../../reflection/reflection.h"
 
 
 namespace xg {
@@ -19,60 +19,11 @@ struct F2Function {
 
     F2Function() { functionId = MakeFunctionId(); }
     
-    virtual const std::string Execute(const std::string &functionId, const std::string &param) = 0;
+    virtual const std::unordered_map<std::string, Any> Execute(const std::string &functionId, const std::string &param) = 0;
 
     virtual ~F2Function() {}
     std::string functionId;
     std::string hostChartId;
-};
-
-class FunctionManager {
-  public:
-    static FunctionManager &GetInstance() {
-        static FunctionManager manager;
-        return manager;
-    }
-
-    FunctionManager(FunctionManager const &) = delete;
-    void operator=(FunctionManager const &) = delete;
-
-    void Add(F2Function *function) {
-        std::unique_lock<std::mutex> lock(mutex_);
-        this->functions_[function->functionId] = function;
-    }
-
-    void Remove(std::string functionId) {
-        std::unique_lock<std::mutex> lock(mutex_);
-        functions_.erase(functionId);
-    }
-
-    F2Function *Find(std::string functionId) {
-        std::unique_lock<std::mutex> lock(mutex_);
-        auto it = this->functions_.find(functionId);
-        if(it == this->functions_.end()) {
-            return nullptr;
-        }
-        return it->second;
-    }
-
-    void Clear(const std::string hostChartId) {
-        std::unique_lock<std::mutex> lock(mutex_);
-        for(auto it = functions_.begin(); it != functions_.end();) {
-            if(it->second != nullptr && it->second->hostChartId == hostChartId) {
-                delete it->second;
-                it = functions_.erase(it);
-            } else {
-                it++;
-            }
-        }
-    }
-
-  private:
-    FunctionManager() {}
-
-  private:
-    std::unordered_map<std::string, F2Function *> functions_;
-    std::mutex mutex_;
 };
 
 

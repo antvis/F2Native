@@ -78,8 +78,8 @@ class Interval : public GeomShapeBase {
             }
             
             
-            std::vector<float> roundings =  style.roundings;
-            for (size_t i = 0; i < style.roundings.size(); ++i) {
+            std::vector<float> roundings =  style.rounding;
+            for (size_t i = 0; i < style.rounding.size(); ++i) {
                 roundings[i] *= context.GetDevicePixelRatio();
             }
             rect->SetRoundings(roundings);

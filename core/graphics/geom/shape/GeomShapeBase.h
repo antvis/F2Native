@@ -8,7 +8,6 @@
 #include "../../canvas/Coord.h"
 #include "../../shape/Group.h"
 #include "../../util/json_data.h"
-#include "../../../nlohmann/json.hpp"
 #include "../../../utils/common.h"
 
 using namespace std;

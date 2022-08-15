@@ -5,7 +5,6 @@
 #include <limits>
 #include <math.h>
 #include "../../utils/common.h"
-#include "../../nlohmann/json.hpp"
 
 namespace xg {
 namespace adjust {

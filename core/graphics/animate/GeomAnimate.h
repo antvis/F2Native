@@ -10,27 +10,35 @@ namespace xg {
 class XChart;
 namespace animate {
 
+struct AnimateCfg {
+    bool enable = false;
+    string animate;
+    string erasing = "linear";
+    long delay = 16;
+    long duration = 450;
+};
+
 namespace action {
 
 void GroupScaleIn(animate::TimeLine *timeLine,
                          shape::Group *container,
-                         nlohmann::json &cfg,
+                         const AnimateCfg &cfg,
                          canvas::coord::AbstractCoord *coord,
                          util::Point zeroY,
                          std::string type);
 
-void GroupScaleInX(animate::TimeLine *timeLine, shape::Group *container, nlohmann::json &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY);
+void GroupScaleInX(animate::TimeLine *timeLine, shape::Group *container, const AnimateCfg &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY);
 
-void GroupScaleInY(animate::TimeLine *timeLine, shape::Group *container, nlohmann::json &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY);
+void GroupScaleInY(animate::TimeLine *timeLine, shape::Group *container, const AnimateCfg &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY);
 
-void GroupScaleInXY(animate::TimeLine *timeLine, shape::Group *container, nlohmann::json &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY);
+void GroupScaleInXY(animate::TimeLine *timeLine, shape::Group *container, const AnimateCfg &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY);
 
-void GroupWaveIn(animate::TimeLine *timeLine, shape::Group *container, nlohmann::json &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY);
+void GroupWaveIn(animate::TimeLine *timeLine, shape::Group *container, const AnimateCfg &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY);
 
 void DoGroupAnimate(std::string animateType,
                            animate::TimeLine *timeLine,
                            shape::Group *container,
-                           nlohmann::json &cfg,
+                           const AnimateCfg &cfg,
                            canvas::coord::AbstractCoord *coord,
                            util::Point zeroY);
 
@@ -38,12 +46,8 @@ void DoGroupAnimate(std::string animateType,
 
 util::Matrix GetScaledShapeMatrix(shape::Shape *shape, util::Vector2D *v, std::string direct);
 
-void DoAnimation(TimeLine *timeLine_, shape::Shape *shape, const AnimateState &endState, nlohmann::json &cfg, std::function<void()> onEnd);
+void DoAnimation(TimeLine *timeLine_, shape::Shape *shape, const AnimateState &endState, const animate::AnimateCfg &cfg, std::function<void()> onEnd);
 
-
-struct AnimateCfg {
-    bool enable = false;
-};
 
 class GeomAnimate {
   public:
@@ -51,7 +55,7 @@ class GeomAnimate {
 
     ~GeomAnimate();
 
-    static std::string GetGeomAnimateDefaultCfg(std::string geomType, canvas::coord::AbstractCoord *coord);
+    static std::string GetGeomAnimateDefaultCfg(const std::string &geomType, canvas::coord::AbstractCoord *coord);
 
     void OnBeforeCanvasDraw();
 

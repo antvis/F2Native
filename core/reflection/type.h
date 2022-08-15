@@ -382,6 +382,20 @@ DEF_CT1(std::shared_ptr, 1);
 DEF_CT1(std::vector, 2);
 #undef DEF_CT1
 
+
+#define DEF_CT1(C,n) \
+template<class T1, class T2> \
+struct ReflectType<C<T1, T2>>{ \
+    static const Type* type; \
+    static const Type* Value(){ \
+        static const Type* type = Type::RegisterTemplate(new Type(n), #C, nullptr); \
+        return type; \
+    } \
+};
+
+DEF_CT1(std::unordered_map, 3);
+#undef DEF_CT1
+
 #define DEF_CT1(C) \
 template<class... T> \
 struct ReflectType<C<T...>>{ \

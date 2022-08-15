@@ -9,7 +9,7 @@ using namespace xg;
 
 void animate::action::GroupScaleIn(animate::TimeLine *timeLine,
                                    shape::Group *container,
-                                   nlohmann::json &cfg,
+                                   const AnimateCfg &cfg,
                                    canvas::coord::AbstractCoord *coord,
                                    util::Point zeroY,
                                    std::string type) {
@@ -50,21 +50,21 @@ void animate::action::GroupScaleIn(animate::TimeLine *timeLine,
     animate::DoAnimation(timeLine, container->clip_.get(), endState, cfg, [container]() -> void { container->clip_ = nullptr; });
 }
 
-void animate::action::GroupScaleInX(animate::TimeLine *timeLine, shape::Group *container, nlohmann::json &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY) {
+void animate::action::GroupScaleInX(animate::TimeLine *timeLine, shape::Group *container, const AnimateCfg &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY) {
     GroupScaleIn(timeLine, container, cfg, coord, zeroY, "x");
 }
 
-void animate::action::GroupScaleInY(animate::TimeLine *timeLine, shape::Group *container, nlohmann::json &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY) {
+void animate::action::GroupScaleInY(animate::TimeLine *timeLine, shape::Group *container, const AnimateCfg &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY) {
     GroupScaleIn(timeLine, container, cfg, coord, zeroY, "y");
 }
 
-void animate::action::GroupScaleInXY(animate::TimeLine *timeLine, shape::Group *container, nlohmann::json &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY) {
+void animate::action::GroupScaleInXY(animate::TimeLine *timeLine, shape::Group *container, const AnimateCfg &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY) {
     GroupScaleIn(timeLine, container, cfg, coord, zeroY, "xy");
 }
 
 void animate::action::GroupWaveIn(animate::TimeLine *timeLine,
                                          shape::Group *container,
-                                         nlohmann::json &cfg,
+                                         const AnimateCfg &cfg,
                                          canvas::coord::AbstractCoord *coord,
                                          util::Point zeroY) {
     std::unique_ptr<shape::Shape> clip = nullptr;
@@ -94,7 +94,7 @@ void animate::action::GroupWaveIn(animate::TimeLine *timeLine,
 void animate::action::DoGroupAnimate(std::string animateType,
                                             animate::TimeLine *timeLine,
                                             shape::Group *container,
-                                            nlohmann::json &cfg,
+                                            const AnimateCfg &cfg,
                                             canvas::coord::AbstractCoord *coord,
                                             util::Point zeroY) {
     if(animateType == "GroupWaveIn") {
@@ -160,20 +160,20 @@ util::Matrix animate::GetScaledShapeMatrix(shape::Shape *shape, util::Vector2D *
 void animate::DoAnimation(animate::TimeLine *timeLine_,
                                  shape::Shape *shape,
                                  const animate::AnimateState &endState,
-                                 nlohmann::json &cfg,
+                                 const AnimateCfg &cfg,
                                  std::function<void()> onEnd) {
     animate::AnimateState startState;
     startState.matrix = shape->GetMatrix();
     // todo 补充 startState 属性
     //    startState.engle = shape-> // read rect startAngle.
-    animate::AnimInfo animInfo = animate::CreateAnimInfo(shape, startState, endState, cfg);
+    animate::AnimInfo animInfo = animate::CreateAnimInfo(shape, startState, endState, cfg.delay, cfg.duration, cfg.erasing);
     animInfo.onEnd = std::move(onEnd);
     timeLine_->PushAnim(std::move(animInfo));
 }
 
 #pragma GeomAnimate
 
-std::string animate::GeomAnimate::GetGeomAnimateDefaultCfg(std::string geomType, canvas::coord::AbstractCoord *coord) {
+std::string animate::GeomAnimate::GetGeomAnimateDefaultCfg(const std::string &geomType, canvas::coord::AbstractCoord *coord) {
     bool isPolar = coord->GetType() == canvas::coord::CoordType::Polar;
     if(geomType == "line") {
         if(isPolar) {
@@ -227,13 +227,10 @@ void animate::GeomAnimate::OnBeforeCanvasDraw() {
     for(std::vector<std::unique_ptr<geom::AbstractGeom>>::iterator it = chart_->geoms_.begin(); it != chart_->geoms_.end(); ++it) {
         const std::string &geomType = (*it)->GetType();
 
-        std::string animateType = animate::GeomAnimate::GetGeomAnimateDefaultCfg(geomType, chart_->coord_.get());
-        nlohmann::json cfg = {
-            {"animate", animateType}, //
-            {"erasing", "linear"},    //
-            {"delay", 16},            //
-            {"duration", 450}         //
-        };
+        animateCfg_.animate = animate::GeomAnimate::GetGeomAnimateDefaultCfg(geomType, chart_->coord_.get());
+        animateCfg_.erasing = "linear";
+        animateCfg_.delay = 16;
+        animateCfg_.duration = 450;
         
         //todo merge传入的动画配置 需要区分每一类geom的动画 
 //        if(chart_->animateCfg_.is_object()) {
@@ -243,7 +240,7 @@ void animate::GeomAnimate::OnBeforeCanvasDraw() {
         // geomCfg
         auto &yScale = chart_->GetScale((*it)->GetYScaleField());
         util::Point zeroY = chart_->GetCoord().ConvertPoint(util::Point{0, yScale.Scale((*it)->GetYMinValue(*chart_))});
-        animate::action::DoGroupAnimate(animateType, timeLine_, (*it)->container_, cfg, chart_->coord_.get(), zeroY);
+        animate::action::DoGroupAnimate(animateCfg_.animate, timeLine_, (*it)->container_, animateCfg_, chart_->coord_.get(), zeroY);
     }
 }
 

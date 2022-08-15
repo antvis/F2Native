@@ -19,5 +19,6 @@ public:
     static std::vector<float> CreateNumberArray(NSArray *array, const Type *type);
     static Any CreateStruct(NSDictionary *config, const Type *type);
     static xg::util::XSourceItem CreateaSourceItem(NSDictionary *data);
+    static std::unordered_map<std::string, Any> CreateMap(NSDictionary *config);
 };
 

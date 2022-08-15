@@ -12,7 +12,6 @@
 #include "../shape/Text.h"
 #include "../util/Point.h"
 #include "../../utils/common.h"
-#include "../../nlohmann/json.hpp"
 #include "../../reflection/reflection.h"
 
 using namespace xg::util;
@@ -43,7 +42,6 @@ struct AxisGridCfg {
     END_TYPE
 #endif
 };
-extern void from_json(const nlohmann::json& j, AxisGridCfg& g);
 
 struct AxisLabelCfg {
     string textColor = "#808080"; // 标签文字颜色
@@ -60,7 +58,8 @@ struct AxisLabelCfg {
     float yOffset = 0;
     string content = "";
     bool hidden = false;
-#if !defined(__EMSCRIPTEN__)
+
+    //这里没有__EMSCRIPTEN__宏，是因为AxisController需要反射AxisLabelCfg
     BEGIN_TYPE(AxisLabelCfg)
         FIELDS(FIELD(&AxisLabelCfg::textColor),
                FIELD(&AxisLabelCfg::textSize),
@@ -77,9 +76,7 @@ struct AxisLabelCfg {
                FIELD(&AxisLabelCfg::hidden))
         CTORS(DEFAULT_CTOR(AxisLabelCfg))
     END_TYPE
-#endif
 };
-extern void from_json(const nlohmann::json& j, AxisLabelCfg& l);
 
 struct AxisLineCfg {
     string type = "line";      // 网格线类型
@@ -98,7 +95,6 @@ struct AxisLineCfg {
     END_TYPE
 #endif
 };
-extern void from_json(const nlohmann::json& j, AxisLineCfg& l);
 
 struct AxisCfg {
     bool hidden = false;
@@ -116,7 +112,6 @@ struct AxisCfg {
     END_TYPE
 #endif
 };
-extern void from_json(const nlohmann::json& j, AxisCfg& a);
 
 class Axis {
   public:

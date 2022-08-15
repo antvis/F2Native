@@ -6,7 +6,6 @@
 #include <vector>
 #include "../util/Point.h"
 #include "../../utils/xtime.h"
-#include "../../nlohmann/json.hpp"
 
 
 #define PRESS_DELAY 250

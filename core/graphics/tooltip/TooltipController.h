@@ -10,7 +10,7 @@ namespace xg {
 class XChart;
 namespace tooltip {
 
-typedef std::function<void(nlohmann::json &data)> ToolTipMarkerItemsCallback;
+typedef std::function<void()> ToolTipMarkerItemsCallback;
 class ToolTipController {
   public:
     ToolTipController(XChart *chart);

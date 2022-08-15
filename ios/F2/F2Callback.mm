@@ -78,10 +78,18 @@
 
 -(void)runCommand:(long)commandPointer {
     xg::func::Command *command = reinterpret_cast<xg::func::Command *>(commandPointer);
-    if (self.canvasView && self.canvasView.canvasContext) {
-        command->run();
-        [self.canvasView setNeedsDisplay];
+    if (!command) {
+        NSCAssert(NO, @"run nullptr command");
+        return;
     }
+    
+    if (!self.canvasView || !self.canvasView.canvasContext) {
+        NSCAssert(NO, @"run command with nil canvasview");
+        return;
+    }
+    
+    command->run();
+    [self.canvasView setNeedsDisplay];
     delete command;
 }
 

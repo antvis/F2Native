@@ -30,7 +30,7 @@ EMSCRIPTEN_BINDINGS(xchart) {
         .function("source", &XChart::SourceWasm, allow_raw_pointers()) //普通类成员函数
         .function("padding", &XChart::PaddingWasm, allow_raw_pointers())
         .function("margin", &XChart::MarginWasm, allow_raw_pointers())
-        .function("parse", &XChart::Parse)
+        // .function("parse", &XChart::Parse)
         .function("render", &XChart::Render)
         .function("clear", &XChart::Clear)
         .function("repaint", &XChart::Repaint)

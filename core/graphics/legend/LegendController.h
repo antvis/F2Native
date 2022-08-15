@@ -6,7 +6,6 @@
 #include "../shape/Group.h"
 #include "../shape/Marker.h"
 #include "../shape/Text.h"
-#include "../../nlohmann/json.hpp"
 #include "../../reflection/reflection.h"
 
 namespace xg {

@@ -159,12 +159,12 @@ bool tooltip::ToolTipController::ShowToolTip(const util::Point &point) {
                 
                 tooltipItem.touchX = _point.x;
                 tooltipItem.touchY = _point.y;
-                tooltipMarkerItems.items.push_back(tooltipItem);
+                tooltipMarkerItems.tooltip.push_back(tooltipItem);
             }
         }
     });
 
-    if(tooltipMarkerItems.items.size() == 0) {
+    if(tooltipMarkerItems.tooltip.size() == 0) {
         chart_->GetLogTracer()->trace("%s", "#ToolTipController ShowToolTip interrupted with tooltipMarkerItems is empty.");
         return false;
     }
@@ -173,13 +173,21 @@ bool tooltip::ToolTipController::ShowToolTip(const util::Point &point) {
 
     if(!config_.onPress.empty()) {
         //转换成map
-        string param = nlohmann::json(tooltipMarkerItems).dump();
-        auto rst = xg::json::ParseString(chart_->InvokeFunction(config_.onPress, param));
-        tooltipMarkerItems = rst;
+        string param = tooltipMarkerItems.ToJson();
+        
+        auto rst = chart_->InvokeFunction(config_.onPress, param);
+        if (rst.count("tooltip")) {
+            auto &tooltips = rst.at("tooltip").Cast<vector<Any> &>();
+            tooltipMarkerItems.tooltip.clear();
+//            for (auto &item : tooltips) {
+//                auto obj = json::FromMapByType(item.Cast<unordered_map<string, Any>>(), typeof (ToolTipItem)).Cast<ToolTipItem>();
+//                tooltipMarkerItems.tooltip.push_back(std::move(obj));
+//            }
+        }
     }
 
     if(!config_.hidden) {
-        const ToolTipItem &first = tooltipMarkerItems.items[0];
+        const ToolTipItem &first = tooltipMarkerItems.tooltip[0];
         if(chart_->GetCoord().IsTransposed()) {
             // TODO
         } else {
@@ -193,10 +201,9 @@ bool tooltip::ToolTipController::ShowToolTip(const util::Point &point) {
         chart_->GetLogTracer()->trace("%s", "#ToolTipController ShowToolTip show tooltip.");
         this->toolTip_->Show(*chart_->canvasContext_, chart_->GetLogTracer());
 
-        nlohmann::json param = nlohmann::json(tooltipMarkerItems);
         std::for_each(actionListeners_.begin(), actionListeners_.end(),
                       [&](ToolTipMarkerItemsCallback callback) -> void {
-            callback(param); });
+            callback(); });
 
         chart_->Redraw();
     }
@@ -206,9 +213,8 @@ bool tooltip::ToolTipController::ShowToolTip(const util::Point &point) {
 }
 
 bool tooltip::ToolTipController::HideToolTip() {
-    nlohmann::json emptyData;
     std::for_each(actionListeners_.begin(), actionListeners_.end(),
-                  [&](ToolTipMarkerItemsCallback callback) -> void { callback(emptyData); });
+                  [&](ToolTipMarkerItemsCallback callback) -> void { callback(); });
     container_->Clear();
     chart_->Redraw();
     return true;

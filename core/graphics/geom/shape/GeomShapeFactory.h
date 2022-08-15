@@ -6,7 +6,6 @@
 #include "GeomShapeBase.h"
 #include "../../util/json_data.h"
 #include "../../shape/Group.h"
-#include "../../../nlohmann/json.hpp"
 
 namespace xg {
 class XChart;

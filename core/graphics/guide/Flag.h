@@ -4,7 +4,6 @@
 #include "GuideBase.h"
 #include "../util/BBox.h"
 #include "../util/Point.h"
-#include "../../nlohmann/json.hpp"
 #include "../global.h"
 
 namespace xg {

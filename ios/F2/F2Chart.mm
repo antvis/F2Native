@@ -10,19 +10,26 @@
 #import "F2Reflection.h"
 #import "F2Reflection.h"
 
-typedef const char *(*selector)(void *caller, const char *functionId, const char *parameter);
-const char *cexecute(void *caller, const char *functionId, const char *parameter) {
-    F2Chart *chart = (__bridge F2Chart *)caller;
-    return [chart execute:functionId param:parameter]; }
+//typedef const std::unordered_map<std::string, Any> (*selector)(void *caller, const char *functionId, const char *parameter);
+//
+//std::unordered_map<std::string, Any> cexecute(void *caller, const char *functionId, const char *parameter) {
+//    F2Chart *chart = (__bridge F2Chart *)caller;
+//    return [chart execute:functionId param:parameter];
+//}
 
 namespace xg {
 namespace func {
 class IOSF2Function : public func::F2Function {
   public:
-    IOSF2Function(void *_handle, selector _call) : func::F2Function(), handle_(_handle), call_(_call) {}
+    IOSF2Function(id _handle, SEL _call) : func::F2Function(), handle_(_handle), call_(_call) {}
     
-    const std::string Execute(const std::string &functionId, const std::string &param) override {
-        return std::string(call_(handle_,functionId.data(),  param.data()));    
+    const std::unordered_map<std::string, Any> Execute(const std::string &functionId, const std::string &param) override {
+        NSString *functionIdStr = [NSString stringWithUTF8String:functionId.c_str()];
+        NSString *paramStr = [NSString stringWithUTF8String:param.c_str()];
+        NSDictionary *paramDic = @{@"functionId":functionIdStr, @"param":[F2Utils toJsonObject:paramStr] ? : @{}};
+        NSDictionary *rstDic = [handle_ performSelector:call_ withObject:paramDic];
+        auto rstMap = F2Reflection::CreateMap(rstDic);
+        return rstMap;
     }
     
     ~IOSF2Function() override {
@@ -31,8 +38,8 @@ class IOSF2Function : public func::F2Function {
     }
 
   private:
-    void *handle_;
-    selector call_;
+    id handle_;
+    SEL call_;
 };
 } // namespace func
 }
@@ -62,7 +69,7 @@ using namespace xg;
         _chart = new xg::XChart([F2SafeString(name) UTF8String], size.width, size.height, F2NativeScale);
         
        //注册统一的回调函数
-        _innerCallback = new xg::func::IOSF2Function((__bridge void *)self, cexecute);
+        _innerCallback = new xg::func::IOSF2Function(self, @selector(execute:));
         _chart->SetInvokeFunction(_innerCallback);
         
         //初始化回调函数容器
@@ -89,17 +96,13 @@ using namespace xg;
     [self removeSystemNotification];
 }
 
-- (const char *)execute:(const char *)functionId param:(const char *)param {
-    if (!functionId || strlen(functionId) == 0) {
-        return "{}";
-    }
-    NSString *functionIdStr = [NSString stringWithUTF8String:functionId];
-    NSString *paramStr = [NSString stringWithUTF8String:param];
-    NSDictionary *paramDic = [F2Utils toJsonObject:paramStr];
+- (NSDictionary *)execute:(NSDictionary *)param {
+    NSString *functionIdStr = param[@"functionId"];
+    NSDictionary *paramDic = param[@"param"];
     //动画的回调函数
     if ([functionIdStr isEqualToString:self.requestAnimationFrameHandle.functionId]) {
         NSDictionary *rstDic = [self.requestAnimationFrameHandle execute:paramDic];
-        return rstDic ? [[F2Utils toJsonString:rstDic] UTF8String] : "{}";
+        return rstDic ? : @{};
     }
     //native的回调
     else {
@@ -107,13 +110,13 @@ using namespace xg;
         F2Callback *callback = [self.callbackList objectForKey:functionIdStr];
         if (callback) {
             NSDictionary *rstDic = [callback execute:paramDic];
-            return rstDic ? [[F2Utils toJsonString:rstDic] UTF8String] : "{}";
+            return rstDic ? : @{};
         }//外部的钩子
         else if (self.outCallback) {
             NSDictionary *rstDic = self.outCallback(functionIdStr, paramDic);
-            return rstDic ? [[F2Utils toJsonString:rstDic] UTF8String] : "{}";
+            return rstDic ? : @{};
         } else {
-            return "{}";
+            return @{};
         }
     }
 }
@@ -383,15 +386,15 @@ using namespace xg;
 
 - (NSArray<NSDictionary *> * (^)(NSString *field))getScaleTicks {
     return ^id(NSString *field) {
-        std::string info = self.chart->GetScaleTicks([F2SafeString(field) UTF8String]);
-        NSString *jsonStr = [NSString stringWithCString:info.c_str() encoding:[NSString defaultCStringEncoding]];
-        return [F2Utils toJsonObject:jsonStr];
+//        std::string info = self.chart->GetScaleTicks([F2SafeString(field) UTF8String]);
+//        NSString *jsonStr = [NSString stringWithCString:info.c_str() encoding:[NSString defaultCStringEncoding]];
+        return [F2Utils toJsonObject:@""];
     };
 }
 
 - (F2Chart * (^)(NSDictionary *config))config {
     return ^id(NSDictionary *config) {
-        self.chart->Parse([F2SafeJson([F2Utils toJsonString:config]) UTF8String]);
+//        self.chart->Parse([F2SafeJson([F2Utils toJsonString:config]) UTF8String]);
         return self;
     };
 }

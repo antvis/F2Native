@@ -57,10 +57,13 @@ struct StyleCfg {
     bool connectNulls = true;
     
     //圆角
-    std::vector<float> roundings = {0, 0, 0, 0};
+    std::vector<float> rounding = {0, 0, 0, 0};
     
     //圆半径
     float size = NAN;
+    
+    //回调方法 未实现
+    std::string custom;
     
 #if !defined(__EMSCRIPTEN__)
     BEGIN_TYPE(StyleCfg)
@@ -72,8 +75,9 @@ struct StyleCfg {
                FIELD(&StyleCfg::candle),
                FIELD(&StyleCfg::widthRatio),
                FIELD(&StyleCfg::connectNulls),
-               FIELD(&StyleCfg::roundings),
-               FIELD(&StyleCfg::size))
+               FIELD(&StyleCfg::rounding),
+               FIELD(&StyleCfg::size),
+               FIELD(&StyleCfg::custom))
         CTORS(DEFAULT_CTOR(StyleCfg))
     END_TYPE
 #endif

@@ -3,7 +3,6 @@
 
 #include <array>
 #include "../scale/Scale.h"
-#include "../../nlohmann/json.hpp"
 #include "../../reflection/reflection.h"
 
 namespace xg {

@@ -44,7 +44,6 @@
 #include "tooltip/TooltipController.h"
 #include "util/json_data.h"
 #include "../utils/Tracer.h"
-#include "../nlohmann/json.hpp"
 
 
 #define XG_MEMBER_CALLBACK(funPtr) std::bind(&funPtr, this)
@@ -217,11 +216,11 @@ class XChart {
     /// 调用callback
     /// @param functionId  回调函数的id
     /// @param param  参数，是一个json string
-    inline const std::string InvokeFunction(const std::string &functionId, const std::string &param = "{}") {
+    inline const std::unordered_map<std::string, Any> InvokeFunction(const std::string &functionId, const std::string &param = "{}") {
         if(invokeFunction_) {
             return invokeFunction_->Execute(functionId, param);
         }else {
-            return "{}";
+            return {};
         }
     }
     
@@ -256,7 +255,7 @@ class XChart {
     inline const double GetWidth() const noexcept { return width_; }
     inline const double GetHeight() const noexcept { return height_; }
 
-    std::string GetScaleTicks(const std::string &field) noexcept;
+    std::vector<scale::Tick> GetScaleTicks(const std::string &field) noexcept;
 
     // 计算某一项数据对应的坐标位置
     const util::Point GetPosition(const XSourceItem &item);
@@ -313,9 +312,9 @@ class XChart {
     /*
      为了能解析DSL，需要提供一些便捷方法
     */
-    bool Parse(const std::string &dsl);
-    bool ParseObject(const nlohmann::json &dsl);
-    XChart &SourceObject(const nlohmann::json &data);
+//    bool Parse(const std::string &dsl);
+//    bool ParseObject(const nlohmann::json &dsl);
+//    XChart &SourceObject(const nlohmann::json &data);
     XChart &ScaleObject(const std::string &field, const ScaleCfg &json);
     XChart &AxisObject(const std::string &field, const axis::AxisCfg &json);
     XChart &LegendObject(const std::string &field, const legend::LegendCfg &json);

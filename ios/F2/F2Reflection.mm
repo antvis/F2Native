@@ -114,3 +114,37 @@ util::XSourceItem F2Reflection::CreateaSourceItem(NSDictionary *obj) {
     }];
     return item;
 }
+
+std::unordered_map<std::string, Any> F2Reflection::CreateMap(NSDictionary *config) {
+    if (!config || ![config isKindOfClass:NSDictionary.class]) {
+        return {};
+    }
+    
+    __block std::unordered_map<std::string, Any> rst;
+    [config enumerateKeysAndObjectsUsingBlock:^(NSString  *_Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        if ([obj isKindOfClass:NSString.class]) {
+            rst[key.UTF8String] = Any(std::string([obj UTF8String]));
+        } else if ([obj isKindOfClass:NSNumber.class]) {
+            rst[key.UTF8String] = Any([obj doubleValue]);
+        } else if ([obj isKindOfClass:NSNumber.class]) {
+            rst[key.UTF8String] = Any([obj integerValue]);
+        } else  if([obj isKindOfClass:NSArray.class]) {
+            id firstObj = [(NSArray* )obj firstObject];
+            NSArray *array = (NSArray *)obj;
+            if ([firstObj isKindOfClass:NSDictionary.class]) {
+                __block std::vector<std::unordered_map<std::string, Any>> vals;
+                [array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    vals.push_back(F2Reflection::CreateMap(obj));
+                }];
+                rst[key.UTF8String] = Any(vals);
+            } else {
+                __block std::vector<Any> vals;
+                [array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    vals.push_back(Any([obj doubleValue]));
+                }];
+                rst[key.UTF8String] = Any(vals);
+            }
+        }
+    }];
+    return rst;
+}

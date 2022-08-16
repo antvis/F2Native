@@ -3,15 +3,15 @@
 
 using namespace xg;
 
-void geom::shape::GeomShapeFactory::RegisterGeomShape(std::string geomType, std::unique_ptr<geom::shape::GeomShapeBase> geomShape) {
+void geom::shape::GeomShapeFactory::RegisterGeomShape(const std::string &geomType, std::unique_ptr<geom::shape::GeomShapeBase> geomShape) {
     geomShapes_[geomType] = std::move(geomShape);
 }
 
-void geom::shape::GeomShapeFactory::UnregterShapeShape(std::string geomType) { geomShapes_.erase(geomType); }
+void geom::shape::GeomShapeFactory::UnregterShapeShape(const std::string &geomType) { geomShapes_.erase(geomType); }
 
 void geom::shape::GeomShapeFactory::DrawGeomShape(XChart &chart,
-                                                  std::string geomType,
-                                                  std::string shapeType,
+                                                  const std::string &geomType,
+                                                  const std::string &shapeType,
                                                   const XDataArray &data,
                                                   std::size_t start,
                                                   std::size_t end,
@@ -27,8 +27,8 @@ void geom::shape::GeomShapeFactory::DrawGeomShape(XChart &chart,
 }
 
 void geom::shape::GeomShapeFactory::DrawGeomShape(XChart &chart,
-                   std::string geomType,
-                   std::string shapeType,
+                   const std::string &geomType,
+                   const std::string &shapeType,
                    const XData &data,
                    std::size_t start,
                    std::size_t end,

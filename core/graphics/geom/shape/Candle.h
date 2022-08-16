@@ -13,7 +13,7 @@ namespace shape {
 class Candle : public GeomShapeBase {
   public:
     Candle() {}
-    void Draw(std::string shapeType,
+    void Draw(const std::string &shapeType,
               canvas::coord::AbstractCoord &coord,
               canvas::CanvasContext &context,
               const XData &data,

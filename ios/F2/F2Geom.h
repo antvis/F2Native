@@ -15,6 +15,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// 设置对象的颜色，常量颜色，支付宝95版本前及财富支持支持RGB格式（#528EFF），支付宝95及版本后支持RGBA格式（#528EFFFF)
 - (F2Geom * (^)(NSString *color))fixedColor;
 
+/// 设置线性渐变色
+- (F2Geom * (^)(NSDictionary *color))linearGradientColor;
+/// 雷达渐变
+- (F2Geom * (^)(NSDictionary *color))radiarGradientColor;
+
 /// size('field', [ ${min}, ${max} ])，指定映射到 size 字段外，还提供了 size
 /// 的最大值和最小值范围；sizes为空默认使用使用内置的默认大小范围为 [4, 10]；size 单位dp
 - (F2Geom * (^)(NSString *field, NSArray<NSNumber *> *sizes))size;
@@ -33,6 +38,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 ///设置几何对象的样式
 - (F2Geom * (^)(NSDictionary *config))style;
+
+/// opacity 指定常量，将所有数据值映射到固定的 opacity, 0~1
+- (F2Geom * (^)(CGFloat opacity))fixedOpacity;
 
 - (void *)getGeom;
 

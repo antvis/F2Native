@@ -145,7 +145,7 @@ bool tooltip::ToolTipController::ShowToolTip(const util::Point &point) {
                 ToolTipItem tooltipItem;
                 tooltipItem.x = record._x;
                 tooltipItem.y = record._y0.empty() ? record._y : record._y0[0];
-                tooltipItem.color = record._color;
+                tooltipItem.color = record._color.color;
                 tooltipItem.xTip = config_.xTip;
                 tooltipItem.yTip = config_.yTip;
 

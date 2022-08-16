@@ -10,6 +10,7 @@ namespace guide {
 struct BackgroundCfg {
     string color = "#1CAA3DB2";
     vector<string> leftBottom, rightTop;
+    float opacity = 1.0f;
     bool top = false;
 
 #if !defined(__EMSCRIPTEN__)
@@ -17,6 +18,7 @@ struct BackgroundCfg {
         FIELDS(FIELD(&BackgroundCfg::color),
                FIELD(&BackgroundCfg::leftBottom),
                FIELD(&BackgroundCfg::rightTop),
+               FIELD(&BackgroundCfg::opacity),
                FIELD(&BackgroundCfg::top))
         CTORS(DEFAULT_CTOR(BackgroundCfg))
     END_TYPE

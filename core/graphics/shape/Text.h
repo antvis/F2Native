@@ -2,6 +2,7 @@
 #define XG_GRAPHICS_SHAPE_TEXT_H
 
 #include "Shape.h"
+#include "../global.h"
 
 namespace xg {
 namespace shape {

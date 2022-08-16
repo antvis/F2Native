@@ -10,6 +10,7 @@
 #define XG_GRAPHICS_GUIDE_POINT_H
 
 #include "GuideBase.h"
+#include "../global.h"
 
 namespace xg {
 namespace guide {

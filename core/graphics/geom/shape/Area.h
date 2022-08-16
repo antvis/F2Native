@@ -16,7 +16,7 @@ class Area : public GeomShapeBase {
   public:
     Area() {}
 
-    void Draw(std::string shapeType,
+    void Draw(const std::string &shapeType,
               canvas::coord::AbstractCoord &coord,
               canvas::CanvasContext &context,
               const XDataArray &data,
@@ -58,19 +58,11 @@ class Area : public GeomShapeBase {
            topPoints.push_back(topPoints[0]);
            bottomPoints.push_back(bottomPoints[0]);
        }
-
-        std::size_t size = end - start + 1;
-        if(size > 0 && !data[start]._shape.empty()) {
-            shapeType = data[start]._shape;
-        }
-        bool smooth = shapeType == "smooth";
+   
+        bool smooth = data[start]._shape == "smooth";
         auto area = xg::make_unique<xg::shape::Area>(topPoints, bottomPoints, smooth);
-
-        if(size <= 0) {
-            area->SetFillColor(GLOBAL_COLORS[0]);
-        } else {
-            area->SetFillColor(data[start]._color);
-        }
+        area->SetFillStyle(data[start]._color);
+        area->SetFillOpacity(data[start]._opacity);
         container.AddElement(std::move(area));
     }
 };

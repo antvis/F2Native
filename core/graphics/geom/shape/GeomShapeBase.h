@@ -22,7 +22,7 @@ class GeomShapeBase {
     virtual ~GeomShapeBase() {}
 
     //绘制一组数据 比如线
-    virtual void Draw(std::string shapeType,
+    virtual void Draw(const std::string &shapeType,
                       canvas::coord::AbstractCoord &coord,
                       canvas::CanvasContext &context,
                       const XDataArray &data,
@@ -32,7 +32,7 @@ class GeomShapeBase {
                       const StyleCfg &style) {};
     
     //绘制一个数据 比如柱
-    virtual void Draw(std::string shapeType,
+    virtual void Draw(const std::string &shapeType,
                       canvas::coord::AbstractCoord &coord,
                       canvas::CanvasContext &context,
                       const XData &data,

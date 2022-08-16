@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include "../../canvas/Coord.h"
+#include "../../canvas/CanvasFillStrokeStyle.h"
 #include "../../scale/Category.h"
 #include "../../scale/Scale.h"
 #include "../../util/json_data.h"
@@ -18,7 +19,7 @@ using namespace std;
 namespace xg {
 namespace attr {
 
-enum class AttrType { Position = 1, Color, Size, Shape, Adjust };
+enum class AttrType { Position = 1, Color, Size, Shape, Adjust, Opacity };
 
 class AttrBase {
   public:
@@ -111,7 +112,9 @@ class Color : public AttrBase {
                                            // }
                                        };
 
-    Color(const string &color) : AttrBase({}, {"color"}) { colors_.push_back(color); }
+    Color(const string &color) : AttrBase({}, {"color"}), color_(color) { }
+    Color(const canvas::CanvasLinearGradient &color) : AttrBase({}, {"color"}), color_(color) {  }
+    Color(const canvas::CanvasRadialGradient &color) : AttrBase({}, {"color"}), color_(color) { }
 
     AttrType GetType() const override { return AttrType::Color; }
 
@@ -120,25 +123,32 @@ class Color : public AttrBase {
     void Mapping(XDataArray &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
         //设置的是一个固定的颜色
         if (fields_.empty()) {
-            for(std::size_t index = start; index <= end; ++index) {
-                groupData[index]._color = colors_[0];
+            if (colors_.empty()) {
+                for(std::size_t index = start; index <= end; ++index) {
+                    groupData[index]._color = color_;
+                }
+            } else {
+                for(std::size_t index = start; index <= end; ++index) {
+                    groupData[index]._color = canvas::CanvasFillStrokeStyle(colors_[0]);
+                }
             }
         } else {
             for(size_t i = start; i <= end; i++) {
                 auto &item = groupData[i];
-                if(!fields_.empty() && scale::IsCategory(xScale.GetType())) {
+                if(scale::IsCategory(xScale.GetType())) {
                     const scale::Category &cat = (scale::Category &)xScale;
                     std::size_t index = cat.Transform(item.data[fields_[0]]);
-                    item._color = colors_[index];
+                    item._color = canvas::CanvasFillStrokeStyle(colors_[index]);
                 } else {
-                    item._color = colors_[0];
+                    item._color = canvas::CanvasFillStrokeStyle(colors_[0]);
                 }
             }
         }
     }
 
   private:
-    vector<string> colors_{};
+    vector<string> colors_;
+    canvas::CanvasFillStrokeStyle color_;
 };
 
 class Size : public AttrBase {
@@ -225,6 +235,36 @@ class Adjust : public AttrBase {
 
   private:
     string adjust_;
+};
+
+class Opacity : public AttrBase {
+  public:
+    Opacity(const string &field, const vector<float> &opacity) : AttrBase({field}, {"color"}), opacity_(opacity) {}
+
+    Opacity(const float opacity) : AttrBase({}, {"opacity"}) { opacity_.push_back(opacity); }
+
+    inline const float GetSize(int index) const { return index < opacity_.size() ? opacity_[index] : opacity_[0]; }
+
+    AttrType GetType() const override { return AttrType::Opacity; }
+
+    void Mapping(XDataArray &groupData, std::size_t start, std::size_t end, AbstractScale &xScale, AbstractScale &yScale, const AbstractCoord &coord) override {
+        //用户设置的是一个固定的size
+        if (fields_.empty()) {
+            for(std::size_t index = start; index <= end; ++index) {
+                groupData[index]._size = opacity_[0];
+            }
+        } else {
+            for(std::size_t index = start; index <= end; ++index) {
+                auto &item = groupData[index];
+                item._opacity = opacity_[index];
+            }
+        }
+    }
+
+ 
+
+  private:
+    vector<float> opacity_;
 };
 
 } // namespace attr

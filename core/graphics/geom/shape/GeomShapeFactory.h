@@ -22,14 +22,14 @@ class GeomShapeFactory final {
     void Clear() { geomShapes_.clear(); }
 
     // geomType: line/interval/point 等
-    void RegisterGeomShape(std::string geomType, std::unique_ptr<GeomShapeBase> geomShape);
+    void RegisterGeomShape(const std::string &geomType, std::unique_ptr<GeomShapeBase> geomShape);
 
-    void UnregterShapeShape(std::string gemoType);
+    void UnregterShapeShape(const std::string &gemoType);
 
     // shapeType 为 geomType 的子类型, 例如 line 分为 line/dash/smooth
     void DrawGeomShape(XChart &chart,
-                       std::string geomType,
-                       std::string shapeType,
+                       const std::string &geomType,
+                       const std::string &shapeType,
                        const XDataArray &data,
                        std::size_t start,
                        std::size_t end,
@@ -37,8 +37,8 @@ class GeomShapeFactory final {
                        const StyleCfg &style);
     
     void DrawGeomShape(XChart &chart,
-                       std::string geomType,
-                       std::string shapeType,
+                       const std::string &geomType,
+                       const std::string &shapeType,
                        const XData &data,
                        std::size_t start,
                        std::size_t end,

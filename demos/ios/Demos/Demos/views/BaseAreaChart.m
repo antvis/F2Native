@@ -12,10 +12,10 @@
     self.chart.scale(@"tem", @{@"min": @(0)});
     self.chart.axis(@"time", @{@"grid": @(NO), @"label": @{@"textAlign": @"start"}});
     self.chart.line().position(@"time*tem").fixedSize(2).fixedShape(@"smooth");
-    self.chart.area().position(@"time*tem").fixedShape(@"smooth").fixedColor([F2Utils toJsonString:@{
+    self.chart.area().position(@"time*tem").fixedShape(@"smooth").linearGradientColor(@{
         @"colorStops": @[@{@"offset": @(0.f), @"color": @"#ff0000"}, @{@"offset": @(1.f), @"color": @"#ffffff"}],
         @"position": @[@(0), @(0), @(0), @(self.canvasView.frame.size.height * [UIScreen mainScreen].scale)]
-    }]);
+    }).fixedOpacity(0.1);
     self.chart.point().position(@"time*tem").fixedColor(@"#000000").style(@{
         @"custom": [F2Callback callback:^NSDictionary *_Nonnull(NSDictionary *_Nonnull param) {
             if([param[@"_index"] longValue] == 3) {
@@ -24,7 +24,7 @@
             return @{};
         }]
     });
-    self.chart.animate(@YES);
+    self.chart.animate(YES);
     self.chart.tooltip(@{});
     self.chart.render();
 }

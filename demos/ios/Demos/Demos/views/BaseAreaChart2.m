@@ -20,7 +20,7 @@
     self.chart.area().position(@"month*value").fixedColor(@"#1890FF0F");
 
     self.chart.scale(@"value", @{@"nice": @(YES)});
-    self.chart.animate(@YES);
+    self.chart.animate(YES);
     self.chart.render();
 }
 

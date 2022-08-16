@@ -3,7 +3,6 @@
 
 #include "../canvas/CanvasContext.h"
 #include "../util/BBox.h"
-#include "../util/Color.h"
 #include "../util/Matrix.h"
 #include "../util/Point.h"
 
@@ -96,8 +95,7 @@ class Element {
     /// @param fillColor 颜色
     virtual void SetFillColor(const std::string &fillColor) {
         if(!fillColor.empty()) {
-            SetFillStyle(util::ColorParser(fillColor));
-            SetFillOpacity(OpacityParserString(fillColor));
+            SetFillStyle(canvas::CanvasFillStrokeStyle(fillColor));
         }
     }
     
@@ -106,8 +104,7 @@ class Element {
     /// @param strokeColor 颜色
     virtual void SetStorkColor(const std::string &strokeColor) {
         if(!strokeColor.empty()) {
-            SetStorkStyle(util::ColorParser(strokeColor));
-            SetStrokeOpacity(OpacityParserString(strokeColor));
+            SetStorkStyle(canvas::CanvasFillStrokeStyle(strokeColor));
         }
     }
     
@@ -139,9 +136,9 @@ class Element {
     util::Point point_;
     canvas::CanvasFillStrokeStyle fillStyle_;
     canvas::CanvasFillStrokeStyle strokeStyle_;
-    float strokeOpacity_ = DEFAULT_OPACITY;
-    float fillOpacity_ = DEFAULT_OPACITY;
-    float lineWidth_ = std::nan("0");
+    float strokeOpacity_ = NAN;
+    float fillOpacity_ = NAN;
+    float lineWidth_ = NAN;
 
   private:
     void InitElementId();

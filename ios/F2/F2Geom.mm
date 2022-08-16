@@ -52,6 +52,57 @@
     };
 }
 
+- (F2Geom * (^)(NSDictionary *color))linearGradientColor {
+    return ^id(NSDictionary *color) {
+        xg::canvas::CanvasLinearGradient gradient;
+        NSArray *colorStops = color[@"colorStops"];
+        NSArray *position = color[@"position"];
+        
+        if(![colorStops isKindOfClass:NSArray.class] ||
+           ![position isKindOfClass:NSArray.class]) {
+            return self;
+        }
+        for(NSUInteger i = 0; i < colorStops.count; ++i) {
+            NSDictionary *stop = colorStops[i];
+            gradient.addColorStop([stop[@"offset"] floatValue], [stop[@"color"] UTF8String]);
+        }
+
+       
+        if(position.count >= 4) {
+            gradient.start = {[position[0] floatValue], [position[1] floatValue]};
+            gradient.end = {[position[2] floatValue], [position[3] floatValue]};
+        }
+    
+        self->_geom->Color(gradient);
+        return self;
+    };
+}
+
+- (F2Geom * (^)(NSDictionary *color))radialGradientColor {
+    return ^id(NSDictionary *color) {
+        xg::canvas::CanvasRadialGradient gradient;
+        NSArray *colorStops = color[@"colorStops"];
+        NSArray *position = color[@"position"];
+        
+        if(![colorStops isKindOfClass:NSArray.class] ||
+           ![position isKindOfClass:NSArray.class]) {
+            return self;
+        }
+        for(NSUInteger i = 0; i < colorStops.count; ++i) {
+            NSDictionary *stop = colorStops[i];
+            gradient.addColorStop([stop[@"offset"] floatValue], [stop[@"color"] UTF8String]);
+        }
+
+        if(position.count >= 6) {
+            gradient.start = {[position[0] floatValue], [position[1] floatValue], [position[2] floatValue]};
+            gradient.end = {[position[3] floatValue], [position[4] floatValue], [position[5] floatValue]};
+        }
+    
+        self->_geom->Color(gradient);
+        return self;
+    };
+}
+
 - (F2Geom * (^)(NSString *field, NSArray<NSNumber *> *sizes))size {
     return ^id(NSString *field, NSArray *sizes) {
         std::vector<float> s;
@@ -101,6 +152,13 @@
         auto cfg = F2Reflection::CreateStruct(reset, typeof(xg::geom::StyleCfg));
         auto cast = cfg.Cast<xg::geom::StyleCfg &>();
         self->_geom->StyleObject(cast);
+        return self;
+    };
+}
+
+- (F2Geom * (^)(CGFloat opacity))fixedOpacity {
+    return ^id(CGFloat opacity) {
+        self->_geom->Opacity(opacity);
         return self;
     };
 }

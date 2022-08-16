@@ -96,11 +96,14 @@ class AbstractGeom {
     AbstractGeom &Position(const string &field);
     AbstractGeom &Color(const string &field, const vector<string> &colors);
     AbstractGeom &Color(const string &color);
+    AbstractGeom &Color(const CanvasLinearGradient &color);
+    AbstractGeom &Color(const CanvasRadialGradient &color);
     AbstractGeom &Size(const string &field, const vector<float> &sizes);
     AbstractGeom &Size(const float size);
     AbstractGeom &Shape(const string &field, const vector<string> &shapes);
     AbstractGeom &Shape(const string &shape);
     AbstractGeom &Adjust(const string &adjust);
+    AbstractGeom &Opacity(const float opacity);
 //    AbstractGeom &Style(const std::string &json);
     AbstractGeom &StyleObject(const StyleCfg &cfg);
     
@@ -173,7 +176,6 @@ class AbstractGeom {
     bool ignoreEmptyGroup_ = false;
     string type_ = "";
     string shapeType_ = "";
-//    nlohmann::json styleConfig_ = {{"startOnZero", true}};
     
     StyleCfg styleConfig_;
     

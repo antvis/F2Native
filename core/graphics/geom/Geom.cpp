@@ -38,6 +38,18 @@ xg::geom::AbstractGeom &xg::geom::AbstractGeom::Color(const string &color) {
     return *this;
 }
 
+xg::geom::AbstractGeom &xg::geom::AbstractGeom::Color(const CanvasLinearGradient &color) {
+    std::unique_ptr<attr::AttrBase> attr = xg::make_unique<attr::Color>(color);
+    attrs_[AttrType::Color] = std::move(attr);
+    return *this;
+}
+
+xg::geom::AbstractGeom &xg::geom::AbstractGeom::Color(const CanvasRadialGradient &color) {
+    std::unique_ptr<attr::AttrBase> attr = xg::make_unique<attr::Color>(color);
+    attrs_[AttrType::Color] = std::move(attr);
+    return *this;
+}
+
 xg::geom::AbstractGeom &xg::geom::AbstractGeom::Size(const string &field, const vector<float> &sizes) {
     this->tracker_->trace("geom#%s  Size: %s sizes: %lu", type_.c_str(), field.c_str(), sizes.size());
     std::unique_ptr<attr::AttrBase> attr = xg::make_unique<attr::Size>(field, sizes.empty() ? GLOBAL_SIZES : sizes);
@@ -71,6 +83,13 @@ xg::geom::AbstractGeom &xg::geom::AbstractGeom::Adjust(const string &adjust) {
     this->tracker_->trace("geom#%s  adjust: %s ", type_.c_str(), adjust.c_str());
     std::unique_ptr<attr::AttrBase> attr = xg::make_unique<attr::Adjust>("", adjust);
     attrs_[AttrType::Adjust] = std::move(attr);
+    return *this;
+}
+
+xg::geom::AbstractGeom &xg::geom::AbstractGeom::Opacity(const float opacity) {
+    this->tracker_->trace("geom#%s  Opacity: %f ", type_.c_str(), opacity);
+    std::unique_ptr<attr::AttrBase> attr = xg::make_unique<attr::Opacity>(opacity);
+    attrs_[AttrType::Opacity] = std::move(attr);
     return *this;
 }
 
@@ -240,8 +259,8 @@ void xg::geom::AbstractGeom::Mapping(XChart &chart, XDataArray &dataArray, std::
         }
         AttrBase &attr = *it.second.get();
         const vector<string> &fields = attr.GetFields();
-        AbstractScale &xScale = chart.GetScale(fields.size() >= 1 ? fields[0] : "");
-        AbstractScale &yScale = chart.GetScale(fields.size() >= 2 ? fields[1] : "");
+        AbstractScale &xScale = chart.GetScale(fields.size() >= 1 ? fields[0] : GetXScaleField());
+        AbstractScale &yScale = chart.GetScale(fields.size() >= 2 ? fields[1] : GetYScaleField());
         attr.Mapping(dataArray, start, end, xScale, yScale, chart.GetCoord());
     }
 }

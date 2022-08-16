@@ -21,6 +21,15 @@ class Circle : public Shape {
         SetFillColor(fill);
         SetStorkColor(stroke);
     }
+    
+    Circle(const util::Point &center, const float radius, const canvas::CanvasFillStrokeStyle &fill, const canvas::CanvasFillStrokeStyle &stroke, const float lineWidth) : radius_(radius) {
+        type_ = "circle";
+        point_ = center;
+        lineWidth_ = lineWidth;
+
+        SetFillStyle(fill);
+        SetStorkStyle(stroke);
+    }
 
     BBox CalculateBox(canvas::CanvasContext &context) const override;
 

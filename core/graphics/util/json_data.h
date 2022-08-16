@@ -13,6 +13,7 @@
 #include <array>
 #include "Point.h"
 #include "../global.h"
+#include "../canvas/CanvasFillStrokeStyle.h"
 #include "../../reflection/reflection.h"
 
 namespace xg {
@@ -44,8 +45,10 @@ namespace util {
         std::unordered_map<std::string, Any> data;
         double _x = NAN, _y = NAN;
         std::vector<double> _y0;
-        std::string _color, _shape, _adjust;
+        std::string _shape, _adjust;
+        canvas::CanvasFillStrokeStyle _color;
         double _size = NAN;
+        double _opacity = NAN;
         
         //for interval and candle
         TagCfg _tag;

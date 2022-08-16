@@ -13,6 +13,7 @@
 #include <vector>
 #include <array>
 #include <cstring>
+#include <cmath>
 
 namespace xg {
 namespace canvas {
@@ -46,7 +47,7 @@ class CanvasGradient {
     /// 标准接口, 添加colorStop
     /// offset
     /// color
-    void addColorStop(float offset, std::string color) {
+    void addColorStop(float offset, const std::string &color) {
         ColorStop cs;
         cs.offset = offset;
         cs.color = color;
@@ -109,11 +110,13 @@ struct CanvasFillStrokeStyle {
 
     CanvasFillStrokeStyleType type = CanvasFillStrokeStyleType::kNone;
 
-    std::string color;
+    std::string color = "";
 
     // ref to pattern / linear gradient / radial gradient
     CanvasLinearGradient linearGradient;
     CanvasRadialGradient radialGradient;
+    
+    inline bool Empty() const { return type == CanvasFillStrokeStyleType::kNone;}
 };
 
 }//canvas

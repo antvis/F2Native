@@ -14,7 +14,7 @@ namespace shape {
 class Interval : public GeomShapeBase {
   public:
     Interval() {}
-    void Draw(std::string shapeType,
+    void Draw(const std::string &shapeType,
               canvas::coord::AbstractCoord &coord,
               canvas::CanvasContext &context,
               const XData &data,
@@ -28,10 +28,10 @@ class Interval : public GeomShapeBase {
             points.push_back(std::move(p));
         }
         
-        auto color = std::string(GLOBAL_COLORS[0]);
+        auto color = CanvasFillStrokeStyle(GLOBAL_COLORS[0]);
         if (data.data.count("_color")) {
-            color = data.data.at("_color").Cast<std::string>();
-        } else if (!data._color.empty()) {
+            color = CanvasFillStrokeStyle(data.data.at("_color").Cast<std::string>());
+        } else if (!data._color.Empty()) {
             color = data._color;
         }
 
@@ -64,16 +64,16 @@ class Interval : public GeomShapeBase {
 
             auto fillRect = xg::make_unique<xg::shape::Rect>(coord.GetCenter(), r, r0, startAngle, endAngle, lineWidth);
             fillRect->SetStorkColor(style.stroke);
-            fillRect->SetFillColor(color);
+            fillRect->SetFillStyle(color);
             container.AddElement(std::move(fillRect));
         } else {
             util::Size size(points[2].x - points[0].x, points[2].y - points[0].y);
 
             auto rect = xg::make_unique<xg::shape::Rect>(points[0], size);
             if(isFill) {
-                rect->SetFillColor(color);
+                rect->SetFillStyle(color);
             } else {
-                rect->SetStorkColor(color);
+                rect->SetFillStyle(color);
                 rect->SetLineWidth(lineWidth);
             }
             

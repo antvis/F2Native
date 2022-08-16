@@ -11,7 +11,7 @@ namespace shape {
 class Point : public GeomShapeBase {
   public:
     Point() {}
-    void Draw(std::string shapeType,
+    void Draw(const std::string &shapeType,
               canvas::coord::AbstractCoord &coord,
               canvas::CanvasContext &context,
               const XData &data,
@@ -23,19 +23,23 @@ class Point : public GeomShapeBase {
         if(!data._shape.empty()) {
             shape = data._shape;
         }
+        
+        if(shape != "circle") {
+            return;
+        }
 
         util::Point center = {data._x, data._y};
 
-        std::string colorStyle = GLOBAL_COLORS[0];
-        if(!data._color.empty()) {
+        auto colorStyle = CanvasFillStrokeStyle(GLOBAL_COLORS[0]);
+        if(!data._color.Empty()) {
             colorStyle = data._color;
         } else if(!style.fill.empty()){
-            colorStyle = style.fill;
+            colorStyle = CanvasFillStrokeStyle(style.fill);
         }
         
-        std::string strokeColor = "";
+        auto strokeStyle = CanvasFillStrokeStyle();
         if(!style.stroke.empty()){
-            strokeColor = style.stroke;
+            strokeStyle = CanvasFillStrokeStyle(style.stroke);
         }
         
         float radius = 3;
@@ -44,13 +48,10 @@ class Point : public GeomShapeBase {
         }else if(!std::isnan(style.size)){
             radius = style.size;
         }
-
-        if(shape == "circle") {           
-            radius *= context.GetDevicePixelRatio();
-
-            auto circle = std::make_unique<xg::shape::Circle>(center, radius, colorStyle, strokeColor, style.lineWidth);
-            container.AddElement(std::move(circle));
-        }
+ 
+        radius *= context.GetDevicePixelRatio();
+        auto circle = std::make_unique<xg::shape::Circle>(center, radius, colorStyle, strokeStyle, style.lineWidth);
+        container.AddElement(std::move(circle));
     }
 };
 } // namespace shape

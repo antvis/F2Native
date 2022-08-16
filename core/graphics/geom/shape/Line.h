@@ -18,7 +18,7 @@ class Line : public GeomShapeBase {
   public:
     Line() {}
 
-    void Draw(std::string shapeType,
+    void Draw(const std::string &shapeType,
               canvas::coord::AbstractCoord &coord,
               canvas::CanvasContext &context,
               const XDataArray &data,
@@ -52,10 +52,10 @@ class Line : public GeomShapeBase {
             return;
         }
         
-        std::string color = data[start]._color.empty() ? GLOBAL_COLORS[0] : data[start]._color;
+        auto color = data[start]._color.Empty() ? CanvasFillStrokeStyle(GLOBAL_COLORS[0]) : data[start]._color;
         //使用线宽的一般作为半径来画点，避免出现第二个点的时候 有明显的大小变化的跳动感觉
         float radius = (std::isnan(data[start]._size) ? 1 :data[start]._size) * canvasContext.GetDevicePixelRatio() / 2.0;
-        auto circle = std::make_unique<xg::shape::Circle>(center, radius, color, "", 1.0f);
+        auto circle = std::make_unique<xg::shape::Circle>(center, radius, color, CanvasFillStrokeStyle(), 1.0f);
         container.AddElement(std::move(circle));
     }
     
@@ -75,7 +75,7 @@ class Line : public GeomShapeBase {
             return;
         }
 
-        std::string color = data[start]._color.empty() ? GLOBAL_COLORS[0] : data[start]._color;
+        auto color = data[start]._color.Empty() ? CanvasFillStrokeStyle(GLOBAL_COLORS[0]) : data[start]._color;
 
         float lineWidth = std::isnan(data[start]._size) ? 1 : data[start]._size;
 
@@ -106,7 +106,7 @@ class Line : public GeomShapeBase {
                 topLine->SetDashLine(json::ScaleDash(style.dash, canvasContext.GetDevicePixelRatio()));
             }
 
-            topLine->SetStorkColor(color);
+            topLine->SetStorkStyle(color);
             container.AddElement(std::move(topLine));
 
             // auto bottomLine =
@@ -143,7 +143,7 @@ class Line : public GeomShapeBase {
         if(!style.dash.empty()) {
             l->SetDashLine(json::ScaleDash(style.dash, canvasContext.GetDevicePixelRatio()));
         }
-        l->SetStorkColor(color);
+        l->SetStorkStyle(color);
         container.AddElement(std::move(l));
     }
 };

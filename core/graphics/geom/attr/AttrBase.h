@@ -222,6 +222,7 @@ class Shape : public AttrBase {
 class Adjust : public AttrBase {
   public:
     Adjust(const string &field, const string &adjust) : AttrBase({field}, {"adjust"}), adjust_(adjust){};
+    Adjust(const string &adjust) : AttrBase({}, {"adjust"}), adjust_(adjust){};
 
     AttrType GetType() const override { return AttrType::Adjust; }
 

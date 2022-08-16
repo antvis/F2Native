@@ -28,6 +28,7 @@ struct AxisGridCfg {
     std::vector<float> dash = {10, 10};
     //雷达图轴上的背景色
     std::vector<string> fill;
+    std::vector<float> fillOpacity;
     bool hidden = false;
     
 #if !defined(__EMSCRIPTEN__)
@@ -37,6 +38,7 @@ struct AxisGridCfg {
                FIELD(&AxisGridCfg::stroke),
                FIELD(&AxisGridCfg::dash),
                FIELD(&AxisGridCfg::fill),
+               FIELD(&AxisGridCfg::fillOpacity),
                FIELD(&AxisGridCfg::hidden))
         CTORS(DEFAULT_CTOR(AxisGridCfg))
     END_TYPE

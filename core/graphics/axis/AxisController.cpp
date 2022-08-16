@@ -269,13 +269,13 @@ void xg::axis::AxisController::DrawAxis(xg::XChart &chart, std::unique_ptr<xg::a
         tracer->trace("%s", "draw grid line");
         float lineWidth = axis->gridCfg.lineWidth * chart.GetCanvasContext().GetDevicePixelRatio();
         auto &type = axis->gridCfg.type;
-        auto position = axis->position;
         auto &stroke = axis->gridCfg.stroke;
        
         std::vector<float> dash = json::ScaleDash(axis->gridCfg.dash, context.GetDevicePixelRatio());
         
         //雷达图轴上的背景色
-        std::vector<string> fill = axis->gridCfg.fill;
+        std::vector<string> &fill = axis->gridCfg.fill;
+        std::vector<float> &fillOpacity = axis->gridCfg.fillOpacity;
         auto xAxis = coord.GetXAxis();
         int index = 0;
         int radius0 = 0;
@@ -291,11 +291,13 @@ void xg::axis::AxisController::DrawAxis(xg::XChart &chart, std::unique_ptr<xg::a
                 }
                 //第一个是圆心 不上色
                 const string &fillColor = fill.size() && index > 0 ? fill[(index -1) % fill.size()] : "";
+                const float opacity = fillOpacity.size() && index > 0 ? fillOpacity[(index -1) % fillOpacity.size()] : NAN;
                 auto point = Vector2D {points[0].x - coord.GetCenter().x, points[0].y - coord.GetCenter().y};
                 double radius = Vector2DUtil::Length(point);
                 if(type == "line") {
                     auto p = xg::make_unique<xg::shape::Polygon>(lineWidth, points, points0, stroke, fillColor, false);
                     p->SetZIndex(-2);
+                    p->SetFillOpacity(opacity);
                     this->container_->AddElement(std::move(p));
                 }else if(type == "dash") {
                     auto p = xg::make_unique<xg::shape::Polygon>(lineWidth, points, points0, stroke, fillColor, false);
@@ -305,6 +307,7 @@ void xg::axis::AxisController::DrawAxis(xg::XChart &chart, std::unique_ptr<xg::a
                 }else if(type == "arc") {
                     auto arc = xg::make_unique<xg::shape::Rect>(coord.GetCenter(), radius, radius0, xAxis.x, xAxis.y,  fillColor, lineWidth, stroke);
                     arc->SetZIndex(-2);
+                    arc->SetFillOpacity(opacity);
                     this->container_->AddElement(std::move(arc));
                 }else if(type == "arcdash") {
                     auto arc = xg::make_unique<xg::shape::Rect>(coord.GetCenter(), radius, radius0, xAxis.x, xAxis.y,  fillColor, lineWidth, stroke);

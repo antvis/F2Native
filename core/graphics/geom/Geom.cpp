@@ -81,7 +81,7 @@ xg::geom::AbstractGeom &xg::geom::AbstractGeom::Shape(const string &shape) {
 
 xg::geom::AbstractGeom &xg::geom::AbstractGeom::Adjust(const string &adjust) {
     this->tracker_->trace("geom#%s  adjust: %s ", type_.c_str(), adjust.c_str());
-    std::unique_ptr<attr::AttrBase> attr = xg::make_unique<attr::Adjust>("", adjust);
+    std::unique_ptr<attr::AttrBase> attr = xg::make_unique<attr::Adjust>(adjust);
     attrs_[AttrType::Adjust] = std::move(attr);
     return *this;
 }

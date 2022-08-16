@@ -14,7 +14,8 @@
     NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"Res/mockData_radarArea" ofType:@"json"];
     NSString *jsonData = [NSString stringWithContentsOfFile:jsonPath encoding:NSUTF8StringEncoding error:nil];
     self.chart.clear();
-    self.chart.canvas(self.canvasView).padding(0, 10, 0, 0).source(jsonData);
+    self.chart.canvas(self.canvasView).padding(0, 10, 0, 0);
+    self.chart.source([F2Utils toJsonArray:jsonData]);
    
     self.chart.line().position(@"item*score").color(@"user", @[]);
     self.chart.area().position(@"item*score").color(@"user", @[]);
@@ -24,11 +25,11 @@
     self.chart.scale(@"item", @{@"type": @"cat"});
     self.chart.axis(@"score", @{
         @"label":@{@"labelOffset":@(20)},
-        @"grid":@{@"type":@"line", @"fill":@[@"#E8E8E82A", @"#fffffff"], @"stroke" :@"#E8E8E8"}});
+        @"grid":@{@"type":@"line", @"fill":@[@"#E8E8E8", @"#ffffff"], @"fillOpacity":@[@0.1, @1.0], @"stroke" :@"#E8E8E8"}});
     self.chart.axis(@"item", @{
         @"label":@{@"labelOffset":@(10)},
         @"grid":@{@"type":@"dash", @"stroke" :@"#E8E8E8", @"dash": @[@(4), @(2)]}});
-    self.chart.animate(@(YES));
+    self.chart.animate(YES);
     self.chart.legend(@"user", @{@"position": @"top"});
     self.chart.render();
     

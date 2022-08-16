@@ -29,9 +29,9 @@
     self.candleChart.line().position(@"date*m20").fixedColor(@"#FF8C53");
     self.candleChart.scale(@"date", @{@"type": @"kline-day", @"domain": @[@(40), @(80)]});
     self.candleChart.scale(@"values", @{@"nice": @(YES)});
-    self.candleChart.scale(@"m5", @{@"assign": @"values"});
-    self.candleChart.scale(@"m10", @{@"assign": @"values"});
-    self.candleChart.scale(@"m20", @{@"assign": @"values"});
+//    self.candleChart.scale(@"m5", @{@"assign": @"values"});
+//    self.candleChart.scale(@"m10", @{@"assign": @"values"});
+//    self.candleChart.scale(@"m20", @{@"assign": @"values"});
 
     self.candleChart.axis(@"m5", @{@"hidden": @(YES)});
     self.candleChart.axis(@"m10", @{@"hidden": @(YES)});

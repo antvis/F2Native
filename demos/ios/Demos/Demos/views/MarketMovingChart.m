@@ -27,7 +27,8 @@
                                    @"textColor":@"#108EE9",
                                    @"lineWidth": @(0.5),
                                    @"textSize": @(11),
-                                   @"backgroundColor": @"#108EE920",
+                                   @"backgroundColor": @"#108EE9",
+                                   @"backgroundOpacity": @0.2,
                                    @"padding": @[@5, @5, @5, @2]});
     self.chart.guide().flag(@{@"content":@"盐湖提锂",
                                    @"position": @[@"1639101240000", @"3662.4675"],
@@ -35,7 +36,8 @@
                                    @"textColor":@"#108EE9",
                                    @"lineWidth": @(0.5),
                                    @"textSize": @(11),
-                                   @"backgroundColor": @"#108EE920",
+                                   @"backgroundColor": @"#108EE9",
+                                   @"backgroundOpacity": @0.2,
                                    @"padding": @[@5, @5, @5, @2]});
     self.chart.guide().flag(@{@"content":@"汽车零部件",
                                    @"position": @[@"1639102800000", @"3665.2538"],
@@ -43,7 +45,8 @@
                                    @"textColor":@"#108EE9",
                                    @"lineWidth": @(0.5),
                                    @"textSize": @(11),
-                                   @"backgroundColor": @"#108EE920",
+                                   @"backgroundColor": @"#108EE9",
+                                   @"backgroundOpacity": @0.2,
                                    @"padding": @[@5, @5, @5, @2]});
     self.chart.guide().flag(@{@"content":@"银行",
                                    @"position": @[@"1639104900000", @"3665.7622"],
@@ -51,7 +54,8 @@
                                    @"textColor":@"#108EE9",
                                    @"lineWidth": @(0.5),
                                    @"textSize": @(11),
-                                   @"backgroundColor": @"#108EE920",
+                                   @"backgroundColor": @"#108EE9",
+                                   @"backgroundOpacity": @0.2,
                                    @"padding": @[@5, @5, @5, @2]});
     self.chart.guide().flag(@{@"content":@"元宇宙",
                                    @"position": @[@"1639106340000", @"3659.8543"],
@@ -59,7 +63,8 @@
                                    @"textColor":@"#108EE9",
                                    @"lineWidth": @(0.5),
                                    @"textSize": @(11),
-                                   @"backgroundColor": @"#108EE920",
+                                   @"backgroundColor": @"#108EE9",
+                                   @"backgroundOpacity": @0.2,
                                    @"padding": @[@5, @5, @5, @2]});
     self.chart.guide().flag(@{@"content":@"燃气",
                                    @"position": @[@"1639112940000", @"3665.5504"],
@@ -67,7 +72,8 @@
                                    @"textColor":@"#108EE9",
                                    @"lineWidth": @(0.5),
                                    @"textSize": @(11),
-                                   @"backgroundColor": @"#108EE920",
+                                   @"backgroundColor": @"#108EE9",
+                                   @"backgroundOpacity": @0.2,
                                    @"padding": @[@5, @5, @5, @2]});
     self.chart.guide().flag(@{@"content":@"煤炭开采",
                                    @"position": @[@"1639114800000", @"3665.3084"],
@@ -75,7 +81,8 @@
                                    @"textColor":@"#FFFFFF",
                                    @"lineWidth": @(0.5),
                                    @"textSize": @(11),
-                                   @"backgroundColor": @"#108EE990",
+                                   @"backgroundColor": @"#108EE9",
+                                   @"backgroundOpacity": @0.8,
                                    @"padding": @[@5, @5, @5, @2],
                                    @"rounding":@[@3, @0, @3, @0]
                                  });

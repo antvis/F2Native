@@ -49,9 +49,9 @@ unordered_map<string, double> geom::Interval::CreateShapePointsCfg(XChart &chart
 
     normalizeSize *= widthRatio;
 
-    attr::AttrBase *attrBase = GetAttr(attr::AttrType::Adjust).get();
+    auto *attrBase = GetAttr(attr::AttrType::Adjust);
     if(attrBase != nullptr) {
-        attr::Adjust *adjust = static_cast<attr::Adjust *>(attrBase);
+        const attr::Adjust *adjust = static_cast<const attr::Adjust *>(attrBase);
         if(adjust->GetAdjust() == "dodge") {
             double size = fmax(dataArray_.size(), 1.);
             normalizeSize = normalizeSize / size;

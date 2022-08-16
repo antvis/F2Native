@@ -124,8 +124,8 @@ void xg::geom::AbstractGeom::InitAttributes(XChart &chart) {
     if(this->attrs_.find(AttrType::Adjust) == this->attrs_.end()) {
         return;
     }
-    std::unique_ptr<attr::AttrBase> &adjustAttr = attrs_[attr::AttrType::Adjust];
-    attr::Adjust *adjust = static_cast<attr::Adjust *>(adjustAttr.get());
+    auto adjustAttr = GetAttr(attr::AttrType::Adjust);
+    const attr::Adjust *adjust = static_cast<const attr::Adjust *>(adjustAttr);
     if(chart.GetCoord().IsTransposed() && chart.GetCoord().GetType() == xg::canvas::coord::CoordType::Polar && adjust->GetAdjust() == "stack") {
         auto &yScale = chart.GetScale(this->GetYScaleField());
         if(yScale.values.size() > 0) {
@@ -142,10 +142,10 @@ void xg::geom::AbstractGeom::ProcessData(XChart &chart) {
     auto timestamp = xg::CurrentTimestampAtMM();
     dataArray_ = GroupData(chart);
 
-    std::unique_ptr<attr::AttrBase> &adjustAttr = attrs_[attr::AttrType::Adjust];
-    attr::AttrBase *base = adjustAttr.get();
+    auto base = GetAttr(attr::AttrType::Adjust);
+  
     if(base != nullptr) {
-        attr::Adjust *adjust = static_cast<attr::Adjust *>(base);
+        const attr::Adjust *adjust = static_cast<const attr::Adjust *>(base);
         if(adjust->GetAdjust() == "dodge") {
             // numberic
             auto xField = GetXScaleField();
@@ -254,9 +254,6 @@ void xg::geom::AbstractGeom::Mapping(XChart &chart, XDataArray &dataArray, std::
     this->tracker_->trace("geom#%s start mapping, size: %lu", type_.c_str(), dataArray.size());
 
     for(auto &it : attrs_) {
-        if(it.second.get() == nullptr) {
-            continue;
-        }
         AttrBase &attr = *it.second.get();
         const vector<string> &fields = attr.GetFields();
         AbstractScale &xScale = chart.GetScale(fields.size() >= 1 ? fields[0] : GetXScaleField());

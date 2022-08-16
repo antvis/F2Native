@@ -118,6 +118,7 @@ void Flag::DrawFlagCircleAndLine(XChart &chart, shape::Group *container, canvas:
 
     auto circle = xg::make_unique<shape::Circle>(position, radius, config_.color, "", 1.0f);
     circle->SetZIndex(-10);
+    circle->SetFillOpacity(config_.opacity);
     container->AddElement(std::move(circle));
 
     util::Point endPoint{position.x, contentRect_.y};
@@ -137,6 +138,7 @@ void Flag::DrawFragContent(XChart &chart, shape::Group *container, canvas::Canva
     auto rect = xg::make_unique<shape::Rect>(util::Point{contentRect_.x, contentRect_.y},
                                              util::Size(contentRect_.width, contentRect_.height), config_.backgroundColor, config_.color, lineWidth);
     rect->SetZIndex(-5);
+    rect->SetFillOpacity(config_.backgroundOpacity);
     
     auto rounding = json::ScaleRoundings(config_.rounding, context.GetDevicePixelRatio());
     rect->SetRoundings(rounding);
@@ -148,5 +150,6 @@ void Flag::DrawFragContent(XChart &chart, shape::Group *container, canvas::Canva
     text->SetPoint(util::Point(contentRect_.x + padding[0], contentRect_.y + contentRect_.height - padding[3] - 1));
     text->SetTextAlign(config_.textAlign);
     text->SetTextBaseline(config_.textBaseline);
+    text->SetStrokeOpacity(config_.textOpacity);
     container->AddElement(std::move(text));
 }

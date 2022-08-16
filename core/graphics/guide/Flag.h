@@ -22,8 +22,11 @@ struct FlagCfg {
     vector<float> padding =  {0.f, 0.f, 0.f, 0.f};
     vector<float> rounding =  {0.f, 0.f, 0.f, 0.f};
     float lineWidth =  1.0f;              // 旗子延长线线宽
-    string backgroundColor = "#FFFFFF7D"; // 旗子方块背景色
+    string backgroundColor = "#FFFFFF"; // 旗子方块背景色
     vector<string> position;
+    float opacity = 1.0f;
+    float textOpacity = 1.0f;
+    float backgroundOpacity = 1.0f;
     bool top = false;
     
 #if !defined(__EMSCRIPTEN__)
@@ -40,6 +43,9 @@ struct FlagCfg {
                FIELD(&FlagCfg::lineWidth),
                FIELD(&FlagCfg::backgroundColor),
                FIELD(&FlagCfg::position),
+               FIELD(&FlagCfg::opacity),
+               FIELD(&FlagCfg::textOpacity),
+               FIELD(&FlagCfg::backgroundOpacity),
                FIELD(&FlagCfg::top))
         CTORS(DEFAULT_CTOR(FlagCfg))
     END_TYPE

@@ -126,7 +126,12 @@ class AbstractGeom {
     const XData &GetLastSnapRecord(XChart *chart);
     const XData &GetFirstSnapRecord(XChart *chart);
 
-    const std::unique_ptr<AttrBase> &GetAttr(AttrType type) { return attrs_[type]; }
+    const AttrBase *GetAttr(AttrType type) {
+        if (attrs_.count(type)) {
+            return attrs_[type].get();
+        }
+        return nullptr;
+    }
 
     virtual void Clear();
     

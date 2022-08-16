@@ -10,8 +10,8 @@ namespace xg {
 namespace tooltip {
 
 static scale::AbstractScale &_GetToolTipValueScale(XChart *chart, std::unique_ptr<geom::AbstractGeom> &geom) {
-    auto &attr = geom->GetAttr(attr::AttrType::Color);
-    if(attr.get() != nullptr && !attr->GetFields().empty()) {
+    auto attr = geom->GetAttr(attr::AttrType::Color);
+    if(attr != nullptr && !attr->GetFields().empty()) {
         auto &scale = chart->GetScale(attr->GetFields()[0]);
         if(scale::IsLinear(scale.GetType())) {
             return scale;
@@ -22,8 +22,8 @@ static scale::AbstractScale &_GetToolTipValueScale(XChart *chart, std::unique_pt
 }
 
 static scale::AbstractScale &_GetToolTipGroupScale(XChart *chart, std::unique_ptr<geom::AbstractGeom> &geom) {
-    auto &attr = geom->GetAttr(attr::AttrType::Color);
-    if(attr.get() != nullptr && !attr->GetFields().empty()) {
+    auto attr = geom->GetAttr(attr::AttrType::Color);
+    if(attr != nullptr && !attr->GetFields().empty()) {
         auto &scale = chart->GetScale(attr->GetFields()[0]);
         return scale;
     }

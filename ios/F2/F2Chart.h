@@ -140,12 +140,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// 把callback缓存到chart中
 - (void)bindCallback:(F2Callback *)callback;
 
-/// 内部分发functionId的方法 外部请勿调用
-/// @param functionId 方法名字
-/// @param param 参数 json格式
-/// @return const char * json格式
-//- (std::unordered_map<std::string, Any>)execute:(const char *)functionId param:(const char *)param;
-
 @end
 
 NS_ASSUME_NONNULL_END

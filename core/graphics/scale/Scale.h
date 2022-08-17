@@ -91,7 +91,7 @@ struct ScaleCfg {
  */
 class AbstractScale {
   public:
-    AbstractScale(const std::string &_field, const vector<Any> &_values, const ScaleCfg &_cfg) : field(_field), config(_cfg) {
+    AbstractScale(const std::string &_field, const vector<const Any *> &_values, const ScaleCfg &_cfg) : field(_field), config(_cfg) {
         this->values = _values;
     }
     virtual ~AbstractScale() {}
@@ -147,7 +147,7 @@ class AbstractScale {
   protected:
     virtual vector<std::string> CalculateTicks() = 0;
   public:
-    vector<Any> values;
+    vector<const Any *> values;
 };
 } // namespace scale
 } // namespace xg

@@ -386,9 +386,13 @@ using namespace xg;
 
 - (NSArray<NSDictionary *> * (^)(NSString *field))getScaleTicks {
     return ^id(NSString *field) {
-//        std::string info = self.chart->GetScaleTicks([F2SafeString(field) UTF8String]);
-//        NSString *jsonStr = [NSString stringWithCString:info.c_str() encoding:[NSString defaultCStringEncoding]];
-        return [F2Utils toJsonObject:@""];
+        auto ticks = self.chart->GetScaleTicks([F2SafeString(field) UTF8String]);
+        NSMutableArray *rst = [NSMutableArray array];
+        for (auto &tick : ticks) {
+            [rst addObject:@{@"text": [NSString stringWithUTF8String:tick.text.c_str()],
+                             @"value": [NSString stringWithFormat:@"%f", tick.value]}];
+        }
+        return [rst copy];
     };
 }
 

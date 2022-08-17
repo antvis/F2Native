@@ -10,7 +10,7 @@ namespace scale {
 
 class TimeSharingLinear : public AbstractScale {
   public:
-    TimeSharingLinear(const std::string &_field, const vector<Any> &_values, const ScaleCfg &_config)
+    TimeSharingLinear(const std::string &_field, const vector<const Any *> &_values, const ScaleCfg &_config)
         : AbstractScale(_field, _values, _config) {
         Change(_config);
     }

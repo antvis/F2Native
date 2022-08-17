@@ -49,11 +49,11 @@ class InteractionContext {
 
     bool UpdateRange(std::array<double, 2> newRange = {0, 1});
 
-    bool Repaint(const vector<Any> &newValues, std::size_t valueStart, std::size_t valueEnd);
+    bool Repaint(const vector<const Any *> &newValues, std::size_t valueStart, std::size_t valueEnd);
 
     void UpdateScale(const std::string &field, const scale::ScaleCfg &cfg);
 
-    void UpdateFollowScale(scale::AbstractScale &pinchScale, const vector<Any> &pinchValues, std::size_t valueStart, std::size_t valueEnd);
+    void UpdateFollowScale(scale::AbstractScale &pinchScale, const vector<const Any *> &pinchValues, std::size_t valueStart, std::size_t valueEnd);
 
     void UpdateTicks();
 
@@ -74,7 +74,6 @@ class InteractionContext {
     std::array<double, 2> range_ = {0, 1};
     int lastTickCount_ = 0;
     double minScale_ = .0;
-    std::vector<Any> values_;
     PinchCfg pinch_;
     PanCfg pan_;
     size_t minCount_ = 10;

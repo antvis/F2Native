@@ -19,8 +19,7 @@ void interaction::InteractionContext::OnAfterChartInit() {
     }
     const std::string &xField = chart_->GetXScaleField();
     auto &scale = chart_->GetScale(xField);
-    this->values_ = scale.values;
-    double size = fmax(values_.size(), 1.0);
+    double size = fmax(scale.values.size(), 1.0);
     this->minScale_ = static_cast<double>(this->minCount_) / size;
 
     std::size_t _minCount = minCount_;
@@ -93,13 +92,16 @@ bool interaction::InteractionContext::DoZoom(double leftScale, double rightScale
 }
 
 bool interaction::InteractionContext::UpdateRange(std::array<double, 2> newRange) {
+    const std::string &xField = chart_->GetXScaleField();
+    auto &scale = chart_->GetScale(xField);
+    
     double rangeStart = newRange[0];
     double rangeEnd = newRange[1];
 
     rangeStart = fmax(0, rangeStart);
     rangeEnd = fmin(1, rangeEnd);
 
-    std::size_t valueSize = values_.size();
+    std::size_t valueSize = scale.values.size();
     std::size_t valueStart = static_cast<std::size_t>(valueSize * rangeStart);
     std::size_t valueEnd = fmin(static_cast<std::size_t>(valueSize * rangeEnd), valueSize - 1);
 
@@ -110,12 +112,12 @@ bool interaction::InteractionContext::UpdateRange(std::array<double, 2> newRange
     }
     range_ = {rangeStart, rangeEnd};
     // 从原始数据里截取需要显示的数据
-    auto newValue = JsonArraySlice(values_, valueStart, valueEnd);
+    auto newValue = JsonArraySlice(scale.values, valueStart, valueEnd);
 
     return this->Repaint(newValue, valueStart, valueEnd);
 }
 
-bool interaction::InteractionContext::Repaint(const vector<Any> &newValues, std::size_t valueStart, std::size_t valueEnd) {
+bool interaction::InteractionContext::Repaint(const vector<const Any *> &newValues, std::size_t valueStart, std::size_t valueEnd) {
     const std::string &xField = chart_->GetXScaleField();
     auto &scale = chart_->GetScale(xField);
 
@@ -133,7 +135,7 @@ bool interaction::InteractionContext::Repaint(const vector<Any> &newValues, std:
 }
 
 void interaction::InteractionContext::UpdateFollowScale(scale::AbstractScale &pinchScale,
-                                                        const vector<Any> &pinchValues,
+                                                        const vector<const Any *> &pinchValues,
                                                         std::size_t valueStart,
                                                         std::size_t valueEnd) {
 

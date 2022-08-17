@@ -20,21 +20,21 @@ namespace xg {
 class XChart;
 namespace scale {
 
-vector<float> AdjustRange(const vector<Any> &fieldColumn, std::unique_ptr<canvas::coord::AbstractCoord> &coord);
+vector<float> AdjustRange(const vector<const Any *> &fieldColumn, std::unique_ptr<canvas::coord::AbstractCoord> &coord);
 
 std::unique_ptr<AbstractScale> MakeCategory(const std::string &field_,
                                             const util::XSourceArray &data,
                                             const ScaleCfg &config,
                                             utils::Tracer *tracer,
                                             std::unique_ptr<canvas::coord::AbstractCoord> &coord,
-                                            const vector<Any> &fieldColumn);
+                                            const vector<const Any *> &fieldColumn);
 
 std::unique_ptr<AbstractScale> MakeLinear(const std::string &field_,
                                           const util::XSourceArray &data,
                                           const ScaleCfg &config,
                                           utils::Tracer *tracer,
                                           std::unique_ptr<canvas::coord::AbstractCoord> &coord,
-                                          const vector<Any> &fieldColumn);
+                                          const vector<const Any *> &fieldColumn);
 
 std::unique_ptr<AbstractScale> MakeScale(const std::string &field_,
                                          const util::XSourceArray &data,

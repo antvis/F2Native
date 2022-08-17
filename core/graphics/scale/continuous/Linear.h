@@ -17,7 +17,7 @@ namespace scale {
 class Linear : public AbstractScale {
   public:
     // 线性度量
-    Linear(const std::string &_field, const vector<Any> &_values, const ScaleCfg &_config) : AbstractScale(_field, _values, _config) {
+    Linear(const std::string &_field, const vector<const Any *> &_values, const ScaleCfg &_config) : AbstractScale(_field, _values, _config) {
         Change(_config);
     }
 

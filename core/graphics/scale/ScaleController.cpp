@@ -11,7 +11,7 @@
 using namespace xg;
 using namespace xg::scale;
 
-vector<float> xg::scale::AdjustRange(const vector<Any> &fieldColumn, std::unique_ptr<canvas::coord::AbstractCoord> &coord) {
+vector<float> xg::scale::AdjustRange(const vector<const Any *> &fieldColumn, std::unique_ptr<canvas::coord::AbstractCoord> &coord) {
     vector<float> cfg = {NAN, NAN};
     const std::size_t size = fieldColumn.size();
     if(size <= 1) {
@@ -34,7 +34,7 @@ std::unique_ptr<AbstractScale> xg::scale::MakeCategory(const std::string &field_
                                                     const ScaleCfg &config,
                                                     utils::Tracer *tracer,
                                                     std::unique_ptr<canvas::coord::AbstractCoord> &coord,
-                                                    const vector<Any> &fieldColumn) {
+                                                    const vector<const Any*> &fieldColumn) {
     tracer->trace("MakeScale: %s, return Category. ", field_.c_str());
     auto cat = xg::make_unique<Category>(field_, fieldColumn, config);
     auto cfg = cat->GetConfig();
@@ -48,7 +48,7 @@ std::unique_ptr<AbstractScale> xg::scale::MakeLinear(const std::string &field_,
                                                 const ScaleCfg &config,
                                                 utils::Tracer *tracer,
                                                 std::unique_ptr<canvas::coord::AbstractCoord> &coord,
-                                                const vector<Any> &fieldColumn) {
+                                                const vector<const Any *> &fieldColumn) {
     tracer->trace("MakeScale: %s, return Linear. ", field_.c_str());
     return xg::make_unique<Linear>(field_, fieldColumn, config);
 }
@@ -62,7 +62,7 @@ std::unique_ptr<AbstractScale> xg::scale::MakeScale(const std::string &field_,
 
     if(data.size() <= 0 || field_.empty()) {
         tracer->trace("MakeScale: %s, return Identity. data is empty", field_.c_str());
-        return xg::make_unique<Identity>(field_, vector<Any>{});
+        return xg::make_unique<Identity>(field_, vector<const Any *>{});
     }
 
     auto &firstObj = data[0];

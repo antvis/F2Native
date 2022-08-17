@@ -16,12 +16,12 @@ namespace xg {
 namespace util {
 
 // 从原始数组中查找出所有指定的 key 字段值组成新的数组返回
-static vector<Any> JsonArrayByKey(const XSourceArray &data, const std::string &key) {
+static vector<const Any *> JsonArrayByKey(const XSourceArray &data, const std::string &key) {
     if(data.empty()) {
         return {};
     }
 
-    vector<Any> rst;
+    vector<const Any *> rst;
     std::set<std::size_t> _keysFilters;
 
     for(std::size_t i = 0; i < data.size(); ++i) {
@@ -36,7 +36,7 @@ static vector<Any> JsonArrayByKey(const XSourceArray &data, const std::string &k
                 continue;
             }
             _keysFilters.emplace(valHash);
-            rst.push_back(val);
+            rst.push_back(&val);
         } else if(val.GetType().IsArray()) {
             auto valArray = val.Cast<std::vector<Any>>();
             for(size_t i = 0; i < valArray.size(); i++) {
@@ -48,7 +48,7 @@ static vector<Any> JsonArrayByKey(const XSourceArray &data, const std::string &k
                 _keysFilters.emplace(itemHash);
 
                 if(item.GetType().IsNumber() || item.GetType().IsString()) {
-                    rst.push_back(item);
+                    rst.push_back(&item);
                 }
             }
         }
@@ -56,7 +56,7 @@ static vector<Any> JsonArrayByKey(const XSourceArray &data, const std::string &k
     return rst;
 }
 
-static std::array<double, 2> JsonArrayRange(const vector<Any> &data) {
+static std::array<double, 2> JsonArrayRange(const vector<const Any *> &data) {
     if(data.empty()) {
         return std::array<double, 2>{0, 0};
     }
@@ -65,16 +65,16 @@ static std::array<double, 2> JsonArrayRange(const vector<Any> &data) {
 
     bool checked = false;
     for(size_t i = 0; i < data.size(); ++i) {
-        auto &item = data[i];
-        if(item.GetType().IsNumber()) {
-            double t = item.Cast<double>();
+        auto item = data[i];
+        if(item->GetType().IsNumber()) {
+            double t = item->Cast<double>();
             _min = fmin(_min, t);
             _max = fmax(_max, t);
             checked = true;
-        } else if(item.GetType().IsArray()) {
-            auto &array = item.Cast<vector<Any> &>();
+        } else if(item->GetType().IsArray()) {
+            auto &array = item->Cast<vector<Any> &>();
             for(std::size_t index = 0; index < array.size(); ++index) {
-                auto &subItem = array[index];
+                auto subItem = array[index];
                 if(subItem.IsNumber()) {
                     double t = subItem.Cast<double>();
                     _min = fmin(_min, t);
@@ -137,8 +137,8 @@ static XDataGroup JsonGroupByFields(const XSourceArray &data, const std::set<std
     return rst;
 }
 
-static vector<Any> JsonArraySlice(const vector<Any> &source, std::size_t start, std::size_t end) {
-    vector<Any> rst;
+static vector<const Any *> JsonArraySlice(const vector<const Any *> &source, std::size_t start, std::size_t end) {
+    vector<const Any *> rst;
     if(start > end || end >= source.size()) {
         return rst;
     }
@@ -150,7 +150,7 @@ static vector<Any> JsonArraySlice(const vector<Any> &source, std::size_t start, 
     return rst;
 }
 
-static bool isEqualsQuick(const vector<Any> &data1, const vector<Any> &data2) {
+static bool isEqualsQuick(const vector<const Any *> &data1, const vector<const Any *> &data2) {
     if(data1.size() != data2.size()) {
         return false;
     }
@@ -159,7 +159,7 @@ static bool isEqualsQuick(const vector<Any> &data1, const vector<Any> &data2) {
         return true;
 
     std::size_t lastIndex = fmin(data1.size(), data2.size()) - 1;
-    return (data1[0].IsEqual(data2[0]) && data1[lastIndex].IsEqual(data2[lastIndex]));
+    return (data1[0]->IsEqual(data2[0]) && data1[lastIndex]->IsEqual(data2[lastIndex]));
 }
 
 static void JsonRangeInGeomDataArray(const XDataGroup &geomDataArray,
@@ -197,11 +197,11 @@ static void JsonRangeInGeomDataArray(const XDataGroup &geomDataArray,
     }
 }
 
-static double JsonArrayMax(const vector<Any> &dataArray) {
+static double JsonArrayMax(const vector<const Any *> &dataArray) {
     std::vector<double> array;
     array.reserve(dataArray.size());
     for (auto &val: dataArray) {
-        array.push_back(val.Cast<double>());
+        array.push_back(val->Cast<double>());
     }
     
     auto it = std::max_element(array.begin(), array.end());

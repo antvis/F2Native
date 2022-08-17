@@ -12,7 +12,7 @@ namespace scale {
 
 class KLineCat : public Category {
   public:
-    KLineCat(const std::string &_field, const vector<Any> &_values, const ScaleCfg &config)
+    KLineCat(const std::string &_field, const vector<const Any *> &_values, const ScaleCfg &config)
         : Category(_field, _values, config) {
         // ["kline-day", "kline-week", "kline-month", "kline-minutes-1", "kline-minutes-5", "kline-minutes-15", "kline-minutes-30", "kline-minutes-60", "kline-minutes-120"]
             
@@ -61,7 +61,7 @@ class KLineCat : public Category {
         for(std::size_t index = start; index <= end; ++index) {
             auto &item = values[index];
 
-            std::size_t itemHash = item.hash();
+            std::size_t itemHash = item->hash();
             if(allTicksCache_.find(itemHash) != allTicksCache_.end()) {
                 indicators.emplace_back(index);
             }
@@ -69,7 +69,7 @@ class KLineCat : public Category {
 
         vector<string> rst;
         for(std::size_t index = 0; index < indicators.size(); index += intervalStep) {
-            rst.push_back(values[indicators[index]]);
+            rst.push_back(values[indicators[index]]->Cast<string>());
         }
         return rst;
     }
@@ -96,7 +96,7 @@ class KLineCat : public Category {
         for(std::size_t index = start; index <= end; index++) {
             auto &item = values[index];
 
-            std::size_t itemHash = item.hash();
+            std::size_t itemHash = item->hash();
             if(allTicksCache_.find(itemHash) != allTicksCache_.end()) {
                 indicators.emplace_back(index);
             }
@@ -104,12 +104,12 @@ class KLineCat : public Category {
 
         vector<string> rst;
         for(std::size_t index = 0; index < indicators.size(); index += timeStep) {
-            rst.push_back(values[indicators[index]]);
+            rst.push_back(values[indicators[index]]->Cast<string>());
         }
         return rst;
     }
 
-    std::tm ConvertDataToTS(Any &data) {
+    std::tm ConvertDataToTS(const Any &data) {
         if(data.GetType().IsString()) {
             // date str
             if(!config.dateFormate.empty()) {
@@ -138,14 +138,14 @@ class KLineCat : public Category {
                 auto &cur = values[step];
                 auto &next = values[step + 1];
 
-                std::tm curTime = ConvertDataToTS(cur);
-                std::tm nextTime = ConvertDataToTS(next);
+                std::tm curTime = ConvertDataToTS(*cur);
+                std::tm nextTime = ConvertDataToTS(*next);
                 if(curTime.tm_mday != nextTime.tm_mday) {
-                    allTicksCache_[next.hash()] = nextTime;
+                    allTicksCache_[next->hash()] = nextTime;
                     step++;
                 } else {
                     if(curTime.tm_min % 30 == 0) {
-                        allTicksCache_[cur.hash()] = curTime;
+                        allTicksCache_[cur->hash()] = curTime;
                     } else {
                         continue;
                     }
@@ -156,10 +156,10 @@ class KLineCat : public Category {
                 auto &cur = values[step];
                 auto &next = values[step + 1];
 
-                std::tm curTime = ConvertDataToTS(cur);
-                std::tm nextTime = ConvertDataToTS(next);
+                std::tm curTime = ConvertDataToTS(*cur);
+                std::tm nextTime = ConvertDataToTS(*next);
                 if(curTime.tm_mon != nextTime.tm_mon) {
-                    allTicksCache_[next.hash()] = nextTime;
+                    allTicksCache_[next->hash()] = nextTime;
                     step++;
                 }
             }

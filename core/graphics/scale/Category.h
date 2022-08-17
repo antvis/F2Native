@@ -19,7 +19,7 @@ namespace scale {
  */
 class Category : public AbstractScale {
   public:
-    Category(const std::string &_field, const vector<Any> &_values, const ScaleCfg &_config)
+    Category(const std::string &_field, const vector<const Any *> &_values, const ScaleCfg &_config)
         : AbstractScale(_field, _values, _config) {
         Change(_config);
     }
@@ -84,7 +84,7 @@ class Category : public AbstractScale {
 
         std::size_t index = -1;
         for(size_t i = 0; i < values.size(); i++) {
-            if(values[i].IsEqual(key)) {
+            if(values[i]->IsEqual(key)) {
                 index = i;
                 break;
             }
@@ -110,7 +110,7 @@ class Category : public AbstractScale {
                 //对齐f2的展示 tickCount为1的时候 = tickCount为values.size()
                 for (size_t index = 0; index < values.size(); ++index) {
                     auto &_item = values[index];
-                    rst.push_back(_item.Cast<string>());
+                    rst.push_back(_item->Cast<string>());
                 }
                 return rst;
             }
@@ -120,17 +120,18 @@ class Category : public AbstractScale {
                 outlstep = fmax(outlstep, 1);
                 for (size_t index = 0; index < values.size(); index = index + outlstep) {
                     auto &_item = values[index];
-                    rst.push_back(_item.Cast<std::string>());
+                    rst.push_back(_item->Cast<std::string>());
                 }
                          
                 // 如果最后一个tick不等于原数据的最后一个
                 auto &last = values[values.size() - 1];
-                if(rst[rst.size() -1] != last.Cast<std::string>()) {
+                auto lastStr = last->Cast<std::string>();
+                if(rst[rst.size() -1] != lastStr) {
                     //if 逻辑如何走到？
                     if(rst.size() >= tickCount) {
-                        rst[rst.size() - 1] = last.Cast<std::string>();
+                        rst[rst.size() - 1] = lastStr;
                     }else {
-                        rst.push_back(last);
+                        rst.push_back(lastStr);
                     }
                 }
                 

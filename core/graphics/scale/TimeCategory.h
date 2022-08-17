@@ -9,7 +9,7 @@ namespace scale {
 class TimeCategory : public Category {
   public:
     TimeCategory(const std::string &_field,
-                 const vector<Any> &_values,
+                 const vector<const Any *> &_values,
                  const ScaleCfg &config,
                  std::string mask = "HH::mm")
         : Category(_field, _values, config), mask(mask) {}

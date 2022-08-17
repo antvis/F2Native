@@ -198,8 +198,8 @@ using namespace xg;
 - (F2Chart * (^)(NSDictionary *config))coord {
     return ^id(NSDictionary *config) {
         NSDictionary *reset = [F2Utils resetCallbacksFromOld:config host:self];
-        auto cfg = F2Reflection::CreateStruct(reset, typeof(xg::CoordCfg));
-        auto cast = cfg.Cast<xg::CoordCfg &>();
+        auto cfg = F2Reflection::CreateStruct(reset, typeof(coord::CoordCfg));
+        auto cast = cfg.Cast<coord::CoordCfg &>();
         self.chart->CoordObject(cast);
         return self;
     };
@@ -250,9 +250,9 @@ using namespace xg;
     };
 }
 
-- (F2Chart * (^)(bool config))animate {
-    return ^id(bool config) {
-        self.chart->AnimateObject({.enable = config});
+- (F2Chart * (^)(bool enable))animate {
+    return ^id(bool enable) {
+        self.chart->AnimateObject({.hidden = !enable});
         return self;
     };
 }
@@ -398,7 +398,8 @@ using namespace xg;
 
 - (F2Chart * (^)(NSDictionary *config))config {
     return ^id(NSDictionary *config) {
-//        self.chart->Parse([F2SafeJson([F2Utils toJsonString:config]) UTF8String]);
+        GrammerCfg grammer;
+        self.chart->ParseObject(grammer);
         return self;
     };
 }

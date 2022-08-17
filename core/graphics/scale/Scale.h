@@ -33,6 +33,7 @@ struct Tick {
 };
 
 struct ScaleCfg {
+    std::string field;//冗余一个field
     std::string type;
     std::vector<float> range= {NAN, NAN};
 
@@ -67,7 +68,8 @@ struct ScaleCfg {
     
 #if !defined(__EMSCRIPTEN__)
     BEGIN_TYPE(ScaleCfg)
-        FIELDS(FIELD(&ScaleCfg::type),
+        FIELDS(FIELD(&ScaleCfg::field),
+               FIELD(&ScaleCfg::type),
                FIELD(&ScaleCfg::range),
                FIELD(&ScaleCfg::tickCount),
                FIELD(&ScaleCfg::min),

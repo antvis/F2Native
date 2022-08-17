@@ -84,185 +84,139 @@ XChart::~XChart() {
 //    }
 //    return ParseObject(_dsl);
 //}
-//    
-//bool XChart::ParseObject(const nlohmann::json &dsl) {
-//    //线上已经使用了data作为key，这里兼容下
-//    const std::string sourceKey = dsl.contains("data") ? "data" :"source";
-//    if (!dsl.contains(sourceKey)) {
-//        this->logTracer_->trace("#Parse source key is not include");
-//        return false;
-//    }
-//    if (dsl[sourceKey].is_array()) {
-//        const auto &data = json::GetArray(dsl, sourceKey);
-////        SourceObject(data);
-//    }
-//    //线上的老代码data部分是string
-//    else if(dsl[sourceKey].is_string()) {
-//        const auto &dataStr = json::GetString(dsl, sourceKey);
-//        const auto data = json::ParseString(dataStr);
-////        SourceObject(data);
-//    }
-//    
-//    if (data_.size() == 0) {
-//        this->logTracer_->trace("#Parse data length is 0");
-//        return false;
-//    }
 //
-//    const auto &name = json::GetString(dsl, "name");
-//    SetName(name);
-//    
-//    const auto &padding = json::GetArray(dsl, "padding");
-//    const auto &margin = json::GetArray(dsl, "margin");
-//    if (padding.is_array() && padding.size() >= 4) {
-//        Padding(padding[0], padding[1], padding[2], padding[3]);
-//    }
-//    
-//    if (margin.is_array() && margin.size() >= 4) {
-//        Margin(margin[0], margin[1], margin[2], margin[3]);
-//    }
-//    
-//    const auto &coord = json::GetObject(dsl, "coord");
-////    CoordObject(coord);
-//    
-//    //一个chart只有一个legend
-//    const auto &legend = json::GetObject(dsl, "legend");
-////    LegendObject(json::GetString(legend, "field"), legend);
-//    
-//    //可能是bool， 可能是object
-//    const auto &animate = json::Get(dsl, "animate");
-////    AnimateObject(animate);
-//    
-//    const auto &axises = json::GetArray(dsl, "axises");
-//    for (auto it = axises.begin(); it != axises.end(); ++it) {
-//        const auto &config = json::GetObject(*it, "config");
-//        
-//        //兼容线上老的代码
-//        if (config.is_object()) {
-////            AxisObject(json::GetString(*it, "field"), config);
-//        } else {
-////            AxisObject(json::GetString(*it, "field"), *it);
-//        }
-//    }
-//    
-//    const auto &tooltip = json::GetObject(dsl, "tooltip");
-////    TooltipObject(tooltip);
-//    
-//    const auto &scales = json::GetArray(dsl, "scales");
-//    for (auto it = scales.begin(); it != scales.end(); ++it) {
-//        //todo config是否要去掉
-//        const auto &config = json::GetObject(*it, "config");
-//        if (config.is_object()) {
-////            ScaleObject(json::GetString(*it, "field"), config);
-//        } else {
-////            ScaleObject(json::GetString(*it, "field"), *it);
-//        }
-//    }
-//    
-//    const auto &geoms = json::GetArray(dsl, "geoms");
-//    if (geoms.size() == 0) {
-//        this->logTracer_->trace("#Parse geoms size is invalid");
-//        return false;
-//    }
-//    for (auto it = geoms.begin(); it != geoms.end(); ++it) {
-//        const auto &type = json::GetString(*it, "type");
-//        const auto &position = json::GetString(*it, "position");
-//        
-//        if (type.empty() || position.empty()) {
-//            continue;
-//        }
-//        
-//        geom::AbstractGeom *geom = nullptr;
-//        if (type == "line") {
-//            geom = &Line();
-//        } else if (type == "interval") {
-//            geom = &Interval();
-//        } else if (type == "area") {
-//            geom = &Area();
-//        } else if (type == "point") {
-//            geom = &Point();
-//        } else if (type == "candle") {
-//            geom = &Candle();
-//        }
-//        
-//        if (!geom) {
-//            continue;
-//        }
-//        
-//        geom->Position(position);
-//        
-//        const auto &color = json::GetObject(*it , "color");
-//        if (color.is_object()) {
-//            geom->Color(json::GetString(color, "field"), json::GetArray(color, "attrs"));
-//        }
-//
-//        const auto &fixedColor = json::GetString(*it , "fixedColor");
-//        if (!fixedColor.empty()) {
-//            geom->Color(fixedColor);
-//        }
-//
-//        const auto &size = json::GetObject(*it , "size");
-//        if (size.is_object()) {
-//            geom->Size(json::GetString(size, "field"), json::GetArray(size, "attrs"));
-//        }
-//
-//        const auto fixedSize = json::GetNumber(*it , "fixedSize", NAN);
-//        if (!std::isnan(fixedSize)) {
-//            geom->Size(fixedSize);
-//        }
-//
-//        const auto &shape = json::GetObject(*it , "shape");
-//        if (shape.is_object()) {
-//            geom->Shape(json::GetString(shape, "field"), json::GetArray(shape, "attrs"));
-//        }
-//
-//        const auto &fixedShape = json::GetString(*it , "fixedShape");
-//        if (!fixedShape.empty()) {
-//            geom->Shape(fixedShape);
-//        }
-//
-//        const auto &adjust = json::GetString(*it, "adjust");
-//        if (!adjust.empty()) {
-//            geom->Adjust(adjust);
-//        }
-//
-//        const auto &style = json::GetObject(*it, "style");
-//        if (style.is_object()) {
-////            geom->StyleObject(style);
-//        }
-//    }
-//    
-//    const auto &guides = json::GetArray(dsl, "guides");
-//    for (auto it = guides.begin(); it != guides.end(); ++it) {
-//        const auto &type = json::GetString(*it, "type");
-//        if (type.empty()) {
-//            continue;
-//        }
-//        
-//        if (type == "line") {
-////            Guide().LineObject(*it);
-//        } else if (type == "text") {
-////            Guide().TextObject(*it);
-//        } else if (type == "flag") {
-////            Guide().FlagObject(*it);
-//        } else if (type == "background") {
-////            Guide().BackgroundObject(*it);
-//        } else if (type == "image") {
-////            Guide().ImageObject(*it);
-//        }
-//    }
-//    
-//    const auto &interactions = json::GetArray(dsl, "interactions");
-//    for (auto it = interactions.begin(); it != interactions.end(); ++it) {
-//        auto &type = json::GetString(*it, "type");
-//        if (type == "pinch") {
-////            Interaction(json::GetString(*it, "type"), (interaction::PinchCfg)*it);
-//        } else if (type == "pan") {
-////            Interaction(json::GetString(*it, "type"), (interaction::PanCfg)*it);
-//        }
-//        
-//    }
-//    return true;
-//}
+
+
+
+bool XChart::ParseObject(const GrammerCfg &dsl) {
+    if (dsl.source.size() == 0) {
+        this->logTracer_->trace("#Parse data length is 0");
+        return false;
+    }
+    
+    if (dsl.geoms.size() == 0) {
+        this->logTracer_->trace("#Parse geoms size is invalid");
+        return false;
+    }
+
+    SetName(dsl.name);
+
+    if (dsl.padding.size() >= 4) {
+        Padding(dsl.padding[0], dsl.padding[1], dsl.padding[2], dsl.padding[3]);
+    }
+    
+    if (dsl.margin.size() >= 4) {
+        Margin(dsl.margin[0], dsl.margin[1], dsl.margin[2], dsl.margin[3]);
+    }
+    
+
+    CoordObject(dsl.coord);
+    
+    //一个chart只有一个legend
+    LegendObject(dsl.legend.field, dsl.legend);
+    
+    if (!dsl.animate.hidden) {
+        AnimateObject(dsl.animate);
+    }
+
+    for (auto &axis : dsl.axises) {
+        AxisObject(axis.field, axis);
+    }
+    
+    if (!dsl.tooltip.hidden) {
+        TooltipObject(dsl.tooltip);
+    }
+    
+    for (auto &scale : dsl.scales) {
+        ScaleObject(scale.field, scale);
+    }
+
+    for (auto &g : dsl.geoms)  {
+        if (g.type.empty() || g.position.empty()) {
+            continue;
+        }
+        
+        geom::AbstractGeom *geom = nullptr;
+        if (g.type == "line") {
+            geom = &Line();
+        } else if (g.type == "interval") {
+            geom = &Interval();
+        } else if (g.type == "area") {
+            geom = &Area();
+        } else if (g.type == "point") {
+            geom = &Point();
+        } else if (g.type == "candle") {
+            geom = &Candle();
+        }
+        
+        if (!geom) {
+            continue;
+        }
+        
+        geom->Position(g.position);
+        
+        if (!g.color.colors.empty()) {
+            geom->Color(g.color.field, g.color.colors);
+        }
+
+        if (!g.fixedColor.empty()) {
+            geom->Color(g.fixedColor);
+        }
+
+      
+        if (!g.size.sizes.empty()) {
+            geom->Size(g.size.field, g.size.sizes);
+        }
+
+    
+        if (!std::isnan(g.fixedSize)) {
+            geom->Size(g.fixedSize);
+        }
+
+
+        if (!g.shape.shapes.empty()) {
+            geom->Shape(g.shape.field, g.shape.shapes);
+        }
+
+
+        if (!g.fixedShape.empty()) {
+            geom->Shape(g.fixedShape);
+        }
+
+    
+        if (!g.adjust.empty()) {
+            geom->Adjust(g.adjust);
+        }
+
+        geom->StyleObject(g.style);
+    }
+    
+    for (auto &guide : dsl.guides) {
+        if (guide.type.empty()) {
+            continue;
+        }
+        
+        if (guide.type == "line") {
+            Guide().LineObject(guide.line);
+        } else if (guide.type == "text") {
+            Guide().TextObject(guide.text);
+        } else if (guide.type == "flag") {
+            Guide().FlagObject(guide.flag);
+        } else if (guide.type == "background") {
+            Guide().BackgroundObject(guide.background);
+        } else if (guide.type == "image") {
+            Guide().ImageObject(guide.image);
+        }
+    }
+
+    if (dsl.pinch.enable == true) {
+        Interaction("pinch", dsl.pinch);
+    } else if (dsl.pan.enable == true) {
+        Interaction("pan", dsl.pan);
+    }
+
+    return true;
+}
 
 XChart &XChart::Source(const std::vector<XSourceItem> &data) {
     this->data_ = data;

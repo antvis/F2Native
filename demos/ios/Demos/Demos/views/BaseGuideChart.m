@@ -36,8 +36,8 @@
     self.chart.guide().text(@{@"position":@[@"median", @"max"], @"content": @"AntV", @"textAlign": @"center", @"textBaseline": @"top", @"textColor": @"black"});
     
     //背景
-    self.chart.guide().background(@{@"color":@"#FF00001D",@"leftBottom":@[@"min", @"min"], @"rightTop":@[@"max", @(80)]});
-    self.chart.guide().background(@{@"color":@"#00FF001D",@"leftBottom":@[@"min", @(80)], @"rightTop":@[@"max", @(320)]});
+    self.chart.guide().background(@{@"color":@"#FF0000",@"opacity":@0.15, @"leftBottom":@[@"min", @"min"], @"rightTop":@[@"max", @(80)]});
+    self.chart.guide().background(@{@"color":@"#00FF00",@"opacity":@0.15, @"leftBottom":@[@"min", @(80)], @"rightTop":@[@"max", @(320)]});
     
     //线
     self.chart.guide().line(@{@"position":@[@"median", @"median"], @"lineWidth": @(2), @"orientation":@"horizontal", @"color":@"#CCCCCC", @"dash": @[@(6), @(2)] , @"top":@(NO)});

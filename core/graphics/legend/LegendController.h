@@ -42,6 +42,7 @@ struct LegendCfg {
     string layout;
     string align;
     string verticalAlign;
+    string field;//冗余一个field
     bool hidden = false;
     
 #if !defined(__EMSCRIPTEN__)
@@ -58,6 +59,7 @@ struct LegendCfg {
                FIELD(&LegendCfg::layout),
                FIELD(&LegendCfg::align),
                FIELD(&LegendCfg::verticalAlign),
+               FIELD(&LegendCfg::field),
                FIELD(&LegendCfg::hidden))
         CTORS(DEFAULT_CTOR(LegendCfg))
     END_TYPE

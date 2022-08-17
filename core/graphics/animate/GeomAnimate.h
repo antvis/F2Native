@@ -11,7 +11,7 @@ class XChart;
 namespace animate {
 
 struct AnimateCfg {
-    bool enable = false;
+    bool hidden = true;
     string animate;
     string erasing = "linear";
     long delay = 16;

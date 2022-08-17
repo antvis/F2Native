@@ -73,9 +73,11 @@ namespace util {
         std::size_t state = 0; // 0 - 平, 1 涨， -1 跌
     };
 
+//源数据的格式
 using XSourceItem = std::unordered_map<std::string, Any>;
 using XSourceArray = std::vector<std::unordered_map<std::string, Any>>;
 
+//经过处理mapping后的格式
 using XDataArray = std::vector<XData>;
 using XDataGroup = std::vector<std::vector<XData>>;
 }

@@ -14,6 +14,29 @@ class XChart;
 
 namespace guide {
 
+struct GuideCfg {
+    string type;
+    TextCfg text;
+    FlagCfg flag;
+    BackgroundCfg background;
+    LineCfg line;
+    PointCfg point;
+    ImageCfg image;
+    
+#if !defined(__EMSCRIPTEN__)
+   BEGIN_TYPE(GuideCfg)
+       FIELDS(FIELD(&GuideCfg::type),
+              FIELD(&GuideCfg::text),
+              FIELD(&GuideCfg::flag),
+              FIELD(&GuideCfg::background),
+              FIELD(&GuideCfg::line),
+              FIELD(&GuideCfg::point),
+              FIELD(&GuideCfg::image))
+       CTORS(DEFAULT_CTOR(GuideCfg))
+   END_TYPE
+#endif
+};
+
 class GuideController {
   public:
     GuideController(shape::Group *container, shape::Group *backContainer, utils::Tracer *logTracer)

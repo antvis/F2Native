@@ -2,6 +2,7 @@
 #define XG_GRAPHICS_CANVAS_COORD_H
 
 #include "../util/Point.h"
+#include "../../reflection/reflection.h"
 
 /*
   |-----------------------------------end
@@ -15,6 +16,19 @@
 namespace xg {
 namespace canvas {
 namespace coord {
+
+struct CoordCfg {
+    std::string type = "cartesian";
+    bool transposed = false;
+    
+#if !defined(__EMSCRIPTEN__)
+    BEGIN_TYPE(CoordCfg)
+        FIELDS(FIELD(&CoordCfg::type),
+               FIELD(&CoordCfg::transposed))
+        CTORS(DEFAULT_CTOR(CoordCfg))
+    END_TYPE
+#endif
+};
 
 enum class CoordType {
     Polar = 1,

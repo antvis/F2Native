@@ -100,6 +100,7 @@ struct AxisLineCfg {
 
 struct AxisCfg {
     bool hidden = false;
+    string field;//冗余一个field
     AxisGridCfg grid;
     AxisLabelCfg label;
     AxisLineCfg line;
@@ -109,6 +110,7 @@ struct AxisCfg {
         FIELDS(FIELD(&AxisCfg::grid),
                FIELD(&AxisCfg::label),
                FIELD(&AxisCfg::line),
+               FIELD(&AxisCfg::field),
                FIELD(&AxisCfg::hidden))
         CTORS(DEFAULT_CTOR(AxisCfg))
     END_TYPE

@@ -83,6 +83,76 @@ struct StyleCfg {
 #endif
 };
 
+
+struct GeomCfg {
+    struct ColorCfg {
+        string field;
+        vector<string> colors;
+        
+#if !defined(__EMSCRIPTEN__)
+   BEGIN_TYPE(ColorCfg)
+       FIELDS(FIELD(&ColorCfg::field),
+              FIELD(&ColorCfg::colors))
+       CTORS(DEFAULT_CTOR(ColorCfg))
+   END_TYPE
+#endif
+    };
+    
+    struct SizeCfg {
+        string field;
+        vector<float> sizes;
+        
+#if !defined(__EMSCRIPTEN__)
+   BEGIN_TYPE(SizeCfg)
+       FIELDS(FIELD(&SizeCfg::field),
+              FIELD(&SizeCfg::sizes))
+       CTORS(DEFAULT_CTOR(SizeCfg))
+   END_TYPE
+#endif
+    };
+    
+    struct ShapeCfg {
+        string field;
+        vector<string> shapes;
+        
+#if !defined(__EMSCRIPTEN__)
+   BEGIN_TYPE(ShapeCfg)
+       FIELDS(FIELD(&ShapeCfg::field),
+              FIELD(&ShapeCfg::shapes))
+       CTORS(DEFAULT_CTOR(ShapeCfg))
+   END_TYPE
+#endif
+    };
+    
+    string type, position;
+    string fixedColor;
+    ColorCfg color;
+    float fixedSize;
+    SizeCfg size;
+    string fixedShape;
+    ShapeCfg shape;
+    string adjust;
+    StyleCfg style;
+    float opacity;
+    
+#if !defined(__EMSCRIPTEN__)
+   BEGIN_TYPE(GeomCfg)
+       FIELDS(FIELD(&GeomCfg::type),
+              FIELD(&GeomCfg::position),
+              FIELD(&GeomCfg::color),
+              FIELD(&GeomCfg::fixedColor),
+              FIELD(&GeomCfg::size),
+              FIELD(&GeomCfg::fixedSize),
+              FIELD(&GeomCfg::shape),
+              FIELD(&GeomCfg::fixedShape),
+              FIELD(&GeomCfg::adjust),
+              FIELD(&GeomCfg::style),
+              FIELD(&GeomCfg::opacity))
+       CTORS(DEFAULT_CTOR(GeomCfg))
+   END_TYPE
+#endif
+};
+
 class AbstractGeom {
     friend animate::GeomAnimate;
 

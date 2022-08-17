@@ -72,25 +72,29 @@ typedef std::function<void()> ChartActionCallback;
 struct ChartConfig final {
     //当geom中有interval的时候自动调整max, min两个参数，使其中一个为0
     bool adjustScale = true;
-    //当geom中有过个图形时，是否同步他们的最值
-    //默认为false 因为shape为stack的时候不能sync
+    
+    //当geom中有多个图形时，是否同步他们的最值
+    //默认为false 因为shape为stack的时候不能设置sync
     bool syncY = false;
     
-    //当geom中有interval的时候自动调整range参数， 使range = {0.1, 0.9}
+    //当geom中有interval的时候自动调整range参数， 使range = {0.1, 0.9}，让柱图在坐标系内
     bool adjustRange = true;
 };
 
-struct CoordCfg {
-    std::string type = "cartesian";
-    bool transposed = false;
-    
-#if !defined(__EMSCRIPTEN__)
-    BEGIN_TYPE(CoordCfg)
-        FIELDS(FIELD(&CoordCfg::type),
-               FIELD(&CoordCfg::transposed))
-        CTORS(DEFAULT_CTOR(CoordCfg))
-    END_TYPE
-#endif
+struct GrammerCfg final {
+    string name;
+    vector<float> padding, margin;
+    XSourceArray source;
+    coord::CoordCfg coord;
+    legend::LegendCfg legend;
+    tooltip::ToolTipCfg tooltip;
+    animate::AnimateCfg animate;
+    vector<axis::AxisCfg> axises;
+    vector<geom::GeomCfg> geoms;
+    vector<scale::ScaleCfg> scales;
+    vector<guide::GuideCfg> guides;
+    interaction::PanCfg pan;
+    interaction::PinchCfg pinch;
 };
 
 class XChart {
@@ -313,7 +317,7 @@ class XChart {
      为了能解析DSL，需要提供一些便捷方法
     */
 //    bool Parse(const std::string &dsl);
-//    bool ParseObject(const nlohmann::json &dsl);
+    bool ParseObject(const GrammerCfg &dsl);
 //    XChart &SourceObject(const nlohmann::json &data);
     XChart &ScaleObject(const std::string &field, const ScaleCfg &json);
     XChart &AxisObject(const std::string &field, const axis::AxisCfg &json);

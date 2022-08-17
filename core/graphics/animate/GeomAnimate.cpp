@@ -220,7 +220,7 @@ void animate::GeomAnimate::OnBeforeCanvasDraw() {
 
     isUpdate_ = true;
 
-    if(!animateCfg_.enable) {
+    if(animateCfg_.hidden) {
         return;
     }
 

@@ -155,7 +155,7 @@ bool tooltip::ToolTipController::ShowToolTip(const util::Point &point) {
 
                 _point.x = record._x;
                 tooltipItem.value = InvertYTip(_point, yScale);
-                tooltipItem.title = chart_->GetScale(geom->GetXScaleField()).GetTickText(record.data[geom->GetXScaleField()], chart_);
+                tooltipItem.title = chart_->GetScale(geom->GetXScaleField()).GetTickText(record.data->at(geom->GetXScaleField()), chart_);
                 
                 tooltipItem.touchX = _point.x;
                 tooltipItem.touchY = _point.y;

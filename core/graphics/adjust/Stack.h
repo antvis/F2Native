@@ -17,8 +17,8 @@ class Stack {
             auto &data = dataArray[i];
             for(size_t j = 0; j < data.size(); j++) {
                 auto &item = data[j];
-                auto &x = item.data.at(xField);
-                auto &y = item.data.at(yField);
+                auto &x = item.data->at(xField);
+                auto &y = item.data->at(yField);
                 if(y.GetType().IsNumber() && x.GetType().IsString()) {
                     auto y_d = y.Cast<double>();
                     if(y_d >= XG_EPS) {

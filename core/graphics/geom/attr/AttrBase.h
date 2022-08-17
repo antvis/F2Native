@@ -55,8 +55,8 @@ class Position : public AttrBase {
         auto &yField = fields_[1];
         for(size_t i = start; i <= end; i++) {
             auto &item = groupData[i];
-            auto xVal = item.data.count(xField) ? item.data[xField] : Any();
-            auto yVal = item.data.count(yField) ? item.data[yField] : Any();
+            auto xVal = item.data->count(xField) ? item.data->at(xField) : Any();
+            auto yVal = item.data->count(yField) ? item.data->at(yField) : Any();
 
             if(xVal.IsEmpty() && yVal.IsEmpty()) {
                 item._x = std::nan("0"); // attr names[x, y]
@@ -66,7 +66,7 @@ class Position : public AttrBase {
             } else if(xVal.GetType().IsArray()) {
                 // TODO
             } else if(item.adjust.size() >= 2) { //stack
-                double x = xScale.Scale(item.data[xField]);
+                double x = xScale.Scale(item.data->at(xField));
 
                 std::vector<double> rstY;
                 for(std::size_t index = 0; index < item.adjust.size(); ++index) {
@@ -77,12 +77,12 @@ class Position : public AttrBase {
                 item._y0 = rstY;
             } else if(item.dodge.size() >= 1) { //dodge
                 double x = xScale.Scale(item.dodge[0]);
-                double y = item.dodge.size() >= 2 ? yScale.Scale(item.dodge[1]) : yScale.Scale(item.data[fields_[1]]);
+                double y = item.dodge.size() >= 2 ? yScale.Scale(item.dodge[1]) : yScale.Scale(item.data->at(fields_[1]));
                 util::Point point = coord.ConvertPoint(util::Point(x, y));
                 item._x = point.x; // attr names[x, y]
                 item._y = point.y;
             } else if(yVal.GetType().IsArray()) { //区间柱状图
-                double x = xScale.Scale(item.data[xField]);
+                double x = xScale.Scale(item.data->at(xField));
                 std::vector<double> rstY;
                 auto &yValCast = yVal.Cast<std::vector<double> &>();
                 for(std::size_t index = 0; index < yValCast.size(); ++index) {
@@ -137,7 +137,7 @@ class Color : public AttrBase {
                 auto &item = groupData[i];
                 if(scale::IsCategory(xScale.GetType())) {
                     const scale::Category &cat = (scale::Category &)xScale;
-                    std::size_t index = cat.Transform(item.data[fields_[0]]);
+                    std::size_t index = cat.Transform(item.data->at(fields_[0]));
                     item._color = canvas::CanvasFillStrokeStyle(colors_[index]);
                 } else {
                     item._color = canvas::CanvasFillStrokeStyle(colors_[0]);
@@ -171,10 +171,10 @@ class Size : public AttrBase {
             for(std::size_t index = start; index <= end; ++index) {
                 auto &item = groupData[index];
                 if(scale::IsCategory(xScale.GetType())) {
-                    std::size_t val = static_cast<scale::Category &>(xScale).Transform(item.data[xScale.field]);
+                    std::size_t val = static_cast<scale::Category &>(xScale).Transform(item.data->at(xScale.field));
                     item._size = sizes_[val % sizes_.size()];
                 } else {
-                    double percent = xScale.Scale(item.data[xScale.field]);
+                    double percent = xScale.Scale(item.data->at(xScale.field));
                     item._size = sizes_[GetLinear(percent) % sizes_.size()];
                 }
             }

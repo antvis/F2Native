@@ -29,8 +29,8 @@ class Interval : public GeomShapeBase {
         }
         
         auto color = CanvasFillStrokeStyle(GLOBAL_COLORS[0]);
-        if (data.data.count("_color")) {
-            color = CanvasFillStrokeStyle(data.data.at("_color").Cast<std::string>());
+        if (data.data->count("_color")) {
+            color = CanvasFillStrokeStyle(data.data->at("_color").Cast<std::string>());
         } else if (!data._color.Empty()) {
             color = data._color;
         }

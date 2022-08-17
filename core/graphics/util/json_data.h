@@ -42,7 +42,10 @@ namespace util {
     };
 
     struct XData final {
-        std::unordered_map<std::string, Any> data;
+        //源数据
+        const std::unordered_map<std::string, Any> *data;
+        
+        //扩展数据
         double _x = NAN, _y = NAN;
         std::vector<double> _y0;
         std::string _shape, _adjust;

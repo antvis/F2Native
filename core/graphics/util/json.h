@@ -30,7 +30,7 @@ Any FromMapByObj(const unordered_map<string, Any> &data, const Any &obj);
 //}
 
 std::vector<float> ScaleDash(const std::vector<float> &dash, float scale);
-std::vector<float> ScaleRoundings(const std::vector<float> roundings, float scale);
+std::vector<float> ScaleRoundings(const std::vector<float> &roundings, float scale);
 
 } // namespace json
 } // namespace xg

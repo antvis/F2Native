@@ -39,7 +39,7 @@ std::vector<float> ScaleDash(const std::vector<float> &dash, float scale) {
     return rst;
 }
 
-std::vector<float> ScaleRoundings(const std::vector<float> roundings, float scale) {
+std::vector<float> ScaleRoundings(const std::vector<float> &roundings, float scale) {
     std::vector<float> rst {roundings[0] * scale, roundings[1] * scale, roundings[2] * scale, roundings[3] * scale };
     return rst;
 }

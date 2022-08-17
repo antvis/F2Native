@@ -118,10 +118,10 @@ static XDataGroup JsonGroupByFields(const XSourceArray &data, const std::set<std
 
         std::string key = GenerateRowUniqueKey(row, fields);
         if(group.count(key)) {
-            group[key].push_back({.data = row});
+            group[key].push_back({.data = &row});
         } else {
             std::vector<XData> array;
-            array.push_back({.data = row});
+            array.push_back({.data = &row});
             group[key] = std::move(array);
         }
 
@@ -176,8 +176,8 @@ static void JsonRangeInGeomDataArray(const XDataGroup &geomDataArray,
             if(_end > start) {
                 for(std::size_t column = start; column <= _end; ++column) {
                     auto &item = groupData[column].data;
-                    if(item.count(field)) {
-                        auto fieldVal = item.find(field)->second;
+                    if(item->count(field)) {
+                        auto fieldVal = item->find(field)->second;
                         if(fieldVal.GetType().IsNumber()) {
                             double val = fieldVal.Cast<double>();
                             (*rangeMin) = fmin(val, (*rangeMin));

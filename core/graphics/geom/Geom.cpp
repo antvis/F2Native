@@ -156,14 +156,14 @@ void xg::geom::AbstractGeom::ProcessData(XChart &chart) {
                 auto &group = dataArray_[groupIdx];
                 for(std::size_t index = 0; index < group.size(); ++index) {
                     auto &item = group[index];
-                    if(scale::IsCategory(xScale.GetType()) && item.data.count(xField)) {
+                    if(scale::IsCategory(xScale.GetType()) && item.data->count(xField)) {
                         scale::Category &catScale = static_cast<scale::Category &>(xScale);
-                        item.dodge.push_back( catScale.Transform(item.data[xField]));
+                        item.dodge.push_back( catScale.Transform(item.data->at(xField)));
                     }
 
-                    if(scale::IsCategory(yScale.GetType()) && item.data.count(yField)) {
+                    if(scale::IsCategory(yScale.GetType()) && item.data->count(yField)) {
                         scale::Category &catScale = static_cast<scale::Category &>(yScale);
-                        item.dodge.push_back( catScale.Transform(item.data[yField]));
+                        item.dodge.push_back( catScale.Transform(item.data->at(yField)));
                     }
                 }
             }
@@ -193,7 +193,7 @@ XDataGroup xg::geom::AbstractGeom::GroupData(XChart &chart) {
         for(size_t index = 0, size = data.size(); index < size; ++index) {            
             //过滤掉没有x轴key的数据
             if(data[index].count(xField)) {
-                ary.emplace_back(XData{.data = data[index]});
+                ary.emplace_back(XData{.data = &data[index]});
             }
         }
         return XDataGroup({std::move(ary)});
@@ -351,7 +351,7 @@ XDataArray xg::geom::AbstractGeom::GetSnapRecords(XChart *chart, util::Point poi
 
         for(size_t index = start; index <= end; index++) {
             auto &item = groupData[index];
-            if(item.data.count(xField) && item.data[xField].IsEqual(xValue)) {
+            if(item.data->count(xField) && item.data->at(xField).IsEqual(xValue)) {
                 tmp.push_back(item);
             }
         }

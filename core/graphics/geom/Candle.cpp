@@ -11,10 +11,10 @@ unordered_map<string, double> geom::Candle::CreateShapePointsCfg(XChart &chart, 
     scale::AbstractScale &xScale = chart.GetScale(xField);
     scale::AbstractScale &yScale = chart.GetScale(yField);
 
-    double x = xScale.Scale(item.data[xField]);
+    double x = xScale.Scale(item.data->at(xField));
     std::size_t state = 0; // 0 - 平, 1 涨， -1 跌
 
-    auto &yFieldVal = item.data[yField];
+    auto &yFieldVal = item.data->at(yField);
     if(!yFieldVal.GetType().IsArray()) {
         return {{"x", x}, {"y0", 0}, {"y1", 0}, {"size", 0}, {"state", 0}, {"max", 0}, {"min", 0}};
     }

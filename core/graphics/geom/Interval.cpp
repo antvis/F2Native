@@ -29,7 +29,7 @@ unordered_map<string, double> geom::Interval::CreateShapePointsCfg(XChart &chart
     scale::AbstractScale &yScale = chart.GetScale(yField);
     
     auto &data = item.data;
-    double x = item.dodge.size() >= 1 ? xScale.Scale(item.dodge[0]) : xScale.Scale(data[xField]);
+    double x = item.dodge.size() >= 1 ? xScale.Scale(item.dodge[0]) : xScale.Scale(data->at(xField));
     double y0 = yScale.Scale(this->GetYMinValue(chart));
 
     std::size_t count = fmax(xScale.GetValuesSize(), 1);
@@ -72,8 +72,8 @@ vector<double> geom::Interval::CreateShapePoints(XChart &chart, XData &item, siz
             double y_s = yScale.Scale(y_d);
             y.push_back(y_s);
         }
-    } else if(data[yField].GetType().IsArray()) { //区间柱状图
-        vector<double> stack_item = data[yField].Cast<vector<double>>();
+    } else if(data->at(yField).GetType().IsArray()) { //区间柱状图
+        vector<double> stack_item = data->at(yField).Cast<vector<double>>();
         for(size_t i = 0; i < stack_item.size(); i++) {
             double y_d = stack_item[i];
             double y_s = yScale.Scale(y_d);
@@ -81,7 +81,7 @@ vector<double> geom::Interval::CreateShapePoints(XChart &chart, XData &item, siz
         }
 
     } else {
-        y.push_back(yScale.Scale(data[yField]));
+        y.push_back(yScale.Scale(data->at(yField)));
     }
     return y;
 }
@@ -131,11 +131,11 @@ void geom::Interval::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
         for(std::size_t position = start; position <= end; ++position) {
             auto &item = groupData[position];
             
-            if (!item.data.count(yField)) {
+            if (!item.data->count(yField)) {
                 continue;;
             }
      
-            const auto &yValue = item.data[yField];
+            const auto &yValue = item.data->at(yField);
             auto cfg = CreateShapePointsCfg(chart, item, index);
             auto points = CreateShapePoints(chart, item, index);
             item.points = getRectPoints(cfg, points);

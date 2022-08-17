@@ -187,7 +187,7 @@ XDataGroup xg::geom::AbstractGeom::GroupData(XChart &chart) {
 
     const set<string> fields(GetGroupFieldNames(chart));
     if(fields.empty()) {
-        auto xField = chart.GetXScaleField();
+        const auto &xField = chart.GetXScaleField();
         XDataArray ary;
         ary.reserve(data.size());
         for(size_t index = 0, size = data.size(); index < size; ++index) {            

@@ -49,8 +49,8 @@
 
     self.chart.tooltip(@{});
     
-    self.chart.guide().background(@{@"color":@"#FF0000", @"opacity":@0.2, @"leftBottom":@[@"min", @"min"], @"rightTop":@[@"max", @(80)]});
-    self.chart.guide().background(@{@"color":@"#00FF00",@"opacity":@0.2, @"leftBottom":@[@"min", @(80)], @"rightTop":@[@"max", @(320)]});
+    self.chart.guide().background(@{@"color":@"#FF0000", @"opacity":@0.15, @"leftBottom":@[@"min", @"min"], @"rightTop":@[@"max", @(80)]});
+    self.chart.guide().background(@{@"color":@"#00FF00",@"opacity":@0.15, @"leftBottom":@[@"min", @(80)], @"rightTop":@[@"max", @(320)]});
     
     self.chart.animate(YES);
     

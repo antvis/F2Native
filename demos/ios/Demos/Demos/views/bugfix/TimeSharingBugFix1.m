@@ -24,7 +24,8 @@
 - (void)chartRender {
     NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"Res/bugfix/mockData_timeSharingBugfix1" ofType:@"json"];
     NSString *jsonData = [NSString stringWithContentsOfFile:jsonPath encoding:NSUTF8StringEncoding error:nil];
-    self.priceChart.canvas(self.canvasView).padding(0, 0, 0, 0.f).source(jsonData);
+    self.priceChart.canvas(self.canvasView).padding(0, 0, 0, 0.f);
+    self.priceChart.source([F2Utils toJsonArray:jsonData]);
     self.priceChart.line().position(@"date*price").fixedColor(@"#E62C3B").fixedShape(@"smooth").fixedSize(1);
     self.priceChart.area().position(@"date*price").fixedColor(@"#E62C3B18").fixedShape(@"smooth");
 
@@ -44,7 +45,7 @@
     self.subChart.canvas(self.canvasView);
     self.subChart.margin(0, 210, 0, 0);
     self.subChart.padding(15, 0, 15, 20);
-    self.subChart.source(jsonData);
+    self.subChart.source([F2Utils toJsonArray:jsonData]);
     self.subChart.axis(@"date", @{@"hidden": @(YES)});
     self.subChart.axis(@"volume", @{@"hidden": @(YES)});
     self.subChart.interval().position(@"date*volume");

@@ -13,9 +13,10 @@
 - (void)chartRender {
     NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"Res/mockData_singlePointChart" ofType:@"json"];
     NSString *jsonData = [NSString stringWithContentsOfFile:jsonPath encoding:NSUTF8StringEncoding error:nil];
-    self.chart.canvas(self.canvasView).padding(20, 10, 20, 0.f).source(jsonData);
+    self.chart.canvas(self.canvasView).padding(20, 10, 20, 0.f);
+    self.chart.source([F2Utils toJsonArray:jsonData]);
     self.chart.point().position(@"x*y").size(@"z", @[@(3), @(10)]).fixedShape(@"circle");
-    self.chart.animate(@YES);
+    self.chart.animate(YES);
     self.chart.render();
 }
 

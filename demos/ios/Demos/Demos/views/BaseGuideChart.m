@@ -48,7 +48,7 @@
     //圆
     self.chart.guide().point(@{@"margin":@[@0, @0],@"position":@[@"median", @"median"], @"fill":@"red", @"size":@(6), @"top":@NO});
     
-    self.chart.animate(@(NO));
+    self.chart.animate(NO);
     
     self.chart.render();
 }

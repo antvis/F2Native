@@ -15,7 +15,7 @@
         @"rounding": @[@(10), @(10), @(0), @(0)] // [tl, tr, bl, br]
     });
     self.chart.tooltip(@{});
-    self.chart.animate(@(YES));
+    self.chart.animate(YES);
     self.chart.render();
 }
 

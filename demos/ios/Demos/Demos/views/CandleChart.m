@@ -22,16 +22,14 @@
     NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"Res/mockData_klineDay" ofType:@"json"];
     NSString *jsonData = [NSString stringWithContentsOfFile:jsonPath encoding:NSUTF8StringEncoding error:nil];
 
-    self.candleChart.canvas(self.canvasView).padding(15, 10, 15, 0.f).source(jsonData);
+    self.candleChart.canvas(self.canvasView).padding(15, 10, 15, 0.f);
+    self.candleChart.source([F2Utils toJsonArray:jsonData]);
     self.candleChart.candle().position(@"date*values"); // .style(@{@"stroke": @[@"#1CAA3D", @"#808080", @"#F4333C"]});
     self.candleChart.line().position(@"date*m5").fixedColor(@"#A46FFE");
     self.candleChart.line().position(@"date*m10").fixedColor(@"#46ACFF");
     self.candleChart.line().position(@"date*m20").fixedColor(@"#FF8C53");
     self.candleChart.scale(@"date", @{@"type": @"kline-day", @"domain": @[@(40), @(80)]});
     self.candleChart.scale(@"values", @{@"nice": @(YES)});
-//    self.candleChart.scale(@"m5", @{@"assign": @"values"});
-//    self.candleChart.scale(@"m10", @{@"assign": @"values"});
-//    self.candleChart.scale(@"m20", @{@"assign": @"values"});
 
     self.candleChart.axis(@"m5", @{@"hidden": @(YES)});
     self.candleChart.axis(@"m10", @{@"hidden": @(YES)});
@@ -46,7 +44,7 @@
     self.subChart.canvas(self.canvasView);
     self.subChart.margin(0, 210, 0, 0);
     self.subChart.padding(15, 10, 15, 10);
-    self.subChart.source(jsonData);
+    self.subChart.source([F2Utils toJsonArray:jsonData]);
     self.subChart.axis(@"date", @{@"hidden": @(YES)});
     self.subChart.interval().position(@"date*volumn");
     self.subChart.scale(@"date", @{@"type": @"kline-day", @"domain": @[@(40), @(80)]});

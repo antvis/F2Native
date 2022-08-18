@@ -4,7 +4,6 @@ set(PROJECT_NAME "f2wasm")
 
 project(${PROJECT_NAME})
 
-
 add_definitions(-DWASI)
 
 #change the path
@@ -12,8 +11,8 @@ SET(CMAKE_C_COMPILER  /Users/weiqing.twq/Documents/wasi-sdk-16.0/bin/clang)
 SET(CMAKE_CXX_COMPILER  /Users/weiqing.twq/Documents/wasi-sdk-16.0/bin/clang++)
 set(CMAKE_SYSROOT /Users/weiqing.twq/Documents/wasi-sdk-16.0/share/wasi-sysroot)
 
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fno-rtti -fno-exceptions -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --target=wasm32-wasi -Wall -Wextra -fno-exceptions")
+# --allow-undefined
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --target=wasm32-wasi -Wall -Wextra -fno-exceptions -fno-rtti -fdata-sections -ffunction-sections -Os")
 
 include_directories(../core)
 
@@ -70,3 +69,4 @@ list(APPEND DIR_SRC ${DIR_SRC_WEBASSEMBLY})
 list(APPEND DIR_SRC ${DIR_SRC_GRAPHICS})
 
 add_executable(${PROJECT_NAME} ${DIR_SRC})
+set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-fno-rtti -fno-exceptions -Os")

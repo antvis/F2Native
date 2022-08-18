@@ -138,7 +138,6 @@ yarn-error.log
 .yarn-integrity
 #scan
 build-system-*
-build.sh
 idir
 scan.sh
 

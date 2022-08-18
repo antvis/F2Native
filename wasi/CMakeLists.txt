@@ -7,6 +7,7 @@ project(${PROJECT_NAME})
 
 add_definitions(-DWASI)
 
+#change the path
 SET(CMAKE_C_COMPILER  /Users/weiqing.twq/Documents/wasi-sdk-16.0/bin/clang)
 SET(CMAKE_CXX_COMPILER  /Users/weiqing.twq/Documents/wasi-sdk-16.0/bin/clang++)
 set(CMAKE_SYSROOT /Users/weiqing.twq/Documents/wasi-sdk-16.0/share/wasi-sysroot)

@@ -5,7 +5,6 @@
 #ifndef XG_GRAPHICS_CANVAS_CANVASCOLORPARSER_H
 #define XG_GRAPHICS_CANVAS_CANVASCOLORPARSER_H
 
-#include <mutex>
 #include <stdio.h>
 #include <string>
 #include <unordered_map>

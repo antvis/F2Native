@@ -7,7 +7,6 @@
 using namespace xg::canvas;
 
 std::unordered_map<std::string, CanvasColor> CanvasColorParser::colorMap;
-std::mutex CanvasColorParser::global_mutex;
 std::string CanvasColorParser::hex_digit = "0123456789abcdef";
 
 typedef union {
@@ -18,7 +17,6 @@ typedef union {
 } InnerColorRGBA;
 
 void CanvasColorParser::InitColorMapIfEmpty() {
-    std::unique_lock<std::mutex> lock(global_mutex);
     if(colorMap.empty()) {
         colorMap.insert(std::pair<std::string, CanvasColor>("black", {0, 0, 0, 255}));
         colorMap.insert(std::pair<std::string, CanvasColor>("silver", {192, 192, 192, 255})); //{{192.0f / 255, 192.0f / 255, 192.0f / 255, 1.0f}}));

@@ -14,6 +14,10 @@
 #include "webassembly/WebCanvasContext.h"
 #endif
 
+#if defined(WASI)
+#include "wasi/WasiCanvasContext.h"
+#endif
+
 #include <cstring>
 #include <algorithm>
 #include <map>
@@ -151,6 +155,14 @@ class XChart {
         return *this;
     }
 #endif // __EMSCRIPTEN__
+
+#if defined(WASI)
+    XChart &SetCanvasContext(const std::string &canvasName) {
+        XG_RELEASE_POINTER(canvasContext_);
+        canvasContext_ = new canvas::WasiCanvasContext(canvasName, width_, height_, ratio_);
+        return *this;
+    }
+#endif // WASI
     
     /// 设置chart的canvasConext，这里和上面的方法增加了一个ownCanvasContext_来区分谁创建的canvasContext
     /// @param canvasContext 绘制的context

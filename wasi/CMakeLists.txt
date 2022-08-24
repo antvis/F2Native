@@ -1,18 +1,17 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-set(PROJECT_NAME "f2wasm")
+set(PROJECT_NAME "f2")
 
 project(${PROJECT_NAME})
 
 add_definitions(-DWASI)
-
-#change the path
-SET(CMAKE_C_COMPILER  /Users/weiqing.twq/Documents/wasi-sdk-16.0/bin/clang)
-SET(CMAKE_CXX_COMPILER  /Users/weiqing.twq/Documents/wasi-sdk-16.0/bin/clang++)
-set(CMAKE_SYSROOT /Users/weiqing.twq/Documents/wasi-sdk-16.0/share/wasi-sysroot)
+add_definitions(-DNDEBUG)
 
 # --allow-undefined
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --target=wasm32-wasi -Wall -Wextra -fno-exceptions -fno-rtti -fdata-sections -ffunction-sections -Os")
+# -s \"EXPORTED_FUNCTIONS=['_main']\"
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --no-entry --target=wasm32-wasi -s FILESYSTEM=0 -Wall -Wextra -fno-exceptions -fno-rtti -fdata-sections -ffunction-sections -Os -s STANDALONE_WASM=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0")
+
+# set(CMAKE_EXE_LINKER_FLAGS "-Wl,--trace-symbol=__wasi_fd_write")
 
 include_directories(../core)
 
@@ -69,4 +68,6 @@ list(APPEND DIR_SRC ${DIR_SRC_WEBASSEMBLY})
 list(APPEND DIR_SRC ${DIR_SRC_GRAPHICS})
 
 add_executable(${PROJECT_NAME} ${DIR_SRC})
-set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-fno-rtti -fno-exceptions -Os")
+
+#--profiling-funcs 可以看到函数调用
+set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "--minify=0 -s FILESYSTEM=0  -fno-rtti -fno-exceptions -Oz -s STANDALONE_WASM=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0")

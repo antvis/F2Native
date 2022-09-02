@@ -99,6 +99,7 @@ class Legend {
 
     float CalLegendWidth(XChart &chart);
     float CalLegendHeight(XChart &chart);
+    float CalLegendStep(XChart &chart);
 
   private:
     std::string field_;

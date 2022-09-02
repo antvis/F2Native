@@ -12,6 +12,7 @@
     self.chart.scale(@"value", @{@"nice": @(YES)});
     self.chart.interval().adjust(@"dodge").position(@"month*value").color(@"name", @[]);
     self.chart.tooltip(@{});
+    self.chart.legend(@"name", @{@"position": @"bottom", @"align": @"center"});
     self.chart.render();
 }
 

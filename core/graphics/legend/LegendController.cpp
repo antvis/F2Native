@@ -65,7 +65,7 @@ util::Point legend::Legend::AlignLegend(XChart &chart, const string &position, c
             y = chart.GetHeight() - legendHeight;
         }
     } else {
-        y = (position == "top") ? chart.GetPadding()[1] : chart.GetPadding()[1] + chart.GetHeight() - legendHeight;
+        y = (position == "top") ? (chart.GetMargin()[1] + chart.GetPadding()[1]) : chart.GetHeight() - chart.GetMargin()[1] - chart.GetPadding()[1];
         if (align == "left") {
             x = chart.GetMargin()[0] + chart.GetPadding()[0];
         } else if(align == "right") {
@@ -236,15 +236,12 @@ void legend::LegendController::Render(XChart &chart) {
     }
 
     // calculate legend range
-    float ratio = chart.GetCanvasContext().GetDevicePixelRatio();
     float left = 0;
     float top = 0;
     float right = 0;
     float bottom = 0;
 
     std::array<double, 4> &userPadding = chart.padding_;
-
-    auto width = chart.GetWidth() - chart.GetPadding()[0] - chart.GetMargin()[0] - chart.GetPadding()[2] - chart.GetMargin()[2];
     if(position_ == "top") {
         top = legendHeight_;
     } else if(position_ == "bottom") {

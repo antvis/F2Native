@@ -151,7 +151,7 @@ void legend::LegendController::AddLegend(XChart &chart, const std::string &field
         fieldLegendCfg = legendCfg_[field];
     }
 
-    if(fieldLegendCfg.is_boolean() && fieldLegendCfg == false) {
+    if(fieldLegendCfg.is_boolean() && fieldLegendCfg == false || !fieldLegendCfg.is_object()) {
         return;
     }
     // if custom { // TODO 待实现 }

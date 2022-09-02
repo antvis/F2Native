@@ -151,14 +151,16 @@ void legend::LegendController::AddLegend(XChart &chart, const std::string &field
         fieldLegendCfg = legendCfg_[field];
     }
 
-    if(fieldLegendCfg.is_boolean() && fieldLegendCfg == false || !fieldLegendCfg.is_object()) {
+    if((fieldLegendCfg.is_boolean() && fieldLegendCfg == false)) {
         return;
     }
     // if custom { // TODO 待实现 }
     // else if category
     if(scale::IsCategory(chart.GetScale(field).GetType())) {
         nlohmann::json lastCfg = DefaultLegendConfig()[position_];
-        lastCfg.merge_patch(fieldLegendCfg);
+        if (fieldLegendCfg.is_object()) {
+            lastCfg.merge_patch(fieldLegendCfg);
+        }
         double maxLength = (position_ == "right" || position_ == "left") ? chart.GetHeight() : chart.GetWidth();
         lastCfg["maxLength"] = maxLength;
 

@@ -16,7 +16,7 @@ void legend::Legend::CreateShape(XChart &chart, shape::Group *container, const u
     float textSize = nameStyle["textSize"];
     float r_itemGap = itemGap * ratio;
     int horizontalItems = cfg_["horizontalItems"];
-    float step = width_ / horizontalItems;
+    float step = CalLegendStep(chart);
     float lineBottom = cfg_["lineBottom"];
     float radius = cfg_["radius"];
     float r_radius = radius * ratio;
@@ -65,8 +65,14 @@ util::Point legend::Legend::AlignLegend(XChart &chart, const string &position, c
             y = chart.GetHeight() - legendHeight;
         }
     } else {
-        x = chart.GetPadding()[0];
         y = (position == "top") ? chart.GetPadding()[1] : chart.GetPadding()[1] + chart.GetHeight() - legendHeight;
+        if (align == "left") {
+            x = chart.GetMargin()[0] + chart.GetPadding()[0];
+        } else if(align == "right") {
+            x = chart.GetWidth() - legendWidth - chart.GetMargin()[2] - chart.GetPadding()[2];
+        } else { //center
+            x = chart.GetMargin()[0] + chart.GetPadding()[0] + legendWidth/2;
+        }
     }
     return Point(x, y);
 }
@@ -79,19 +85,20 @@ float legend::Legend::CalLegendWidth(XChart &chart) {
     float wordSpace = cfg_["wordSpace"];
     float textSize = nameStyle["textSize"];
     float itemMarginBottom = cfg_["itemMarginBottom"];
+    auto step = CalLegendStep(chart);
 
-    if(cfg_["layout"] == "vertical") {
-        auto cal = [&](LegendItem &item) {
-            float r_radius = item.marker.radius * ratio;
-            auto text = xg::make_unique<shape::Text>(item.name, util::Point(0, 0), textSize * ratio, "", "");
-            float t_width = text->GetTextWidth(chart.GetCanvasContext());
-            float i_width = r_radius * 2 + wordSpace * ratio + t_width;
-            width = fmax(i_width, width);
-        };
-        std::for_each(legendItems_.begin(), legendItems_.end(), cal);
+    auto cal = [&](LegendItem &item) {
+        float r_radius = item.marker.radius * ratio;
+        auto text = xg::make_unique<shape::Text>(item.name, util::Point(0, 0), textSize * ratio, "", "");
+        float t_width = text->GetTextWidth(chart.GetCanvasContext());
+        float i_width = r_radius * 2 + wordSpace * ratio + t_width;
+        width = fmax(i_width, width);
+    };
+    std::for_each(legendItems_.begin(), legendItems_.end(), cal);
+    if (cfg_["layout"] == "vertical") {
         width += itemMarginBottom * ratio;
     } else {
-        width = chart.GetWidth() - chart.GetPadding()[0] - chart.GetMargin()[0] - chart.GetPadding()[2] - chart.GetMargin()[2];
+        width += (legendItems_.size() - 1) * step;
     }
 
     width_ = width;
@@ -129,6 +136,13 @@ float legend::Legend::CalLegendHeight(XChart &chart) {
     return height_;
 }
 
+float legend::Legend::CalLegendStep(XChart &chart) {
+    int horizontalItems = cfg_["horizontalItems"];
+    auto width = chart.GetWidth() - chart.GetPadding()[0] - chart.GetMargin()[0] - chart.GetPadding()[2] - chart.GetMargin()[2];
+    float step = width / horizontalItems;
+    return step;
+}
+
 void legend::LegendController::AddLegend(XChart &chart, const std::string &field, const std::vector<legend::LegendItem> &fieldItems) {
 
     nlohmann::json &fieldLegendCfg = legendCfg_;
@@ -143,11 +157,8 @@ void legend::LegendController::AddLegend(XChart &chart, const std::string &field
     // if custom { // TODO 待实现 }
     // else if category
     if(scale::IsCategory(chart.GetScale(field).GetType())) {
-        nlohmann::json lastCfg;
-        lastCfg.merge_patch(DefaultLegendConfig()[position_]);
-        if(fieldLegendCfg.is_object()) {
-            lastCfg.merge_patch(fieldLegendCfg);
-        }
+        nlohmann::json lastCfg = DefaultLegendConfig()[position_];
+        lastCfg.merge_patch(fieldLegendCfg);
         double maxLength = (position_ == "right" || position_ == "left") ? chart.GetHeight() : chart.GetWidth();
         lastCfg["maxLength"] = maxLength;
 
@@ -231,6 +242,7 @@ void legend::LegendController::Render(XChart &chart) {
 
     std::array<double, 4> &userPadding = chart.padding_;
 
+    auto width = chart.GetWidth() - chart.GetPadding()[0] - chart.GetMargin()[0] - chart.GetPadding()[2] - chart.GetMargin()[2];
     if(position_ == "top") {
         top = legendHeight_;
     } else if(position_ == "bottom") {

@@ -65,13 +65,13 @@ util::Point legend::Legend::AlignLegend(XChart &chart, const string &position, c
             y = chart.GetHeight() - legendHeight;
         }
     } else {
-        y = (position == "top") ? (chart.GetMargin()[1] + chart.GetPadding()[1]) : chart.GetHeight() - chart.GetMargin()[1] - chart.GetPadding()[1];
+        y = (position == "top") ? (chart.GetMargin()[1] + chart.GetPadding()[1]) : chart.GetHeight() - chart.GetMargin()[3] - chart.GetPadding()[3] - legendHeight;
         if (align == "left") {
             x = chart.GetMargin()[0] + chart.GetPadding()[0];
         } else if(align == "right") {
             x = chart.GetWidth() - legendWidth - chart.GetMargin()[2] - chart.GetPadding()[2];
         } else { //center
-            x = chart.GetMargin()[0] + chart.GetPadding()[0] + legendWidth/2;
+            x = (chart.GetWidth() - legendWidth) / 2;
         }
     }
     return Point(x, y);
@@ -85,6 +85,7 @@ float legend::Legend::CalLegendWidth(XChart &chart) {
     float wordSpace = cfg_["wordSpace"];
     float textSize = nameStyle["textSize"];
     float itemMarginBottom = cfg_["itemMarginBottom"];
+    int horizontalItems = cfg_["horizontalItems"];
     auto step = CalLegendStep(chart);
 
     auto cal = [&](LegendItem &item) {
@@ -98,7 +99,7 @@ float legend::Legend::CalLegendWidth(XChart &chart) {
     if (cfg_["layout"] == "vertical") {
         width += itemMarginBottom * ratio;
     } else {
-        width += (legendItems_.size() - 1) * step;
+        width += (fmin(horizontalItems,legendItems_.size()) - 1) * step;
     }
 
     width_ = width;

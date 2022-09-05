@@ -51,13 +51,13 @@ void legend::Legend::CreateShape(XChart &chart, shape::Group *container, const u
 util::Point legend::Legend::AlignLegend(XChart &chart, const string &position, const float legendHeight, const float legendWidth) {
     float x = 0.f;
     float y = 0.f;
-    float itemMarginBottom = cfg_["itemMarginBottom"];
+    float itemMarginBottom = cfg_["itemMarginBottom"].get<float>() * chart.GetCanvasContext().GetDevicePixelRatio();
     string verticalAlign = cfg_["verticalAlign"].is_string() ? cfg_["verticalAlign"] : "middle";
     string align = cfg_["align"].is_string() ? cfg_["align"] : "center";
     if(position == "left" || position == "right") {
         x = (position == "left") ?
                 chart.GetMargin()[0] + chart.GetPadding()[0] :
-                chart.GetWidth() - legendWidth - chart.GetMargin()[2] - chart.GetPadding()[2] + itemMarginBottom * chart.GetCanvasContext().GetDevicePixelRatio();
+                chart.GetWidth() - legendWidth - chart.GetMargin()[2] - chart.GetPadding()[2] + itemMarginBottom ;
         y = (chart.GetHeight() - legendHeight) / 2;
         if(verticalAlign == "top") {
             y = chart.GetMargin()[1] + chart.GetPadding()[1];
@@ -65,7 +65,7 @@ util::Point legend::Legend::AlignLegend(XChart &chart, const string &position, c
             y = chart.GetHeight() - legendHeight;
         }
     } else {
-        y = (position == "top") ? (chart.GetMargin()[1] + chart.GetPadding()[1]) : chart.GetHeight() - chart.GetMargin()[3] - chart.GetPadding()[3] - legendHeight;
+        y = (position == "top") ? (chart.GetMargin()[1] + chart.GetPadding()[1]) : chart.GetHeight() - chart.GetMargin()[3] - chart.GetPadding()[3] - legendHeight + itemMarginBottom;
         if (align == "left") {
             x = chart.GetMargin()[0] + chart.GetPadding()[0];
         } else if(align == "right") {

@@ -17,7 +17,7 @@ class KLineCat : public Category {
         // ["kline-day", "kline-week", "kline-month", "kline-minutes-1", "kline-minutes-5", "kline-minutes-15", "kline-minutes-30", "kline-minutes-60", "kline-minutes-120"]
             
         std::vector<std::string> lineTypes;
-        StringUtil::Split(config.type, lineTypes, '-');
+        StringUtil::SplitString(config.type, lineTypes, '-');
         if (lineTypes.size() >= 3) {
             kLineType_ = lineTypes[1];
             minutes_ = std::stoi(lineTypes[2]);

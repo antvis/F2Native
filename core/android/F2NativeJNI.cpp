@@ -16,6 +16,7 @@
 #include "JavaChartBridgeCallBack.h"
 #include "bridge/ChartBridge.h"
 #include "BridgeRailingAndroid.h"
+#include "JNIReflection.h"
 
 #ifndef xg_jni_arraysize
 
@@ -72,7 +73,8 @@ static jint SetChartCanvas(JNIEnv *env, jclass clazz, jlong chart, jlong view, j
 static jint SetChartSource(JNIEnv *env, jclass clazz, jlong chart, jstring source) {
     xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
     std::string data = JavaStringToString(env, source);
-    _chart->Source(std::move(data));
+    XSourceArray list;
+    _chart->Source(list);
     F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartSource");
     return 0;
 }
@@ -96,7 +98,9 @@ static jint SetChartScale(JNIEnv *env, jclass clazz, jlong chart, jstring field,
     std::string _config = JavaStringToString(env, config);
 
     xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
-    _chart->Scale(std::move(_field), std::move(_config));
+    auto cfg = JNIReflection::CreateStruct(_config, typeof(scale::ScaleCfg));
+    auto cast = cfg.Cast<scale::ScaleCfg &>();
+    _chart->ScaleObject(std::move(_field), cast);
     F2_LOG_I(_chart->GetChartName(), "%s", "#SetScaleConfig");
     return 0;
 }
@@ -106,7 +110,9 @@ static jint SetChartAxis(JNIEnv *env, jclass clazz, jlong chart, jstring field, 
     std::string _config = JavaStringToString(env, config);
 
     xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
-    _chart->Axis(std::move(_field), std::move(_config));
+    auto cfg = JNIReflection::CreateStruct(_config, typeof(axis::AxisCfg));
+    auto cast = cfg.Cast<axis::AxisCfg &>();
+    _chart->AxisObject(std::move(_field), cast);
     F2_LOG_I(_chart->GetChartName(), "%s", "#SetAxisConfig");
     return 0;
 }
@@ -115,7 +121,9 @@ static jint SetChartCoord(JNIEnv *env, jclass clazz, jlong chart, jstring config
     std::string _config = JavaStringToString(env, config);
 
     xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
-    _chart->Coord(std::move(_config));
+    auto cfg = JNIReflection::CreateStruct(_config, typeof(coord::CoordCfg));
+    auto cast = cfg.Cast<coord::CoordCfg &>();
+    _chart->CoordObject(cast);
     F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartCoord");
     return 0;
 }
@@ -124,7 +132,7 @@ static jint SetChartAnimate(JNIEnv *env, jclass clazz, jlong chart, jstring conf
     std::string _config = JavaStringToString(env, config);
 
     xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
-    _chart->Animate(std::move(_config));
+    _chart->AnimateObject({.enable = false});
     F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartAnimate");
     return 0;
 }
@@ -134,7 +142,15 @@ static jint SetChartInteraction(JNIEnv *env, jclass clazz, jlong chart, jstring 
     std::string _config = JavaStringToString(env, config);
 
     xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
-    _chart->Interaction(_type, _config);
+    if (_type == "pan") {
+        auto cfg = JNIReflection::CreateStruct(_config, typeof(interaction::PanCfg));
+        auto cast = cfg.Cast<interaction::PanCfg &>();
+        _chart->Interaction(_type, cast);
+    } else if(_type == "pinch") {
+        auto cfg = JNIReflection::CreateStruct(_config, typeof(interaction::PinchCfg));
+        auto cast = cfg.Cast<interaction::PinchCfg &>();
+        _chart->Interaction(_type, cast);
+    }
     return 0;
 }
 
@@ -142,7 +158,9 @@ static jint SetChartToolTip(JNIEnv *env, jclass clazz, jlong chart, jstring conf
     std::string _config = JavaStringToString(env, config);
 
     xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
-    _chart->Tooltip(std::move(_config));
+    auto cfg = JNIReflection::CreateStruct(_config, typeof(tooltip::ToolTipCfg));
+    auto cast = cfg.Cast<tooltip::ToolTipCfg &>();
+    _chart->TooltipObject(cast);
     return 0;
 }
 
@@ -151,7 +169,9 @@ static jint SetChartLegend(JNIEnv *env, jclass clazz, jlong chart, jstring field
     std::string _config = JavaStringToString(env, config);
 
     xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
-    _chart->Legend(_field, std::move(_config));
+    auto cfg = JNIReflection::CreateStruct(_config, typeof(legend::LegendCfg));
+    auto cast = cfg.Cast<legend::LegendCfg &>();
+    _chart->LegendObject(_field, cast);
     F2_LOG_I(_chart->GetChartName(), "%s", "#SetAxisConfig");
     return 0;
 }
@@ -162,22 +182,34 @@ static jint SetChartGuideType(JNIEnv *env, jclass clazz, jlong chart, jstring ty
     std::string _type = JavaStringToString(env, type);
     std::string _config = JavaStringToString(env, config);
     if(_type == "text") {
-        _chart->Guide().Text(std::move(_config));
+        auto cfg = JNIReflection::CreateStruct(_config, typeof(xg::guide::TextCfg));
+        auto cast = cfg.Cast<xg::guide::TextCfg &>();
+        _chart->Guide().TextObject(cast);
         F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartGuideText");
     } else if(_type == "flag") {
-        _chart->Guide().Flag(std::move(_config));
+        auto cfg = JNIReflection::CreateStruct(_config, typeof(xg::guide::FlagCfg));
+        auto cast = cfg.Cast<xg::guide::FlagCfg &>();
+        _chart->Guide().FlagObject(cast);
         F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartGuideFlag");
     } else if(_type == "line") {
-        _chart->Guide().Line(std::move(_config));
+        auto cfg = JNIReflection::CreateStruct(_config, typeof(xg::guide::LineCfg));
+        auto cast = cfg.Cast<xg::guide::LineCfg &>();
+        _chart->Guide().LineObject(cast);
         F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartGuideLine");
     } else if(_type == "background") {
-        _chart->Guide().Background(std::move(_config));
+        auto cfg = JNIReflection::CreateStruct(_config, typeof(xg::guide::BackgroundCfg));
+        auto cast = cfg.Cast<xg::guide::BackgroundCfg &>();
+        _chart->Guide().BackgroundObject(cast);
         F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartGuideBackground");
     } else if(_type == "point") {
-        _chart->Guide().Point(std::move(_config));
+        auto cfg = JNIReflection::CreateStruct(_config, typeof(xg::guide::PointCfg));
+        auto cast = cfg.Cast<xg::guide::PointCfg &>();
+        _chart->Guide().PointObject(cast);
         F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartGuidePoint");
     } else if(_type == "image") {
-        _chart->Guide().Image(std::move(_config));
+        auto cfg = JNIReflection::CreateStruct(_config, typeof(xg::guide::ImageCfg));
+        auto cast = cfg.Cast<xg::guide::ImageCfg &>();
+        _chart->Guide().ImageObject(cast);
         F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartGuideImage");
     }
     return 0;
@@ -187,7 +219,8 @@ static jint SendChartTouchEvent(JNIEnv *env, jclass clazz, jlong chart, jstring 
     std::string _event = JavaStringToString(env, event);
     bool ret = false;
     xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
-    ret = _chart->OnTouchEvent(std::move(_event));
+    auto myEvent = JNIReflection::CreateTouchEvent(_event);
+    ret = _chart->OnTouchEvent(myEvent);
     return ret ? 1 : 0;
 }
 

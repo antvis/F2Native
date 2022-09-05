@@ -52,6 +52,9 @@ class Linear : public AbstractScale {
     }
 
     double Scale(const Any &key) override {
+        if (key.IsEmpty()) {
+            return NAN;
+        }
         double val = NAN;
         if (key.GetType().IsString()) {
             val = stod(key.Cast<string>());
@@ -248,7 +251,7 @@ class Linear : public AbstractScale {
     int GetFixedLength(const double num) const {
         string str = std::to_string(num);
         vector<string> sv;
-        StringUtil::Split(std::to_string(num), sv, '.');
+        StringUtil::SplitString(std::to_string(num), sv, '.');
         if(sv.size() >= 2) {
             return std::min((int)(sv.size()), 20);
         }

@@ -16,8 +16,9 @@ xg::geom::AbstractGeom::~AbstractGeom() {
 
 #pragma mark public
 xg::geom::AbstractGeom &xg::geom::AbstractGeom::Position(const string &field) {
-    this->tracker_->trace("geom#%s  Position: %s", type_.c_str(), field.c_str());
-    vector<string> fields(StringUtil::ParseFields(field));
+    this->tracker_->trace("geom#%s  Position1: %s", type_.c_str(), field.c_str());
+    // vector<string> fields(StringUtil::ParseFields(field));
+    vector<string> fields{"genre", "sold"};
     std::unique_ptr<attr::AttrBase> attr = xg::make_unique<attr::Position>(fields);
     attrs_[AttrType::Position] = std::move(attr);
     return *this;
@@ -251,8 +252,6 @@ void xg::geom::AbstractGeom::Paint(XChart *chart) {
 }
 
 void xg::geom::AbstractGeom::Mapping(XChart &chart, XDataArray &dataArray, std::size_t start, std::size_t end) {
-    this->tracker_->trace("geom#%s start mapping, size: %lu", type_.c_str(), dataArray.size());
-
     for(auto &it : attrs_) {
         AttrBase &attr = *it.second.get();
         const vector<string> &fields = attr.GetFields();

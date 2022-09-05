@@ -5,6 +5,8 @@
 using namespace xg;
 using namespace xg::canvas;
 
+// extern "C" void _2d_clearRect(float, float, float, float);
+
 WasiCanvasContext::WasiCanvasContext(const std::string &contextName, float width, float height, double devicePixelRatio)
     : CanvasContext(devicePixelRatio, nullptr) {
     canvasContext_ = contextName;
@@ -13,7 +15,7 @@ WasiCanvasContext::WasiCanvasContext(const std::string &contextName, float width
 WasiCanvasContext::~WasiCanvasContext() {}
 
 bool WasiCanvasContext::IsValid() {
-    return !canvasContext_.empty();
+    return true;
 }
 
 void WasiCanvasContext::ChangeSize(float width, float height) {
@@ -95,6 +97,7 @@ void WasiCanvasContext::SetShadowColor(const char *v) {}
 void WasiCanvasContext::SetShadowBlur(float v) {}
 
 float WasiCanvasContext::MeasureTextWidth(const std::string &text) {
+    return 0;
 }
 
 void WasiCanvasContext::Transform(float a, float b, float c, float d, float e, float f) {

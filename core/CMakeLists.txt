@@ -19,6 +19,7 @@ aux_source_directory(bridge DIR_SRC_BRIDGE)
 aux_source_directory(utils DIR_SRC_UTILS)
 aux_source_directory(nlohmann DIR_SRC_NLOHMANN)
 aux_source_directory(android DIR_SRC_ANDROID)
+aux_source_directory(reflection DIR_SRC_REFLECTION)
 
 aux_source_directory(graphics/axis DIR_SRC_GRAPHICS_AXIS)
 aux_source_directory(graphics/animate DIR_SRC_GRAPHICS_ANIMATE)
@@ -63,6 +64,7 @@ list(APPEND DIR_SRC ${DIR_SRC_GRAPHICS})
 list(APPEND DIR_SRC ${DIR_SRC_NLOHMANN})
 list(APPEND DIR_SRC ${DIR_SRC_BRIDGE})
 list(APPEND DIR_SRC ${DIR_SRC_ANDROID})
+list(APPEND DIR_SRC ${DIR_SRC_REFLECTION})
 
 
 # 添加unit下所有文件

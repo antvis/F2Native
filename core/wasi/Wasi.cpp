@@ -3,10 +3,20 @@
 
 using namespace xg;
 
+// __attribute__((export_name("hello")))
 int main() {
-  printf("Hello World!\n");
-
+  std::vector<XSourceItem> data;
+  typedef pair<string,string> xData;
+  typedef pair<string,int> yData;
+  data.push_back({xData("genre", "Sports"), yData{"sold", 275}});
+  data.push_back({xData("genre", "Strategy"), yData{"sold", 115}});
+  data.push_back({xData("genre", "Action"), yData{"sold", 120}});
+  data.push_back({xData("genre", "Shooter"), yData{"sold", 350}});
+  data.push_back({xData("genre", "Other"), yData{"sold", 150}});
   XChart chart("wasi-chart", 400, 400, 1.0f);
+  chart.SetCanvasContext("wasi-context");
+  chart.Source(data);
+  chart.Interval().Position("genre*sold").Color("genre", {});
   chart.Render();
-  return 0;
+  return 1;
 }

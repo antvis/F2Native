@@ -90,31 +90,6 @@ Any F2Reflection::CreateStruct(NSDictionary *config, const Type *type) {
     return cfg;
 }
 
-util::XSourceItem F2Reflection::CreateaSourceItem(NSDictionary *obj) {
-    __block util::XSourceItem item;
-    [obj enumerateKeysAndObjectsUsingBlock:^(NSString  *_Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-        if ([obj isKindOfClass:NSString.class]) {
-            item[key.UTF8String] = Any(std::string([obj UTF8String]));
-        } else if ([obj isKindOfClass:NSNumber.class]) {
-            item[key.UTF8String] = Any([obj doubleValue]);
-        } else if ([obj isKindOfClass:NSNumber.class]) {
-            item[key.UTF8String] = Any([obj integerValue]);
-        } else  if([obj isKindOfClass:NSArray.class]) {
-            __block std::vector<Any> vals;
-            NSArray *array = (NSArray *)obj;
-            [array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                if ([obj isKindOfClass:NSNumber.class]) {
-                    vals.push_back(Any([obj doubleValue]));
-                } else {
-                    NSCAssert(NO, @"unsuportd type");
-                }
-            }];
-            item[key.UTF8String] = Any(vals);
-        }
-    }];
-    return item;
-}
-
 std::unordered_map<std::string, Any> F2Reflection::CreateMap(NSDictionary *config) {
     if (!config || ![config isKindOfClass:NSDictionary.class]) {
         return {};
@@ -147,4 +122,38 @@ std::unordered_map<std::string, Any> F2Reflection::CreateMap(NSDictionary *confi
         }
     }];
     return rst;
+}
+
+util::XSourceItem F2Reflection::CreateaSourceItem(NSDictionary *obj) {
+    __block util::XSourceItem item;
+    [obj enumerateKeysAndObjectsUsingBlock:^(NSString  *_Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        if ([obj isKindOfClass:NSString.class]) {
+            item[key.UTF8String] = Any(std::string([obj UTF8String]));
+        } else if ([obj isKindOfClass:NSNumber.class]) {
+            item[key.UTF8String] = Any([obj doubleValue]);
+        } else if ([obj isKindOfClass:NSNumber.class]) {
+            item[key.UTF8String] = Any([obj integerValue]);
+        } else  if([obj isKindOfClass:NSArray.class]) {
+            __block std::vector<Any> vals;
+            NSArray *array = (NSArray *)obj;
+            [array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj isKindOfClass:NSNumber.class]) {
+                    vals.push_back(Any([obj doubleValue]));
+                } else {
+                    NSCAssert(NO, @"unsuportd type");
+                }
+            }];
+            item[key.UTF8String] = Any(vals);
+        }
+    }];
+    return item;
+}
+
+util::XSourceArray F2Reflection::CreateaSourceArray(NSArray *data) {
+    __block util::XSourceArray list;
+    [data enumerateObjectsUsingBlock:^(NSDictionary * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        util::XSourceItem item = F2Reflection::CreateaSourceItem(obj);
+        list.push_back(std::move(item));
+    }];
+    return list;
 }

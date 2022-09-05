@@ -71,7 +71,6 @@
 		9557242525ECBF7200D2FC07 /* Point.h in Headers */ = {isa = PBXBuildFile; fileRef = 955723B225ECBF7200D2FC07 /* Point.h */; };
 		9557242625ECBF7200D2FC07 /* Path.h in Headers */ = {isa = PBXBuildFile; fileRef = 955723B325ECBF7200D2FC07 /* Path.h */; };
 		9557242725ECBF7200D2FC07 /* Matrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 955723B425ECBF7200D2FC07 /* Matrix.h */; };
-		9557242825ECBF7200D2FC07 /* Color.h in Headers */ = {isa = PBXBuildFile; fileRef = 955723B525ECBF7200D2FC07 /* Color.h */; };
 		9557242925ECBF7200D2FC07 /* json_util.h in Headers */ = {isa = PBXBuildFile; fileRef = 955723B625ECBF7200D2FC07 /* json_util.h */; };
 		9557242A25ECBF7200D2FC07 /* json.h in Headers */ = {isa = PBXBuildFile; fileRef = 955723B725ECBF7200D2FC07 /* json.h */; };
 		9557242B25ECBF7200D2FC07 /* Vector2d.h in Headers */ = {isa = PBXBuildFile; fileRef = 955723B825ECBF7200D2FC07 /* Vector2d.h */; };
@@ -85,7 +84,6 @@
 		9557243525ECBF7200D2FC07 /* Canvas.h in Headers */ = {isa = PBXBuildFile; fileRef = 955723C325ECBF7200D2FC07 /* Canvas.h */; };
 		9557243625ECBF7200D2FC07 /* CanvasContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 955723C425ECBF7200D2FC07 /* CanvasContext.h */; };
 		9557243725ECBF7200D2FC07 /* Polar.h in Headers */ = {isa = PBXBuildFile; fileRef = 955723C525ECBF7200D2FC07 /* Polar.h */; };
-		9557243825ECBF7200D2FC07 /* Line.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 955723C725ECBF7200D2FC07 /* Line.cpp */; };
 		9557243925ECBF7200D2FC07 /* Point.h in Headers */ = {isa = PBXBuildFile; fileRef = 955723C925ECBF7200D2FC07 /* Point.h */; };
 		9557243A25ECBF7200D2FC07 /* GeomShapeFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 955723CA25ECBF7200D2FC07 /* GeomShapeFactory.h */; };
 		9557243B25ECBF7200D2FC07 /* GeomShapeFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 955723CB25ECBF7200D2FC07 /* GeomShapeFactory.cpp */; };
@@ -128,7 +126,6 @@
 		CC1A962F287812470066AE7D /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC1A962E287812470066AE7D /* common.cpp */; };
 		CC1C4118284896F8009C9322 /* Linear.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC895526284766C800AD24E0 /* Linear.cpp */; };
 		CC1C4119284896FD009C9322 /* Scale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC8955242847653100AD24E0 /* Scale.cpp */; };
-		CC1E0EE2275798A400C76359 /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC1E0EE0275798A400C76359 /* Color.cpp */; };
 		CC3C01E426A00E9300335A1C /* F2Logger.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC3C01E226A00E9300335A1C /* F2Logger.mm */; };
 		CC3C01E526A00E9300335A1C /* F2Logger.h in Headers */ = {isa = PBXBuildFile; fileRef = CC3C01E326A00E9300335A1C /* F2Logger.h */; };
 		CC5F25E4273E5E360016F3A8 /* Polygon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC5F25E2273E5E360016F3A8 /* Polygon.cpp */; };
@@ -147,11 +144,13 @@
 		CC612BF8250B2EF700315124 /* F2Geom.h in Headers */ = {isa = PBXBuildFile; fileRef = CC612BF0250B2EF700315124 /* F2Geom.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC612BF9250B2EF700315124 /* F2Geom.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC612BF1250B2EF700315124 /* F2Geom.mm */; };
 		CC612BFA250B2EF700315124 /* F2Guide.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC612BF2250B2EF700315124 /* F2Guide.mm */; };
-		CC69E013284F2F6600261105 /* F2ChartBridgeTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC69E012284F2F6600261105 /* F2ChartBridgeTests.mm */; };
 		CC69E019284F51C400261105 /* F2TestUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = CC69E018284F51C400261105 /* F2TestUtil.m */; };
 		CC79F1CF285AAFF900A5623C /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC79F1CE285AAFF900A5623C /* libc++.tbd */; };
 		CC79F2B228619F6B00A5623C /* ScaleController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC79F2B128619F6B00A5623C /* ScaleController.cpp */; };
 		CC79F2B328619F6B00A5623C /* ScaleController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC79F2B128619F6B00A5623C /* ScaleController.cpp */; };
+		CC80E3AC28BCAF4600BFE684 /* F2Reflection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC80E3AA28BCAF4600BFE684 /* F2Reflection.mm */; };
+		CC80E3AD28BCAF4600BFE684 /* F2Reflection.h in Headers */ = {isa = PBXBuildFile; fileRef = CC80E3AB28BCAF4600BFE684 /* F2Reflection.h */; };
+		CC80E3B528BDE5DE00BFE684 /* StringUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC80E3B428BDE5DE00BFE684 /* StringUtil.cpp */; };
 		CC8955112844DAC400AD24E0 /* BridgeRailingIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = CC89550F2844DAC300AD24E0 /* BridgeRailingIOS.h */; };
 		CC8955122844DAC400AD24E0 /* BridgeRailingIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC8955102844DAC300AD24E0 /* BridgeRailingIOS.mm */; };
 		CC8955252847653100AD24E0 /* Scale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC8955242847653100AD24E0 /* Scale.cpp */; };
@@ -203,7 +202,6 @@
 		CC8B56CF2817DB75006B2E45 /* Point.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723B225ECBF7200D2FC07 /* Point.h */; };
 		CC8B56D02817DB75006B2E45 /* Path.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723B325ECBF7200D2FC07 /* Path.h */; };
 		CC8B56D12817DB75006B2E45 /* Matrix.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723B425ECBF7200D2FC07 /* Matrix.h */; };
-		CC8B56D22817DB75006B2E45 /* Color.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723B525ECBF7200D2FC07 /* Color.h */; };
 		CC8B56D32817DB75006B2E45 /* json_util.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723B625ECBF7200D2FC07 /* json_util.h */; };
 		CC8B56D42817DB75006B2E45 /* json.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723B725ECBF7200D2FC07 /* json.h */; };
 		CC8B56D52817DB75006B2E45 /* Vector2d.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723B825ECBF7200D2FC07 /* Vector2d.h */; };
@@ -241,8 +239,6 @@
 		CC8B56FD2817DC50006B2E45 /* Command.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723EE25ECBF7200D2FC07 /* Command.h */; };
 		CC8B56FE2817DC50006B2E45 /* Func.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955723EF25ECBF7200D2FC07 /* Func.h */; };
 		CC8B57332817F9A6006B2E45 /* Core.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CC8B572F2817F0B3006B2E45 /* Core.h */; };
-		CC8B74E02818F83A006B2E45 /* json.hpp in Headers */ = {isa = PBXBuildFile; fileRef = CC8B74DF2818F83A006B2E45 /* json.hpp */; };
-		CC8B74E228196AB1006B2E45 /* json.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = CC8B74DF2818F83A006B2E45 /* json.hpp */; };
 		CC8C6196278FE54300F540D7 /* res in Resources */ = {isa = PBXBuildFile; fileRef = CC8C6195278FE54300F540D7 /* res */; };
 		CC8C619A278FF92B00F540D7 /* F2PixelMatch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC8C6199278FF92B00F540D7 /* F2PixelMatch.mm */; };
 		CC8C61F027965A0000F540D7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC8C61EF27965A0000F540D7 /* UIKit.framework */; };
@@ -266,10 +262,39 @@
 		CCC3F3AD275F118D008D3F06 /* Tracer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC3F3AB275F118D008D3F06 /* Tracer.cpp */; };
 		CCC3F4422760808A008D3F06 /* F2CanvasContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCC3F44027608089008D3F06 /* F2CanvasContext.mm */; };
 		CCC3F4432760808A008D3F06 /* F2CanvasContext.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC3F4412760808A008D3F06 /* F2CanvasContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CCCD817728AF3AF000395AA9 /* type.h in Headers */ = {isa = PBXBuildFile; fileRef = CCCD816528AF3AF000395AA9 /* type.h */; };
+		CCCD817828AF3AF000395AA9 /* string_helper.h in Headers */ = {isa = PBXBuildFile; fileRef = CCCD816628AF3AF000395AA9 /* string_helper.h */; };
+		CCCD817928AF3AF000395AA9 /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = CCCD816728AF3AF000395AA9 /* utils.h */; };
+		CCCD817A28AF3AF000395AA9 /* enum.h in Headers */ = {isa = PBXBuildFile; fileRef = CCCD816828AF3AF000395AA9 /* enum.h */; };
+		CCCD817B28AF3AF000395AA9 /* field.h in Headers */ = {isa = PBXBuildFile; fileRef = CCCD816928AF3AF000395AA9 /* field.h */; };
+		CCCD817C28AF3AF000395AA9 /* qualified_type.h in Headers */ = {isa = PBXBuildFile; fileRef = CCCD816A28AF3AF000395AA9 /* qualified_type.h */; };
+		CCCD817D28AF3AF000395AA9 /* method.h in Headers */ = {isa = PBXBuildFile; fileRef = CCCD816B28AF3AF000395AA9 /* method.h */; };
+		CCCD817E28AF3AF000395AA9 /* constructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCCD816C28AF3AF000395AA9 /* constructor.cpp */; };
+		CCCD817F28AF3AF000395AA9 /* constructor.h in Headers */ = {isa = PBXBuildFile; fileRef = CCCD816D28AF3AF000395AA9 /* constructor.h */; };
+		CCCD818028AF3AF000395AA9 /* param.h in Headers */ = {isa = PBXBuildFile; fileRef = CCCD816E28AF3AF000395AA9 /* param.h */; };
+		CCCD818128AF3AF000395AA9 /* enum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCCD816F28AF3AF000395AA9 /* enum.cpp */; };
+		CCCD818228AF3AF000395AA9 /* param.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCCD817028AF3AF000395AA9 /* param.cpp */; };
+		CCCD818328AF3AF000395AA9 /* qualified_type.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCCD817128AF3AF000395AA9 /* qualified_type.cpp */; };
+		CCCD818428AF3AF000395AA9 /* field.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCCD817228AF3AF000395AA9 /* field.cpp */; };
+		CCCD818528AF3AF000395AA9 /* method.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCCD817328AF3AF000395AA9 /* method.cpp */; };
+		CCCD818628AF3AF000395AA9 /* exception.h in Headers */ = {isa = PBXBuildFile; fileRef = CCCD817428AF3AF000395AA9 /* exception.h */; };
+		CCCD818728AF3AF000395AA9 /* reflection.h in Headers */ = {isa = PBXBuildFile; fileRef = CCCD817528AF3AF000395AA9 /* reflection.h */; };
+		CCCD818828AF3AF000395AA9 /* type.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCCD817628AF3AF000395AA9 /* type.cpp */; };
+		CCCD819428AF3D0F00395AA9 /* type.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCCD816528AF3AF000395AA9 /* type.h */; };
+		CCCD819528AF3D1200395AA9 /* string_helper.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCCD816628AF3AF000395AA9 /* string_helper.h */; };
+		CCCD819628AF3D1400395AA9 /* utils.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCCD816728AF3AF000395AA9 /* utils.h */; };
+		CCCD819728AF3D1900395AA9 /* enum.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCCD816828AF3AF000395AA9 /* enum.h */; };
+		CCCD819828AF3D1D00395AA9 /* field.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCCD816928AF3AF000395AA9 /* field.h */; };
+		CCCD819928AF3D1F00395AA9 /* qualified_type.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCCD816A28AF3AF000395AA9 /* qualified_type.h */; };
+		CCCD819A28AF3D2900395AA9 /* method.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCCD816B28AF3AF000395AA9 /* method.h */; };
+		CCCD819B28AF3D2B00395AA9 /* constructor.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCCD816D28AF3AF000395AA9 /* constructor.h */; };
+		CCCD819C28AF3D2D00395AA9 /* param.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCCD816E28AF3AF000395AA9 /* param.h */; };
+		CCCD819D28AF3D2F00395AA9 /* exception.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCCD817428AF3AF000395AA9 /* exception.h */; };
+		CCCD819E28AF3D3100395AA9 /* reflection.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCCD817528AF3AF000395AA9 /* reflection.h */; };
+		CCCD81A028AF3D6700395AA9 /* json_data.h in Headers */ = {isa = PBXBuildFile; fileRef = CCCD819F28AF3D6700395AA9 /* json_data.h */; };
+		CCCD81A128AF3D8200395AA9 /* json_data.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCCD819F28AF3D6700395AA9 /* json_data.h */; };
+		CCCD81A628AF3DF100395AA9 /* Point.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CC1A9627287811E20066AE7D /* Point.h */; };
 		CCCDE9CF2744D9740060D768 /* F2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC793C3B2509FBAA00E9D913 /* F2.framework */; };
-		CCCDE9D72744D9D70060D768 /* F2ScalesTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCCDE9D62744D9D70060D768 /* F2ScalesTests.mm */; };
-		CCCDE9ED2744E2E30060D768 /* F2UtilsTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCCDE9EC2744E2E30060D768 /* F2UtilsTests.mm */; };
-		CCCDEA0A274635170060D768 /* F2CanvasTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCCDEA09274635170060D768 /* F2CanvasTests.mm */; };
 		CCCEC0DA27883043008E217E /* CanvasColorParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCCEC0D727883043008E217E /* CanvasColorParser.cpp */; };
 		CCCEC0DB27883043008E217E /* CanvasColorParser.h in Headers */ = {isa = PBXBuildFile; fileRef = CCCEC0D927883043008E217E /* CanvasColorParser.h */; };
 /* End PBXBuildFile section */
@@ -329,6 +354,7 @@
 				CC8B56A32817DAAA006B2E45 /* Image.h in CopyFiles */,
 				CC8B56A42817DAAA006B2E45 /* Background.h in CopyFiles */,
 				CC8B56A52817DAAA006B2E45 /* Text.h in CopyFiles */,
+				CCCD81A628AF3DF100395AA9 /* Point.h in CopyFiles */,
 				CC8B56A62817DAAA006B2E45 /* Flag.h in CopyFiles */,
 				CC8B56A72817DAAA006B2E45 /* GuideController.h in CopyFiles */,
 				CC8B56A82817DAAA006B2E45 /* Line.h in CopyFiles */,
@@ -434,10 +460,10 @@
 			dstSubfolderSpec = 7;
 			files = (
 				CC8B56CE2817DB75006B2E45 /* BBox.h in CopyFiles */,
+				CCCD81A128AF3D8200395AA9 /* json_data.h in CopyFiles */,
 				CC8B56CF2817DB75006B2E45 /* Point.h in CopyFiles */,
 				CC8B56D02817DB75006B2E45 /* Path.h in CopyFiles */,
 				CC8B56D12817DB75006B2E45 /* Matrix.h in CopyFiles */,
-				CC8B56D22817DB75006B2E45 /* Color.h in CopyFiles */,
 				CC8B56D32817DB75006B2E45 /* json_util.h in CopyFiles */,
 				CC8B56D42817DB75006B2E45 /* json.h in CopyFiles */,
 				CC8B56D52817DB75006B2E45 /* Vector2d.h in CopyFiles */,
@@ -555,7 +581,6 @@
 			dstPath = Headers/nlohmann;
 			dstSubfolderSpec = 7;
 			files = (
-				CC8B74E228196AB1006B2E45 /* json.hpp in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -566,6 +591,26 @@
 			dstSubfolderSpec = 7;
 			files = (
 				CC8B57332817F9A6006B2E45 /* Core.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CCCD819328AF3CEB00395AA9 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/reflection;
+			dstSubfolderSpec = 7;
+			files = (
+				CCCD819428AF3D0F00395AA9 /* type.h in CopyFiles */,
+				CCCD819728AF3D1900395AA9 /* enum.h in CopyFiles */,
+				CCCD819D28AF3D2F00395AA9 /* exception.h in CopyFiles */,
+				CCCD819E28AF3D3100395AA9 /* reflection.h in CopyFiles */,
+				CCCD819C28AF3D2D00395AA9 /* param.h in CopyFiles */,
+				CCCD819928AF3D1F00395AA9 /* qualified_type.h in CopyFiles */,
+				CCCD819828AF3D1D00395AA9 /* field.h in CopyFiles */,
+				CCCD819A28AF3D2900395AA9 /* method.h in CopyFiles */,
+				CCCD819B28AF3D2B00395AA9 /* constructor.h in CopyFiles */,
+				CCCD819528AF3D1200395AA9 /* string_helper.h in CopyFiles */,
+				CCCD819628AF3D1400395AA9 /* utils.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -636,7 +681,6 @@
 		955723B225ECBF7200D2FC07 /* Point.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Point.h; sourceTree = "<group>"; };
 		955723B325ECBF7200D2FC07 /* Path.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Path.h; sourceTree = "<group>"; };
 		955723B425ECBF7200D2FC07 /* Matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Matrix.h; sourceTree = "<group>"; };
-		955723B525ECBF7200D2FC07 /* Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Color.h; sourceTree = "<group>"; };
 		955723B625ECBF7200D2FC07 /* json_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json_util.h; sourceTree = "<group>"; };
 		955723B725ECBF7200D2FC07 /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json.h; sourceTree = "<group>"; };
 		955723B825ECBF7200D2FC07 /* Vector2d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector2d.h; sourceTree = "<group>"; };
@@ -650,7 +694,6 @@
 		955723C325ECBF7200D2FC07 /* Canvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Canvas.h; sourceTree = "<group>"; };
 		955723C425ECBF7200D2FC07 /* CanvasContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasContext.h; sourceTree = "<group>"; };
 		955723C525ECBF7200D2FC07 /* Polar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Polar.h; sourceTree = "<group>"; };
-		955723C725ECBF7200D2FC07 /* Line.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Line.cpp; sourceTree = "<group>"; };
 		955723C925ECBF7200D2FC07 /* Point.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Point.h; sourceTree = "<group>"; };
 		955723CA25ECBF7200D2FC07 /* GeomShapeFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeomShapeFactory.h; sourceTree = "<group>"; };
 		955723CB25ECBF7200D2FC07 /* GeomShapeFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeomShapeFactory.cpp; sourceTree = "<group>"; };
@@ -691,7 +734,6 @@
 		CC1A9627287811E20066AE7D /* Point.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Point.h; sourceTree = "<group>"; };
 		CC1A9628287811E20066AE7D /* Point.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Point.cpp; sourceTree = "<group>"; };
 		CC1A962E287812470066AE7D /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = "<group>"; };
-		CC1E0EE0275798A400C76359 /* Color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Color.cpp; sourceTree = "<group>"; };
 		CC3C01E226A00E9300335A1C /* F2Logger.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = F2Logger.mm; sourceTree = "<group>"; };
 		CC3C01E326A00E9300335A1C /* F2Logger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F2Logger.h; sourceTree = "<group>"; };
 		CC5F25E2273E5E360016F3A8 /* Polygon.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Polygon.cpp; sourceTree = "<group>"; };
@@ -715,15 +757,16 @@
 		CC69E018284F51C400261105 /* F2TestUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = F2TestUtil.m; sourceTree = "<group>"; };
 		CC6E83EF28337A3400F69380 /* MarketMoving.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MarketMoving.h; sourceTree = "<group>"; };
 		CC793C3B2509FBAA00E9D913 /* F2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = F2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CC79F1AB28587A8C00A5623C /* XChart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XChart.h; sourceTree = "<group>"; };
 		CC79F1CE285AAFF900A5623C /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
 		CC79F2B128619F6B00A5623C /* ScaleController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScaleController.cpp; sourceTree = "<group>"; };
+		CC80E3AA28BCAF4600BFE684 /* F2Reflection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = F2Reflection.mm; sourceTree = "<group>"; };
+		CC80E3AB28BCAF4600BFE684 /* F2Reflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F2Reflection.h; sourceTree = "<group>"; };
+		CC80E3B428BDE5DE00BFE684 /* StringUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringUtil.cpp; sourceTree = "<group>"; };
 		CC89550F2844DAC300AD24E0 /* BridgeRailingIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BridgeRailingIOS.h; sourceTree = "<group>"; };
 		CC8955102844DAC300AD24E0 /* BridgeRailingIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BridgeRailingIOS.mm; sourceTree = "<group>"; };
 		CC8955242847653100AD24E0 /* Scale.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Scale.cpp; sourceTree = "<group>"; };
 		CC895526284766C800AD24E0 /* Linear.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Linear.cpp; sourceTree = "<group>"; };
 		CC8B572F2817F0B3006B2E45 /* Core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Core.h; sourceTree = "<group>"; };
-		CC8B74DF2818F83A006B2E45 /* json.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = json.hpp; sourceTree = "<group>"; };
 		CC8C6195278FE54300F540D7 /* res */ = {isa = PBXFileReference; lastKnownFileType = folder; name = res; path = ../../tests/res; sourceTree = "<group>"; };
 		CC8C6197278FF30E00F540D7 /* pixelmatch.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pixelmatch.hpp; sourceTree = "<group>"; };
 		CC8C6198278FF92B00F540D7 /* F2PixelMatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F2PixelMatch.h; sourceTree = "<group>"; };
@@ -748,27 +791,31 @@
 		CCC3F3AB275F118D008D3F06 /* Tracer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tracer.cpp; sourceTree = "<group>"; };
 		CCC3F44027608089008D3F06 /* F2CanvasContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = F2CanvasContext.mm; sourceTree = "<group>"; };
 		CCC3F4412760808A008D3F06 /* F2CanvasContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F2CanvasContext.h; sourceTree = "<group>"; };
+		CCCD816528AF3AF000395AA9 /* type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = type.h; sourceTree = "<group>"; };
+		CCCD816628AF3AF000395AA9 /* string_helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = string_helper.h; sourceTree = "<group>"; };
+		CCCD816728AF3AF000395AA9 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		CCCD816828AF3AF000395AA9 /* enum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = enum.h; sourceTree = "<group>"; };
+		CCCD816928AF3AF000395AA9 /* field.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = field.h; sourceTree = "<group>"; };
+		CCCD816A28AF3AF000395AA9 /* qualified_type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qualified_type.h; sourceTree = "<group>"; };
+		CCCD816B28AF3AF000395AA9 /* method.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = method.h; sourceTree = "<group>"; };
+		CCCD816C28AF3AF000395AA9 /* constructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = constructor.cpp; sourceTree = "<group>"; };
+		CCCD816D28AF3AF000395AA9 /* constructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = constructor.h; sourceTree = "<group>"; };
+		CCCD816E28AF3AF000395AA9 /* param.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = param.h; sourceTree = "<group>"; };
+		CCCD816F28AF3AF000395AA9 /* enum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = enum.cpp; sourceTree = "<group>"; };
+		CCCD817028AF3AF000395AA9 /* param.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = param.cpp; sourceTree = "<group>"; };
+		CCCD817128AF3AF000395AA9 /* qualified_type.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qualified_type.cpp; sourceTree = "<group>"; };
+		CCCD817228AF3AF000395AA9 /* field.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = field.cpp; sourceTree = "<group>"; };
+		CCCD817328AF3AF000395AA9 /* method.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = method.cpp; sourceTree = "<group>"; };
+		CCCD817428AF3AF000395AA9 /* exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = exception.h; sourceTree = "<group>"; };
+		CCCD817528AF3AF000395AA9 /* reflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reflection.h; sourceTree = "<group>"; };
+		CCCD817628AF3AF000395AA9 /* type.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = type.cpp; sourceTree = "<group>"; };
+		CCCD819F28AF3D6700395AA9 /* json_data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json_data.h; sourceTree = "<group>"; };
 		CCCDE9CB2744D9740060D768 /* F2Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = F2Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCCDE9D62744D9D70060D768 /* F2ScalesTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = F2ScalesTests.mm; sourceTree = "<group>"; };
 		CCCDE9EC2744E2E30060D768 /* F2UtilsTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = F2UtilsTests.mm; sourceTree = "<group>"; };
 		CCCDEA09274635170060D768 /* F2CanvasTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = F2CanvasTests.mm; sourceTree = "<group>"; };
 		CCCEC0D727883043008E217E /* CanvasColorParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasColorParser.cpp; sourceTree = "<group>"; };
 		CCCEC0D927883043008E217E /* CanvasColorParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasColorParser.h; sourceTree = "<group>"; };
-		CCD8ACA3285876FE00A6DAB8 /* Linear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Linear.h; sourceTree = "<group>"; };
-		CCD8ACA4285876FE00A6DAB8 /* ScaleController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScaleController.h; sourceTree = "<group>"; };
-		CCD8ACA5285876FE00A6DAB8 /* KLineCat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KLineCat.h; sourceTree = "<group>"; };
-		CCD8ACA6285876FE00A6DAB8 /* Category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Category.h; sourceTree = "<group>"; };
-		CCD8ACA7285876FE00A6DAB8 /* TimeSharingLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeSharingLinear.h; sourceTree = "<group>"; };
-		CCD8ACAA285876FE00A6DAB8 /* ChartBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChartBridge.h; sourceTree = "<group>"; };
-		CCD8ACAC285876FE00A6DAB8 /* Point.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Point.h; sourceTree = "<group>"; };
-		CCD8ACAD285876FE00A6DAB8 /* StringUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringUtils.h; sourceTree = "<group>"; };
-		CCD8ACAE285876FE00A6DAB8 /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json.h; sourceTree = "<group>"; };
-		CCD8ACAF285876FE00A6DAB8 /* XTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTime.h; sourceTree = "<group>"; };
-		CCD8ACB0285876FE00A6DAB8 /* Vector2d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector2d.h; sourceTree = "<group>"; };
-		CCD8ACB2285876FE00A6DAB8 /* CanvasFontParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasFontParser.h; sourceTree = "<group>"; };
-		CCD8ACB3285876FE00A6DAB8 /* Cartesian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cartesian.h; sourceTree = "<group>"; };
-		CCD8ACB4285876FE00A6DAB8 /* CanvasColorParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasColorParser.h; sourceTree = "<group>"; };
-		CCD8ACB5285876FE00A6DAB8 /* Polar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Polar.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -944,12 +991,11 @@
 		955723B025ECBF7200D2FC07 /* util */ = {
 			isa = PBXGroup;
 			children = (
+				CCCD819F28AF3D6700395AA9 /* json_data.h */,
 				955723B125ECBF7200D2FC07 /* BBox.h */,
 				955723B225ECBF7200D2FC07 /* Point.h */,
 				955723B325ECBF7200D2FC07 /* Path.h */,
 				955723B425ECBF7200D2FC07 /* Matrix.h */,
-				955723B525ECBF7200D2FC07 /* Color.h */,
-				CC1E0EE0275798A400C76359 /* Color.cpp */,
 				955723B625ECBF7200D2FC07 /* json_util.h */,
 				955723B725ECBF7200D2FC07 /* json.h */,
 				955723B825ECBF7200D2FC07 /* Vector2d.h */,
@@ -981,7 +1027,6 @@
 		955723C625ECBF7200D2FC07 /* geom */ = {
 			isa = PBXGroup;
 			children = (
-				955723C725ECBF7200D2FC07 /* Line.cpp */,
 				955723C825ECBF7200D2FC07 /* shape */,
 				955723D125ECBF7200D2FC07 /* Point.h */,
 				955723D225ECBF7200D2FC07 /* Path.h */,
@@ -1090,9 +1135,9 @@
 		CC611D11250A1D0800315124 /* core */ = {
 			isa = PBXGroup;
 			children = (
+				CCCD816428AF3AF000395AA9 /* reflection */,
 				CC8B572F2817F0B3006B2E45 /* Core.h */,
 				CC2F5CF7283DB2AE00F1DEEB /* bridge */,
-				CC8B74DE2818F83A006B2E45 /* nlohmann */,
 				CC3C01E126A00E6700335A1C /* ios */,
 				9557237325ECBF7200D2FC07 /* graphics */,
 				CC611D12250A1D0800315124 /* utils */,
@@ -1104,6 +1149,7 @@
 		CC611D12250A1D0800315124 /* utils */ = {
 			isa = PBXGroup;
 			children = (
+				CC80E3B428BDE5DE00BFE684 /* StringUtil.cpp */,
 				CC1A962E287812470066AE7D /* common.cpp */,
 				CCC3F3AB275F118D008D3F06 /* Tracer.cpp */,
 				CC611D17250A1D0800315124 /* StringUtil.h */,
@@ -1117,6 +1163,8 @@
 		CC612BAE250A1E5800315124 /* F2 */ = {
 			isa = PBXGroup;
 			children = (
+				CC80E3AB28BCAF4600BFE684 /* F2Reflection.h */,
+				CC80E3AA28BCAF4600BFE684 /* F2Reflection.mm */,
 				CCC3F4412760808A008D3F06 /* F2CanvasContext.h */,
 				CCC3F44027608089008D3F06 /* F2CanvasContext.mm */,
 				3F58178B257A3CCF002023ED /* F2-Prefix.pch */,
@@ -1172,14 +1220,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		CC8B74DE2818F83A006B2E45 /* nlohmann */ = {
-			isa = PBXGroup;
-			children = (
-				CC8B74DF2818F83A006B2E45 /* json.hpp */,
-			);
-			path = nlohmann;
-			sourceTree = "<group>";
-		};
 		CC8C6191278FDEA500F540D7 /* e2e */ = {
 			isa = PBXGroup;
 			children = (
@@ -1194,10 +1234,34 @@
 			path = ../../tests/e2e;
 			sourceTree = "<group>";
 		};
+		CCCD816428AF3AF000395AA9 /* reflection */ = {
+			isa = PBXGroup;
+			children = (
+				CCCD816528AF3AF000395AA9 /* type.h */,
+				CCCD816628AF3AF000395AA9 /* string_helper.h */,
+				CCCD816728AF3AF000395AA9 /* utils.h */,
+				CCCD816828AF3AF000395AA9 /* enum.h */,
+				CCCD816928AF3AF000395AA9 /* field.h */,
+				CCCD816A28AF3AF000395AA9 /* qualified_type.h */,
+				CCCD816B28AF3AF000395AA9 /* method.h */,
+				CCCD816C28AF3AF000395AA9 /* constructor.cpp */,
+				CCCD816D28AF3AF000395AA9 /* constructor.h */,
+				CCCD816E28AF3AF000395AA9 /* param.h */,
+				CCCD816F28AF3AF000395AA9 /* enum.cpp */,
+				CCCD817028AF3AF000395AA9 /* param.cpp */,
+				CCCD817128AF3AF000395AA9 /* qualified_type.cpp */,
+				CCCD817228AF3AF000395AA9 /* field.cpp */,
+				CCCD817328AF3AF000395AA9 /* method.cpp */,
+				CCCD817428AF3AF000395AA9 /* exception.h */,
+				CCCD817528AF3AF000395AA9 /* reflection.h */,
+				CCCD817628AF3AF000395AA9 /* type.cpp */,
+			);
+			path = reflection;
+			sourceTree = "<group>";
+		};
 		CCCDE9CC2744D9740060D768 /* F2Tests */ = {
 			isa = PBXGroup;
 			children = (
-				CCD8ACA1285876FE00A6DAB8 /* unit */,
 				CC8C6195278FE54300F540D7 /* res */,
 				CC8FC7D4275E3291001A5CA6 /* F2ChartTests.mm */,
 				CCCDE9D62744D9D70060D768 /* F2ScalesTests.mm */,
@@ -1209,62 +1273,6 @@
 				CC69E018284F51C400261105 /* F2TestUtil.m */,
 			);
 			path = F2Tests;
-			sourceTree = "<group>";
-		};
-		CCD8ACA1285876FE00A6DAB8 /* unit */ = {
-			isa = PBXGroup;
-			children = (
-				CC79F1AB28587A8C00A5623C /* XChart.h */,
-				CCD8ACA2285876FE00A6DAB8 /* scale */,
-				CCD8ACA9285876FE00A6DAB8 /* bridge */,
-				CCD8ACAB285876FE00A6DAB8 /* utils */,
-				CCD8ACB1285876FE00A6DAB8 /* canvas */,
-			);
-			name = unit;
-			path = ../../tests/unit;
-			sourceTree = "<group>";
-		};
-		CCD8ACA2285876FE00A6DAB8 /* scale */ = {
-			isa = PBXGroup;
-			children = (
-				CCD8ACA3285876FE00A6DAB8 /* Linear.h */,
-				CCD8ACA4285876FE00A6DAB8 /* ScaleController.h */,
-				CCD8ACA5285876FE00A6DAB8 /* KLineCat.h */,
-				CCD8ACA6285876FE00A6DAB8 /* Category.h */,
-				CCD8ACA7285876FE00A6DAB8 /* TimeSharingLinear.h */,
-			);
-			path = scale;
-			sourceTree = "<group>";
-		};
-		CCD8ACA9285876FE00A6DAB8 /* bridge */ = {
-			isa = PBXGroup;
-			children = (
-				CCD8ACAA285876FE00A6DAB8 /* ChartBridge.h */,
-			);
-			path = bridge;
-			sourceTree = "<group>";
-		};
-		CCD8ACAB285876FE00A6DAB8 /* utils */ = {
-			isa = PBXGroup;
-			children = (
-				CCD8ACAC285876FE00A6DAB8 /* Point.h */,
-				CCD8ACAD285876FE00A6DAB8 /* StringUtils.h */,
-				CCD8ACAE285876FE00A6DAB8 /* json.h */,
-				CCD8ACAF285876FE00A6DAB8 /* XTime.h */,
-				CCD8ACB0285876FE00A6DAB8 /* Vector2d.h */,
-			);
-			path = utils;
-			sourceTree = "<group>";
-		};
-		CCD8ACB1285876FE00A6DAB8 /* canvas */ = {
-			isa = PBXGroup;
-			children = (
-				CCD8ACB2285876FE00A6DAB8 /* CanvasFontParser.h */,
-				CCD8ACB3285876FE00A6DAB8 /* Cartesian.h */,
-				CCD8ACB4285876FE00A6DAB8 /* CanvasColorParser.h */,
-				CCD8ACB5285876FE00A6DAB8 /* Polar.h */,
-			);
-			path = canvas;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1282,9 +1290,9 @@
 				955723F525ECBF7200D2FC07 /* Flag.h in Headers */,
 				CC612BF4250B2EF700315124 /* F2Chart.h in Headers */,
 				CCC3F4432760808A008D3F06 /* F2CanvasContext.h in Headers */,
-				CC8B74E02818F83A006B2E45 /* json.hpp in Headers */,
 				9557245825ECBF7200D2FC07 /* Command.h in Headers */,
 				9557245125ECBF7200D2FC07 /* InteractionBase.h in Headers */,
+				CCCD817D28AF3AF000395AA9 /* method.h in Headers */,
 				955723F425ECBF7200D2FC07 /* Text.h in Headers */,
 				CC612BF8250B2EF700315124 /* F2Geom.h in Headers */,
 				9557242225ECBF7200D2FC07 /* Linear.h in Headers */,
@@ -1318,16 +1326,17 @@
 				9557243A25ECBF7200D2FC07 /* GeomShapeFactory.h in Headers */,
 				9557240725ECBF7200D2FC07 /* Dodge.h in Headers */,
 				9557243725ECBF7200D2FC07 /* Polar.h in Headers */,
+				CCCD818728AF3AF000395AA9 /* reflection.h in Headers */,
 				9557241E25ECBF7200D2FC07 /* ScaleController.h in Headers */,
 				3F5817E4257FB72F002023ED /* F2Callback.h in Headers */,
 				9557240B25ECBF7200D2FC07 /* Text.h in Headers */,
-				9557242825ECBF7200D2FC07 /* Color.h in Headers */,
 				CCCEC0DB27883043008E217E /* CanvasColorParser.h in Headers */,
 				9557244325ECBF7200D2FC07 /* Candle.h in Headers */,
 				9557244D25ECBF7200D2FC07 /* Interval.h in Headers */,
 				955723F625ECBF7200D2FC07 /* GuideController.h in Headers */,
 				9557240C25ECBF7200D2FC07 /* Circle.h in Headers */,
 				9557240225ECBF7200D2FC07 /* XChart.h in Headers */,
+				CCCD817928AF3AF000395AA9 /* utils.h in Headers */,
 				9557245625ECBF7200D2FC07 /* Pinch.h in Headers */,
 				CC8C620A27968E5700F540D7 /* CanvasImage.h in Headers */,
 				9557241725ECBF7200D2FC07 /* Line.h in Headers */,
@@ -1336,12 +1345,17 @@
 				9557243925ECBF7200D2FC07 /* Point.h in Headers */,
 				9557244125ECBF7200D2FC07 /* Point.h in Headers */,
 				3F56A02D25218EE5002AA2D2 /* F2.h in Headers */,
+				CCCD817B28AF3AF000395AA9 /* field.h in Headers */,
 				CC6124E0250A1D0C00315124 /* xtime.h in Headers */,
+				CCCD818028AF3AF000395AA9 /* param.h in Headers */,
 				9557242A25ECBF7200D2FC07 /* json.h in Headers */,
 				955723FC25ECBF7200D2FC07 /* LegendController.h in Headers */,
 				9557245025ECBF7200D2FC07 /* EventController.h in Headers */,
+				CCCD817F28AF3AF000395AA9 /* constructor.h in Headers */,
 				9557240D25ECBF7200D2FC07 /* Marker.h in Headers */,
+				CC80E3AD28BCAF4600BFE684 /* F2Reflection.h in Headers */,
 				9557243325ECBF7200D2FC07 /* Coord.h in Headers */,
+				CCCD817C28AF3AF000395AA9 /* qualified_type.h in Headers */,
 				9557243625ECBF7200D2FC07 /* CanvasContext.h in Headers */,
 				9557244225ECBF7200D2FC07 /* Path.h in Headers */,
 				9557242425ECBF7200D2FC07 /* BBox.h in Headers */,
@@ -1364,6 +1378,7 @@
 				9557244025ECBF7200D2FC07 /* Interval.h in Headers */,
 				9557241F25ECBF7200D2FC07 /* Identity.h in Headers */,
 				CC6124DD250A1D0C00315124 /* common.h in Headers */,
+				CCCD817828AF3AF000395AA9 /* string_helper.h in Headers */,
 				9557241125ECBF7200D2FC07 /* Element.h in Headers */,
 				CCB5B59B279A995E00835806 /* CoreGraphicsContext.h in Headers */,
 				955723FA25ECBF7200D2FC07 /* GuideBase.h in Headers */,
@@ -1372,9 +1387,13 @@
 				9557245225ECBF7200D2FC07 /* Pan.h in Headers */,
 				CC6124DC250A1D0C00315124 /* StringUtil.h in Headers */,
 				CC6124DF250A1D0C00315124 /* Tracer.h in Headers */,
+				CCCD817A28AF3AF000395AA9 /* enum.h in Headers */,
+				CCCD817728AF3AF000395AA9 /* type.h in Headers */,
 				9557242D25ECBF7200D2FC07 /* global.h in Headers */,
 				9557242325ECBF7200D2FC07 /* TimeSharingLinear.h in Headers */,
+				CCCD81A028AF3D6700395AA9 /* json_data.h in Headers */,
 				9557243D25ECBF7200D2FC07 /* Area.h in Headers */,
+				CCCD818628AF3AF000395AA9 /* exception.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1411,6 +1430,7 @@
 				CC8B56FC2817DC3C006B2E45 /* CopyFiles */,
 				CC8B56FF2817DC58006B2E45 /* CopyFiles */,
 				CC8B57322817F993006B2E45 /* CopyFiles */,
+				CCCD819328AF3CEB00395AA9 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -1500,9 +1520,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC0912632834CB4D007A92F0 /* ChartBridge.cpp in Sources */,
-				CC1E0EE2275798A400C76359 /* Color.cpp in Sources */,
+				CCCD818528AF3AF000395AA9 /* method.cpp in Sources */,
 				CC612BF5250B2EF700315124 /* F2Utils.m in Sources */,
-				9557243825ECBF7200D2FC07 /* Line.cpp in Sources */,
+				CCCD818128AF3AF000395AA9 /* enum.cpp in Sources */,
 				CC1A962F287812470066AE7D /* common.cpp in Sources */,
 				955723F225ECBF7200D2FC07 /* GuideBase.cpp in Sources */,
 				9557242E25ECBF7200D2FC07 /* XChart.cpp in Sources */,
@@ -1515,6 +1535,7 @@
 				CC8955122844DAC400AD24E0 /* BridgeRailingIOS.mm in Sources */,
 				9557244B25ECBF7200D2FC07 /* Interval.cpp in Sources */,
 				9557245725ECBF7200D2FC07 /* InteractionContext.cpp in Sources */,
+				CC80E3B528BDE5DE00BFE684 /* StringUtil.cpp in Sources */,
 				CC1A962A287811E20066AE7D /* Point.cpp in Sources */,
 				9557241825ECBF7200D2FC07 /* Element.cpp in Sources */,
 				CCC3F4422760808A008D3F06 /* F2CanvasContext.mm in Sources */,
@@ -1522,13 +1543,17 @@
 				9555CEAD2623E36C00202A83 /* F2CanvasView.mm in Sources */,
 				955723F725ECBF7200D2FC07 /* GuideController.cpp in Sources */,
 				CCB5B59C279A995E00835806 /* CoreGraphicsContext.mm in Sources */,
+				CCCD818428AF3AF000395AA9 /* field.cpp in Sources */,
+				CCCD818328AF3AF000395AA9 /* qualified_type.cpp in Sources */,
 				CC8C620627968E4700F540D7 /* Image.cpp in Sources */,
 				9557242F25ECBF7200D2FC07 /* Canvas.cpp in Sources */,
 				9557244725ECBF7200D2FC07 /* Point.cpp in Sources */,
+				CCCD817E28AF3AF000395AA9 /* constructor.cpp in Sources */,
 				9557244525ECBF7200D2FC07 /* Candle.cpp in Sources */,
 				9557244A25ECBF7200D2FC07 /* Area.cpp in Sources */,
 				9557243B25ECBF7200D2FC07 /* GeomShapeFactory.cpp in Sources */,
 				9557245425ECBF7200D2FC07 /* Pinch.cpp in Sources */,
+				CCCD818828AF3AF000395AA9 /* type.cpp in Sources */,
 				955723FE25ECBF7200D2FC07 /* GeomAnimate.cpp in Sources */,
 				9557241B25ECBF7200D2FC07 /* Group.cpp in Sources */,
 				CC8FC7BF275DDC28001A5CA6 /* CanvasFontParser.cpp in Sources */,
@@ -1537,7 +1562,9 @@
 				9557240925ECBF7200D2FC07 /* Marker.cpp in Sources */,
 				3F5817E5257FB72F002023ED /* F2Callback.mm in Sources */,
 				955723FF25ECBF7200D2FC07 /* TimeLine.cpp in Sources */,
+				CC80E3AC28BCAF4600BFE684 /* F2Reflection.mm in Sources */,
 				CCCEC0DA27883043008E217E /* CanvasColorParser.cpp in Sources */,
+				CCCD818228AF3AF000395AA9 /* param.cpp in Sources */,
 				CC8C620227968E3D00F540D7 /* Image.cpp in Sources */,
 				9557241A25ECBF7200D2FC07 /* Polyline.cpp in Sources */,
 				9557241625ECBF7200D2FC07 /* Circle.cpp in Sources */,
@@ -1569,11 +1596,7 @@
 				CC8FC7D5275E3291001A5CA6 /* F2ChartTests.mm in Sources */,
 				CC1C4118284896F8009C9322 /* Linear.cpp in Sources */,
 				CC1C4119284896FD009C9322 /* Scale.cpp in Sources */,
-				CCCDEA0A274635170060D768 /* F2CanvasTests.mm in Sources */,
-				CC69E013284F2F6600261105 /* F2ChartBridgeTests.mm in Sources */,
-				CCCDE9D72744D9D70060D768 /* F2ScalesTests.mm in Sources */,
 				CC69E019284F51C400261105 /* F2TestUtil.m in Sources */,
-				CCCDE9ED2744E2E30060D768 /* F2UtilsTests.mm in Sources */,
 				CC79F2B328619F6B00A5623C /* ScaleController.cpp in Sources */,
 				CC8C619A278FF92B00F540D7 /* F2PixelMatch.mm in Sources */,
 			);

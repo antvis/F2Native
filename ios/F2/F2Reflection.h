@@ -18,7 +18,9 @@ public:
     static std::vector<std::vector<long long>> CreateTimeRangeArray(NSArray *array, const Type *type);
     static std::vector<float> CreateNumberArray(NSArray *array, const Type *type);
     static Any CreateStruct(NSDictionary *config, const Type *type);
-    static xg::util::XSourceItem CreateaSourceItem(NSDictionary *data);
     static std::unordered_map<std::string, Any> CreateMap(NSDictionary *config);
+    
+    static xg::util::XSourceArray CreateaSourceArray(NSArray *data);
+    static xg::util::XSourceItem CreateaSourceItem(NSDictionary *data);
 };
 

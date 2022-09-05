@@ -9,10 +9,10 @@ add_definitions(-DNDEBUG)
 
 # --allow-undefined
 # -s \"EXPORTED_FUNCTIONS=['_main']\"
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --no-entry --target=wasm32-wasi -s FILESYSTEM=0 -Wall -Wextra -fno-exceptions -fno-rtti -fdata-sections -ffunction-sections -Os -s STANDALONE_WASM=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0")
+# --no-entry
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--export=__heap_base -Wl,--export=__data_end -Wl,--export=malloc -Wl,--export=free --target=wasm32-wasi -s FILESYSTEM=0 -Wall -Wextra -fno-exceptions -fno-rtti -fdata-sections -ffunction-sections -Os -s STANDALONE_WASM=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0 ")
 
 # set(CMAKE_EXE_LINKER_FLAGS "-Wl,--trace-symbol=__wasi_fd_write")
-
 include_directories(../core)
 
 # 添加 core/utils 下所有源文件
@@ -69,5 +69,5 @@ list(APPEND DIR_SRC ${DIR_SRC_GRAPHICS})
 
 add_executable(${PROJECT_NAME} ${DIR_SRC})
 
-#--profiling-funcs 可以看到函数调用
-set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "--minify=0 -s FILESYSTEM=0  -fno-rtti -fno-exceptions -Oz -s STANDALONE_WASM=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0")
+# --profiling-funcs 可以看到函数调用
+set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-Wl,--export=__heap_base -Wl,--export=__data_end -Wl,--export=malloc -Wl,--export=free --minify=0 -s FILESYSTEM=0  -fno-rtti -fno-exceptions -Oz -s STANDALONE_WASM=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0")

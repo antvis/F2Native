@@ -18,7 +18,9 @@ bool xg::scale::IsCategory(ScaleType type) {
 bool xg::scale::IsLinear(ScaleType type) { return type == ScaleType::Linear || type == ScaleType::TimeSharingLinear; }
 
 std::string AbstractScale::GetTickText(const Any &item, XChart *chart) {
+    printf("GetTickText start \n");
     if(!config.tick.empty() && chart) {
+        printf("GetTickText start 0\n");
         std::string content = "{\"content\"," +  item.Cast<string>() + "}";
         auto rst = chart->InvokeFunction(config.tick, content);
         if(rst.count("content")) {
@@ -26,7 +28,9 @@ std::string AbstractScale::GetTickText(const Any &item, XChart *chart) {
         }
     }
     
+    printf("GetTickText start 1\n");
     if(item.GetType().IsString()) {
+        printf("GetTickText start 2\n");
         return item.Cast<std::string>();
     } else if(item.GetType().IsNumber()) {
         return std::to_string(item.Cast<int>());

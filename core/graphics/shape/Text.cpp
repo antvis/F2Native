@@ -18,7 +18,7 @@ xg::shape::Text::Text(const std::string &text, const Point &pt, const float font
     text_ = text;
     lineCount_ = 1;
     if(text.size() && text.find("\n") != string::npos) {
-        StringUtil::Split(text, textArr_, '\n');
+        StringUtil::SplitString(text, textArr_, '\n');
         lineCount_ = (int)textArr_.size();
     }
 }

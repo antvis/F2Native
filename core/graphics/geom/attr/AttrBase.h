@@ -81,8 +81,8 @@ class Position : public AttrBase {
                 util::Point point = coord.ConvertPoint(util::Point(x, y));
                 item._x = point.x; // attr names[x, y]
                 item._y = point.y;
-            } else if(yVal.GetType().IsArray()) { //区间柱状图
-                double x = xScale.Scale(item.data->at(xField));
+            } else if(!yVal.IsEmpty() && yVal.GetType().IsArray()) { //区间柱状图
+                double x = xScale.Scale(xVal);
                 std::vector<double> rstY;
                 auto &yValCast = yVal.Cast<std::vector<double> &>();
                 for(std::size_t index = 0; index < yValCast.size(); ++index) {

@@ -5,12 +5,13 @@
 #include "graphics/XChart.h"
 #include "graphics/global.h"
 
+#include "graphics/guide/GuideController.h"
 #include "graphics/guide/Image.h"
 #include "graphics/guide/Background.h"
 #include "graphics/guide/Text.h"
 #include "graphics/guide/Flag.h"
-#include "graphics/guide/GuideController.h"
 #include "graphics/guide/Line.h"
+#include "graphics/guide/Point.h"
 #include "graphics/guide/GuideBase.h"
 
 #include "graphics/legend/LegendController.h"
@@ -52,7 +53,7 @@
 #include "graphics/util/Point.h"
 #include "graphics/util/Path.h"
 #include "graphics/util/Matrix.h"
-#include "graphics/util/Color.h"
+#include "graphics/util/json_data.h"
 #include "graphics/util/json_util.h"
 #include "graphics/util/json.h"
 #include "graphics/util/Vector2d.h"
@@ -102,7 +103,6 @@
 #include "utils/Tracer.h"
 #include "utils/xtime.h"
 
-#include "nlohmann/json.hpp"
 #if defined(__APPLE__)
 #include "ios/CoreGraphicsContext.h"
 #include "ios/F2Logger.h"

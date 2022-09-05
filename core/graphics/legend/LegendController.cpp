@@ -99,7 +99,6 @@ float legend::Legend::CalLegendHeight(XChart &chart) {
     float height = 0.f;
     float ratio = chart.GetCanvasContext().GetDevicePixelRatio();
     auto &nameStyle = cfg_.nameStyle;
-
     if(cfg_.layout == "vertical") {
         auto cal = [&](LegendItem &item) {
             auto text = xg::make_unique<shape::Text>(item.name, util::Point(0, 0), nameStyle.textSize * ratio, "", "");
@@ -109,7 +108,7 @@ float legend::Legend::CalLegendHeight(XChart &chart) {
         std::for_each(legendItems_.begin(), legendItems_.end(), cal);
         height += (cfg_.itemMarginBottom - cfg_.wordSpace) * ratio;
     } else {
-        if(legendItems_.size() > 0) {
+        if(!legendItems_.empty()) {
             LegendItem &item = legendItems_[0];
             auto text = xg::make_unique<shape::Text>(item.name, util::Point(0, 0), nameStyle.textSize * ratio, "", "");
             xg::util::BBox textBbox = text->GetBBox(chart.GetCanvasContext());
@@ -121,10 +120,9 @@ float legend::Legend::CalLegendHeight(XChart &chart) {
     return height_;
 }
 
-void legend::LegendController::AddLegend(XChart &chart, const std::string &field, const std::vector<legend::LegendItem> &fieldItems) {
-
-    if(legendCfg_[field].hidden) {
-        return;
+bool legend::LegendController::AddLegend(XChart &chart, const std::string &field, const std::vector<legend::LegendItem> &fieldItems) {
+    if(!legendCfg_[field].enable) {
+        return false;
     }
     // if custom { // TODO 待实现 }
     // else if category
@@ -149,30 +147,30 @@ void legend::LegendController::AddLegend(XChart &chart, const std::string &field
         legendWidth_ = fmax(legendWidth_, width_i);
         legendHeight_ = fmax(legendHeight_, height_i);
     }
+    return true;
 }
 
 void legend::LegendController::SetFieldConfig(const std::string &field, const legend::LegendCfg &cfg) {
     position_ = cfg.position;
     legendCfg_[field] = cfg;
-    hidden_ = cfg.hidden;
+    enable_ = cfg.enable;
 }
 
-void legend::LegendController::Render(XChart &chart) {
-    if(hidden_)
-        return;
-
+bool legend::LegendController::Render(XChart &chart) {
+    if(!enable_) return false;
+    printf("LegendController Render start\n");
     if(chart.GetCoord().GetType() == xg::canvas::coord::CoordType::Polar) {
         position_ = "right";
     }
 
     // only support category
-
+    printf("LegendController Render start 0\n");
     std::map<std::string, std::vector<legend::LegendItem>> legendItems = chart.GetLegendItems();
     if(legendItems.empty())
-        return;
+        return false;
 
     // init legend
-
+    printf("LegendController Render step1\n");
     for(auto it = legendItems.begin(); it != legendItems.end(); ++it) {
         std::string field = it->first;
         std::vector<legend::LegendItem> &fieldItems = it->second;
@@ -189,7 +187,7 @@ void legend::LegendController::Render(XChart &chart) {
 //            }
 //        });
 
-        this->AddLegend(chart, field, fieldItems);
+        bool rst = this->AddLegend(chart, field, fieldItems);
     }
 
     // draw
@@ -199,7 +197,7 @@ void legend::LegendController::Render(XChart &chart) {
         Point originPoint = legend.AlignLegend(chart, position_, legendHeight_, legendWidth_);
         legend.CreateShape(chart, container_, originPoint);
     }
-
+    printf("LegendController Render step2\n");
     // calculate legend range
     float ratio = chart.GetCanvasContext().GetDevicePixelRatio();
     float left = 0;
@@ -220,11 +218,11 @@ void legend::LegendController::Render(XChart &chart) {
     }
 
     chart.UpdateLayout({userPadding[0] + left, userPadding[1] + top, userPadding[2] + right, userPadding[3] + bottom});
+    return true;
 }
 
 void legend::LegendController::OnToolTipMarkerItemsChanged() {
-    if(this->hidden_)
-        return;
+    if(!this->enable_) return;
 
 //    markerItems_ = items;
 //

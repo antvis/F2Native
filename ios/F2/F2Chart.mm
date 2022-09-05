@@ -252,7 +252,7 @@ using namespace xg;
 
 - (F2Chart * (^)(bool enable))animate {
     return ^id(bool enable) {
-        self.chart->AnimateObject({.hidden = !enable});
+        self.chart->AnimateObject({.enable = enable});
         return self;
     };
 }

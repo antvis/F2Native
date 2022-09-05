@@ -43,7 +43,7 @@ struct LegendCfg {
     string align;
     string verticalAlign;
     string field;//冗余一个field
-    bool hidden = false;
+    bool enable = true;
     
 #if !defined(__EMSCRIPTEN__)
     BEGIN_TYPE(LegendCfg)
@@ -60,7 +60,7 @@ struct LegendCfg {
                FIELD(&LegendCfg::align),
                FIELD(&LegendCfg::verticalAlign),
                FIELD(&LegendCfg::field),
-               FIELD(&LegendCfg::hidden))
+               FIELD(&LegendCfg::enable))
         CTORS(DEFAULT_CTOR(LegendCfg))
     END_TYPE
 #endif
@@ -128,7 +128,7 @@ class LegendController {
 
     void SetFieldConfig(const std::string &field, const LegendCfg &cfg);
 
-    void Render(XChart &chart);
+    bool Render(XChart &chart);
 
     inline LegendRange GetRange() const noexcept { return legendRange_; }
 
@@ -139,7 +139,7 @@ class LegendController {
     void ClearInner();
 
   private:
-    void AddLegend(XChart &chart, const std::string &field, const std::vector<LegendItem> &fieldItems);
+    bool AddLegend(XChart &chart, const std::string &field, const std::vector<LegendItem> &fieldItems);
 
   private:
     unordered_map<string, LegendCfg> legendCfg_;
@@ -150,7 +150,7 @@ class LegendController {
     float legendHeight_ = 0.f;
 //    nlohmann::json markerItems_;
     shape::Group *container_ = nullptr;
-    bool hidden_ = false;
+    bool enable_ = true;
 };
 } // namespace legend
 } // namespace xg

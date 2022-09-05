@@ -340,6 +340,7 @@ REFLECT_ALIASED_PRIMITIVE_TYPE(wchar_t, uint16_t)
 #if defined(LONG_MAX) && (LONG_MAX > 0xffffffffL)
 REFLECT_ALIASED_PRIMITIVE_TYPE(signed long, int64_t)
 REFLECT_ALIASED_PRIMITIVE_TYPE(unsigned long, uint64_t)
+//REFLECT_ALIASED_PRIMITIVE_TYPE(long long, uint64_t)
 #else
 REFLECT_ALIASED_PRIMITIVE_TYPE(signed long, int32_t)
 REFLECT_ALIASED_PRIMITIVE_TYPE(unsigned long, uint32_t)

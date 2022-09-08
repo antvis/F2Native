@@ -65,18 +65,6 @@ list(APPEND DIR_SRC ${DIR_SRC_BRIDGE})
 list(APPEND DIR_SRC ${DIR_SRC_ANDROID})
 
 
-# 添加unit下所有文件
-aux_source_directory(tests/unit/bridge DIR_TESTS_BRIDGE)
-aux_source_directory(tests/unit/canvas DIR_TESTS_CANVAS)
-aux_source_directory(tests/unit/scale DIR_TESTS_SCALE)
-aux_source_directory(tests/unit/utils DIR_TESTS_UTILS)
-
-list(APPEND DIR_TESTS ${DIR_TESTS_BRIDGE})
-list(APPEND DIR_TESTS ${DIR_TESTS_CANVAS})
-list(APPEND DIR_TESTS ${DIR_TESTS_SCALE})
-list(APPEND DIR_TESTS ${DIR_TESTS_UTILS})
-
-
 if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
     add_definitions(-D DEBUG)
 endif ()

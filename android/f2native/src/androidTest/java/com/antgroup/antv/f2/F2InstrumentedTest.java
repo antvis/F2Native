@@ -19,10 +19,12 @@ import static org.junit.Assert.*;
 public class F2InstrumentedTest {
     @Test
     public void runAllTest() {
-        System.loadLibrary("f2tests");
-        F2TestProxy test = new F2TestProxy();
+        if(BuildConfig.DEBUG) {
+            System.loadLibrary("f2tests");
+            F2TestProxy test = new F2TestProxy();
 
-        //所有c++的单测都在JNI的runTest中
-        assertEquals(test.runTest(), 1);
+            //所有c++的单测都在JNI的runTest中
+            assertEquals(test.runTest(), 1);
+        }
     }
 }

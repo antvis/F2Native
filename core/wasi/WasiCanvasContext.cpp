@@ -5,7 +5,17 @@
 using namespace xg;
 using namespace xg::canvas;
 
-// extern "C" void _2d_clearRect(float, float, float, float);
+extern "C" void clearRect(float, float, float, float);
+extern "C" void lineTo(float, float);
+extern "C" void moveTo(float, float);
+extern "C" void setFillStyle(const char *);
+extern "C" void setStrokeStyle(const char *);
+extern "C" void setLineWidth(float);
+extern "C" void setFont(const char *);
+extern "C" float globalAlpha();
+extern "C" void fillText(const char *, float, float, float);
+extern "C" void strokeText(const char *, float, float, float);
+
 
 WasiCanvasContext::WasiCanvasContext(const std::string &contextName, float width, float height, double devicePixelRatio)
     : CanvasContext(devicePixelRatio, nullptr) {
@@ -23,26 +33,43 @@ void WasiCanvasContext::ChangeSize(float width, float height) {
 }
 
 void WasiCanvasContext::SetFillStyle(const std::string &color) {
+    setFillStyle(color.c_str());
 }
 
 void WasiCanvasContext::SetFillStyle(const canvas::CanvasFillStrokeStyle &style) {
+    switch (style.type) {
+    case CanvasFillStrokeStyleType::kColor: {
+      this->SetFillStyle(style.color);
+      break;
+    }
+    default:
+      break;
+  }
 }
 
 void WasiCanvasContext::SetStrokeStyle(const std::string &color) {
-    
+    setStrokeStyle(color.c_str());
 }
 
 void WasiCanvasContext::SetStrokeStyle(const canvas::CanvasFillStrokeStyle &style) {
+    switch (style.type) {
+        case CanvasFillStrokeStyleType::kColor: {
+            this->SetStrokeStyle(style.color);
+            break;
+        }
+        default:
+        break;
+  }
 }
 
 void WasiCanvasContext::SetLineCap(const std::string &lineCap) {
-   
 }
 
 void WasiCanvasContext::SetLineJoin(const std::string &lineJoin) {
 }
 
 void WasiCanvasContext::SetLineWidth(float lineWidth) {
+    setLineWidth(lineWidth);
 }
 
 void WasiCanvasContext::SetLineDashOffset(float v) {
@@ -54,17 +81,21 @@ void WasiCanvasContext::SetLineDash(const std::vector<float> &params) {
 void WasiCanvasContext::SetMiterLimit(float limit) {}
 
 void WasiCanvasContext::SetGlobalAlpha(float globalAlpha) {
+    
 }
 
-float WasiCanvasContext::GlobalAlpha() { return globalAlpha_; }
+float WasiCanvasContext::GlobalAlpha() { return globalAlpha(); }
 
 void WasiCanvasContext::SetFont(const std::string &font) {
+    setFont(font.c_str());
 }
 
 void WasiCanvasContext::FillText(const std::string &text, float x, float y, float maxWidth) {
+    fillText(text.c_str(), x, y, maxWidth);
 }
 
 void WasiCanvasContext::StrokeText(const std::string &text, float x, float y, float maxWidth) {
+    strokeText(text.c_str(), x, y, maxWidth);
 }
 
 std::string WasiCanvasContext::TextAlign() const { return textAlgin_; }
@@ -110,6 +141,7 @@ void WasiCanvasContext::Rect(float x, float y, float width, float height) {
 }
 
 void WasiCanvasContext::ClearRect(float x, float y, float width, float height) {
+    clearRect(x, y, width, height);
 }
 
 void WasiCanvasContext::FillRect(float x, float y, float width, float height) {
@@ -125,12 +157,14 @@ void WasiCanvasContext::BeginPath() {
 }
 
 void WasiCanvasContext::MoveTo(float x, float y) {
+    moveTo(x, y);
 }
 
 void WasiCanvasContext::ClosePath() {
 }
 
 void WasiCanvasContext::LineTo(float x, float y) {
+    lineTo(x, y);
 }
 
 void WasiCanvasContext::Clip(const std::string &fillRule) {

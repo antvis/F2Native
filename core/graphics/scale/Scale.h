@@ -113,22 +113,17 @@ class AbstractScale {
     void Reset() { this->ticks = this->CalculateTicks(); }
 
     std::vector<Tick> GetTicks(XChart *chart) {
-        printf("GetTicks start\n");
         std::vector<Tick> ticks_;
         ticks_.reserve(ticks.size());
-        printf("GetTicks start 0\n");
         for(size_t i = 0; i < ticks.size(); i++) {
             //warning must be const std::string &
             const std::string &item = ticks[i];
             scale::Tick tick;
-            printf("GetTicks start 1\n");
             tick.text = this->GetTickText(item, chart);
-            printf("GetTicks start 2\n");
             tick.value = this->Scale(item);
             tick.tickValue = item;
             ticks_.push_back(std::move(tick));
         }
-        printf("GetTicks end\n");
         return ticks_;
     }
 

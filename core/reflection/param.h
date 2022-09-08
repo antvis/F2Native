@@ -318,20 +318,15 @@ public:
 
     template<class T>
     T Cast() const{
-        printf("Cast start\n");
         if (IsEmpty())
             THROW_EXCEPTION(InvalidCast, "invalid cast from an empty object to '" + qualified_typeof(T).ToString() + "'");
 
         auto type = GetType();
-        printf("Cast start 1\n");
         if (std::is_pointer<T>::value && type == qualified_typeof(void*)) return (T) static_cast<_Holder<T>*>(value)->data;
         if (std::is_pointer<T>::value && type == qualified_typeof(void*&)) return (T) static_cast<_Holder<T&>*>(value)->data;
-        printf("Cast start 2\n");
         QualifiedType t = qualified_typeof(T);
-        printf("Cast start 2.1\n");
         if (t == GetType()) return (T) static_cast<_Holder<T>*>(value)->data;
 
-        printf("Cast start 3\n");
         if (std::is_enum<T>::value && type == typeof(int64_t))
         {
             if (t.IsReference())
@@ -340,7 +335,6 @@ public:
                 return (T) static_cast<_Holder<typename std::conditional<std::is_enum<T>::value, int64_t, T>::type>*>(value)->data;
         }
 
-        printf("Cast start 4\n");
         if (t.GetType() == type.GetType()){
             switch (t.PointerCount())
             {

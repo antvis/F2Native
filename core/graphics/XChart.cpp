@@ -574,25 +574,18 @@ void XChart::Redraw() {
 
 std::map<std::string, std::vector<legend::LegendItem>> XChart::GetLegendItems() {
     std::map<std::string, std::vector<legend::LegendItem>> legendItems;
-    printf("GetLegendItems start\n");
     std::for_each(geoms_.begin(), geoms_.end(), [&](auto &geom) -> void {
-            printf("GetLegendItems start 1\n");
         if(geom->ContainsAttr(attr::AttrType::Color)) {
             const unique_ptr<attr::AttrBase> &_attr = geom->GetColor();
             if(!_attr->GetFields().empty()) {
                 const attr::Color &colorAttr = static_cast<const attr::Color &>(*_attr.get());
 
                 scale::AbstractScale &scale = GetScale(colorAttr.GetFields()[0]);
-                printf("GetLegendItems start 2\n");
                 if(scale::IsCategory(scale.GetType())) {
-                    printf("GetLegendItems start 3\n");
                     const scale::Category &cat = static_cast<Category &>(scale);
-                    printf("GetLegendItems start 4\n");
                     const std::vector<scale::Tick> &ticks = scale.GetTicks(this);
-                    printf("GetLegendItems start 5\n");
 
                     std::vector<legend::LegendItem> fieldItems;
-                    printf("GetLegendItems start 6\n");
                     std::for_each(ticks.begin(), ticks.end(), [&](const scale::Tick &tick) -> void {
                         legend::LegendItem item;
                         item.name = tick.text;
@@ -602,11 +595,9 @@ std::map<std::string, std::vector<legend::LegendItem>> XChart::GetLegendItems() 
                     });
                     legendItems[cat.field] = std::move(fieldItems);
                 }
-                printf("GetLegendItems start 7\n");
             }
         }
     });
-    printf("GetLegendItems end\n");
     return legendItems;
 }
 

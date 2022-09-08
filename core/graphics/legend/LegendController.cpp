@@ -158,19 +158,16 @@ void legend::LegendController::SetFieldConfig(const std::string &field, const le
 
 bool legend::LegendController::Render(XChart &chart) {
     if(!enable_) return false;
-    printf("LegendController Render start\n");
     if(chart.GetCoord().GetType() == xg::canvas::coord::CoordType::Polar) {
         position_ = "right";
     }
 
     // only support category
-    printf("LegendController Render start 0\n");
     std::map<std::string, std::vector<legend::LegendItem>> legendItems = chart.GetLegendItems();
     if(legendItems.empty())
         return false;
 
     // init legend
-    printf("LegendController Render step1\n");
     for(auto it = legendItems.begin(); it != legendItems.end(); ++it) {
         std::string field = it->first;
         std::vector<legend::LegendItem> &fieldItems = it->second;
@@ -187,7 +184,7 @@ bool legend::LegendController::Render(XChart &chart) {
 //            }
 //        });
 
-        bool rst = this->AddLegend(chart, field, fieldItems);
+        this->AddLegend(chart, field, fieldItems);
     }
 
     // draw

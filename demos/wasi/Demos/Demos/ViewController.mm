@@ -34,7 +34,9 @@ using namespace xg::canvas;
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = UIColor.whiteColor;
-    F2CanvasView *view = [F2CanvasView canvas:CGRectMake(0, self.navigationController.navigationBar.bounds.size.height, self.view.frame.size.width, 200)];
+    CGFloat height = self.navigationController.navigationBar.frame.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height;
+
+    F2CanvasView *view = [F2CanvasView canvas:CGRectMake(0, height, self.view.frame.size.width, 200)];
     [self.view addSubview:view];
     view.backgroundColor = UIColor.clearColor;
     [self initwasm:view];

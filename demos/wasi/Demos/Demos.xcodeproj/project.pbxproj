@@ -8,8 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		CC80E3B228BDB4CF00BFE684 /* f2.wasm in Resources */ = {isa = PBXBuildFile; fileRef = CC80E3B128BDB4CE00BFE684 /* f2.wasm */; };
-		CCB93E9828C8392200864266 /* F2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCB93E9128C838A700864266 /* F2.framework */; };
-		CCB93E9928C8392200864266 /* Wasm3Lib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCB93E8A28C8389C00864266 /* Wasm3Lib.framework */; };
+		CCB93EA028CA0B1600864266 /* wasm_canvas_api.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCB93E9F28CA0B1600864266 /* wasm_canvas_api.mm */; };
+		CCB93EAD28CAE80D00864266 /* F2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCB93E9128C838A700864266 /* F2.framework */; };
+		CCB93F5528CB10BF00864266 /* Wasm3Lib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCB93F5228CB109D00864266 /* Wasm3Lib.framework */; };
 		CCCD80E828AE3EF700395AA9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CCCD80E728AE3EF700395AA9 /* AppDelegate.m */; };
 		CCCD80EE28AE3EF700395AA9 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCCD80ED28AE3EF700395AA9 /* ViewController.mm */; };
 		CCCD80F128AE3EF700395AA9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCCD80EF28AE3EF700395AA9 /* Main.storyboard */; };
@@ -19,13 +20,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		CCB93E8928C8389C00864266 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CCB93E8528C8389C00864266 /* Wasm3Lib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CCB93E2628C8372700864266;
-			remoteInfo = Wasm3Lib;
-		};
 		CCB93E9028C838A700864266 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CCB93E8B28C838A700864266 /* F2.xcodeproj */;
@@ -47,9 +41,16 @@
 			remoteGlobalIDString = CC793C3A2509FBAA00E9D913;
 			remoteInfo = F2;
 		};
-		CCB93E9628C8391C00864266 /* PBXContainerItemProxy */ = {
+		CCB93F5128CB109D00864266 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = CCB93E8528C8389C00864266 /* Wasm3Lib.xcodeproj */;
+			containerPortal = CCB93F4D28CB109D00864266 /* Wasm3Lib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CCB93E2628C8372700864266;
+			remoteInfo = Wasm3Lib;
+		};
+		CCB93F5328CB10BA00864266 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CCB93F4D28CB109D00864266 /* Wasm3Lib.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = CCB93E2528C8372700864266;
 			remoteInfo = Wasm3Lib;
@@ -59,9 +60,10 @@
 /* Begin PBXFileReference section */
 		CC528F2128B5F28A00D516FF /* Demos.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Demos.entitlements; sourceTree = "<group>"; };
 		CC80E3B128BDB4CE00BFE684 /* f2.wasm */ = {isa = PBXFileReference; lastKnownFileType = file; path = f2.wasm; sourceTree = "<group>"; };
-		CCB93E8528C8389C00864266 /* Wasm3Lib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Wasm3Lib.xcodeproj; path = Wasm3Lib/Wasm3Lib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		CCB93E8B28C838A700864266 /* F2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = F2.xcodeproj; path = ../../../../ios/F2.xcodeproj; sourceTree = "<group>"; };
-		CCB93E9C28C9905000864266 /* wasm3_cpp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wasm3_cpp.h; sourceTree = "<group>"; };
+		CCB93E9E28CA0B1600864266 /* wasm_canvas_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = wasm_canvas_api.h; sourceTree = "<group>"; };
+		CCB93E9F28CA0B1600864266 /* wasm_canvas_api.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = wasm_canvas_api.mm; sourceTree = "<group>"; };
+		CCB93F4D28CB109D00864266 /* Wasm3Lib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Wasm3Lib.xcodeproj; path = Wasm3Lib/Wasm3Lib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		CCCD80E328AE3EF700395AA9 /* Demos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCCD80E628AE3EF700395AA9 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		CCCD80E728AE3EF700395AA9 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -79,27 +81,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CCB93E9828C8392200864266 /* F2.framework in Frameworks */,
-				CCB93E9928C8392200864266 /* Wasm3Lib.framework in Frameworks */,
+				CCB93F5528CB10BF00864266 /* Wasm3Lib.framework in Frameworks */,
+				CCB93EAD28CAE80D00864266 /* F2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		CCB93E8628C8389C00864266 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CCB93E8A28C8389C00864266 /* Wasm3Lib.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		CCB93E8C28C838A700864266 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				CCB93E9128C838A700864266 /* F2.framework */,
 				CCB93E9328C838A700864266 /* F2Tests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CCB93F4E28CB109D00864266 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CCB93F5228CB109D00864266 /* Wasm3Lib.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -125,14 +127,15 @@
 			isa = PBXGroup;
 			children = (
 				CCB93E8B28C838A700864266 /* F2.xcodeproj */,
-				CCB93E8528C8389C00864266 /* Wasm3Lib.xcodeproj */,
-				CC80E3B128BDB4CE00BFE684 /* f2.wasm */,
+				CCB93F4D28CB109D00864266 /* Wasm3Lib.xcodeproj */,
 				CC528F2128B5F28A00D516FF /* Demos.entitlements */,
+				CC80E3B128BDB4CE00BFE684 /* f2.wasm */,
 				CCCD80E628AE3EF700395AA9 /* AppDelegate.h */,
 				CCCD80E728AE3EF700395AA9 /* AppDelegate.m */,
 				CCCD80EC28AE3EF700395AA9 /* ViewController.h */,
 				CCCD80ED28AE3EF700395AA9 /* ViewController.mm */,
-				CCB93E9C28C9905000864266 /* wasm3_cpp.h */,
+				CCB93E9E28CA0B1600864266 /* wasm_canvas_api.h */,
+				CCB93E9F28CA0B1600864266 /* wasm_canvas_api.mm */,
 				CCCD80EF28AE3EF700395AA9 /* Main.storyboard */,
 				CCCD80F228AE3EF800395AA9 /* Assets.xcassets */,
 				CCCD80F428AE3EF800395AA9 /* LaunchScreen.storyboard */,
@@ -163,8 +166,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				CCB93F5428CB10BA00864266 /* PBXTargetDependency */,
 				CCB93E9528C8391C00864266 /* PBXTargetDependency */,
-				CCB93E9728C8391C00864266 /* PBXTargetDependency */,
 			);
 			name = Demos;
 			productName = Demos;
@@ -202,8 +205,8 @@
 					ProjectRef = CCB93E8B28C838A700864266 /* F2.xcodeproj */;
 				},
 				{
-					ProductGroup = CCB93E8628C8389C00864266 /* Products */;
-					ProjectRef = CCB93E8528C8389C00864266 /* Wasm3Lib.xcodeproj */;
+					ProductGroup = CCB93F4E28CB109D00864266 /* Products */;
+					ProjectRef = CCB93F4D28CB109D00864266 /* Wasm3Lib.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -214,13 +217,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		CCB93E8A28C8389C00864266 /* Wasm3Lib.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Wasm3Lib.framework;
-			remoteRef = CCB93E8928C8389C00864266 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		CCB93E9128C838A700864266 /* F2.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -233,6 +229,13 @@
 			fileType = wrapper.cfbundle;
 			path = F2Tests.xctest;
 			remoteRef = CCB93E9228C838A700864266 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CCB93F5228CB109D00864266 /* Wasm3Lib.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Wasm3Lib.framework;
+			remoteRef = CCB93F5128CB109D00864266 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -258,6 +261,7 @@
 			files = (
 				CCCD80EE28AE3EF700395AA9 /* ViewController.mm in Sources */,
 				CCCD80E828AE3EF700395AA9 /* AppDelegate.m in Sources */,
+				CCB93EA028CA0B1600864266 /* wasm_canvas_api.mm in Sources */,
 				CCCD80F928AE3EF800395AA9 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -270,10 +274,10 @@
 			name = F2;
 			targetProxy = CCB93E9428C8391C00864266 /* PBXContainerItemProxy */;
 		};
-		CCB93E9728C8391C00864266 /* PBXTargetDependency */ = {
+		CCB93F5428CB10BA00864266 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Wasm3Lib;
-			targetProxy = CCB93E9628C8391C00864266 /* PBXContainerItemProxy */;
+			targetProxy = CCB93F5328CB10BA00864266 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -420,7 +424,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Demos",
-					"$(PROJECT_DIR)/Demos/Wamr",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Demos/Info.plist;
@@ -461,7 +464,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Demos",
-					"$(PROJECT_DIR)/Demos/Wamr",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Demos/Info.plist;

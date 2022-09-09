@@ -7,16 +7,15 @@
 
 #import "ViewController.h"
 #import <F2/F2.h>
-#import <F2/Core.h>
 #include <cstdio>
 #include <cstring>
 #include <fstream>
-#import "wasm3_cpp.h"
-#import <Wasm3Lib/wasm3.h>
-#import <Wasm3Lib/m3_config.h>
-#import <Wasm3Lib/m3_api_libc.h>
-#import <Wasm3Lib/m3_api_wasi.h>
-#import <Wasm3Lib/m3_exception.h>
+#include <Wasm3Lib/m3_config.h>
+#include <Wasm3Lib/m3_api_libc.h>
+#include <Wasm3Lib/m3_api_wasi.h>
+#include <Wasm3Lib/m3_exception.h>
+#include "wasm_canvas_api.h"
+
 
 #define FATAL(msg, ...) { printf("Fatal: " msg "\n", ##__VA_ARGS__); return; }
 
@@ -37,38 +36,14 @@ using namespace xg::canvas;
     self.view.backgroundColor = UIColor.whiteColor;
     F2CanvasView *view = [F2CanvasView canvas:CGRectMake(0, self.navigationController.navigationBar.bounds.size.height, self.view.frame.size.width, 200)];
     [self.view addSubview:view];
-    
     view.backgroundColor = UIColor.clearColor;
-
-
-    [self initwasm3:view];
+    [self initwasm:view];
 }
 
-//-(void)initwasmcpp {
-//    NSString *myPath = [NSBundle.mainBundle pathForResource:@"f2" ofType:@"wasm"];
-//
-//    wasm3::environment env;
-//    wasm3::runtime runtime = env.new_runtime(8 * 1024);
-//    std::ifstream wasm_file(myPath.UTF8String, std::ios::binary | std::ios::in);
-//    if (!wasm_file.is_open()) {
-//        throw std::runtime_error("Failed to open wasm file");
-//    }
-//    wasm3::module mod = env.parse_module(wasm_file);
-//    runtime.load(mod);
-//
-//    mod.link_libc();
-//    mod.link_wasi();
-//
-//    mod.link("*", "clearRect", clearRect);
-//
-//    wasm3::function test_fn = runtime.find_function("_start");
-//    test_fn.call<int>();
-//}
-
--(void)initwasm3:(F2CanvasView *)view {
+-(void)initwasm:(F2CanvasView *)view {
     CGContextRef contextRef = [view.canvasContext context2d];
-    CGFloat width = view.frame.size.width * F2NativeScale;
-    CGFloat height = view.frame.size.height * F2NativeScale;
+    CGFloat width = view.frame.size.width ;
+    CGFloat height = view.frame.size.height ;
     CoreGraphicsContext *context = new CoreGraphicsContext(contextRef, width, height, UIScreen.mainScreen.nativeScale, nullptr);
     
     auto start = xg::CurrentTimestampAtMM();
@@ -116,124 +91,5 @@ using namespace xg::canvas;
 
     printf("Call _start function cost %lld ms\n", (xg::CurrentTimestampAtMM() - start));
 }
-
-m3ApiRawFunction(f2_clear_rect) {
-    m3ApiGetArg   (float, x)
-    m3ApiGetArg   (float, y)
-    m3ApiGetArg   (float, width)
-    m3ApiGetArg   (float, height)
-    
-    CanvasContext* context = (CanvasContext*)(_ctx->userdata);
-    context->ClearRect(x, y, width, height);
-    m3ApiSuccess();
-}
-
-m3ApiRawFunction(f2_line_to) {
-    m3ApiGetArg   (float, x)
-    m3ApiGetArg   (float, y)
-    
-    CanvasContext* context = (CanvasContext*)(_ctx->userdata);
-    context->LineTo(x, y);
-    m3ApiSuccess();
-}
-
-m3ApiRawFunction(f2_move_to) {
-    m3ApiGetArg   (float, x)
-    m3ApiGetArg   (float, y)
-    
-    CanvasContext* context = (CanvasContext*)(_ctx->userdata);
-    context->MoveTo(x, y);
-    m3ApiSuccess();
-}
-
-m3ApiRawFunction(f2_set_fill_style) {
-    m3ApiGetArgMem   (const char *, color)
-    
-    CanvasContext* context = (CanvasContext*)(_ctx->userdata);
-    context->SetFillStyle(color);
-    m3ApiSuccess();
-}
-
-m3ApiRawFunction(f2_set_stroke_style) {
-    m3ApiGetArgMem   (const char *, color)
-    
-    CanvasContext* context = (CanvasContext*)(_ctx->userdata);
-    context->SetStrokeStyle(color);
-    m3ApiSuccess();
-}
-
-m3ApiRawFunction(f2_set_line_width) {
-    m3ApiGetArg   (float, lineWidth)
-    
-    CanvasContext* context = (CanvasContext*)(_ctx->userdata);
-    context->SetLineWidth(lineWidth);
-    m3ApiSuccess();
-}
-
-m3ApiRawFunction(f2_global_alpha) {
-    m3ApiReturnType  (float)
-    CanvasContext* context = (CanvasContext*)(_ctx->userdata);
-    m3ApiReturn(context->GlobalAlpha());
-}
-
-m3ApiRawFunction(f2_set_font) {
-    m3ApiGetArgMem   (const char *, font)
-    
-    CanvasContext* context = (CanvasContext*)(_ctx->userdata);
-    context->SetFont(font);
-    m3ApiSuccess();
-}
-
-m3ApiRawFunction(f2_fill_text) {
-    m3ApiGetArgMem   (const char *, font)
-    m3ApiGetArg   (float, x)
-    m3ApiGetArg   (float, y)
-    m3ApiGetArg   (float, maxWith)
-    
-    CanvasContext* context = (CanvasContext*)(_ctx->userdata);
-    context->FillText(font, x, y, maxWith);
-    m3ApiSuccess();
-}
-
-m3ApiRawFunction(f2_stroke_text) {
-    m3ApiGetArgMem   (const char *, font)
-    m3ApiGetArg   (float, x)
-    m3ApiGetArg   (float, y)
-    m3ApiGetArg   (float, maxWith)
-    
-    CanvasContext* context = (CanvasContext*)(_ctx->userdata);
-    context->StrokeText(font, x, y, maxWith);
-    m3ApiSuccess();
-}
-
-static
-M3Result SuppressLookupFailure(M3Result i_result)
-{
-    if (i_result == m3Err_functionLookupFailed)
-        return m3Err_none;
-    else
-        return i_result;
-}
-
-M3Result  m3_LinkCanvas  (IM3Module module, CoreGraphicsContext *context)
-{
-    M3Result result = m3Err_none;
-
-    const char* canvas = "*";
-
-_   (SuppressLookupFailure (m3_LinkRawFunctionEx (module, canvas, "clearRect", "v(ffff)", &f2_clear_rect, context)));
-    (SuppressLookupFailure (m3_LinkRawFunctionEx (module, canvas, "lineTo", "v(ff)", &f2_line_to, context)));
-    (SuppressLookupFailure (m3_LinkRawFunctionEx (module, canvas, "moveTo", "v(ff)", &f2_move_to, context)));
-    (SuppressLookupFailure (m3_LinkRawFunctionEx (module, canvas, "setFillStyle", "v(*)", &f2_set_fill_style, context)));
-    (SuppressLookupFailure (m3_LinkRawFunctionEx (module, canvas, "setStrokeStyle", "v(*)", &f2_set_stroke_style, context)));
-    (SuppressLookupFailure (m3_LinkRawFunctionEx (module, canvas, "setLineWidth", "v(f)", &f2_set_line_width, context)));
-    (SuppressLookupFailure (m3_LinkRawFunctionEx (module, canvas, "setFont", "v(*)", &f2_set_font, context)));
-    (SuppressLookupFailure (m3_LinkRawFunctionEx (module, canvas, "globalAlpha", "f()", &f2_global_alpha, context)));
-    (SuppressLookupFailure (m3_LinkRawFunctionEx (module, canvas, "fillText", "v(*fff)", &f2_fill_text, context)));
-    (SuppressLookupFailure (m3_LinkRawFunctionEx (module, canvas, "strokeText", "v(*fff)", &f2_stroke_text, context)));
-_catch:
-    return result;
-}
-
 
 @end

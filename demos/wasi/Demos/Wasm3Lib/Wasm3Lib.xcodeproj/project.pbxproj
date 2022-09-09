@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CCB93E2A28C8372700864266 /* Wasm3Lib.h in Headers */ = {isa = PBXBuildFile; fileRef = CCB93E2928C8372700864266 /* Wasm3Lib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CCB93E5C28C8374400864266 /* m3_api_wasi.h in Headers */ = {isa = PBXBuildFile; fileRef = CCB93E3128C8374400864266 /* m3_api_wasi.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CCB93E5D28C8374400864266 /* m3_compile.c in Sources */ = {isa = PBXBuildFile; fileRef = CCB93E3228C8374400864266 /* m3_compile.c */; };
 		CCB93E5E28C8374400864266 /* m3_core.h in Headers */ = {isa = PBXBuildFile; fileRef = CCB93E3328C8374400864266 /* m3_core.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -50,7 +49,6 @@
 
 /* Begin PBXFileReference section */
 		CCB93E2628C8372700864266 /* Wasm3Lib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Wasm3Lib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CCB93E2928C8372700864266 /* Wasm3Lib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Wasm3Lib.h; sourceTree = "<group>"; };
 		CCB93E3128C8374400864266 /* m3_api_wasi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = m3_api_wasi.h; sourceTree = "<group>"; };
 		CCB93E3228C8374400864266 /* m3_compile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = m3_compile.c; sourceTree = "<group>"; };
 		CCB93E3328C8374400864266 /* m3_core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = m3_core.h; sourceTree = "<group>"; };
@@ -122,7 +120,6 @@
 			isa = PBXGroup;
 			children = (
 				CCB93E3028C8374400864266 /* source */,
-				CCB93E2928C8372700864266 /* Wasm3Lib.h */,
 			);
 			path = Wasm3Lib;
 			sourceTree = "<group>";
@@ -192,7 +189,6 @@
 				CCB93E6B28C8374400864266 /* m3_code.h in Headers */,
 				CCB93E7728C8374400864266 /* fib64.wasm.h in Headers */,
 				CCB93E7E28C8374400864266 /* m3_api_libc.h in Headers */,
-				CCB93E2A28C8372700864266 /* Wasm3Lib.h in Headers */,
 				CCB93E8128C8374400864266 /* m3_info.h in Headers */,
 				CCB93E6628C8374400864266 /* m3_function.h in Headers */,
 				CCB93E5E28C8374400864266 /* m3_core.h in Headers */,
@@ -422,13 +418,17 @@
 		CCB93E2E28C8372700864266 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = BQWDN7869J;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -438,14 +438,18 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACH_O_TYPE = staticlib;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.antvis.f2.wasi.demos.Wasm3Lib;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -455,24 +459,36 @@
 		CCB93E2F28C8372700864266 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = BQWDN7869J;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					__wasi__,
+					d_m3HasWASI,
+				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACH_O_TYPE = staticlib;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.antvis.f2.wasi.demos.Wasm3Lib;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";

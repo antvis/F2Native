@@ -133,7 +133,7 @@ class LegendController {
   private:
     nlohmann::json legendCfg_;
     bool enable_ = true;
-    std::string position_ = "top";
+    std::string position_ = "";
     LegendRange legendRange_{};
     std::unordered_map<std::string, std::vector<Legend>> legends_;
     float legendWidth_ = 0.f;

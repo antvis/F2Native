@@ -196,9 +196,13 @@ void legend::LegendController::SetFieldConfig(std::string field, nlohmann::json 
 void legend::LegendController::Render(XChart &chart) {
     if(!this->enable_)
         return;
-
-    if(chart.GetCoord().GetType() == xg::canvas::coord::CoordType::Polar) {
-        position_ = "right";
+    
+    if (position_.empty()) {
+        if(chart.GetCoord().GetType() == xg::canvas::coord::CoordType::Polar) {
+            position_ = "right";
+        } else {
+            position_ = "top";
+        }
     }
 
     // only support category

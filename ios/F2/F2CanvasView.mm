@@ -23,6 +23,7 @@
     if(self = [super initWithFrame:frame]) {
         self.canvasContext = [[F2CanvasContext alloc] initWithSize:frame.size];
         self.listener = [[F2GestureListener alloc] initWithView:self];
+        self.backgroundColor = UIColor.clearColor;
     }
     return self;
 }

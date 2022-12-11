@@ -29,6 +29,15 @@ Pod::Spec.new do |spec|
   spec.ios.deployment_target = '9.0'
   spec.requires_arc = true
 
+  #fix:Cannot code sign because the target does not have an Info.plist
+  spec.user_target_xcconfig = {
+        'GENERATE_INFOPLIST_FILE' => 'YES'
+  }
+
+  spec.pod_target_xcconfig = {
+        'GENERATE_INFOPLIST_FILE' => 'YES'
+  }
+
   #保护目录结构不变，如果不设置，所有头文件都将被放到同一个目录下 当需要暴露c++头文件后在设置
   # spec.header_mappings_dir = "core/**"
 end

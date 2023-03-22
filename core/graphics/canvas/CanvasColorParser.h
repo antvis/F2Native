@@ -39,7 +39,11 @@ class CanvasColorParser {
 
   private:
     static std::unordered_map<std::string, CanvasColor> colorMap;
-    static std::mutex global_mutex;
+
+    static std::mutex& global_mutex(){
+        static std::mutex& mutex = *(new std::mutex());
+        return mutex;
+    }
     static std::string hex_digit;
 };
 

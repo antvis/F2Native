@@ -32,6 +32,7 @@
 		CD2657002C1622C3002D70CC /* HistogramBarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2656FF2C1622C3002D70CC /* HistogramBarChart.swift */; };
 		CD2657022C162334002D70CC /* BasePointChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2657012C162334002D70CC /* BasePointChart.swift */; };
 		CD2657042C1623D4002D70CC /* RadarAreaChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2657032C1623D4002D70CC /* RadarAreaChart.swift */; };
+		CD2657062C162533002D70CC /* ChartListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2657052C162533002D70CC /* ChartListViewController.swift */; };
 		D1093B56324A12388FFA958C /* libPods-Demos-Swift.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B6B0DAB8161155F20647AC22 /* libPods-Demos-Swift.a */; };
 /* End PBXBuildFile section */
 
@@ -71,6 +72,7 @@
 		CD2656FF2C1622C3002D70CC /* HistogramBarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistogramBarChart.swift; sourceTree = "<group>"; };
 		CD2657012C162334002D70CC /* BasePointChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasePointChart.swift; sourceTree = "<group>"; };
 		CD2657032C1623D4002D70CC /* RadarAreaChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadarAreaChart.swift; sourceTree = "<group>"; };
+		CD2657052C162533002D70CC /* ChartListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartListViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +121,7 @@
 				CC79F203285AB18100A5623C /* AppDelegate.swift */,
 				CC79F207285AB18100A5623C /* ViewController.swift */,
 				CC79F251285ADA2300A5623C /* DemoViewController.swift */,
+				CD2657052C162533002D70CC /* ChartListViewController.swift */,
 				CC79F20C285AB18300A5623C /* Assets.xcassets */,
 				CC79F20E285AB18300A5623C /* LaunchScreen.storyboard */,
 				CC79F211285AB18300A5623C /* Info.plist */,
@@ -281,6 +284,7 @@
 				CD2656F02C161B98002D70CC /* ContrastLineChart.swift in Sources */,
 				CD2656EC2C161310002D70CC /* CandleChart.swift in Sources */,
 				CD2656E82C160C2A002D70CC /* BaseAreaChart.swift in Sources */,
+				CD2657062C162533002D70CC /* ChartListViewController.swift in Sources */,
 				CD2656FA2C16212C002D70CC /* GroupBarChart.swift in Sources */,
 				CD2656FE2C162228002D70CC /* GroupStackBarChart.swift in Sources */,
 				CC79F252285ADA2300A5623C /* DemoViewController.swift in Sources */,

@@ -18,7 +18,7 @@ class ContrastLineChart: BaseLineChart {
             return
         }
         let jsonData = F2Utils.toJsonArray(jsonDataString)
-        
+        chart.clear()
         chart.canvas()(canvasView).padding()(20, 10, 20, 0)
         chart.source()(jsonData)
         chart.scale()("value", ["nice": true])

@@ -17,6 +17,7 @@ class RadarAreaChart: BaseLineChart {
             return
         }
         let jsonData = F2Utils.toJsonArray(jsonDataString)
+        chart.clear()
         chart.canvas()(canvasView).padding()(20, 10, 20, 0)
         chart.source()(jsonData)
         chart.line()().position()("item*score").color()("user", [])

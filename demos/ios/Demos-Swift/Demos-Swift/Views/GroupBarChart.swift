@@ -17,6 +17,7 @@ class GroupBarChart: BaseLineChart {
             return
         }
         let jsonData = F2Utils.toJsonArray(jsonDataString)
+        chart.clear()
         chart.canvas()(canvasView).padding()(15, 15, 15, 15)
         chart.source()(jsonData)
         chart.axis()("month", ["grid": false])

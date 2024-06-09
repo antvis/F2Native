@@ -39,6 +39,7 @@ class CandleChart: UIView {
         let jsonData = F2Utils.toJsonArray(jsonDataString)
         
         // Setup for the main candlestick chart
+        candleChart.clear()
         candleChart.canvas()(canvasView)
         candleChart.source()(jsonData)
         candleChart.padding()(15, 10, 15, 0)
@@ -64,6 +65,7 @@ class CandleChart: UIView {
         candleChart.render()()
 
         // Setup for the volume chart
+        subChart.clear()
         subChart.adjustScale()(false);
         subChart.canvas()(canvasView)
         subChart.source()(jsonData)

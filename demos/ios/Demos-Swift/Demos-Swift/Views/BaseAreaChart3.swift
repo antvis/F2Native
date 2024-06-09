@@ -17,7 +17,7 @@ class BaseAreaChart3: BaseLineChart {
             return
         }
         let jsonData = F2Utils.toJsonArray(jsonDataString)
-        
+        chart.clear()
         chart.canvas()(canvasView).padding()(20, 10, 20, 0).source()(jsonData)
         chart.axis()("tem", ["grid": ["stroke": "#000"]])
         chart.line()().position()("month*value")

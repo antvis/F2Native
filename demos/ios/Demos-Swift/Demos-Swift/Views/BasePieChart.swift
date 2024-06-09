@@ -23,8 +23,9 @@ class BasePieChart: BaseLineChart {
         }
         
         let jsonData = F2Utils.toJsonArray(jsonString)
+        chart.clear()
         chart.canvas()(canvasView)
-        self.chart!.source()(jsonData)
+        chart.source()(jsonData)
         chart.padding()(10, 20, 10, 0)
         chart.axis()("percent", ["line": false, "label": false, "grid": false])
         chart.axis()("a", ["line": false, "label": false, "grid": false])

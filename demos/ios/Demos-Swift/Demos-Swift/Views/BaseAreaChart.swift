@@ -24,6 +24,7 @@ class BaseAreaChart: BaseLineChart {
         
         let height = canvasView.frame.size.height * UIScreen.main.scale
         let jsonData = F2Utils.toJsonArray(jsonString)
+        chart.clear()
         chart.canvas()(canvasView)
         self.chart!.source()(jsonData)
         chart.padding()(10, 20, 10, 0)

@@ -19,7 +19,7 @@ class BaseLineChart2: BaseLineChart {
         }
         
         let jsonData = F2Utils.toJsonArray(jsonDataString)
-        
+        chart.clear()
         chart.syncYScale()(false)
         chart.canvas()(canvasView).padding()(20, 10, 20, 0).source()(jsonData)
         chart.scale()("date", ["tickCount": 5])

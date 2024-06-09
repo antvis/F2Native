@@ -10,6 +10,11 @@ import UIKit
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     var demoTable: UITableView?
+    // Lazy initialization of the UIBarButtonItem in Swift
+      lazy var rightButton: UIBarButtonItem = {
+          let button = UIBarButtonItem(title: "ChartList", style: .done, target: self, action: #selector(onMultiChart))
+          return button
+      }()
     
     required init() {
         self.demoTable = nil;
@@ -29,10 +34,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.demoTable?.backgroundColor = UIColor.white;
         self.demoTable?.separatorColor = UIColor.gray;
         self.view.addSubview(self.demoTable!)
-        
+        self.navigationItem.rightBarButtonItem = rightButton
     }
     
-    func demoInfo() -> NSArray {
+    static func demoInfo() -> NSArray {
         return [["type": "baseLine", "name": "Line Chart", "view": "BaseLineChart"],
                 ["type": "multiAxiesLine", "name":  "Line Chart(Dual Y-axis)", "view": "BaseLineChart2"],
                 ["type": "multiLine", "name": "ContrastLineChart", "view": "ContrastLineChart"],
@@ -54,7 +59,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.demoInfo().count;
+        return ViewController.demoInfo().count;
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -66,15 +71,20 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             cell!.textLabel?.textColor = UIColor.black;
             cell!.selectionStyle = UITableViewCell.SelectionStyle.none
         }
-        let info: NSDictionary = self.demoInfo().object(at: indexPath.row) as! NSDictionary
+        let info: NSDictionary = ViewController.demoInfo().object(at: indexPath.row) as! NSDictionary
         cell!.textLabel?.text = info.object(forKey: "name") as? String
         return cell!;
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let info: NSDictionary = self.demoInfo().object(at: indexPath.row) as! NSDictionary
+        let info: NSDictionary = ViewController.demoInfo().object(at: indexPath.row) as! NSDictionary
         let demoVC = DemoViewController.init(info: info)
         self.navigationController?.pushViewController(demoVC, animated: true)
+    }
+    
+    @objc func onMultiChart() {
+        let listCtr = ChartListViewController() // Assuming ChartListViewController is correctly imported
+        navigationController?.pushViewController(listCtr, animated: true)
     }
 }
 

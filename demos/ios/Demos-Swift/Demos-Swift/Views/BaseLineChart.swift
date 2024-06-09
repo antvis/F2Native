@@ -31,6 +31,7 @@ class BaseLineChart: UIView {
             return
         }
         let jsonData = F2Utils.toJsonArray(jsonString)
+        self.chart?.clear()
         self.chart!.canvas()(self.canvasView!)
         self.chart?.padding()(10, 20, 10, 0)
         self.chart!.source()(jsonData)

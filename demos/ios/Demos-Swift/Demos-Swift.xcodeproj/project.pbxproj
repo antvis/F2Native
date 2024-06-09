@@ -24,7 +24,7 @@
 		7BD1F423043680858A1042C3 /* Pods-Demos-Swift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demos-Swift.release.xcconfig"; path = "Target Support Files/Pods-Demos-Swift/Pods-Demos-Swift.release.xcconfig"; sourceTree = "<group>"; };
 		A2880A139FC7C7C81542CC93 /* Pods-Demos-Swift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demos-Swift.debug.xcconfig"; path = "Target Support Files/Pods-Demos-Swift/Pods-Demos-Swift.debug.xcconfig"; sourceTree = "<group>"; };
 		B6B0DAB8161155F20647AC22 /* libPods-Demos-Swift.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Demos-Swift.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CC79F200285AB18100A5623C /* Demos-Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Demos-Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC79F200285AB18100A5623C /* F2Native.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = F2Native.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC79F203285AB18100A5623C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CC79F207285AB18100A5623C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		CC79F20C285AB18300A5623C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -78,7 +78,7 @@
 		CC79F201285AB18100A5623C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CC79F200285AB18100A5623C /* Demos-Swift.app */,
+				CC79F200285AB18100A5623C /* F2Native.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -125,9 +125,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		CC79F1FF285AB18100A5623C /* Demos-Swift */ = {
+		CC79F1FF285AB18100A5623C /* F2Native */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CC79F214285AB18300A5623C /* Build configuration list for PBXNativeTarget "Demos-Swift" */;
+			buildConfigurationList = CC79F214285AB18300A5623C /* Build configuration list for PBXNativeTarget "F2Native" */;
 			buildPhases = (
 				A578B91E08DDEEEBCDF7B168 /* [CP] Check Pods Manifest.lock */,
 				CC79F1FC285AB18100A5623C /* Sources */,
@@ -138,9 +138,9 @@
 			);
 			dependencies = (
 			);
-			name = "Demos-Swift";
+			name = F2Native;
 			productName = "Demos-Swift";
-			productReference = CC79F200285AB18100A5623C /* Demos-Swift.app */;
+			productReference = CC79F200285AB18100A5623C /* F2Native.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -171,7 +171,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CC79F1FF285AB18100A5623C /* Demos-Swift */,
+				CC79F1FF285AB18100A5623C /* F2Native */,
 			);
 		};
 /* End PBXProject section */
@@ -460,7 +460,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CC79F214285AB18300A5623C /* Build configuration list for PBXNativeTarget "Demos-Swift" */ = {
+		CC79F214285AB18300A5623C /* Build configuration list for PBXNativeTarget "F2Native" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CC79F215285AB18300A5623C /* Debug */,

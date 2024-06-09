@@ -35,7 +35,11 @@ With the power of grammar of graphics, F2Native including classical charts such 
 
 [Chart Demos](https://f2native.antv.vision/en/docs/examples/line/line)
 <br />
-[Video Demos](./demos/videos/ios_demo.mp4)
+[Video Demos]
+
+https://github.com/antvis/F2Native/assets/5905640/de909209-608a-4be9-95e1-4a9edeb73eec
+
+
 
 ### iOS
 <img width = "260" src = "https://gw.alipayobjects.com/mdn/rms_b413ff/afts/img/A*ZJ-iRby9Gt4AAAAAAAAAAAAAARQnAQ"/>

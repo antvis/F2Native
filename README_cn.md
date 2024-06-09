@@ -1,45 +1,44 @@
-
-![](https://gw.alipayobjects.com/mdn/rms_04a9e5/afts/img/A*97sBRoNWXoIAAAAAAAAAAAAAARQnAQ)
+![](https://gw.alipayobjects.com/mdn/rms_04a9e5/afts/img/A*sK26T47j3tEAAAAAAAAAAAAAARQnAQ)
 ![](https://img.shields.io/badge/language-c++-red.svg) ![](https://img.shields.io/badge/license-MIT-000000.svg)
 
-[中文 README](./README.md)
+[English README](./README_en.md)
 
-F2Native is born for mobile visual development. It is out-of-the-box,cross-platform, high-performance visualization solution . Support Android, iOS and MacOS perfect,moreover have high-performance experience in low-end mobile. Based on [the grammar of graphics](https://www.cs.uic.edu/~wilkinson/TheGrammarOfGraphics/GOG.html), F2Native provides all the chart types you'll need. Our mobile design guidelines enable better user experience in mobile visualzation projects.
+F2Native，专注于移动 Native 可视化开发，开箱即用的跨平台高性能的可视化解决方案。完美支持 Android, iOS, 和MacOS 平台，并在中低端机型具备高性能体验。完备的图形语法理论，满足你的各种可视化需求。专业的移动设计指引为你带来最佳的移动端图表体验。
 
 ![](https://gw.alipayobjects.com/mdn/rms_04a9e5/afts/img/A*kWF0TYboysoAAAAAAAAAAAAAARQnAQ)
-
-> Special thanks to [Leland Wilkinson](https://en.wikipedia.org/wiki/Leland_Wilkinson), the author of [*The Grammar Of Graphics*](https://www.cs.uic.edu/~wilkinson/TheGrammarOfGraphics/GOG.html), whose book served as the foundation for F2Native and F2.
-
-
-## Features
-### Focus on the mobile,extreme experience
-F2Native supports Android, iOS And MacOS. Using the cross-platform language C++ to generate the underlying drawing commands，
- can achieve **cross-platform, unified experience, high-performance experience**. After packaging on Android and iOS, the APK and IPA size are **250KB and 500KB** respectively.
-
-### Light and natural
-make data more alive and chart interactions more natural.
-
-### All the chart types you want
-With the power of grammar of graphics, F2Native including classical charts such as line, column/bar chart, pie chart. Additionally, F2 also provides feature-riched chart components to meet various needs.
+> 在此衷心感谢[《The Grammar of Graphics》](https://www.cs.uic.edu/~wilkinson/TheGrammarOfGraphics/GOG.html)的作者 [Leland Wilkinson](https://en.wikipedia.org/wiki/Leland_Wilkinson)，为 F2 的图形语法提供了理论基础！
 
 
-## Links
+## 特性
+
+### 专注客户端，极致体验
+
+F2Native 支持 Android，iOS，MacOS 平台。使用跨平台语言 C++ 来生成底层绘制指令, 可以做到 **跨平台，多端体验统一，高性能体验**。在 Android 和 iOS 端打包后占 APK 和 IPA 大小分别为 **250KB, 500KB**.
+
+### 轻量化植入，自然呈现
+在设计上我们以人为本，追求自然简单易懂。可视化展现和人的自然行为特征有机融合，使图表展示更为自然，并且引入灵活、成本低。
+
+### 图表丰富，组件完备
+与传统的图表库不同，抛弃了特图特做的封装思路，基于强大的图形语法理论，以数据驱动，通过图形语法的组合灵活构建各类图表，覆盖各类场景在提供基础的图表可视化能力外，我们还提供了丰富图表功能组件，满足各种功能需求。
+
+
+
+## 文档
 
 * [Website](https://f2native.antv.vision/)
 * English documents: https://f2native.antv.vision/en
 * 中文文档: https://f2native.antv.vision/zh
 
-
-
 ## Demos
 
-[Chart Demos](https://f2native.antv.vision/en/docs/examples/line/line)
+[图表实例](https://f2native.antv.vision/zh/docs/examples/line/line)
 
+## 快速开始
 
 ### iOS
 <img width = "260" src = "https://gw.alipayobjects.com/mdn/rms_b413ff/afts/img/A*ZJ-iRby9Gt4AAAAAAAAAAAAAARQnAQ"/>
 
-#### CocoaPod Setup
+#### CocoaPod设置
 ```pod
 pod 'F2'
 ```
@@ -87,7 +86,7 @@ func chartRender() {
 ### Android
 <img width = "260" src = "https://gw.alipayobjects.com/mdn/rms_b413ff/afts/img/A*YTFkT4NizlIAAAAAAAAAAAAAARQnAQ"/>
 
-#### Gradle Setup
+#### Gradle设置
 ```gradle
 repositories {
     maven { url 'https://jitpack.io' }
@@ -171,14 +170,14 @@ private var mChart: F2Chart? = null
     }
 ```
 
-## How to Contribute
+## 联系我们
+![](https://gw.alipayobjects.com/mdn/rms_b413ff/afts/img/A*O-tFT7mMQ74AAAAAAAAAAAAAARQnAQ)
 
+## 如何贡献
 
-Please let us know how can we help. Do check out [issues](https://github.com/antvis/f2native/issues) for bug reports or suggestions first.
+如果您在使用的过程中碰到问题，可以先通过 [issues]() 看看有没有类似的 bug 或者建议。
 
-To become a contributor, please follow our [contributing guide](https://github.com/antvis/f2native/blob/master/CONTRIBUTING.md).
+如需提交代码，请遵从我们的[贡献指南](./CONTRIBUTING.md)。
 
 ## License
 [MIT license](./LICENSE)
-
-

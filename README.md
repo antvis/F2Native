@@ -34,7 +34,7 @@ With the power of grammar of graphics, F2Native including classical charts such 
 ## Demos
 
 [Chart Demos](https://f2native.antv.vision/en/docs/examples/line/line)
-![Video Demos](./demos/videos/ios_demo.mp4)
+[Video Demos](./demos/videos/ios_demo.mp4)
 
 ### iOS
 <img width = "260" src = "https://gw.alipayobjects.com/mdn/rms_b413ff/afts/img/A*ZJ-iRby9Gt4AAAAAAAAAAAAAARQnAQ"/>

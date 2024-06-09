@@ -19,7 +19,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "F2Native"
@@ -29,12 +29,28 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.demoTable?.backgroundColor = UIColor.white;
         self.demoTable?.separatorColor = UIColor.gray;
         self.view.addSubview(self.demoTable!)
-
+        
     }
     
     func demoInfo() -> NSArray {
-        return [["type": "baseLine", "name": "基础折线图", "view": "BaseLineUIView"],
-                ["type": "baseInterval2", "name": "基础柱状图2", "view": "BaseInterval2UIView"]]
+        return [["type": "baseLine", "name": "Line Chart", "view": "BaseLineChart"],
+                ["type": "multiAxiesLine", "name":  "Line Chart(Dual Y-axis)", "view": "BaseLineChart2"],
+                ["type": "multiLine", "name": "ContrastLineChart", "view": "ContrastLineChart"],
+                ["type": "baseInterval", "name":"Bar Chart", "view": "BaseBarChart"],
+                ["type": "baseInterval2", "name": "Bar Chart2", "view": "BaseBarChart2"],
+                ["type": "multiInterval", "name": "Group Bar Chart", "view": "GroupBarChart"],
+                ["type": "multiInterval2", "name": "Group Bar Chart2 (with negative value)", "view": "GroupBarChart2"],
+                ["type": "multiInterval3", "name":"Group Stack Bar Chart", "view": "GroupStackBarChart"],
+                ["type": "setionInterval", "name": "Histogram Bar Chart", "view": "HistogramBarChart"],
+                ["type": "Point", "name": "Base Point Chart", "view": "BasePointChart"],
+                ["type": "baseArea", "name": "Area Chart", "view": "BaseAreaChart"],
+                ["type": "baseArea2", "name": "Area Chart2", "view": "BaseAreaChart2"],
+                ["type": "baseArea3", "name": "Area Chart3(x baseline is not 0)", "view": "BaseAreaChart3"],
+                ["type": "multiArea", "name": "Stacked Area Chart", "view": "StackedAreaChart"],
+                ["type": "radarArea","name": "Radar Area Chart","view": "RadarAreaChart"],
+                ["type": "basePie", "name": "Pie Chart", "view": "BasePieChart"],
+                ["type": "klineDay", "name": "Candle Chart", "view": "CandleChart"],
+        ]
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

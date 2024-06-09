@@ -13,10 +13,25 @@
 		CC79F210285AB18300A5623C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC79F20E285AB18300A5623C /* LaunchScreen.storyboard */; };
 		CC79F248285AB94F00A5623C /* Res in Resources */ = {isa = PBXBuildFile; fileRef = CC79F247285AB94F00A5623C /* Res */; };
 		CC79F24B285AD17A00A5623C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC79F249285AD17A00A5623C /* Main.storyboard */; };
-		CC79F24E285AD97E00A5623C /* BaseLineUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC79F24D285AD97E00A5623C /* BaseLineUIView.swift */; };
-		CC79F250285AD98D00A5623C /* BaseInterval2UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC79F24F285AD98D00A5623C /* BaseInterval2UIView.swift */; };
+		CC79F24E285AD97E00A5623C /* BaseLineChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC79F24D285AD97E00A5623C /* BaseLineChart.swift */; };
+		CC79F250285AD98D00A5623C /* BaseBarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC79F24F285AD98D00A5623C /* BaseBarChart.swift */; };
 		CC79F252285ADA2300A5623C /* DemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC79F251285ADA2300A5623C /* DemoViewController.swift */; };
 		CC79F27B285C115F00A5623C /* libF2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CC79F27A285C115F00A5623C /* libF2.a */; };
+		CD2656E82C160C2A002D70CC /* BaseAreaChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2656E72C160C2A002D70CC /* BaseAreaChart.swift */; };
+		CD2656EA2C160F5D002D70CC /* BasePieChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2656E92C160F5D002D70CC /* BasePieChart.swift */; };
+		CD2656EC2C161310002D70CC /* CandleChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2656EB2C161310002D70CC /* CandleChart.swift */; };
+		CD2656EE2C1619F1002D70CC /* BaseLineChart2.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2656ED2C1619F1002D70CC /* BaseLineChart2.swift */; };
+		CD2656F02C161B98002D70CC /* ContrastLineChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2656EF2C161B98002D70CC /* ContrastLineChart.swift */; };
+		CD2656F22C161C99002D70CC /* BaseAreaChart2.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2656F12C161C99002D70CC /* BaseAreaChart2.swift */; };
+		CD2656F42C161CA5002D70CC /* BaseAreaChart3.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2656F32C161CA5002D70CC /* BaseAreaChart3.swift */; };
+		CD2656F62C161CB2002D70CC /* StackedAreaChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2656F52C161CB2002D70CC /* StackedAreaChart.swift */; };
+		CD2656F82C161F0F002D70CC /* BaseBarChart2.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2656F72C161F0F002D70CC /* BaseBarChart2.swift */; };
+		CD2656FA2C16212C002D70CC /* GroupBarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2656F92C16212C002D70CC /* GroupBarChart.swift */; };
+		CD2656FC2C1621A8002D70CC /* GroupBarChart2.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2656FB2C1621A8002D70CC /* GroupBarChart2.swift */; };
+		CD2656FE2C162228002D70CC /* GroupStackBarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2656FD2C162228002D70CC /* GroupStackBarChart.swift */; };
+		CD2657002C1622C3002D70CC /* HistogramBarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2656FF2C1622C3002D70CC /* HistogramBarChart.swift */; };
+		CD2657022C162334002D70CC /* BasePointChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2657012C162334002D70CC /* BasePointChart.swift */; };
+		CD2657042C1623D4002D70CC /* RadarAreaChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2657032C1623D4002D70CC /* RadarAreaChart.swift */; };
 		D1093B56324A12388FFA958C /* libPods-Demos-Swift.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B6B0DAB8161155F20647AC22 /* libPods-Demos-Swift.a */; };
 /* End PBXBuildFile section */
 
@@ -33,14 +48,29 @@
 		CC79F224285AB22F00A5623C /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		CC79F247285AB94F00A5623C /* Res */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Res; sourceTree = "<group>"; };
 		CC79F24A285AD17A00A5623C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		CC79F24D285AD97E00A5623C /* BaseLineUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseLineUIView.swift; sourceTree = "<group>"; };
-		CC79F24F285AD98D00A5623C /* BaseInterval2UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseInterval2UIView.swift; sourceTree = "<group>"; };
+		CC79F24D285AD97E00A5623C /* BaseLineChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseLineChart.swift; sourceTree = "<group>"; };
+		CC79F24F285AD98D00A5623C /* BaseBarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseBarChart.swift; sourceTree = "<group>"; };
 		CC79F251285ADA2300A5623C /* DemoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoViewController.swift; sourceTree = "<group>"; };
 		CC79F253285B22B400A5623C /* libF2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libF2.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC79F256285B22C200A5623C /* libc++abi.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++abi.tbd"; path = "usr/lib/libc++abi.tbd"; sourceTree = SDKROOT; };
 		CC79F257285B22C200A5623C /* libc++.1.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.1.tbd"; path = "usr/lib/libc++.1.tbd"; sourceTree = SDKROOT; };
 		CC79F276285B245900A5623C /* libF2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libF2.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC79F27A285C115F00A5623C /* libF2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libF2.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD2656E72C160C2A002D70CC /* BaseAreaChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseAreaChart.swift; sourceTree = "<group>"; };
+		CD2656E92C160F5D002D70CC /* BasePieChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasePieChart.swift; sourceTree = "<group>"; };
+		CD2656EB2C161310002D70CC /* CandleChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CandleChart.swift; sourceTree = "<group>"; };
+		CD2656ED2C1619F1002D70CC /* BaseLineChart2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseLineChart2.swift; sourceTree = "<group>"; };
+		CD2656EF2C161B98002D70CC /* ContrastLineChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContrastLineChart.swift; sourceTree = "<group>"; };
+		CD2656F12C161C99002D70CC /* BaseAreaChart2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseAreaChart2.swift; sourceTree = "<group>"; };
+		CD2656F32C161CA5002D70CC /* BaseAreaChart3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseAreaChart3.swift; sourceTree = "<group>"; };
+		CD2656F52C161CB2002D70CC /* StackedAreaChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackedAreaChart.swift; sourceTree = "<group>"; };
+		CD2656F72C161F0F002D70CC /* BaseBarChart2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseBarChart2.swift; sourceTree = "<group>"; };
+		CD2656F92C16212C002D70CC /* GroupBarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupBarChart.swift; sourceTree = "<group>"; };
+		CD2656FB2C1621A8002D70CC /* GroupBarChart2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupBarChart2.swift; sourceTree = "<group>"; };
+		CD2656FD2C162228002D70CC /* GroupStackBarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupStackBarChart.swift; sourceTree = "<group>"; };
+		CD2656FF2C1622C3002D70CC /* HistogramBarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistogramBarChart.swift; sourceTree = "<group>"; };
+		CD2657012C162334002D70CC /* BasePointChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasePointChart.swift; sourceTree = "<group>"; };
+		CD2657032C1623D4002D70CC /* RadarAreaChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadarAreaChart.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,8 +146,23 @@
 		CC79F24C285AD96600A5623C /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				CC79F24D285AD97E00A5623C /* BaseLineUIView.swift */,
-				CC79F24F285AD98D00A5623C /* BaseInterval2UIView.swift */,
+				CC79F24D285AD97E00A5623C /* BaseLineChart.swift */,
+				CD2656ED2C1619F1002D70CC /* BaseLineChart2.swift */,
+				CD2656EF2C161B98002D70CC /* ContrastLineChart.swift */,
+				CC79F24F285AD98D00A5623C /* BaseBarChart.swift */,
+				CD2656F72C161F0F002D70CC /* BaseBarChart2.swift */,
+				CD2656F92C16212C002D70CC /* GroupBarChart.swift */,
+				CD2656FB2C1621A8002D70CC /* GroupBarChart2.swift */,
+				CD2656FD2C162228002D70CC /* GroupStackBarChart.swift */,
+				CD2656FF2C1622C3002D70CC /* HistogramBarChart.swift */,
+				CD2656E72C160C2A002D70CC /* BaseAreaChart.swift */,
+				CD2656F12C161C99002D70CC /* BaseAreaChart2.swift */,
+				CD2656F32C161CA5002D70CC /* BaseAreaChart3.swift */,
+				CD2656F52C161CB2002D70CC /* StackedAreaChart.swift */,
+				CD2656E92C160F5D002D70CC /* BasePieChart.swift */,
+				CD2656EB2C161310002D70CC /* CandleChart.swift */,
+				CD2657012C162334002D70CC /* BasePointChart.swift */,
+				CD2657032C1623D4002D70CC /* RadarAreaChart.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -220,11 +265,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC79F24E285AD97E00A5623C /* BaseLineUIView.swift in Sources */,
+				CC79F24E285AD97E00A5623C /* BaseLineChart.swift in Sources */,
+				CD2656F62C161CB2002D70CC /* StackedAreaChart.swift in Sources */,
+				CD2656EE2C1619F1002D70CC /* BaseLineChart2.swift in Sources */,
+				CD2656F22C161C99002D70CC /* BaseAreaChart2.swift in Sources */,
+				CD2657042C1623D4002D70CC /* RadarAreaChart.swift in Sources */,
+				CD2656F82C161F0F002D70CC /* BaseBarChart2.swift in Sources */,
+				CD2657002C1622C3002D70CC /* HistogramBarChart.swift in Sources */,
+				CD2656FC2C1621A8002D70CC /* GroupBarChart2.swift in Sources */,
 				CC79F208285AB18100A5623C /* ViewController.swift in Sources */,
+				CD2656F42C161CA5002D70CC /* BaseAreaChart3.swift in Sources */,
 				CC79F204285AB18100A5623C /* AppDelegate.swift in Sources */,
-				CC79F250285AD98D00A5623C /* BaseInterval2UIView.swift in Sources */,
+				CD2656EA2C160F5D002D70CC /* BasePieChart.swift in Sources */,
+				CC79F250285AD98D00A5623C /* BaseBarChart.swift in Sources */,
+				CD2656F02C161B98002D70CC /* ContrastLineChart.swift in Sources */,
+				CD2656EC2C161310002D70CC /* CandleChart.swift in Sources */,
+				CD2656E82C160C2A002D70CC /* BaseAreaChart.swift in Sources */,
+				CD2656FA2C16212C002D70CC /* GroupBarChart.swift in Sources */,
+				CD2656FE2C162228002D70CC /* GroupStackBarChart.swift in Sources */,
 				CC79F252285ADA2300A5623C /* DemoViewController.swift in Sources */,
+				CD2657022C162334002D70CC /* BasePointChart.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,7 +8,8 @@
 import UIKit
 import F2
 
-class BaseLineUIView: UIView {
+class BaseLineChart: UIView {
+    
     public var canvasView:F2CanvasView?
     public var chart:F2Chart?
     
@@ -46,6 +47,7 @@ class BaseLineUIView: UIView {
         self.chart!.axis()("date",
                            ["grid": false,
                            "label":["item": itemCallback]]);
+        self.chart!.animate()(true)
         self.chart!.render()();
     }
 }

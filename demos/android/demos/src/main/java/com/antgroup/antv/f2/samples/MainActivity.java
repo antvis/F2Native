@@ -63,16 +63,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_multiCharts: {
-                Intent intent = new Intent(this, ChartListActivity.class);
-                startActivity(intent);
-                break;
-            }
-            case R.id.action_bridge:{
-                startActivity(new Intent(this,BridgeActivity.class));
-                break;
-            }
+        if (item.getItemId() == R.id.action_multiCharts) {
+            Intent intent = new Intent(this, ChartListActivity.class);
+            startActivity(intent);
+        } else if (item.getItemId() == R.id.action_bridge) {
+            startActivity(new Intent(this, BridgeActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }
@@ -80,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     static class ChartViewHolder extends RecyclerView.ViewHolder {
 
         TextView chartName;
+
         public ChartViewHolder(@NonNull View itemView) {
             super(itemView);
             chartName = itemView.findViewById(R.id.chart_name);
@@ -88,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
     static class ChartAdapter extends RecyclerView.Adapter<ChartViewHolder> {
         private List<ChartModel> mChartModels;
+
         ChartAdapter(List<ChartModel> chartModels) {
             mChartModels = chartModels;
         }

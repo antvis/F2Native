@@ -1,27 +1,25 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
 apply plugin: 'maven-publish'
-apply plugin: 'com.github.dcendents.android-maven'
 group='com.github.antvis'
 
 android {
 
-    compileSdkVersion rootProject.extensions.sdks.CompileSDK
-    buildToolsVersion rootProject.extensions.sdks.BuildTool
+    compileSdk rootProject.extensions.sdks.CompileSDK
+    ndkVersion rootProject.extensions.sdks.ndkVersion
 
     defaultConfig {
+        namespace "com.antgroup.antv.f2"
         minSdkVersion rootProject.extensions.sdks.MinSDK
         targetSdkVersion rootProject.extensions.sdks.TargetSDK
         versionCode 1
         versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled false
 
         externalNativeBuild {
             cmake {
-                cppFlags "-DTARGET_ALIPAY"
-                cFlags "-ffunction-sections -fdata-sections"
-                arguments "-DANDROID_STL=c++_shared", '-DTARGET_ALIPAY=1'
+                cppFlags rootProject.extensions.externalNativeCmake.cppFlags
+                arguments = []
+                arguments.addAll(rootProject.extensions.externalNativeCmake.arguments)
             }
         }
         ndk {
@@ -30,10 +28,20 @@ android {
         }
     }
 
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
     buildTypes {
         release {
             minifyEnabled false
         }
+    }
+
+    compileOptions {
+        targetCompatibility rootProject.extensions.compileOptions.targetCompatibility
+        sourceCompatibility rootProject.extensions.compileOptions.sourceCompatibility
     }
 
     externalNativeBuild {
@@ -41,11 +49,19 @@ android {
             path "../../CMakeLists.txt"
         }
     }
+
+    packagingOptions {
+        exclude '**/libc++_shared.so'
+        exclude '**/**/libc++_shared.so'
+    }
+
+    sourceSets {
+        main.manifest.srcFile 'src/main/AndroidManifest.xml'
+        main.java.srcDirs = ['src/main/java']
+        main.res.srcDirs = ['src/main/res']
+    }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    compileOnly rootProject.extensions.dependencies.fastjson
 }

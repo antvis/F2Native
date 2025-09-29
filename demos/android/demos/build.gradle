@@ -1,10 +1,9 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion rootProject.extensions.sdks.CompileSDK
-    buildToolsVersion rootProject.extensions.sdks.BuildTool
+    compileSdk rootProject.extensions.sdks.CompileSDK
     defaultConfig {
-        applicationId "com.antgroup.antv.f2.samples"
+        namespace "com.antgroup.antv.f2.samples"
         minSdkVersion rootProject.extensions.sdks.MinSDK
         targetSdkVersion rootProject.extensions.sdks.TargetSDK
         versionCode 1
@@ -28,7 +27,6 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:1.1.0"
     implementation "androidx.appcompat:appcompat:1.2.0"
 
-//    implementation 'com.github.antvis:F2Native:2.0.8'
     implementation project(':android:f2native')
     implementation 'com.alibaba:fastjson:1.2.73'
 

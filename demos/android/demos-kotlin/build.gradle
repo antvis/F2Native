@@ -4,14 +4,15 @@ plugins {
 }
 
 android {
-    compileSdkVersion rootProject.extensions.sdks.CompileSDK
-    buildToolsVersion rootProject.extensions.sdks.BuildTool
+    compileSdk rootProject.extensions.sdks.CompileSDK
+    ndkVersion rootProject.extensions.sdks.ndkVersion
     defaultConfig {
-        applicationId "com.antgroup.antv.f2.kotlinsamples"
+        namespace "com.antgroup.antv.f2.kotlinsamples"
         minSdkVersion rootProject.extensions.sdks.MinSDK
         targetSdkVersion rootProject.extensions.sdks.TargetSDK
         versionCode 1
         versionName "1.0"
+        multiDexEnabled false
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

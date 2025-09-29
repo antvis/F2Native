@@ -1,15 +1,12 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-
 buildscript {
-    ext.kotlin_version = "1.4.31"
+    ext.kotlin_version = '2.0.0'
     repositories {
         google()
         jcenter()
 
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.3'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
+        classpath 'com.android.tools.build:gradle:8.4.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -27,14 +24,25 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
+
 rootProject.extensions.sdks = [
-        'Gradle'        : '3.0.1',
-        'CompileSDK'    : 28,
-        'BuildTool'     : '28.0.3',
-        'MinSDK'        : 18,
-        'TargetSDK'     : 28,
-        'JUnit'         : '4.12',
-        'Support'       : '26.0.2',
-        'ABIs'          : ["armeabi-v7a","arm64-v8a"],
-        'EXCLUDE_CPP_SHARED' : false
+        'CompileSDK': 34,
+        'MinSDK'    : 21,
+        'TargetSDK' : 34,
+        'ABIs'      : ["armeabi-v7a", "arm64-v8a"],
+        'ndkVersion': "27.2.12479018"
+]
+
+rootProject.extensions.dependencies = [
+        'fastjson': 'com.alibaba:fastjson:1.2.73',
+]
+
+rootProject.extensions.externalNativeCmake = [
+        'cppFlags' : "-ffunction-sections -fdata-sections",
+        'arguments': ["-DANDROID_STL=c++_static"]
+]
+
+rootProject.extensions.compileOptions = [
+        'targetCompatibility': 11,
+        'sourceCompatibility': 11
 ]

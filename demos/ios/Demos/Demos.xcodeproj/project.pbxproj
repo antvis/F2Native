@@ -94,7 +94,7 @@
 		3F5D90902535C5320091D8F7 /* CyclicPieUIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CyclicPieUIView.m; sourceTree = "<group>"; };
 		3F5DD47B2553A34D00FD60B3 /* BaseInterval2UIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseInterval2UIView.h; sourceTree = "<group>"; };
 		3F5DD47C2553A34D00FD60B3 /* BaseInterval2UIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseInterval2UIView.m; sourceTree = "<group>"; };
-		3F5DD4E1255AB42C00FD60B3 /* F2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = F2.xcodeproj; path = ../../../ios/F2.xcodeproj; sourceTree = "<group>"; };
+		3F5DD4E1255AB42C00FD60B3 /* F2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = F2.xcodeproj; path = ../../../../ios/F2.xcodeproj; sourceTree = "<group>"; };
 		3FD08FAE25B0764A002F14AC /* KLineUIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KLineUIView.h; sourceTree = "<group>"; };
 		3FD08FAF25B0764A002F14AC /* KLineUIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KLineUIView.m; sourceTree = "<group>"; };
 		9500DF9D2689F4A500025EF1 /* TimeSharingUIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TimeSharingUIView.h; sourceTree = "<group>"; };

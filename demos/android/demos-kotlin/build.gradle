@@ -5,14 +5,12 @@ plugins {
 
 android {
     compileSdk rootProject.extensions.sdks.CompileSDK
-    ndkVersion rootProject.extensions.sdks.ndkVersion
     defaultConfig {
         namespace "com.antgroup.antv.f2.kotlinsamples"
         minSdkVersion rootProject.extensions.sdks.MinSDK
         targetSdkVersion rootProject.extensions.sdks.TargetSDK
         versionCode 1
         versionName "1.0"
-        multiDexEnabled false
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -20,6 +18,15 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }
 

@@ -12,6 +12,9 @@ object Utils {
     @JvmStatic
     fun loadAssetFile(context: Context, assetFile: String?): String? {
         try {
+            if (assetFile == null){
+                return null
+            }
             val `is` = context.assets.open(assetFile)
             val buf = ByteArray(1024 * 500)
             val output = ByteArrayOutputStream()

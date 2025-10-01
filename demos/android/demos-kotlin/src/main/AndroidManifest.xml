@@ -26,7 +26,8 @@
             android:label="@string/title_activity_bridge"
             android:theme="@style/AppTheme" />
 
-        <activity android:name="com.antgroup.antv.f2.kotlinsamples.MainActivity">
+        <activity android:name="com.antgroup.antv.f2.kotlinsamples.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

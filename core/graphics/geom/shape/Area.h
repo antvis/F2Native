@@ -19,7 +19,7 @@ class Area : public GeomShapeBase {
     void Draw(std::string shapeType,
               canvas::coord::AbstractCoord &coord,
               canvas::CanvasContext &context,
-              const XDataArray &data,
+              const nlohmann::json &data,
               std::size_t start,
               std::size_t end,
               xg::shape::Group &container,
@@ -28,8 +28,8 @@ class Area : public GeomShapeBase {
         vector<xg::util::Point> bottomPoints;
 
         for(std::size_t i = start; i <= end; i++) {
-            const auto &item = data[i];
-            const nlohmann::json &points = item._points;
+            const nlohmann::json &item = data[i];
+            const nlohmann::json &points = item["_points"];
             if(connectNulls) {
                 if(!(std::isnan(points[0]["x"]) || std::isnan(points[0]["y"]) || std::isnan(points[1]["x"]) || std::isnan(points[1]["y"]))) {
                     util::Point bottom{points[0]["x"], points[0]["y"]};
@@ -58,16 +58,27 @@ class Area : public GeomShapeBase {
        }
 
         std::size_t size = end - start + 1;
-        if(size > 0 && !data[start]._shape.empty()) {
-            shapeType = data[start]._shape;
+        if(size > 0 && data[start].contains("_shape")) {
+            shapeType = data[start]["_shape"];
         }
         bool smooth = shapeType == "smooth";
+
         auto area = xg::make_unique<xg::shape::Area>(topPoints, bottomPoints, smooth);
 
         if(size <= 0) {
             area->SetFillColor(GLOBAL_COLORS[0]);
         } else {
-            area->SetFillColor(data[start]._color);
+            area->SetFillColor(json::GetString(data[start], "_color"), context);
+        }
+
+        if(size > 0 && data[start].contains("_style")) {
+            const nlohmann::json &style = data[start]["_style"];
+            if(!style.is_null() && style.contains("fillOpacity")) {
+                double opacityValue = json::GetNumber(style, "fillOpacity", -1);
+                if (opacityValue <= 1 && opacityValue >= 0) {
+                    area->SetFillOpacity(opacityValue);
+                }
+            }
         }
         container.AddElement(std::move(area));
     }

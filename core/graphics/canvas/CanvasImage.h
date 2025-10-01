@@ -23,6 +23,10 @@ class CanvasImage {
 
     void OnLoad(std::function<void()> finished);
 
+#if defined(ANDROID)
+    void OnLoadFinish(void * image,bool  isSuccess);
+#endif //ANDROID
+
     inline void *GetImage() { return image_; }
 
     float GetWidth();
@@ -30,16 +34,12 @@ class CanvasImage {
     float GetHeight();
 
     inline const std::string &GetURL() { return url_; }
-    
-    inline bool IsValid() const { return image_ != nullptr; }
 
   private:
     //在ios上是CGImageRef
     void *image_ = nullptr;
-    //在ios上是一个下载器
-    void *downloader_ = nullptr;
-    //图片的url地址
     std::string url_;
+    std::function<void()> finished_;
 };
 
 } // namespace canvas

@@ -15,9 +15,9 @@ class Point : public AbstractGeom {
         this->styleConfig_ = {};
     }
 
-    void BeforeMapping(XChart &chart, XDataGroup &dataArray) override;
+    void BeforeMapping(XChart &chart, nlohmann::json &dataArray) override;
 
-    void Draw(XChart &chart, const XDataArray &groupData, std::size_t start, std::size_t end) const override;
+    void Draw(XChart &chart, const nlohmann::json &groupData, std::size_t start, std::size_t end) const override;
 };
 } // namespace geom
 } // namespace xg

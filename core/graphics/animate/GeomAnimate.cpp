@@ -2,30 +2,73 @@
 #include "../XChart.h"
 #include "../canvas/Polar.h"
 #include "../shape/Rect.h"
+#include <iostream>
+#include <string>
+#include <utils/StringUtil.h>
+#include <unordered_map>
+#include <map>
 
 using namespace xg;
 
 #pragma animate : actions
 
+
+/// 整体动画分发
+/// - Parameters:
+///   - animateType: 动画类型
+///   - timeLine: 动画控制器
+///   - container: Group
+///   - cfg: 动画配置
+///   - coord: 坐标系
+///   - zeroY: Y轴起点
+static void animate::action::DoGroupAnimate(std::string animateType,
+                                            animate::TimeLine *timeLine,
+                                            shape::Group *container,
+                                            nlohmann::json &cfg,
+                                            canvas::coord::AbstractCoord *coord,
+                                            util::Point zeroY) {
+    if(animateType == "GroupWaveIn") {
+        GroupWaveIn(timeLine, container, cfg, coord, zeroY);
+    } else if(animateType == "GroupScaleInX") {
+        GroupScaleIn(timeLine, container, cfg, coord, zeroY, "x");
+    } else if(animateType == "GroupScaleInY") {
+        GroupScaleIn(timeLine, container, cfg, coord, zeroY, "y");
+    } else if(animateType == "GroupScaleInXY") {
+        GroupScaleIn(timeLine, container, cfg, coord, zeroY, "xy");
+    } else if(animateType == "GroupFadeIn") {
+        GroupFadeIn(timeLine, container, cfg, coord);
+    } else {
+        GroupWaveIn(timeLine, container, cfg, coord, zeroY);
+    }
+}
+
+/// 整体缩放动画
+/// - Parameters:
+///   - timeLine: 动画控制器
+///   - container: Group
+///   - cfg: 动画配置
+///   - coord: 坐标系
+///   - zeroY: Y轴起点
+///   - type: 缩放动画的类型, x/y/xy
 void animate::action::GroupScaleIn(animate::TimeLine *timeLine,
                                    shape::Group *container,
                                    nlohmann::json &cfg,
                                    canvas::coord::AbstractCoord *coord,
                                    util::Point zeroY,
                                    std::string type) {
- 
+    
     util::Point start = coord->GetStart();
     util::Point end = coord->GetEnd();
     
     //极坐标系的GetWidth是角度，所以这里用start和end单独计算下
     float width = abs(start.x - end.x);
     float height = abs(start.y - end.y);
-
+    
     float x = 0;
     float y = 0;
-
+    
     auto clip = std::make_unique<shape::Rect>(util::Point{start.x, end.y}, util::Size{width, height});
-
+    
     if(type == "y") {
         x = start.x + width / 2;
         y = fmin(zeroY.y, start.y);
@@ -41,44 +84,44 @@ void animate::action::GroupScaleIn(animate::TimeLine *timeLine,
             y = (start.y + end.y) / 2;
         }
     }
-
+    
     util::Vector2D v{x, y};
     util::Matrix endMatrix = GetScaledShapeMatrix(clip.get(), &v, type);
     AnimateState endState;
+    AnimateState startState;
     endState.matrix = std::move(endMatrix);
+    startState.matrix = clip->GetMatrix();
     container->clip_ = std::move(clip);
-    animate::DoAnimation(timeLine, container->clip_.get(), endState, cfg, [container]() -> void { container->clip_ = nullptr; });
+    animate::DoAnimation(timeLine, container->clip_.get(), startState, endState, cfg, [container]() -> void { container->clip_ = nullptr; });
 }
 
-void animate::action::GroupScaleInX(animate::TimeLine *timeLine, shape::Group *container, nlohmann::json &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY) {
-    GroupScaleIn(timeLine, container, cfg, coord, zeroY, "x");
-}
-
-void animate::action::GroupScaleInY(animate::TimeLine *timeLine, shape::Group *container, nlohmann::json &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY) {
-    GroupScaleIn(timeLine, container, cfg, coord, zeroY, "y");
-}
-
-void animate::action::GroupScaleInXY(animate::TimeLine *timeLine, shape::Group *container, nlohmann::json &cfg, canvas::coord::AbstractCoord *coord, util::Point zeroY) {
-    GroupScaleIn(timeLine, container, cfg, coord, zeroY, "xy");
-}
-
-void animate::action::GroupWaveIn(animate::TimeLine *timeLine,
+/// 整体波动入场动画，
+/// 不同坐标系下效果不同，极坐标系是0～360度的动画，正常坐标系是从左往右的动画（宽度），转置之后，变成高度的动画（height）
+/// - Parameters:
+///   - timeLine: 动画控制器
+///   - container: Group
+///   - cfg: 动画配置
+///   - coord: 坐标系
+///   - zeroY: Y轴起点
+static void animate::action::GroupWaveIn(animate::TimeLine *timeLine,
                                          shape::Group *container,
                                          nlohmann::json &cfg,
                                          canvas::coord::AbstractCoord *coord,
                                          util::Point zeroY) {
     std::unique_ptr<shape::Shape> clip = nullptr;
     AnimateState endState;
-
+    AnimateState startState;
+    
     if(canvas::coord::CoordType::Polar == coord->GetType()) {
         canvas::coord::Polar *polar = static_cast<canvas::coord::Polar *>(coord);
         clip = xg::make_unique<xg::shape::Rect>(polar->GetCenter(), polar->circleRadius_, 0, polar->startAngle_, polar->endAngle_, 1.f);
+        startState.angle = polar->startAngle_;
         endState.angle = polar->endAngle_;
         clip->UpdateAttribute("endAngle", polar->startAngle_);
     } else {
         clip = std::make_unique<shape::Rect>(util::Point{coord->GetXAxis().x, coord->GetYAxis().y},
                                              util::Size{coord->GetWidth(), coord->GetHeight()});
-
+        
         if(coord->IsTransposed()) {
             endState.height = coord->GetHeight();
             clip->UpdateAttribute("height", 0);
@@ -87,31 +130,204 @@ void animate::action::GroupWaveIn(animate::TimeLine *timeLine,
             clip->UpdateAttribute("width", 0);
         }
     }
+    startState.matrix = clip->GetMatrix();
     container->clip_ = std::move(clip);
-    animate::DoAnimation(timeLine, container->clip_.get(), endState, cfg, [container]() -> void { container->clip_ = nullptr; });
+    animate::DoAnimation(timeLine, container->clip_.get(), startState, endState, cfg, [container]() -> void { container->clip_ = nullptr; });
 }
 
-void animate::action::DoGroupAnimate(std::string animateType,
+static void animate::action::GroupFadeIn(animate::TimeLine *timeLine,
+                                         shape::Group *container,
+                                         nlohmann::json &cfg,
+                                         canvas::coord::AbstractCoord *coord) {
+    AnimateState endState;
+    AnimateState startState;
+    
+    startState.alpha = 0;
+    endState.alpha = 1;
+    if (!std::isnan(container->GetFillOpacity())) {
+        endState.alpha = container->GetFillOpacity();
+    }
+    
+    animate::DoAnimation(timeLine, container, startState, endState, cfg, [container]() -> void {  });
+}
+
+/// Shape动画分发
+/// - Parameters:
+///   - animateType: 动画类型
+///   - timeLine: 动画控制器
+///   - shape: 执行动画对象Shape
+///   - container: Shape所属Group
+///   - cfg: 动画配置
+///   - coord: 坐标系
+///   - zeroY: Y轴起点
+///   - bbox: Shape的bbox
+static void animate::action::DoShapeAnimate(std::string animateType,
                                             animate::TimeLine *timeLine,
+                                            shape::Element *shape,
                                             shape::Group *container,
                                             nlohmann::json &cfg,
                                             canvas::coord::AbstractCoord *coord,
-                                            util::Point zeroY) {
-    if(animateType == "GroupWaveIn") {
-        GroupWaveIn(timeLine, container, cfg, coord, zeroY);
-    } else if(animateType == "GroupScaleInX") {
-        GroupScaleIn(timeLine, container, cfg, coord, zeroY, "x");
-    } else if(animateType == "GroupScaleInY") {
-        GroupScaleIn(timeLine, container, cfg, coord, zeroY, "y");
-    } else if(animateType == "GroupScaleInXY") {
-        GroupScaleIn(timeLine, container, cfg, coord, zeroY, "xy");
-    } else {
-        GroupWaveIn(timeLine, container, cfg, coord, zeroY);
+                                            util::Point zeroY,
+                                            xg::util::BBox &bbox) {
+    if(animateType == "ShapeScaleInX") {
+        ShapeScaleIn(timeLine, shape, container, cfg, coord, zeroY, "x", bbox);
+    } else if(animateType == "ShapeScaleInY") {
+        ShapeScaleIn(timeLine, shape, container, cfg, coord, zeroY, "y", bbox);
+    } else if(animateType == "ShapeScaleInXY") {
+        ShapeScaleIn(timeLine, shape, container, cfg, coord, zeroY, "xy", bbox);
+    }else if(animateType == "ShapeWaveIn") {
+        ShapeWaveIn(timeLine, shape, container, cfg, coord, zeroY, bbox);
     }
 }
 
+/// 单个Shape 缩放动画
+/// - Parameters:
+///   - timeLine: 动画控制器
+///   - shape: Shape
+///   - container: Shape 所属 Group
+///   - cfg: 动画配置
+///   - coord: 坐标系
+///   - zeroY: Y轴起点
+///   - type: 缩放动画的类型, x/y/xy
+///   - bbox: Shape的bbox
+static void animate::action::ShapeScaleIn(animate::TimeLine *timeLine,
+                                          shape::Element *shape,
+                                          shape::Group *container,
+                                          nlohmann::json &cfg,
+                                          canvas::coord::AbstractCoord *coord,
+                                          util::Point zeroY,
+                                          std::string type,
+                                          xg::util::BBox &bbox) {
+    //极坐标系的GetWidth是角度，所以这里用start和end单独计算下
+    float width = abs(bbox.maxX - bbox.minX);
+    float height = abs(bbox.maxY - bbox.minY);
+    
+    float x = 0;
+    float y = 0;
+
+    auto clip = std::make_unique<shape::Rect>(util::Point{bbox.minX, fmin(bbox.minY, bbox.maxY)}, util::Size{width, height});
+
+    if(type == "y") {
+        x = bbox.minX + width / 2;
+        y = fmin(zeroY.y, fmax(bbox.minY, bbox.maxY));
+    } else if(type == "x") {
+        x = fmax(zeroY.x, fmax(bbox.minX, bbox.maxX));
+        y = bbox.minY + height / 2;
+    } else if(type == "xy") {
+        if(coord->GetType() == coord::CoordType::Polar) {
+            x = coord->GetCenter().x;
+            y = coord->GetCenter().y;
+        } else {
+            x = bbox.x;
+            y = bbox.y;
+        }
+    }
+
+    util::Vector2D v{x, y};
+    util::Matrix endMatrix = GetScaledShapeMatrix(clip.get(), &v, type);
+    AnimateState endState;
+    AnimateState startState;
+    endState.matrix = std::move(endMatrix);
+    startState.matrix = clip->GetMatrix();
+    
+    //单个Shape动画的id
+    string identifier = StringUtil::GenerateRandomString(10);
+    clip->identifier = identifier;
+    container->shapeAnimationDictionary[clip->identifier] = std::move(clip);
+//    auto it = container->dictionary.find(identifier);
+    animate::DoAnimation(timeLine, container->shapeAnimationDictionary[identifier].get(), startState, endState, cfg, [container, identifier]() -> void {
+        //动画结束回调
+        bool isTheLastAnimFinish = true;
+        container->endAnimationElement.push_back(identifier);
+        for (const auto& pair : container->shapeAnimationDictionary) {
+            const std::string& key = pair.first; // 获取动画id
+            bool hasEndThis = std::find(container->endAnimationElement.begin(), container->endAnimationElement.end(), key) != container->endAnimationElement.end();
+            if (!hasEndThis) {
+                //如果注册id中有一个不在动画完成的vector中，则代表动画没有结束
+                isTheLastAnimFinish = false;
+                break;
+            }
+        }
+        if (isTheLastAnimFinish) {
+            //Group内所有Shape动画结束，清空动画
+            container->shapeAnimationDictionary.clear();
+            container->endAnimationElement.clear();
+        }
+    });
+}
+
+static void animate::action::ShapeWaveIn(animate::TimeLine *timeLine,
+                                         shape::Element *shape,
+                                         shape::Group *container,
+                                         nlohmann::json &cfg,
+                                         canvas::coord::AbstractCoord *coord,
+                                         util::Point zeroY,
+                                         xg::util::BBox &bbox) {
+    //极坐标系的GetWidth是角度，所以这里用start和end单独计算下
+    float width = abs(bbox.maxX - bbox.minX);
+    float height = abs(bbox.maxY - bbox.minY);
+    
+    float x = 0;
+    float y = 0;
+
+    auto clip = std::make_unique<shape::Rect>(util::Point{bbox.minX, fmax(bbox.minY, bbox.maxY)}, util::Size{width, -height});
+    
+    AnimateState endState;
+    AnimateState startState;
+    
+    if(canvas::coord::CoordType::Polar == coord->GetType()) {
+//        canvas::coord::Polar *polar = static_cast<canvas::coord::Polar *>(coord);
+//        clip = xg::make_unique<xg::shape::Rect>(polar->GetCenter(), polar->circleRadius_, 0, polar->startAngle_, polar->endAngle_, 1.f);
+//        startState.angle = polar->startAngle_;
+//        endState.angle = polar->endAngle_;
+//        clip->UpdateAttribute("endAngle", polar->startAngle_);
+    } else {
+//        clip = std::make_unique<shape::Rect>(util::Point{coord->GetXAxis().x, coord->GetYAxis().y},
+//                                             util::Size{coord->GetWidth(), coord->GetHeight()});
+        
+//        if(coord->IsTransposed()) {
+//            endState.height = height;
+//            clip->UpdateAttribute("height", 0);
+//        } else {
+//            endState.width = width;
+//            clip->UpdateAttribute("width", 0);
+//        }
+        endState.height = -height;
+        clip->UpdateAttribute("height", 0);
+    }
+    startState.matrix = clip->GetMatrix();
+    
+    //单个Shape动画的id
+    string identifier = StringUtil::GenerateRandomString(10);
+    clip->identifier = identifier;
+    container->shapeAnimationDictionary[clip->identifier] = std::move(clip);
+//    auto it = container->dictionary.find(identifier);
+    animate::DoAnimation(timeLine, container->shapeAnimationDictionary[identifier].get(), startState, endState, cfg, [container, identifier]() -> void {
+        //动画结束回调
+        bool isTheLastAnimFinish = true;
+        container->endAnimationElement.push_back(identifier);
+        for (const auto& pair : container->shapeAnimationDictionary) {
+            const std::string& key = pair.first; // 获取动画id
+            bool hasEndThis = std::find(container->endAnimationElement.begin(), container->endAnimationElement.end(), key) != container->endAnimationElement.end();
+            if (!hasEndThis) {
+                //如果注册id中有一个不在动画完成的vector中，则代表动画没有结束
+                isTheLastAnimFinish = false;
+                break;
+            }
+        }
+        if (isTheLastAnimFinish) {
+            //Group内所有Shape动画结束，清空动画
+            container->shapeAnimationDictionary.clear();
+            container->endAnimationElement.clear();
+        }
+    });
+    
+//    container->clip_ = std::move(clip);
+//    animate::DoAnimation(timeLine, container->clip_.get(), startState, endState, cfg, [container]() -> void { container->clip_ = nullptr; });
+}
+
 #pragma aniamte static methods.
-util::Matrix animate::GetScaledShapeMatrix(shape::Shape *shape, util::Vector2D *v, std::string direct) {
+static util::Matrix animate::GetScaledShapeMatrix(shape::Shape *shape, util::Vector2D *v, std::string direct) {
     shape->Apply(v);
     double x = (*v)[0];
     double y = (*v)[1];
@@ -154,16 +370,17 @@ util::Matrix animate::GetScaledShapeMatrix(shape::Shape *shape, util::Vector2D *
                                                        {"t", util::Vector2D{-x, -y}},   //
                                                    });
     }
-    return scaledMatrix;
+    return std::move(scaledMatrix);
 }
 
-void animate::DoAnimation(animate::TimeLine *timeLine_,
-                                 shape::Shape *shape,
+static void animate::DoAnimation(animate::TimeLine *timeLine_,
+                                 shape::Element *shape,
+                                 const AnimateState &startState,
                                  const animate::AnimateState &endState,
                                  nlohmann::json &cfg,
                                  std::function<void()> onEnd) {
-    animate::AnimateState startState;
-    startState.matrix = shape->GetMatrix();
+//    animate::AnimateState startState;
+//    startState.matrix = shape->GetMatrix();
     // todo 补充 startState 属性
     //    startState.engle = shape-> // read rect startAngle.
     animate::AnimInfo animInfo = animate::CreateAnimInfo(shape, startState, endState, cfg);
@@ -219,30 +436,57 @@ void animate::GeomAnimate::OnBeforeCanvasDraw() {
 
     isUpdate_ = true;
 
-    if(animateCfg_.is_boolean() && animateCfg_ == false) {
+    if(chart_->animateCfg_.is_boolean() && chart_->animateCfg_ == false) {
         return;
     }
 
+    int stepDelay = 0;
     for(std::vector<std::unique_ptr<geom::AbstractGeom>>::iterator it = chart_->geoms_.begin(); it != chart_->geoms_.end(); ++it) {
         const std::string &geomType = (*it)->GetType();
-
         std::string animateType = animate::GeomAnimate::GetGeomAnimateDefaultCfg(geomType, chart_->coord_.get());
+        /*
+        默认动画类型：
+        line:
+            极坐标 GroupScaleInXY
+            笛卡尔坐标 GroupWaveIn
+        area:
+            极坐标 GroupScaleInXY
+            笛卡尔坐标 GroupWaveIn
+        point:
+            GroupScaleInXY
+        interval:
+            极坐标 GroupWaveIn
+            笛卡尔坐标 转置 ? GroupScaleInX : GroupScaleInY
+        其他:
+            GroupWaveIn
+         */
         nlohmann::json cfg = {
-            {"animate", animateType}, //
-            {"erasing", "linear"},    //
-            {"delay", 16},            //
-            {"duration", 450}         //
+            {"animateType", animateType},
+            {"erasing", "linear"},
+            {"delay", 16},
+            {"duration", 450}
         };
         
-        //todo merge传入的动画配置 需要区分每一类geom的动画 
-//        if(chart_->animateCfg_.is_object()) {
-//            cfg.merge_patch(chart_->animateCfg_);
-//        }
+        nlohmann::json &geomCfg = (*it)->getAnimateCfg();
+        if (!geomCfg.empty()) {
+            cfg.merge_patch(geomCfg);
+        }
 
-        // geomCfg
         auto &yScale = chart_->GetScale((*it)->GetYScaleField());
         util::Point zeroY = chart_->GetCoord().ConvertPoint(util::Point{0, yScale.Scale((*it)->GetYMinValue(*chart_))});
-        animate::action::DoGroupAnimate(animateType, timeLine_, (*it)->container_, cfg, chart_->coord_.get(), zeroY);
+        string cfgType = json::GetString(cfg, "animateType", animateType);
+        std::vector<std::string> shapeTypes = {"ShapeScaleInX", "ShapeScaleInY", "ShapeScaleInXY", "ShapeWaveIn"};
+        if (std::find(shapeTypes.begin(), shapeTypes.end(), cfgType) != shapeTypes.end()) {
+            std::for_each((*it)->container_->children_.begin(), (*it)->container_->children_.end(), [&](const std::unique_ptr<Element> &e) {
+                int stepDelayCfg = json::GetNumber(cfg, "shapeInterval", 0);
+                stepDelay += stepDelayCfg;
+                cfg["delay"] = stepDelay;
+                xg::util::BBox bbox = e->GetBBox(*chart_->canvasContext_);
+                animate::action::DoShapeAnimate(json::GetString(cfg, "animateType", animateType), timeLine_, e.get(), (*it)->container_, cfg, chart_->coord_.get(), zeroY, bbox);
+            });
+        } else {
+            animate::action::DoGroupAnimate(json::GetString(cfg, "animateType", animateType), timeLine_, (*it)->container_, cfg, chart_->coord_.get(), zeroY);
+        }
     }
 }
 

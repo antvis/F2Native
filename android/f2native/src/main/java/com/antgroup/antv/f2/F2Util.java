@@ -100,7 +100,7 @@ public final class F2Util {
             long timeStamp = new BigDecimal(dateString).longValue();
             return dateFormat.format(new Date(timeStamp));
         } catch (Exception e) {
-            F2Log.e("F2Util", "getFormatTime exception: " + e.getMessage());
+            F2Log.get().e("F2Util", "getFormatTime exception: " + e.getMessage());
         }
         return dateString;
     }

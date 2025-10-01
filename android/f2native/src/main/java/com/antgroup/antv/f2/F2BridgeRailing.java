@@ -17,14 +17,29 @@ import android.text.TextUtils;
 
 public class F2BridgeRailing {
 
-    private final long mRailingHandle;
+    private static final String TAG = "F2BridgeRailing";
+    private long mRailingHandle;
     private Set<Long> mCommands = new LinkedHashSet<>();
     private Handler mHandler;
     private F2CanvasView mF2CanvasView;
+    private volatile boolean mHasDestroyed = false;
+
+    public F2BridgeRailing() {
+        init();
+    }
 
     public F2BridgeRailing(F2CanvasView f2CanvasView) {
         mF2CanvasView = f2CanvasView;
-        mRailingHandle = F2ChartBridge.nCreateNativeRailHandle(this);
+        init();
+    }
+
+    private void init() {
+        try {
+            mRailingHandle = F2ChartBridge.nCreateNativeRailHandle(this);
+        } catch (Throwable t) {
+            F2Log.get().e(TAG, "nCreateNativeRailHandle error " + t.getMessage());
+            mRailingHandle = 0;
+        }
     }
 
     public long getRailingHandle() {
@@ -32,14 +47,35 @@ public class F2BridgeRailing {
     }
 
     public void destroy() {
-        F2ChartBridge.nDestroyNativeRailHandle(mRailingHandle);
+        if (mHasDestroyed) {
+            return;
+        }
+        clearCommands();
+        if (mRailingHandle != 0) {
+            F2ChartBridge.nDestroyNativeRailHandle(mRailingHandle);
+            mRailingHandle = 0;
+        }
+        mHasDestroyed = true;
+    }
+
+    private void clearCommands() {
+        for (Long command : mCommands) {
+            NativeChartProxy.deallocCommand(command);
+        }
+        mCommands.clear();
+        removeHandlerCallbacks();
     }
 
     /**
      * c++反射调用，播放动画
      */
     public final void playAnimation(String param) {
+        if (mF2CanvasView == null || mHasDestroyed) {
+            F2Log.get().i(TAG, " playAnimation isDestroyed");
+            return;
+        }
         if (TextUtils.isEmpty(param)) {
+            F2Log.get().i(TAG, " playAnimation isEmpty");
             return;
         }
         long pointer = 0;
@@ -54,7 +90,7 @@ public class F2BridgeRailing {
                 delay = json.getLong("delay");
             }
         } catch (Exception e) {
-            F2Log.e("F2BridgeRailing", " playAnimation exception: " + e.getMessage());
+            F2Log.get().e(TAG, " playAnimation exception: " + e.getMessage());
         }
 
         final long command = pointer;
@@ -64,7 +100,8 @@ public class F2BridgeRailing {
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (!mCommands.contains(command)) {
+                if (mF2CanvasView == null || mHasDestroyed || !mCommands.contains(command)) {
+                    F2Log.get().i(TAG, " playAnimation postDelayed isDestroyed");
                     return;
                 }
                 NativeChartProxy.executeCommand(command);
@@ -72,16 +109,17 @@ public class F2BridgeRailing {
                 mCommands.remove(command);
             }
         }, delay);
-        return;
     }
 
     /**
      * c++反射调用，触发刷新
      */
-    public void swap() {
-        if (mF2CanvasView != null) {
-            mF2CanvasView.swapBuffer();
+    public final void swap() {
+        if (mF2CanvasView == null || mHasDestroyed) {
+            F2Log.get().i(TAG, " swap isDestroyed");
+            return;
         }
+        mF2CanvasView.swapBuffer();
     }
 
     /**

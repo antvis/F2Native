@@ -42,7 +42,7 @@ public class ChartListActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        F2Log.i("ChartListActivity", "canvasViews Size: " + canvasViews.size());
+        F2Log.get().i("ChartListActivity", "canvasViews Size: " + canvasViews.size());
         for (WeakReference<F2CanvasView> canvasView : canvasViews) {
             if (canvasView.get() != null) {
                 canvasView.get().destroy();
@@ -67,10 +67,7 @@ public class ChartListActivity extends AppCompatActivity {
             super(itemView);
             chartName = itemView.findViewById(R.id.chart_name);
             canvasView = itemView.findViewById(R.id.canvasView);
-            canvasView.initCanvasContext(new F2CanvasView.ConfigBuilder()
-                    .setOption("canvasBizId", "ChartListActivity")
-                    .setOption("appId", "1000")
-                    .build());
+            canvasView.setCanvasBizId("ChartListActivity");
             canvasViews.add(new WeakReference<>(canvasView));
         }
     }

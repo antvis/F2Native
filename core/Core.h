@@ -11,6 +11,8 @@
 #include "graphics/guide/Flag.h"
 #include "graphics/guide/GuideController.h"
 #include "graphics/guide/Line.h"
+#include "graphics/guide/Point.h"
+#include "graphics/guide/Tag.h"
 #include "graphics/guide/GuideBase.h"
 
 #include "graphics/legend/LegendController.h"
@@ -47,6 +49,7 @@
 
 #include "graphics/scale/continuous/Linear.h"
 #include "graphics/scale/continuous/TimeSharingLinear.h"
+#include "graphics/scale/continuous/FiveDaysLinear.h"
 
 #include "graphics/util/BBox.h"
 #include "graphics/util/Point.h"
@@ -90,8 +93,9 @@
 #include "graphics/event/EventController.h"
 
 #include "graphics/interaction/InteractionBase.h"
-#include "graphics/interaction/Pan.h"
 #include "graphics/interaction/InteractionContext.h"
+#include "graphics/interaction/Tap.h"
+#include "graphics/interaction/Pan.h"
 #include "graphics/interaction/Pinch.h"
 
 #include "graphics/func/Command.h"
@@ -103,15 +107,23 @@
 #include "utils/xtime.h"
 
 #include "nlohmann/json.hpp"
+#include "bridge/AbstractBridgeRailing.h"
+#include "bridge/ChartBridge.h"
+#include "token/DarkModeManager.h"
+
+
 #if defined(__APPLE__)
 #include "ios/CoreGraphicsContext.h"
 #include "ios/F2Logger.h"
+#include "ios/BridgeRailingIOS.h"
 #endif
 
 #if defined(__ANDROID__)
 #include "android/F2NativeJNI.h"
 #include "android/JavaRef.h"
 #include "android/JNIUtil.h"
+#include "android/BridgeRailingAndroid.h"
+#include "android/JavaF2Function.h"
 #endif
 
 #endif /* XG_CORE_H */

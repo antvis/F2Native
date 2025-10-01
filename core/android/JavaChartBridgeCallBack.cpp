@@ -47,7 +47,7 @@ bool JavaChartBridgeCallBack::InitClass(JNIEnv *env) {
         return false;
     }
     jclass bridgeCls = env->GetObjectClass(nativeBridgeObject_->obj());
-    invokeCallbackMethod_ = env->GetMethodID(bridgeCls, "invokeCallback",
+    invokeCallbackMethod_ = env->GetMethodID(bridgeCls, "nInvokeCallback",
                                              "(Ljava/lang/String;)V");
     if (HasException(env)) {
         return false;

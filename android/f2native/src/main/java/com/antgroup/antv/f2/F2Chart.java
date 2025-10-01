@@ -10,6 +10,8 @@ import java.util.Map;
 /**
  * @author qingyuan.yl
  * @date 2020-09-16
+ * <p>
+ * 单chart
  */
 public class F2Chart {
 
@@ -146,6 +148,18 @@ public class F2Chart {
             mCanvasView.swapBuffer();
             // long now = System.currentTimeMillis();
             // innerLog("#postTouchEvent duration: " + (now - ts) +"ms(with swap:"+(now - swTs)+"ms)");
+        }
+        return ret == 1;
+    }
+
+    public boolean postTouchEvent(String event) {
+        if (hasDestroyed) {
+            return false;
+        }
+        assertRenderThread();
+        int ret = mChartProxy.sendTouchEvent(event);
+        if (ret == 1) {
+            mCanvasView.swapBuffer();
         }
         return ret == 1;
     }
@@ -350,20 +364,6 @@ public class F2Chart {
         mChartProxy.clear();
     }
 
-    //设置当geom中有interval的时候，是否调整max, min, range三个参数, 默认是true
-    public void adjustScale(boolean adjust) {
-        if (!hasDestroyed) {
-            mChartProxy.adjustScale(adjust);
-        }
-    }
-
-    //是否同步多个y轴的最值，默认为true
-    public void syncYScale(boolean sync) {
-        if (!hasDestroyed) {
-            mChartProxy.syncYScale(sync);
-        }
-    }
-
     public String getScaleTicks(String field) {
         if (hasDestroyed) {
             return null;
@@ -404,7 +404,7 @@ public class F2Chart {
             innerLog("#finalize..");
             destroy();
         } catch (Exception e) {
-            F2Log.e("F2Chart", "#finalize exception " + e.toString());
+            F2Log.get().e("F2Chart", "#finalize exception " + e.toString());
         } finally {
             super.finalize();
         }
@@ -419,12 +419,12 @@ public class F2Chart {
     }
 
     private void innerLog(String content) {
-        F2Log.i("F2Chart-" + mName, content);
+        F2Log.get().i("F2Chart-" + mName, content);
     }
 
     final void assertRenderThread() {
         if (hasDestroyed || mCanvasView == null) {
-            F2Log.e("F2Chart-" + mName, "#runOnRenderThread chartView is null.");
+            F2Log.get().e("F2Chart-" + mName, "#runOnRenderThread chartView is null.");
             return;
         }
     }
@@ -435,11 +435,10 @@ public class F2Chart {
         }
     }
 
-    public final String nExecute(String functionId, String param) {
+    protected final String nExecute(String functionId, String param) {
         try {
             if (functionId.equals(mRequestFrameHandle.functionId)) {
-                mRequestFrameHandle.execute(param);
-                return param;
+                return mRequestFrameHandle.execute(param).toJsonString();
             } else {
                 F2Function function = mFunctionMap.get(functionId);
                 if (function != null) {
@@ -450,7 +449,7 @@ public class F2Chart {
             }
             return "{}";
         } catch (Exception e) {
-            F2Log.e("F2Function", "execute failed id: " + functionId, e);
+            F2Log.get().i("F2Function", "execute failed id: " + functionId + " e: " + e.getMessage());
             return "{}";
         }
     }
@@ -507,7 +506,7 @@ public class F2Chart {
                     array.put(range[i]);
                 }
             } catch (Exception e) {
-                F2Log.e("F2Chart", "#range exception " + e.toString());
+                F2Log.get().e("F2Chart", "#range exception " + e.toString());
             }
             return setOption(KEY_RANGE, array);
         }
@@ -662,6 +661,10 @@ public class F2Chart {
         private static final String KEY_LINE_BOTTOM = "lineBottom";
         private static final String KEY_ITEM_MARGIN_BOTTOM = "itemMarginBottom";
         private static final String KEY_WORD_SPACE = "wordSpace";
+        private static final String KEY_VERTICAL_ALIGN = "verticalAlign";
+        private static final String KEY_WIDTH = "width";
+        private static final String KEY_HEIGHT = "height";
+
 
         public LegendConfigBuild symbol(String symbol) {
             return setOption(KEY_SYMBOL, symbol);
@@ -677,6 +680,18 @@ public class F2Chart {
 
         public LegendConfigBuild layout(String layout) {
             return setOption(KEY_LAYOUT, layout);
+        }
+
+        public LegendConfigBuild verticalAlign(String layout) {
+            return setOption(KEY_VERTICAL_ALIGN, layout);
+        }
+
+        public LegendConfigBuild width(float width) {
+            return setOption(KEY_WIDTH, width);
+        }
+
+        public LegendConfigBuild height(float height) {
+            return setOption(KEY_HEIGHT, height);
         }
 
         public LegendConfigBuild lineBottom(double lineBottom) {

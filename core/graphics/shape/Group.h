@@ -2,6 +2,7 @@
 #define XG_GRAPHICS_SHAPE_GROUP_H
 
 #include "Shape.h"
+#include <unordered_map>
 
 using namespace std;
 
@@ -16,6 +17,8 @@ class Group : public Element {
 
     void AddElement(std::unique_ptr<Element> &&e) { children_.push_back(std::move(e)); }
     void RemoveElement(std::unique_ptr<Element> &e) { std::remove(children_.begin(), children_.end(), e); }
+    
+    virtual void UpdateAttribute(std::string attrName, double val) override;
 
     inline ElementType GetType() const override { return ElementType::Group; }
 
@@ -42,10 +45,13 @@ class Group : public Element {
     void Scale(float sx, float sy) override;
     void MoveTo(float x, float y) override;
     void Apply(Vector2D *v) override;
+    void Alpha(float alpha) override;
 
     Group *AddGroup();
 
     void DoClip(canvas::CanvasContext &) const override;
+    void DoClipByIdentifier(canvas::CanvasContext &, string identifier) const override;
+    bool NeedShapeClip(canvas::CanvasContext &, const std::function<void(string)>& callback) const override;
 
   protected:
     virtual void DrawInner(canvas::CanvasContext &context) const override;
@@ -54,6 +60,9 @@ class Group : public Element {
     vector<std::unique_ptr<Element>> children_;
 
     std::unique_ptr<Shape> clip_ = nullptr;
+    
+    std::unordered_map<std::string, std::unique_ptr<Shape>> shapeAnimationDictionary;
+    vector<std::string> endAnimationElement;
 };
 } // namespace shape
 } // namespace xg

@@ -22,12 +22,10 @@ class WebCanvasContext : public CanvasContext {
     bool clip_ = false;
 
   public:
-    WebCanvasContext(const std::string &contextName, float width, float height, double devicePixelRatio);
+    WebCanvasContext(const std::string &contextName, float width, float height, double devicePixelRatio, token::DarkModeManager &manager);
     ~WebCanvasContext();
 
     bool IsValid() override;
-
-    void ChangeSize(float width, float height) override;
 
     void SetFillStyle(const std::string &color) override;
 
@@ -132,4 +130,3 @@ class WebCanvasContext : public CanvasContext {
 } // namespace xg
 
 #endif // XG_GRAPHICS_CANVAS_CONTEXT_ALIPAY_H
-//#endif // TARGET_ALIPAY

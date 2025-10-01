@@ -1,16 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="20dp"
     android:orientation="vertical"
     tools:context=".SampleActivity">
-    <com.antgroup.antv.f2.F2CanvasView
-        android:id="@+id/canvasView"
+    <Button
+        android:id="@+id/render1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="绘制"/>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="220dp"/>
+        android:layout_height="200dp">
+
+        <com.antgroup.antv.f2.F2CanvasView
+            android:id="@+id/canvasView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </FrameLayout>
+
 
 </LinearLayout>
 

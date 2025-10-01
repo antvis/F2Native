@@ -1,6 +1,6 @@
 #include "Line.h"
-#include "../XChart.h"
-#include "../shape/Polyline.h"
+#include "graphics/XChart.h"
+#include "graphics/shape/Polyline.h"
 
 using namespace xg;
 
@@ -21,32 +21,38 @@ void guide::Line::Render(XChart &chart, shape::Group *container, canvas::CanvasC
     auto lambda = [&](std::vector<util::Point> &points) -> void {
         auto l = xg::make_unique<xg::shape::Polyline>(lineWidth, points, false);
 
-        if(config_.contains("dash")) {
+        if (config_.contains("dash")) {
             l->SetDashLine(json::ParseDashArray(config_["dash"], context.GetDevicePixelRatio()));
         }
         l->SetStorkColor(color);
         container->AddElement(std::move(l));
     };
-
-    if(orientation == "horizontal") {
+    
+    if (orientation == "horizontal") {
         std::vector<util::Point> points;
         points.push_back(util::Point{xAxis.x, position.y});
         points.push_back(util::Point{xAxis.y, position.y});
         lambda(points);
-    } else if(orientation == "vertical") {
+    } else if (orientation == "vertical") {
         std::vector<util::Point> points;
         points.push_back(util::Point{position.x, yAxis.y});
         points.push_back(util::Point{position.x, yAxis.x});
         lambda(points);
-    } else if(orientation == "crossed") {
+    } else if (orientation == "crossed") {
         std::vector<util::Point> hPoints;
         hPoints.push_back(util::Point{xAxis.x, position.y});
         hPoints.push_back(util::Point{xAxis.y, position.y});
         lambda(hPoints);
-
+        
         std::vector<util::Point> vPoints;
         vPoints.push_back(util::Point{position.x, yAxis.y});
         vPoints.push_back(util::Point{position.x, yAxis.x});
         lambda(vPoints);
+    } else if (orientation == "pointed") {
+        util::Point endPosition = this->GetPosition(chart, json::Get(this->config_, "endPosition"), xField, yField);
+        std::vector<util::Point> points;
+        points.push_back(util::Point{position.x, position.y});
+        points.push_back(util::Point{endPosition.x, endPosition.y});
+        lambda(points);
     }
 }

@@ -3,6 +3,8 @@
 //
 
 #include "CanvasColorParser.h"
+#include "../../token/DarkModeManager.h"
+#include "../../utils/StringUtil.h"
 
 using namespace xg::canvas;
 
@@ -19,7 +21,7 @@ typedef union {
 
 void CanvasColorParser::InitColorMapIfEmpty() {
     std::unique_lock<std::mutex> lock(global_mutex);
-    if(colorMap.empty()) {
+    if (colorMap.empty()) {
         colorMap.insert(std::pair<std::string, CanvasColor>("black", {0, 0, 0, 255}));
         colorMap.insert(std::pair<std::string, CanvasColor>("silver", {192, 192, 192, 255})); //{{192.0f / 255, 192.0f / 255, 192.0f / 255, 1.0f}}));
         colorMap.insert(std::pair<std::string, CanvasColor>("gray", {128, 128, 128, 255})); //{{128.0f / 255, 128.0f / 255, 128.0f / 255, 1.0f}}));
@@ -188,6 +190,7 @@ void CanvasColorParser::InitColorMapIfEmpty() {
     }
 }
 
+// rgba
 void ParseRGBAFullString(char value[8], CanvasColor &output) {
     unsigned long hex = 0x00000000 | strtoul(value, nullptr, 16);
     //        output.rgba = {(hex >> 24) / 255.0f, ((hex & 0xff0000) >> 16) / 255.0f,
@@ -198,42 +201,8 @@ void ParseRGBAFullString(char value[8], CanvasColor &output) {
     output.a = (hex & 0xff);
 }
 
-static std::string Trim(const std::string &str, const char *whitespace = nullptr, bool trimStart = true, bool trimEnd = true) {
-    if(str.empty()) {
-        return str;
-    }
-
-    std::string target;
-    if(whitespace == nullptr) {
-        target = " \t";
-    } else {
-        target = whitespace;
-    }
-
-    unsigned long strBegin = 0;
-    if(trimStart) {
-        strBegin = str.find_first_not_of(target);
-    }
-
-    if(strBegin == std::string::npos) { // trim start时找不到有效字符，直接返回空串
-        return "";
-    }
-
-    if(trimEnd) {
-        auto strEnd = str.find_last_not_of(target);
-        if(strEnd == std::string::npos) { // trim end时找不到有效字符，直接返回空串
-            return "";
-        }
-        auto strRange = strEnd - strBegin + 1;
-        // ALOGI("str=%s|strBegin=%i|strEnd=%i|strRange:%i", str.data(), strBegin, strEnd, strRange);
-        return str.substr(strBegin, strRange);
-    } else {
-        return str.substr(strBegin);
-    }
-}
-
 bool HandleBraceRGBAColor(char *value, InnerColorRGBA &output) {
-    int length = (int)strlen(value);
+    int length = (int) strlen(value);
     int current = 0;
     std::string temp;
     float colorV;
@@ -244,7 +213,7 @@ bool HandleBraceRGBAColor(char *value, InnerColorRGBA &output) {
     bool isPercent = false;
 
     int start = 4;
-    if(value[start] == '(') {
+    if (value[start] == '(') {
         start = 5;
     }
 
@@ -252,53 +221,53 @@ bool HandleBraceRGBAColor(char *value, InnerColorRGBA &output) {
     bool startFlag = false;
     bool hasAlphaContent = false;
     bool parseAlphaFlag = false;
-    for(int i = start; i < length && current < 4; i++) {
-        if(current == 3) { // parse alpha
+    for (int i = start; i < length && current < 4; i++) {
+        if (current == 3) { // parse alpha
             hasAlphaContent = true;
             std::string alpha = &(value[i]);
-            alpha = Trim(alpha);
+            alpha = StringUtil::Trim(alpha);
             // 从头部trim ','字符
-            alpha = Trim(alpha, ",", true, false);
+            alpha = StringUtil::Trim(alpha, ",", true, false);
             // 从尾部trim ')'
-            alpha = Trim(alpha, ")", false, true);
+            alpha = StringUtil::Trim(alpha, ")", false, true);
             // 再trim掉空格
-            alpha = Trim(alpha);
+            alpha = StringUtil::Trim(alpha);
 
             char lastChar = '\0';
             // percent处理
             bool isAlphaPercent = false;
-            if(!alpha.empty()) {
+            if (!alpha.empty()) {
                 lastChar = alpha[alpha.size() - 1];
-                if(lastChar == '%') {
+                if (lastChar == '%') {
                     isAlphaPercent = true;
                     alpha = alpha.substr(0, alpha.size() - 1);
                 }
             }
             // 判断末尾字符是否digit
-            if(!alpha.empty()) {
+            if (!alpha.empty()) {
                 parseAlphaFlag = isdigit(alpha[alpha.size() - 1]) != 0;
             } else {
                 parseAlphaFlag = false;
             }
 
             // ALOGD("Trim alpha=%s,valid=%i", alpha.data(), parseAlphaFlag);
-            if(parseAlphaFlag) {
+            if (parseAlphaFlag) {
                 char *end = nullptr;
                 // convert alpha，并利用end判断是否成功
                 float d = strtof(alpha.data(), &end);
                 // ALOGD("strtof:%s=%f|end=%s", alpha.data(), d, end);
                 std::string end_str = end;
-                if(!end_str.empty()) {
+                if (!end_str.empty()) {
                     parseAlphaFlag = false;
                 } else {
                     parseAlphaFlag = true;
-                    if(isAlphaPercent) {
+                    if (isAlphaPercent) {
                         d = d / 100;
                     }
-                    if(d < 0) {
+                    if (d < 0) {
                         d = 0;
                     }
-                    if(d > 1) {
+                    if (d > 1) {
                         d = 1;
                     }
                     output.components[current] = d;
@@ -306,55 +275,56 @@ bool HandleBraceRGBAColor(char *value, InnerColorRGBA &output) {
             }
             current++;
         } else { // parse r/g/b
-            if(isdigit(value[i]) || value[i] == '.' || value[i] == '%' || value[i] == '-' || value[i] == '+') {
-                if(!startFlag) {
+            if (isdigit(value[i]) || value[i] == '.' || value[i] == '%' || value[i] == '-' ||
+                value[i] == '+') {
+                if (!startFlag) {
                     startFlag = true;
                 }
                 // reset not end
                 endFlag = false;
                 temp.push_back(value[i]);
-            } else if(value[i] == ')' || isspace(value[i])) { // end
+            } else if (value[i] == ')' || isspace(value[i])) { // end
                 endFlag = true;
-            } else if(value[i] == ',') { // end
+            } else if (value[i] == ',') { // end
                 endFlag = true;
-                if(i == (length - 1)) { // end with comma, invalid
+                if (i == (length - 1)) { // end with comma, invalid
                     return false;
                 }
             } else { // wrong format
                 return false;
             }
 
-            if(i == length - 1) {
+            if (i == length - 1) {
                 endFlag = true;
             }
 
-            if(startFlag && endFlag) {
+            if (startFlag && endFlag) {
                 // check is all percent?
                 char lastChar = temp.at(temp.length() - 1);
-                if(current == 0) {
-                    if(value[i] == ',') {
+                if (current == 0) {
+                    if (value[i] == ',') {
                         isCommaSep = true;
-                    } else if(isspace(value[i])) {
+                    } else if (isspace(value[i])) {
                         isSpaceSep = true;
                     }
-                    if(lastChar == '%') {
+                    if (lastChar == '%') {
                         isPercent = true;
                     }
                 } else {
-                    if(lastChar != '%' && isPercent) { // not percent consistent
+                    if (lastChar != '%' && isPercent) { // not percent consistent
                         return false;
                     }
-                    if(value[i] == ',' && !isCommaSep) { // not comma consistent
+                    if (value[i] == ',' && !isCommaSep) { // not comma consistent
                         return false;
                     }
-                    if(isspace(value[i]) && !isSpaceSep) { // not space consistent
+                    if (isspace(value[i]) && !isSpaceSep) { // not space consistent
                         return false;
                     }
                 }
                 // TODO 增加convert是否成功的判断
-                colorV = (float)atof(temp.data());
+                colorV = (float) atof(temp.data());
                 // ALOGI("parse filed s=%s, value=%f", temp.data(), colorV);
-                if(isPercent) {
+                if (isPercent) {
                     colorV = colorV < 0 ? 0 : (colorV > 100 ? 100 : colorV);
                     output.components[current] = colorV / 100;
                 } else {
@@ -371,8 +341,8 @@ bool HandleBraceRGBAColor(char *value, InnerColorRGBA &output) {
     }
 
     // 判断alpha
-    if(hasAlphaContent) {
-        if(!parseAlphaFlag) {
+    if (hasAlphaContent) {
+        if (!parseAlphaFlag) {
             return false;
         }
     }
@@ -384,45 +354,46 @@ bool CanvasColorParser::Parse(const std::string &str, CanvasColor &outputAgColor
     InitColorMapIfEmpty();
 
     outputAgColor = {0, 0, 0, 255};
-    if(str.empty()) {
+    if (str.empty()) {
         return false;
     }
 
     bool result = true;
     const char *value = str.data();
     do {
-        if(value[0] == '#') {
-            int length = (int)strlen(value);
+        if (value[0] == '#') {
+            int length = (int) strlen(value);
             char str_arr[] = "ffffffff";
 
             // check value valid?
             bool sharp_valid = true;
-            for(int i = 1; i < length; i++) {
-                if(!((value[i] >= '0' && value[i] <= '9') || (value[i] >= 'a' && value[i] <= 'f') ||
-                     (value[i] >= 'A' && value[i] <= 'F'))) { // wrong format
+            for (int i = 1; i < length; i++) {
+                if (!((value[i] >= '0' && value[i] <= '9') ||
+                      (value[i] >= 'a' && value[i] <= 'f') ||
+                      (value[i] >= 'A' && value[i] <= 'F'))) { // wrong format
                     // LOG_E("check # wrong format: %c=", value[i]);
                     sharp_valid = false;
                     break;
                 }
             }
 
-            if(!sharp_valid) {
+            if (!sharp_valid) {
                 result = false;
                 break;
             }
 
-            if(length == 4) {
+            if (length == 4) {
                 str_arr[0] = str_arr[1] = value[1];
                 str_arr[2] = str_arr[3] = value[2];
                 str_arr[4] = str_arr[5] = value[3];
                 ParseRGBAFullString(str_arr, outputAgColor);
-            } else if(length == 5) {
+            } else if (length == 5) {
                 str_arr[0] = str_arr[1] = value[1];
                 str_arr[2] = str_arr[3] = value[2];
                 str_arr[4] = str_arr[5] = value[3];
                 str_arr[6] = str_arr[7] = value[4];
                 ParseRGBAFullString(str_arr, outputAgColor);
-            } else if(length == 7) { // #RRGGBB format
+            } else if (length == 7) { // #RRGGBB format
                 str_arr[0] = value[1];
                 str_arr[1] = value[2];
                 str_arr[2] = value[3];
@@ -430,7 +401,7 @@ bool CanvasColorParser::Parse(const std::string &str, CanvasColor &outputAgColor
                 str_arr[4] = value[5];
                 str_arr[5] = value[6];
                 ParseRGBAFullString(str_arr, outputAgColor);
-            } else if(length == 9) { // #RRGGBBAA
+            } else if (length == 9) { // #RRGGBBAA
                 memcpy(str_arr, value + 1, 8);
                 ParseRGBAFullString(str_arr, outputAgColor);
             } else {
@@ -438,19 +409,19 @@ bool CanvasColorParser::Parse(const std::string &str, CanvasColor &outputAgColor
             }
         } else {
             std::string colorVal = value;
-            colorVal = Trim(value);
+            colorVal = StringUtil::Trim(value);
             std::transform(colorVal.begin(), colorVal.end(), colorVal.begin(), ::tolower);
             value = colorVal.c_str();
 
             // match color name
             auto iter = colorMap.find(value);
-            if(iter != colorMap.end()) {
+            if (iter != colorMap.end()) {
                 outputAgColor = iter->second;
                 break;
             }
 
             // handle hsla( format color (not support now)
-            if(strncmp(value, "hsl(", 4) == 0 || strncmp(value, "hsla(", 5) == 0) {
+            if (strncmp(value, "hsl(", 4) == 0 || strncmp(value, "hsla(", 5) == 0) {
                 result = false;
                 break;
             }
@@ -459,11 +430,11 @@ bool CanvasColorParser::Parse(const std::string &str, CanvasColor &outputAgColor
             bool isRgbBrace = strncmp(value, "rgb(", 4) == 0;
             bool isRgbaBrace = strncmp(value, "rgba(", 4) == 0;
             // 根据web spec https://drafts.csswg.org/css-color/#funcdef-rgba, rgb()和rgba()函数等价，都支持alpha
-            if(isRgbBrace || isRgbaBrace) {
+            if (isRgbBrace || isRgbaBrace) {
                 // 注意：无需')'判断， 没有')'结尾也是有效的颜色格式
                 InnerColorRGBA floatColor = {{0.0f, 0.0f, 0.0f, 1.0f}};
-                auto flag = HandleBraceRGBAColor((char *)value, floatColor);
-                if(flag) {
+                auto flag = HandleBraceRGBAColor((char *) value, floatColor);
+                if (flag) {
                     outputAgColor.r = int32_t(floatColor.rgba.r * 255);
                     outputAgColor.g = int32_t(floatColor.rgba.g * 255);
                     outputAgColor.b = int32_t(floatColor.rgba.b * 255);
@@ -474,15 +445,24 @@ bool CanvasColorParser::Parse(const std::string &str, CanvasColor &outputAgColor
                 result = false;
             }
         }
-    } while(false);
+    } while (false);
 
     // ALOGD("parseColorString:success=%i|input=%s|color=(%i,%i,%i,%i)", result, str.data(), outputAgColor.r,
     //        outputAgColor.g, outputAgColor.b, outputAgColor.a);
     return result;
 }
 
- int CanvasColorParser::RGBAToHex(const CanvasColor &color)
-{
-    return (((int)color.a & 0xff) << 24) + (((int)color.r & 0xff) << 16) + (((int)color.g & 0xff) << 8)
-           + ((int)color.b & 0xff);
+// argb hex
+int CanvasColorParser::RGBAToHex(const CanvasColor &color) {
+    return (((int) color.a & 0xff) << 24) + (((int) color.r & 0xff) << 16) +
+           (((int) color.g & 0xff) << 8)
+           + ((int) color.b & 0xff);
+}
+
+// argb hex
+void CanvasColorParser::HexToRGBA(const int hexColor, CanvasColor &agColor) {
+    agColor.a = (hexColor >> 24) & 0xFF;
+    agColor.r = (hexColor >> 16) & 0xFF;
+    agColor.g = (hexColor >> 8) & 0xFF;
+    agColor.b = hexColor & 0xFF;
 }

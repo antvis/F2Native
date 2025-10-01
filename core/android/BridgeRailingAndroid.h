@@ -54,22 +54,19 @@ namespace xg {
              */
             std::string FormatTime(const std::string &value, const std::string &timezoneName,
                                    const std::string &timestampFormatter) override;
+
             /**
              *
-             * @param methodName invokeMethod的名字
-             * @param params 参数
              * @param nativeBridgeObject Android层F2ChartBridge对象，用于反射callback
-             * @param chartBridge c++层ChartBridge对象
              */
-            void InvokeJavaMethod(const std::string &methodName,
-                                  const std::string &params,
-                                  jobject nativeBridgeObject,
-                                  ChartBridge *chartBridge);
+            JavaChartBridgeCallBack *GetJavaCallBack(jobject nativeBridgeObject);
+
             /**
              * 设置画布的上下文
              * @param context 画布
              */
             inline void SetCanvasContext(void *context) override { context_ = context; }
+
             inline void *GetCanvasContext() override { return context_; }
 
         private:

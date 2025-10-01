@@ -25,7 +25,9 @@ public:
 protected:
   static nlohmann::json MergeDefaultCfg(const nlohmann::json &config) {
       nlohmann::json defaultCfg = {
-          {"margin", {0, 0}}// margin: left & top
+              {"width", 12},
+              {"height", 12},
+              {"margin", {0, 0}}// margin: left & top
       };
       if(config.is_object()) {
           defaultCfg.merge_patch(config);

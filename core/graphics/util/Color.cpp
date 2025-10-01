@@ -7,13 +7,14 @@
 //
 
 #include "Color.h"
+#include "graphics/util/json.h"
 
-using namespace xg::canvas;;
+using namespace xg::canvas;
 
-CanvasFillStrokeStyle xg::util::ColorParser(const nlohmann::json &color) {
+CanvasFillStrokeStyle xg::util::ColorParser(const nlohmann::json &color, xg::util::BBox *bbox) {
     if(color.is_string()) {
         const std::string &c = color.get<std::string>();
-        
+
         //不是渐变
         if(c.find("colorStops") == std::string::npos) {
             //解析"#1890FF0F"格式传递到canvas后会引起颜色解析问题
@@ -26,8 +27,20 @@ CanvasFillStrokeStyle xg::util::ColorParser(const nlohmann::json &color) {
         }
         nlohmann::json _color = nlohmann::json::parse(c, nullptr, false);
         if(_color.is_object() && _color.contains("colorStops") && _color["colorStops"].is_array()) {
+            const auto &gradientStyle = json::GetString(_color, "gradient");
             bool isLinear = _color.contains("isLinear") ? _color["isLinear"].get<bool>() : true;
-            if(isLinear) {
+            if(gradientStyle == "conic") {
+                CanvasConicGradient gradient;
+                nlohmann::json &colorStops = _color["colorStops"];
+                for(std::size_t i = 0; i < colorStops.size(); ++i) {
+                    nlohmann::json &stop = colorStops[i];
+                    gradient.addColorStop(stop["offset"], stop["color"]);
+                }
+                gradient.start = {bbox->minX, bbox->minY};
+                gradient.end = {bbox->maxX, bbox->maxY};
+                gradient.gradientColor = gradientStyle;
+                return gradient;
+            } else if(isLinear || gradientStyle == "linear") {
                 CanvasLinearGradient gradient;
                 nlohmann::json &colorStops = _color["colorStops"];
                 for(std::size_t i = 0; i < colorStops.size(); ++i) {
@@ -39,7 +52,26 @@ CanvasFillStrokeStyle xg::util::ColorParser(const nlohmann::json &color) {
                     nlohmann::json &position = _color["position"];
                     gradient.start = {position[0], position[1]};
                     gradient.end = {position[2], position[3]};
+                } else if (bbox != nullptr) {
+                    gradient.start = {bbox->minX, bbox->maxY};
+                    gradient.end = {bbox->minX, bbox->minY};
+                    if (_color.contains("angle")) {
+                        double angle = xg::json::GetNumber(_color, "angle", 0);
+                        // 0 从上到下，1 从右到左，2 从下到上，3 从左到右
+                        int direction = angle / 90;
+                        if (direction == 1) {
+                            gradient.start = {bbox->maxX, bbox->minY};
+                            gradient.end = {bbox->minX, bbox->minY};
+                        } else if (direction == 2) {
+                            gradient.start = {bbox->minX, bbox->minY};
+                            gradient.end = {bbox->minX, bbox->maxY};
+                        } else if (direction == 3) {
+                            gradient.start = {bbox->minX, bbox->minY};
+                            gradient.end = {bbox->maxX, bbox->minY};
+                        }
+                    }
                 }
+                gradient.gradientColor = gradientStyle;
                 return gradient;
             } else {
                 CanvasRadialGradient gradient;
@@ -60,6 +92,7 @@ CanvasFillStrokeStyle xg::util::ColorParser(const nlohmann::json &color) {
                     gradient.end[1] = position[4];
                     gradient.end[2] = position[5];
                 }
+                gradient.gradientColor = gradientStyle;
                 return gradient;
             }
         }
@@ -67,9 +100,10 @@ CanvasFillStrokeStyle xg::util::ColorParser(const nlohmann::json &color) {
     return CanvasFillStrokeStyle(GLOBAL_COLORS[0]);
 }
 
-CanvasFillStrokeStyle xg::util::ColorParser(const nlohmann::json &data, const std::string &key) {
+CanvasFillStrokeStyle
+xg::util::ColorParser(const nlohmann::json &data, const std::string &key, xg::util::BBox *bbox) {
     if(data.is_object() && data.contains(key)) {
-        return ColorParser(data[key]);
+        return ColorParser(data[key], bbox);
     }
     return CanvasFillStrokeStyle(GLOBAL_COLORS[0]);
 }

@@ -1,33 +1,36 @@
-#include "XChart.h"
-#include "animate/TimeLine.h"
-#include "canvas/Cartesian.h"
-#include "canvas/Polar.h"
-#include "func/Func.h"
-#include "geom/shape/Area.h"
-#include "geom/shape/Candle.h"
-#include "geom/shape/Interval.h"
-#include "geom/shape/Line.h"
-#include "geom/shape/Point.h"
-#include "util/Point.h"
-#include "util/json.h"
-#include "../utils/common.h"
-#include "../utils/xtime.h"
+#include "graphics/XChart.h"
+#include "graphics/animate/TimeLine.h"
+#include "graphics/canvas/Cartesian.h"
+#include "graphics/canvas/Polar.h"
+#include "graphics/func/Func.h"
+#include "graphics/geom/shape/Area.h"
+#include "graphics/geom/shape/Candle.h"
+#include "graphics/geom/shape/Interval.h"
+#include "graphics/geom/shape/Line.h"
+#include "graphics/geom/shape/Point.h"
+#include "graphics/util/Point.h"
+#include "graphics/util/json.h"
+#include "../token/DarkModeManager.h"
+#include <cstring>
+#include <utils/common.h>
+#include <utils/xtime.h>
 
 using namespace xg;
 using namespace std;
 
-XChart::XChart(const std::string &name, double width, double height, double ratio) : chartName_(name) {
+XChart::XChart(const std::string &name, double width, double height, double ratio, bool log) : chartName_(name) {
     SetName(name);
     width_ = width * ratio;
     height_ = height * ratio;
     ratio_ = ratio;
-    this->logTracer_ = new utils::Tracer(name + "@Chart");
+    this->logTracer_ = new utils::Tracer(name + "@Chart", log);
     this->logTracer_->trace("create xchart: %s %lf %lf %lf ", chartId_.c_str(), width_, height_, ratio_);
+    this->darkModeManager_ = new token::DarkModeManager(name);
 
     geomShapeFactory_ = xg::make_unique<geom::shape::GeomShapeFactory>();
 
     // 初始化度量控制器
-    scaleController_ = new scale::ScaleController(this);
+    scaleController_ = new scale::ScaleController();
     this->logTracer_->trace("%s", "new ScaleController instance.");
     // 画布
     this->canvas_ = new canvas::Canvas();
@@ -70,6 +73,7 @@ XChart::~XChart() {
     XG_RELEASE_POINTER(interactionContext_);
     XG_RELEASE_POINTER(eventController_);
     XG_RELEASE_POINTER(logTracer_);
+    XG_RELEASE_POINTER(darkModeManager_);
 
     backLayout_ = nullptr;
     midLayout_ = nullptr;
@@ -86,7 +90,7 @@ bool XChart::Parse(const std::string &dsl) {
     }
     return ParseObject(_dsl);
 }
-    
+
 bool XChart::ParseObject(const nlohmann::json &dsl) {
     //线上已经使用了data作为key，这里兼容下
     const std::string sourceKey = dsl.contains("data") ? "data" :"source";
@@ -104,7 +108,7 @@ bool XChart::ParseObject(const nlohmann::json &dsl) {
         const auto data = json::ParseString(dataStr);
         SourceObject(data);
     }
-    
+
     if (!data_.is_array() || (data_.is_array() && data_.size() == 0)) {
         this->logTracer_->trace("#Parse data json is invalid");
         return false;
@@ -112,43 +116,54 @@ bool XChart::ParseObject(const nlohmann::json &dsl) {
 
     const auto &name = json::GetString(dsl, "name");
     SetName(name);
-    
+
     const auto &padding = json::GetArray(dsl, "padding");
     const auto &margin = json::GetArray(dsl, "margin");
     if (padding.is_array() && padding.size() >= 4) {
         Padding(padding[0], padding[1], padding[2], padding[3]);
     }
-    
+
     if (margin.is_array() && margin.size() >= 4) {
         Margin(margin[0], margin[1], margin[2], margin[3]);
     }
-    
+
     const auto &coord = json::GetObject(dsl, "coord");
     CoordObject(coord);
-    
+
     //一个chart只有一个legend
     const auto &legend = json::GetObject(dsl, "legend");
     LegendObject(json::GetString(legend, "field"), legend);
-    
+
     //可能是bool， 可能是object
     const auto &animate = json::Get(dsl, "animate");
     AnimateObject(animate);
-    
+
     const auto &axises = json::GetArray(dsl, "axises");
     for (auto it = axises.begin(); it != axises.end(); ++it) {
         const auto &config = json::GetObject(*it, "config");
+        const auto &selection = json::GetObject(*it, "selection");
         
+        //ougu todo 坐标轴动画配置
+        const auto &animate = json::GetObject(*it, "animate");
+
         //兼容线上老的代码
         if (config.is_object()) {
-            AxisObject(json::GetString(*it, "field"), config);
+            AxisObject(json::GetString(*it, "field"), config, selection);
         } else {
-            AxisObject(json::GetString(*it, "field"), *it);
+            AxisObject(json::GetString(*it, "field"), *it, selection);
         }
     }
     
-    const auto &tooltip = json::GetObject(dsl, "tooltip");
-    TooltipObject(tooltip);
-    
+    const auto &tooltips = json::GetArray(dsl, "tooltips", {});
+    if (tooltips.size() > 0) {
+        for (auto it = tooltips.begin(); it != tooltips.end(); ++it) {
+            TooltipObject(*it, true);
+        }
+    } else {
+        const auto &tooltip = json::GetObject(dsl, "tooltip");
+        TooltipObject(tooltip, false);
+    }
+
     const auto &scales = json::GetArray(dsl, "scales");
     for (auto it = scales.begin(); it != scales.end(); ++it) {
         //todo config是否要去掉
@@ -159,20 +174,20 @@ bool XChart::ParseObject(const nlohmann::json &dsl) {
             ScaleObject(json::GetString(*it, "field"), *it);
         }
     }
-    
+
     const auto &geoms = json::GetArray(dsl, "geoms");
     if (geoms.size() == 0) {
-        this->logTracer_->trace("#Parse geoms size is invalid");
+        this->logTracer_->trace("#Parse geoms before size is invalid");
         return false;
     }
     for (auto it = geoms.begin(); it != geoms.end(); ++it) {
         const auto &type = json::GetString(*it, "type");
         const auto &position = json::GetString(*it, "position");
-        
+
         if (type.empty() || position.empty()) {
             continue;
         }
-        
+
         geom::AbstractGeom *geom = nullptr;
         if (type == "line") {
             geom = &Line();
@@ -185,13 +200,18 @@ bool XChart::ParseObject(const nlohmann::json &dsl) {
         } else if (type == "candle") {
             geom = &Candle();
         }
-        
+
         if (!geom) {
             continue;
         }
-        
+
         geom->Position(position);
         
+        const auto &selection  = json::GetObject(*it, "selection");
+        if (selection.is_object()) {
+            geom->SelectionObject(selection);
+        }
+
         const auto &color = json::GetObject(*it , "color");
         if (color.is_object()) {
             geom->Color(json::GetString(color, "field"), json::GetArray(color, "attrs"));
@@ -236,15 +256,26 @@ bool XChart::ParseObject(const nlohmann::json &dsl) {
         if (attrs.is_object()) {
             geom->AttrsObject(attrs);
         }
+        
+        //ougu todo geom动画
+        const auto &animate = json::GetObject(*it , "animate");
+        if (animate.is_object()) {
+            geom->Animate(animate);
+        }
     }
-    
+
+    if (this->geoms_.size() == 0) {
+        this->logTracer_->trace("#Parse geoms after size is invalid");
+        return false;
+    }
+
     const auto &guides = json::GetArray(dsl, "guides");
     for (auto it = guides.begin(); it != guides.end(); ++it) {
         const auto &type = json::GetString(*it, "type");
         if (type.empty()) {
             continue;
         }
-        
+
         if (type == "line") {
             Guide().LineObject(*it);
         } else if (type == "text") {
@@ -253,11 +284,17 @@ bool XChart::ParseObject(const nlohmann::json &dsl) {
             Guide().FlagObject(*it);
         } else if (type == "background") {
             Guide().BackgroundObject(*it);
-        } else if (type == "image") {
+        } else if (type == "image" && enableCfg_.imageGuideEnable) {
             Guide().ImageObject(*it);
+        } else if (type == "point") {
+            Guide().PointObject(*it);
+        } else if (type == "tag") {
+            Guide().TagObject(*it);
+        } else if (type == "refline") {
+            Guide().RefLineObject(*it);
         }
     }
-    
+
     const auto &interactions = json::GetArray(dsl, "interactions");
     for (auto it = interactions.begin(); it != interactions.end(); ++it) {
         InteractionObject(json::GetString(*it, "type"), *it);
@@ -336,6 +373,31 @@ bool XChart::OnTouchEvent(const std::string &json) {
     event.timeStamp = xg::CurrentTimestampAtMM();
 //    this->logTracer_->trace("#onTouchEvent: %s", json.data());
     return this->eventController_->OnTouchEvent(event);
+}
+
+const std::string XChart::OnTapEvent(const std::string &json) {
+    if(!canvasContext_ || !canvasContext_->IsValid()) {
+        return "";
+    }
+    nlohmann::json cfg = xg::json::ParseString(json);
+    if(!cfg.is_object() || !cfg.contains("eventType") || !cfg.contains("points"))
+        return "";
+    event::Event event;
+    event.eventType = cfg["eventType"];
+    nlohmann::json &_points = cfg["points"];
+    if(!_points.is_array() || _points.empty()) {
+        return "";
+    }
+
+    for(std::size_t i = 0; i < _points.size(); ++i) {
+        nlohmann::json &_point = _points[i];
+        util::Point point{_point["x"], _point["y"]};
+        event.points.push_back(std::move(point));
+    }
+    event.devicePixelRatio = ratio_;
+    event.timeStamp = xg::CurrentTimestampAtMM();
+    this->logTracer_->trace("#OnTapEvent: %s", json.data());
+    return this->eventController_->OnTapEvent(event);
 }
 
 XChart &XChart::Scale(const std::string &field, const std::string &json) {
@@ -449,17 +511,6 @@ bool XChart::Render() {
 
         this->logTracer_->trace("%s", "foreach geom init");
         std::for_each(geoms_.begin(), geoms_.end(), [this](auto &geom) -> void { geom->Init(this); });
-        
-        //调整interval中的min和max值
-        if (config_.adjustScale_) {
-            scaleController_->AdjustScale();
-        }
-
-        //调整interval中的rangeMin和rangeMax值
-        if (config_.syncY_) {
-            scaleController_->SyncYScale();
-        }
-        
         rendered_ = true;
 
         this->NotifyAction(ACTION_CHART_AFTER_INIT);
@@ -499,6 +550,7 @@ bool XChart::Render() {
     this->logTracer_->trace("%s", "canvas#startDraw");
     this->canvasContext_->Reset();
     this->NotifyAction(ACTION_CHART_BEFORE_CANVAS_DRAW);
+
     this->canvas_->Draw(GetCanvasContext());
     this->NotifyAction(ACTION_CHART_AFTER_RENDER);
 
@@ -525,11 +577,11 @@ void XChart::Clear() {
     if(tooltipController_) {
         tooltipController_->Clear();
     }
-    
+
     if (interactionContext_) {
         interactionContext_->Clear();
     }
-    
+
     ClearInner();
     this->geoms_.clear();
     this->geomShapeFactory_->Clear();
@@ -559,7 +611,7 @@ std::size_t XChart::RequestAnimationFrame(func::Command *c, long delay) {
 }
 
 XChart &XChart::Tooltip(const std::string &json) {
-    return TooltipObject(xg::json::ParseString(json));
+    return TooltipObject(xg::json::ParseString(json), false);
 }
 
 void XChart::InitLayout() {
@@ -574,14 +626,14 @@ void XChart::InitLayout() {
 }
 
 void XChart::InitCoord() {
-    bool _transposed = config_.transposed;
-    const std::string &type = config_.coordType;
+    bool _transposed = coordCfg_["transposed"];
+    const std::string &type = coordCfg_["type"];
     util::Point start = util::Point{this->margin_[0] + this->padding_[0], this->margin_[1] + this->height_ - this->padding_[3]};
     util::Point end = util::Point{this->margin_[0] + this->width_ - this->padding_[2], this->margin_[1] + this->padding_[1]};
     if(type == "polar") {
         this->coord_ = xg::make_unique<canvas::coord::Polar>(start, end, _transposed);
     } else {
-        this->coord_ = xg::make_unique<canvas::coord::Cartesian>(start, end, _transposed);
+        this->coord_ = xg::make_unique<canvas::coord::Cartesian>(start, end, _transposed, coordCfg_);
     }
 }
 
@@ -591,9 +643,17 @@ const util::Point XChart::GetPosition(const nlohmann::json &item) {
     }
 
     std::string xField = this->GetXScaleField();
-    std::string yField = this->getYScaleFields()[0];
+    std::vector<std::string> yFields = this->getYScaleFields();
+    std::string yField;
+    for(std::size_t index = 0; index < yFields.size(); ++index) {
+        const std::string &yFieldValue = yFields[index];
+        if (item.contains(yFieldValue)) {
+            yField = yFieldValue;
+            break;
+        }
+    }
 
-    if(!item.contains(xField) || !item.contains(yField)) {
+    if(!item.contains(xField) || yField.empty() || !item.contains(yField)) {
         return util::Point{0, 0};
     }
 
@@ -601,6 +661,15 @@ const util::Point XChart::GetPosition(const nlohmann::json &item) {
     double y = this->GetScale(yField).Scale(item[yField]);
     util::Point ret = this->GetCoord().ConvertPoint(util::Point{x, y});
     return ret;
+}
+
+const nlohmann::json XChart::GetSelectedRecordsForGeom(const size_t index) {
+    if(!canvasContext_ || !canvasContext_->IsValid() || scaleController_->Empty()) {
+        return {};
+    }
+    const auto &geom = this->geoms_[index];
+    auto &records = geom->GetSelectedRecords();
+    return records;
 }
 
 void XChart::ClearInner() {
@@ -684,7 +753,7 @@ std::map<std::string, std::vector<legend::LegendItem>> XChart::GetLegendItems() 
     return legendItems;
 }
 
-    
+
 #pragma mark -
 XChart &XChart::SourceObject(const nlohmann::json &_data) {
     if(!_data.is_array()) {
@@ -697,7 +766,7 @@ XChart &XChart::SourceObject(const nlohmann::json &_data) {
     this->data_ = _data;
     return *this;
 }
-    
+
 XChart &XChart::ScaleObject(const std::string &field, const nlohmann::json &config) {
     this->logTracer_->trace("#Scale field: %s config: %s", field.c_str(), config.dump().c_str());
     this->scaleController_->UpdateColConfig(field, config);
@@ -707,6 +776,13 @@ XChart &XChart::ScaleObject(const std::string &field, const nlohmann::json &conf
 XChart &XChart::AxisObject(const std::string &field, const nlohmann::json &config) {
     this->logTracer_->trace("#Axis field: %s config: %s", field.c_str(), config.dump().c_str());
     this->axisController_->SetFieldConfig(field, config);
+    return *this;
+}
+
+XChart &XChart::AxisObject(const std::string &field, const nlohmann::json &config, const nlohmann::json &selection) {
+    this->logTracer_->trace("#Axis field: %s config: %s selection: %s", field.c_str(), config.dump().c_str(), selection.dump().c_str());
+    this->axisController_->SetFieldConfig(field, config);
+    this->axisController_->SetFieldSelection(field, selection);
     return *this;
 }
 
@@ -720,10 +796,13 @@ XChart &XChart::InteractionObject(const std::string &type, const nlohmann::json 
     if (!this->interactionContext_) {
         interactionContext_ = new interaction::InteractionContext(this);
     }
-    if(type == "pinch") {
+    if (type == "tap") {
+        std::unique_ptr<interaction::InteractionBase> click = std::make_unique<interaction::Tap>(this);
+        interactions_.push_back(std::move(click));
+    } else if (type == "pinch") {
         std::unique_ptr<interaction::InteractionBase> pinch = std::make_unique<interaction::Pinch>(this);
         interactions_.push_back(std::move(pinch));
-    } else if(type == "pan") {
+    } else if (type == "pan") {
         std::unique_ptr<interaction::InteractionBase> pan = std::make_unique<interaction::Pan>(this);
         interactions_.push_back(std::move(pan));
     }
@@ -731,24 +810,42 @@ XChart &XChart::InteractionObject(const std::string &type, const nlohmann::json 
     return *this;
 }
 
-XChart &XChart::TooltipObject(const nlohmann::json &config) {
+XChart &XChart::TooltipObject(const nlohmann::json &config, bool isTooltips) {
     if(this->tooltipController_ == nullptr) {
         this->tooltipController_ = new tooltip::ToolTipController(this);
-
+        // 长按图例的监听
         this->tooltipController_->AddMonitor(
             XG_MEMBER_OWNER_CALLBACK_1(legend::LegendController::OnToolTipMarkerItemsChanged, this->legendController_));
     }
 
-    this->tooltipController_->Init(config);
+    if (isTooltips) {
+        this->tooltipController_->AddConfig(config);
+    } else {
+        this->tooltipController_->Init(config);
+    }
+    return *this;
+}
+
+XChart &XChart::PatchTooltipsObject(const nlohmann::json &config) {
+    if (this->tooltipController_->isTooltips()) {
+         for (std::size_t i = 0; i < this->tooltipController_->GetConfigs().size(); i++) {
+            nlohmann::json &cfg = this->tooltipController_->GetConfigs()[i];
+            cfg.merge_patch(config);
+         }
+    } else {
+        TooltipObject(config, false);
+    }
     return *this;
 }
 
 XChart &XChart::CoordObject(const nlohmann::json &config) {
     this->logTracer_->trace("#coord ");
-    config_.coordType = json::GetString(config, "type", config_.coordType);
-    config_.transposed = json::GetBool(config, "transposed", config_.transposed);
+    if(config.is_object()) {
+        this->coordCfg_.merge_patch(config);
+    }
+    bool _transposed = this->coordCfg_["transposed"];
     if(this->coord_ != nullptr) {
-        this->coord_->SetTransposed(config_.transposed);
+        this->coord_->SetTransposed(_transposed);
     }
     return *this;
 }
@@ -756,30 +853,8 @@ XChart &XChart::CoordObject(const nlohmann::json &config) {
 XChart &XChart::AnimateObject(const nlohmann::json &config) {
     //config bool or object
     if (config.is_boolean() || config.is_object()) {
-        geomAnimate_->SetAnimateConfig(config);
+        this->animateCfg_ = config;
     }
+
     return *this;
-}
-
-void XChart::ChangeSize(double width, double height) {
-    width_ = width * ratio_;
-    height_ = height * ratio_;
-    canvasContext_->ChangeSize(width, height);
-    ClearInner();
-}
-
-void XChart::ChangeData(const std::string &json) {
-    SourceObject(xg::json::ParseString(json));
-    
-    //清理度量
-    scaleController_->Clear();
-    
-    //清理几何标记 里面会关联数据
-    std::for_each(geoms_.begin(), geoms_.end(), [this](auto &geom) -> void { geom->ClearInner(); });
-    
-    //清除画布
-    ClearInner();
-    
-    //标记重新渲染
-    rendered_ = false;
 }

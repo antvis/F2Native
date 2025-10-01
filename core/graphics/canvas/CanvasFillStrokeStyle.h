@@ -54,6 +54,7 @@ class CanvasGradient {
     }
 
     std::vector<ColorStop> colorStops;
+    std::string gradientColor = "";
 };
 
 class CanvasLinearGradient : public CanvasGradient {
@@ -84,13 +85,27 @@ class CanvasRadialGradient : public CanvasGradient {
     bool isLinearGradient() override { return false; }
 };
 
-enum class CanvasFillStrokeStyleType { kNone, kColor, kLinearGradient, kRadialGradient };
+class CanvasConicGradient : public CanvasGradient {
+  public:
+    CanvasConicGradient() = default;
+
+    CanvasConicGradient(const CanvasConicGradient &g) : CanvasGradient(g) {
+        start = g.start;
+        end = g.end;
+    }
+
+    std::array<float, 2> start = {0}, end = {0};
+    
+    bool isLinearGradient() override { return false; }
+};
+
+enum class CanvasFillStrokeStyleType { kNone, kColor, kLinearGradient, kRadialGradient, kConicGradient };
 
 struct CanvasFillStrokeStyle {
     CanvasFillStrokeStyle() = default;
 
     CanvasFillStrokeStyle(const CanvasFillStrokeStyle &style)
-        : type(style.type), color(style.color), linearGradient(style.linearGradient), radialGradient(style.radialGradient) {}
+        : type(style.type), color(style.color), linearGradient(style.linearGradient), radialGradient(style.radialGradient), conicGradient(style.conicGradient) {}
 
     CanvasFillStrokeStyle(const std::string &color) {
         type = CanvasFillStrokeStyleType::kColor;
@@ -106,6 +121,11 @@ struct CanvasFillStrokeStyle {
         type = CanvasFillStrokeStyleType::kRadialGradient;
         this->radialGradient = g;
     }
+    
+    CanvasFillStrokeStyle(const CanvasConicGradient &g) {
+        type = CanvasFillStrokeStyleType::kConicGradient;
+        this->conicGradient = g;
+    }
 
     CanvasFillStrokeStyleType type = CanvasFillStrokeStyleType::kNone;
 
@@ -114,6 +134,7 @@ struct CanvasFillStrokeStyle {
     // ref to pattern / linear gradient / radial gradient
     CanvasLinearGradient linearGradient;
     CanvasRadialGradient radialGradient;
+    CanvasConicGradient  conicGradient;
 };
 
 }//canvas

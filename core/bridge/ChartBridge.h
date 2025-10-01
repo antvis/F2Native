@@ -69,20 +69,31 @@ public:
                       const std::string &params,
                       BridgeCallback bridgeCallback);
 
-    /// 发送手势时间
+    /// 发送手势事件
     /// @param json 是一个json的string
     inline bool OnTouchEvent(const std::string &json) {
        return chart_->OnTouchEvent(json);
     }
-
+    
+    /// 发送点击事件
+    /// @param json 是一个json的string
+    inline const std::string OnTapEvent(const std::string &json) {
+        return chart_->OnTapEvent(json);
+    }
 
     /// 兼容代码，设置是否需要手势
     /// @param tooltip 是否需要手势
     inline void SetNeedTooltip(bool tooltip) { needToolTip_ = tooltip; }
+
+    /// 图表引擎内降级开关list
+    void SetEnableListConfig(const std::string &enableConfig);
+
+    void SetDarkModeInfo(bool isDark,std::map<int, int> &colors);
+
 private:
     bool InvokeRender(const nlohmann::json &dsl, const nlohmann::json &itemPosition, BridgeCallback bridgeCallback);
-    void CallbackSuccess(BridgeCallback callback, const nlohmann::json &itemPosition,long renderCmdCount, long renderDurationMM);
-    void CallbackError(BridgeCallback callback, const std::string &msg);
+    void CallbackSuccess(const std::string &methodName, BridgeCallback callback, const nlohmann::json &itemPosition,long renderCmdCount, long renderDurationMM);
+    void CallbackError(const std::string &methodName, BridgeCallback callback, const std::string &msg);
     void CompatToolTip(BridgeCallback callback);
     void CompatScales(const nlohmann::json &dsl);
     void CompatScale(const std::string &field, const nlohmann::json &scaleConfig);
@@ -90,6 +101,7 @@ private:
     std::string FormatPercent(const std::string &content, double divisor, int precision);
     std::string FormatTime(const std::string &value, const std::string &timezoneName, const std::string &formatter);
     nlohmann::json GetPosition(const nlohmann::json &itemData) ;
+    std::string GetPositions(const nlohmann::json &itemDatas) ;
 
     private:
     AbstractBridgeRailing *railing_ = nullptr;
@@ -99,6 +111,7 @@ private:
     std::string requestFrameFuncId_ = xg::func::MakeFunctionId();
     double pixelRatio_ = 1;
     bool needToolTip_ = false;
+
 };
 
 }

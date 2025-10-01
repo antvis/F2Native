@@ -27,6 +27,15 @@ class Polygon : public Shape {
         SetFillStrokeStyle(strokeColor, fillColor);
     }
     
+    Polygon(const float lineWidth, const vector<util::Point> &points, const canvas::CanvasFillStrokeStyle &strokeStyle, canvas::CanvasFillStrokeStyle &fillStyle, const bool smooth)
+    : Shape(), points_(points) {
+        lineWidth_ = lineWidth;
+        smooth_ = smooth;
+        type_ = "polygon";
+        SetStorkStyle(strokeStyle);
+        SetFillStyle(fillStyle);
+    }
+    
     //镂空多边形
     Polygon(const float lineWidth, const vector<util::Point> &points, const vector<util::Point> &points0, const std::string &strokeColor, const std::string &fillColor, const bool smooth)
     : Shape(), points_(points), points0_(points0) {

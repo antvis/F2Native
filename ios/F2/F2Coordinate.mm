@@ -8,7 +8,7 @@
 
 #import "F2Coordinate.h"
 #import "F2Utils.h"
-#import "../../core/graphics/canvas/Coord.h"
+#import <graphics/canvas/Coord.h>
 
 @interface F2Coordinate () {
     xg::canvas::coord::AbstractCoord *_coord;

@@ -3,7 +3,6 @@ package com.antgroup.antv.f2.base;
 import android.view.View;
 
 import com.antgroup.antv.f2.F2CanvasView;
-import com.antgroup.antv.f2.F2Config;
 
 /**
  * 业务层调用F2CanvasView的接口，antg和native canvas子类分别实现
@@ -11,7 +10,7 @@ import com.antgroup.antv.f2.F2Config;
 public interface F2BaseCanvasView {
 
     // 单位是px
-    void init(int widthPixel, int heightPixel, F2Config config);
+    void setCanvasInfo(int widthPixel, int heightPixel, String canvasBizId);
 
     View getView();
 
@@ -19,9 +18,9 @@ public interface F2BaseCanvasView {
 
     void setOnCanvasTouchListener(F2CanvasView.OnCanvasTouchListener onCanvasTouchListener);
 
-    void initCanvasContext();
+    void setOnCanvasGestureListener(F2CanvasView.OnCanvasGestureListener onCanvasGestureListener);
 
-    void initCanvasContext(F2Config config);
+    void setCanvasBizId(String canvasBizId);
 
     long getNativeCanvas();
 

@@ -12,6 +12,15 @@
 #include <CoreGraphics/CoreGraphics.h>
 #include <CoreText/CoreText.h>
 #include <UIKit/UIKit.h>
+#import "ConicPainter.h"
+
+#if defined(PRODUCT_WALLET)
+#import <APConfig/APConfigService.h>
+#import <APMobileFramework/DTService.h>
+#import <APMobileFramework/DTContext.h>
+#import "F2CSUtil.h"
+#import <AntUI/UIFont+CustomFont.h>
+#endif
 
 using namespace xg::canvas;
 
@@ -27,10 +36,11 @@ ScopedCFObject::~ScopedCFObject() {
   }
 }
 
-static const UIColor *GetUIColorFromHexString(const std::string &hexStr, const float alpha) {
+static const UIColor *GetUIColorFromHexString(const std::string &hexStr, const float alpha, xg::token::DarkModeManager &darkModeManager) {
   CanvasColor rgba;
   // Convert hex string to an integer
   CanvasColorParser::Parse(hexStr, rgba);
+  darkModeManager.GetColorWithRGHA(rgba);
 
   // Create a color object, specifying alpha as well
   UIColor *color = [UIColor colorWithRed:(rgba.r) / 255
@@ -41,10 +51,17 @@ static const UIColor *GetUIColorFromHexString(const std::string &hexStr, const f
 }
 
 static UIFont *GetUIFont(const std::string &fontFmaily, float fontSize) {
-  UIFont *font = [UIFont fontWithName:[NSString stringWithUTF8String:fontFmaily.c_str()]
-                                 size:fontSize];
+    UIFont *font;
+    NSString *fontName = [NSString stringWithUTF8String:fontFmaily.c_str()];
+#if defined(PRODUCT_WALLET)
+    if ([[fontName lowercaseString] containsString:@"alipaynumber"]) {
+        font = [UIFont au_fontWithCustomName:[F2CSUtil f2_AUNumberFontName] size:fontSize];
+    } else {
+        font = [UIFont fontWithName:fontName size:fontSize];
+    }
+#endif
   if (!font) {
-    font = [UIFont systemFontOfSize:fontSize];
+      font = [UIFont systemFontOfSize:fontSize];
   }
   return font;
 }
@@ -83,16 +100,32 @@ static NSAttributedString *GetAttributedString(CTFontRef fontRef, const UIColor 
  CGSize size = [textStr sizeWithAttributes:@{NSFontAttributeName:font}];
  */
 static std::array<float, 2> MeasureTextSize(CTFontRef fontRef, const std::string &text) {
-  //测量高度和宽度的时候颜色随便填写
-  CFAttributedStringRef aString =
-      (__bridge CFAttributedStringRef)GetAttributedString(fontRef, [UIColor whiteColor], text);
-  CTLineRef line = CTLineCreateWithAttributedString(aString);
-  CGFloat ascent;
-  CGFloat descent;
-  CGFloat width = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
-  CGFloat height = ascent + descent;
-  CFRelease(line);
-  return {(float)width, (float)height};
+    //fix iOS18下size计算误差问题
+    if (@available(iOS 18.0, *)) {
+         NSString *configStr;
+ #if defined(PRODUCT_WALLET)
+         // 增加降级开关
+        id<APConfigService> configService = [DTContextGet() findServiceByName:@"APConfigService"];
+        configStr = [configService stringValueForKey:@"STOCK_F2NATIVE_IOS18_MEASURETEXT_DISABLE"];
+ #endif
+        if (![configStr isEqualToString:@"TRUE"]) {
+            NSString *textStr = [NSString stringWithUTF8String:text.c_str()];
+            
+            UIFont *font = (__bridge UIFont *)fontRef;
+            CGSize size = [textStr sizeWithAttributes:@{NSFontAttributeName:font}];
+            return {(float)size.width, (float)size.height};
+        }
+    }
+    // iOS 18以下维持现状
+    CFAttributedStringRef aString =
+    (__bridge CFAttributedStringRef)GetAttributedString(fontRef, [UIColor whiteColor], text);
+    CTLineRef line = CTLineCreateWithAttributedString(aString);
+    CGFloat ascent;
+    CGFloat descent;
+    CGFloat width = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
+    CGFloat height = ascent + descent;
+    CFRelease(line);
+    return {(float)width, (float)height};
 }
 
 bool CoreGraphicsContext::IsValid() { return (canvasContext_ != nullptr); }
@@ -102,6 +135,7 @@ void CoreGraphicsContext::SetFillStyle(const std::string &color) {
   if (color != fillColorCache_ && CanvasColorParser::Parse(color, fillColor_)) {
     fillColorCache_ = color;
   }
+  darkModeManager_.GetColorWithRGHA(fillColor_);
   CGFloat components[4] = {(fillColor_.r) / 255, (fillColor_.g) / 255, (fillColor_.b) / 255, 1.0};
   CGContextSetFillColor((CGContextRef)canvasContext_, components);
 }
@@ -123,6 +157,11 @@ void CoreGraphicsContext::SetFillStyle(const CanvasFillStrokeStyle &style) {
       gradientStyle_ = style;
       break;
     }
+      case CanvasFillStrokeStyleType::kConicGradient: {
+        gradient_ = Gradient::Conic;
+        gradientStyle_ = style;
+        break;
+      }
     default:
       gradient_ = Gradient::None;
       break;
@@ -134,6 +173,7 @@ void CoreGraphicsContext::SetStrokeStyle(const std::string &color) {
   if (color != strokeColorCache_ && CanvasColorParser::Parse(color, strokeColor_)) {
     strokeColorCache_ = color;
   }
+  darkModeManager_.GetColorWithRGHA(strokeColor_);
   CGFloat components[4] = {(strokeColor_.r) / 255, (strokeColor_.g) / 255, (strokeColor_.b) / 255,
                            1.0};
   CGContextSetStrokeColor((CGContextRef)canvasContext_, components);
@@ -156,6 +196,12 @@ void CoreGraphicsContext::SetStrokeStyle(const canvas::CanvasFillStrokeStyle &st
       gradientStyle_ = style;
       break;
     }
+      case CanvasFillStrokeStyleType::kConicGradient: {
+          gradient_ = Gradient::Conic;
+        gradientStyle_ = style;
+        break;
+      }
+          
     default:
       gradient_ = Gradient::None;
       break;
@@ -164,14 +210,26 @@ void CoreGraphicsContext::SetStrokeStyle(const canvas::CanvasFillStrokeStyle &st
 
 void CoreGraphicsContext::SetLineCap(const std::string &lineCap) {
   TraceCommand("SetLineCap: " + lineCap);
-  NSCAssert(NO, @"unsupport SetLineCap");
-  // unsupport
+    if (lineCap == "round") {
+        CGContextSetLineCap(CGContextRef(canvasContext_), kCGLineCapRound);
+        return;
+    } else if (lineCap == "square") {
+        CGContextSetLineCap(CGContextRef(canvasContext_), kCGLineCapSquare);
+        return;
+    }
+    CGContextSetLineCap(CGContextRef(canvasContext_), kCGLineCapButt);
 }
 
 void CoreGraphicsContext::SetLineJoin(const std::string &lineJoin) {
   TraceCommand("SetLineJoin: " + lineJoin);
-  NSCAssert(NO, @"unsupport SetLineJoin");
-  // unsupport
+    if (lineJoin == "round") {
+        CGContextSetLineJoin(CGContextRef(canvasContext_), kCGLineJoinRound);
+        return;
+    } else if (lineJoin == "bevel") {
+        CGContextSetLineJoin(CGContextRef(canvasContext_), kCGLineJoinBevel);
+        return;
+    }
+    CGContextSetLineJoin(CGContextRef(canvasContext_), kCGLineJoinMiter);
 }
 
 void CoreGraphicsContext::SetLineWidth(float lineWidth) {
@@ -378,6 +436,21 @@ float CoreGraphicsContext::MeasureTextWidth(const std::string &text) {
   return width;
 }
 
+float CoreGraphicsContext::MeasureTextHeight(const std::string &text){
+    //把浮点型转换为size_t 避免用float作为key
+    size_t fontSize = fontStyle_.fontSize;
+    if (cfObjects_.find(fontStyle_.fontSize) == cfObjects_.end()) {
+      cfObjects_[fontSize] = std::make_unique<ScopedCFObject>((void *)(GetCTFont(fontStyle_)));
+    }
+
+    CTFontRef fontRef = CTFontRef(cfObjects_[fontSize]->object_);
+
+    float height = MeasureTextSize(fontRef, text)[1];
+    TraceCommand("MeasureTextHeight: " + text + " result: " + std::to_string(height));
+    return height;
+}
+
+
 void CoreGraphicsContext::Transform(float a, float b, float c, float d, float e, float f) {
   TraceCommand("Transform ");
   // Transform 和 SetTransform有啥区别？
@@ -414,6 +487,9 @@ void CoreGraphicsContext::Fill(const std::string &fillRule) {
   } else if (gradient_ == Gradient::Radial) {
     CGContextClip(CGContextRef(canvasContext_));
     DrawRadialGradinet(gradientStyle_);
+  } else if (gradient_ == Gradient::Conic) {
+    CGContextClip(CGContextRef(canvasContext_));
+    DrawConicGradinet(gradientStyle_);
   } else {
     CGContextFillPath(CGContextRef(canvasContext_));
   }
@@ -427,6 +503,9 @@ void CoreGraphicsContext::Stroke() {
   } else if (gradient_ == Gradient::Radial) {
     CGContextClip(CGContextRef(canvasContext_));
     DrawRadialGradinet(gradientStyle_);
+  } else if (gradient_ == Gradient::Conic) {
+    CGContextClip(CGContextRef(canvasContext_));
+    DrawConicGradinet(gradientStyle_);
   } else {
     CGContextStrokePath(CGContextRef(canvasContext_));
   }
@@ -446,6 +525,12 @@ void CoreGraphicsContext::ClosePath() {
   TraceCommand("ClosePath");
   CGContextClosePath(CGContextRef(canvasContext_));
 }
+
+void CoreGraphicsContext::ReplaceStroke() {
+  TraceCommand("ReplaceStroke");
+    CGContextReplacePathWithStrokedPath(CGContextRef(canvasContext_));
+}
+
 
 void CoreGraphicsContext::LineTo(float x, float y) {
   TraceCommand("LineTo x: " + std::to_string(x) + ", " + std::to_string(y));
@@ -507,59 +592,101 @@ void CoreGraphicsContext::DrawImage(CanvasImage *image, float dx, float dy, floa
                ", width: " + std::to_string(width) + ", height: " + std::to_string(height));
   if (image->GetImage()) {
     CGRect rect = CGRectMake(dx, dy, width, height);
-    CGContextDrawImage(CGContextRef(canvasContext_), rect, (CGImageRef)(image->GetImage()));
+//    CGContextDrawImage(CGContextRef(canvasContext_), rect, (CGImageRef)(image->GetImage()));
+    UIGraphicsPushContext( CGContextRef(canvasContext_) );
+    CGImageRef imageRef =  (CGImageRef)(image->GetImage());
+    UIImage *uiImage = [[UIImage alloc] initWithCGImage:imageRef];
+    [uiImage drawInRect:rect];
+    UIGraphicsPopContext();
   }
 }
 
-void CoreGraphicsContext::DrawLinearGradient(const canvas::CanvasFillStrokeStyle &style) {
-  CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-  size_t size = style.linearGradient.colorStops.size();
-  CGFloat locations[size];
-  int index = 0;
 
-  CFMutableArrayRef array = CFArrayCreateMutable(NULL, 0, NULL);
-  std::for_each(style.linearGradient.colorStops.begin(), style.linearGradient.colorStops.end(),
-                [&](auto &item) -> void {
-                  locations[index] = item.offset;
-                  CFArrayAppendValue(array, GetUIColorFromHexString(item.color, 1.0).CGColor);
-                  ++index;
-                });
-  CGPoint start = CGPointMake(style.linearGradient.start[0], style.linearGradient.start[1]);
-  CGPoint end = CGPointMake(style.linearGradient.end[0], style.linearGradient.end[1]);
-  CGGradientRef gradient = CGGradientCreateWithColors(colorSpace, array, locations);
-  CGContextDrawLinearGradient(
-      CGContextRef(canvasContext_), gradient, start, end,
-      kCGGradientDrawsBeforeStartLocation | kCGGradientDrawsAfterEndLocation);
-  CGColorSpaceRelease(colorSpace);
-  CGGradientRelease(gradient);
-  CFRelease(array);
+void CoreGraphicsContext::DrawLinearGradient(const canvas::CanvasFillStrokeStyle &style) {
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    size_t size = style.linearGradient.colorStops.size();
+    CGFloat locations[size];
+    int index = 0;
+    
+    CFMutableArrayRef array = CFArrayCreateMutable(NULL, 0, NULL);
+    std::for_each(style.linearGradient.colorStops.begin(), style.linearGradient.colorStops.end(),
+                  [&](auto &item) -> void {
+        locations[index] = item.offset;
+        CFArrayAppendValue(array, GetUIColorFromHexString(item.color, 1.0, darkModeManager_).CGColor);
+        ++index;
+    });
+    CGPoint start = CGPointMake(style.linearGradient.start[0], style.linearGradient.start[1]);
+    CGPoint end = CGPointMake(style.linearGradient.end[0], style.linearGradient.end[1]);
+    NSLog(@"start point:%@", NSStringFromCGPoint(start));
+    NSLog(@"end point:%@", NSStringFromCGPoint(end));
+    CGGradientRef gradient = CGGradientCreateWithColors(colorSpace, array, locations);
+    CGContextDrawLinearGradient(
+                                CGContextRef(canvasContext_), gradient, start, end,
+                                kCGGradientDrawsBeforeStartLocation | kCGGradientDrawsAfterEndLocation);
+    CGColorSpaceRelease(colorSpace);
+    CGGradientRelease(gradient);
+    CFRelease(array);
 }
 
 void CoreGraphicsContext::DrawRadialGradinet(const canvas::CanvasFillStrokeStyle &style) {
-  CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-  size_t size = style.radialGradient.colorStops.size();
-  CGFloat locations[size];
-  int index = 0;
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    size_t size = style.radialGradient.colorStops.size();
+    CGFloat locations[size];
+    int index = 0;
+    
+    CFMutableArrayRef array = CFArrayCreateMutable(NULL, 0, NULL);
+    std::for_each(style.radialGradient.colorStops.begin(), style.radialGradient.colorStops.end(),
+                  [&](auto &item) -> void {
+        locations[index] = item.offset;
+        CFArrayAppendValue(array, GetUIColorFromHexString(item.color, 1.0, darkModeManager_).CGColor);
+        ++index;
+    });
+    CGPoint start = CGPointMake(style.radialGradient.start[0], style.radialGradient.start[1]);
+    CGFloat startRadius = style.radialGradient.start[2];
+    
+    CGPoint end = CGPointMake(style.radialGradient.end[0], style.radialGradient.end[1]);
+    CGFloat endRadius = style.radialGradient.end[2];
+    CGGradientRef gradient = CGGradientCreateWithColors(colorSpace, array, locations);
+    CGContextDrawRadialGradient(
+                                CGContextRef(canvasContext_), gradient, start, startRadius, end, endRadius,
+                                kCGGradientDrawsBeforeStartLocation | kCGGradientDrawsAfterEndLocation);
+    CGColorSpaceRelease(colorSpace);
+    CGGradientRelease(gradient);
+    CFRelease(array);
+}
 
-  CFMutableArrayRef array = CFArrayCreateMutable(NULL, 0, NULL);
-  std::for_each(style.radialGradient.colorStops.begin(), style.radialGradient.colorStops.end(),
-                [&](auto &item) -> void {
-                  locations[index] = item.offset;
-                  CFArrayAppendValue(array, GetUIColorFromHexString(item.color, 1.0).CGColor);
-                  ++index;
-                });
-  CGPoint start = CGPointMake(style.radialGradient.start[0], style.radialGradient.start[1]);
-  CGFloat startRadius = style.radialGradient.start[2];
-
-  CGPoint end = CGPointMake(style.radialGradient.end[0], style.radialGradient.end[1]);
-  CGFloat endRadius = style.radialGradient.end[2];
-  CGGradientRef gradient = CGGradientCreateWithColors(colorSpace, array, locations);
-  CGContextDrawRadialGradient(
-      CGContextRef(canvasContext_), gradient, start, startRadius, end, endRadius,
-      kCGGradientDrawsBeforeStartLocation | kCGGradientDrawsAfterEndLocation);
-  CGColorSpaceRelease(colorSpace);
-  CGGradientRelease(gradient);
-  CFRelease(array);
+void CoreGraphicsContext::DrawConicGradinet(const canvas::CanvasFillStrokeStyle &style) {
+    if (@available(iOS 17.0, *)) {
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        size_t size = style.conicGradient.colorStops.size();
+        CGFloat locations[size];
+        int index = 0;
+        
+        CFMutableArrayRef array = CFArrayCreateMutable(NULL, 0, NULL);
+        std::for_each(style.conicGradient.colorStops.begin(), style.conicGradient.colorStops.end(),
+                      [&](auto &item) -> void {
+            locations[index] = item.offset;
+            CFArrayAppendValue(array, GetUIColorFromHexString(item.color, 1.0, darkModeManager_).CGColor);
+            ++index;
+        });
+        CGGradientRef gradient = CGGradientCreateWithColors(colorSpace, array, locations);
+        CGContextDrawConicGradient(CGContextRef(canvasContext_), gradient, CGPointMake((style.conicGradient.end[0] - style.conicGradient.start[0]) / 2, (style.conicGradient.end[1] - style.conicGradient.start[1]) / 2),  - M_PI_2);
+        CGColorSpaceRelease(colorSpace);
+        CGGradientRelease(gradient);
+        CFRelease(array);
+    } else {
+        NSMutableArray *colorArray = [[NSMutableArray alloc] init];
+        std::for_each(style.conicGradient.colorStops.begin(), style.conicGradient.colorStops.end(),
+                      [&](auto &item) -> void {
+            [colorArray addObject:GetUIColorFromHexString(item.color, 1.0, darkModeManager_)];
+//            locations[index] = item.offset;
+//            CFArrayAppendValue(array, GetUIColorFromHexString(item.color, 1.0, darkModeManager_).CGColor);
+//            ++index;
+        });
+        
+        ConicPainter *conicPainter = [[ConicPainter alloc] initWithColors:colorArray startAngle:- M_PI_2 endAngle:(2 * M_PI - M_PI_2) context:CGContextRef(canvasContext_)];
+        [conicPainter drawInRect:CGRectMake(style.conicGradient.start[0], style.conicGradient.start[1], style.conicGradient.end[0] - style.conicGradient.start[0], style.conicGradient.end[1] - style.conicGradient.start[1])];
+    }
 }
 
 #endif  // APPLE

@@ -8,6 +8,7 @@ using namespace xg::util;
 namespace xg {
 namespace shape {
 
+    // 折线 line
 class Polyline : public Shape {
   public:
     Polyline(const float lineWidth, const vector<util::Point> &, const bool smooth);

@@ -12,27 +12,27 @@ class Dodge {
   public:
     static void processDodge(const std::string &xField,
                              const std::string &yField,
-                             XDataGroup &dataArray,
+                             nlohmann::json &dataArray,
                              double marginRatio = ADJUST_MARGIN_RATIO,
                              double dodgeRatio = ADJUST_DODGE_RATIO) {
         std::size_t count = dataArray.size();
-        if(count == 0) {
+        if(count == 0 || !dataArray.is_array()) {
             return;
         }
 
         for(std::size_t groupIdx = 0; groupIdx < count; ++groupIdx) {
-            auto &groupData = dataArray[groupIdx];
+            nlohmann::json &groupData = dataArray[groupIdx];
 
             for(std::size_t index = 0, len = groupData.size(); index < len; ++index) {
-                auto &obj = groupData[index];
-                double value = obj.dodge[0];
+                nlohmann::json &obj = groupData[index];
+                double value = obj[xField];
 
                 double pre = len == 1 ? value - 1 : value - 0.5;
                 double next = len == 1 ? value + 1 : value + 0.5;
 
                 std::array<double, 2> range = {pre, next};
                 double dodgeValue = GetDodgeOffset(range, groupIdx, count, marginRatio, dodgeRatio);
-                obj.dodge[0] = dodgeValue;
+                obj[xField] = dodgeValue;
             }
         }
     }

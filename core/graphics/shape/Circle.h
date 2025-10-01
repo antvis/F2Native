@@ -13,11 +13,19 @@ class Circle : public Shape {
         point_ = center;
     }
 
-    Circle(const util::Point &center, const float radius, const std::string &fill) : radius_(radius) {
+    Circle(const util::Point &center, const float radius, const std::string &fillColor) : radius_(radius) {
         type_ = "circle";
         point_ = center;
 
-        SetFillColor(fill);
+        SetFillColor(fillColor);
+    }
+
+    Circle(const util::Point &center, const float radius, const std::string &fillColor, const std::string &strokeColor, float lineWidth): radius_(radius)  {
+        type_ = "circle";
+        point_ = center;
+
+        SetFillStrokeStyle(strokeColor, fillColor);
+        lineWidth_ = lineWidth;
     }
 
     BBox CalculateBox(canvas::CanvasContext &context) const override;
@@ -27,6 +35,7 @@ class Circle : public Shape {
 
   public:
     float radius_;
+    std::vector<float> dash_;
 };
 
 } // namespace shape

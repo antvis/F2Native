@@ -34,6 +34,8 @@ class CanvasColorParser {
      * 解析成安卓平台的ARGB格式
      */
     static int RGBAToHex(const CanvasColor &color);
+    static void HexToRGBA(const int hexColor, CanvasColor &agColor);
+
   private:
     static void InitColorMapIfEmpty();
 

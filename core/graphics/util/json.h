@@ -23,49 +23,30 @@ const nlohmann::json &NullObject();
 /// /// @return nlohmann::json  type is array
 const nlohmann::json &ArrayObject();
 
-inline nlohmann::json ParseString(const std::string &json) {
-    return nlohmann::json::parse(json, nullptr, false);
-}
+nlohmann::json ParseString(const std::string &json);
 
 std::vector<float> ParseDashArray(const nlohmann::json &json, float ratio = 1.0f, const std::vector<float> &defVal = {10, 10});
 
 void ParseRoundings(const nlohmann::json &data, float *rst, float ratio = 1.0f);
 
-inline nlohmann::json Get(const nlohmann::json &obj, const std::string &key) {
-    return (obj.is_object() && obj.contains(key)) ? obj[key] : nlohmann::json();
-}
+nlohmann::json Get(const nlohmann::json &obj, const std::string &key);
 
-inline const std::string GetString(const nlohmann::json &obj, const std::string &key, const std::string &defVal = "") {
-    return (obj.is_object() && obj.contains(key) && obj[key].is_string()) ? obj[key].get<std::string>() : defVal;
-}
+const std::string GetString(const nlohmann::json &obj, const std::string &key, const std::string &defVal = "");
 
 //默认值defVal给NAN更合理
-inline const double GetNumber(const nlohmann::json &obj, const std::string &key, const double defVal = 0) {
-    return (obj.is_object() && obj.contains(key) && obj[key].is_number()) ? obj[key].get<double>() : defVal;
-}
-inline const int GetIntNumber(const nlohmann::json &obj, const std::string &key, const int def = NAN)  {
-    return (obj.is_object() && obj.contains(key) && obj[key].is_number_integer()) ?  obj[key].get<int>() : def;
-}
-
-inline const float GetFloatNumber(const nlohmann::json &obj, const std::string &key, const float def = NAN) {
-    return (obj.is_object() && obj.contains(key) && obj[key].is_number_float()) ? obj[key].get<float>() : def;
-}
+const double GetNumber(const nlohmann::json &obj, const std::string &key, const double defVal = 0);
+const int GetIntNumber(const nlohmann::json &obj, const std::string &key, const int def = NAN) ;
+const float GetFloatNumber(const nlohmann::json &obj, const std::string &key, const float def = NAN);
 
 //使用&会地址不正确
 //@return 如果找不到key，会返回一个空数组对象  可以使用obj.is_array() && obj.size() == 0 来判断
-inline const nlohmann::json &GetArray(const nlohmann::json &obj, const std::string &key, const nlohmann::json &defVal = ArrayObject()) {
-    return (obj.is_object() && obj.contains(key) && obj[key].is_array()) ? obj[key] : defVal;
-}
+const nlohmann::json &GetArray(const nlohmann::json &obj, const std::string &key, const nlohmann::json &defVal = ArrayObject());
 
-inline const bool GetBool(const nlohmann::json &obj, const std::string &key, const bool defVal = false) {
-    return (obj.is_object() && obj.contains(key) && obj[key].is_boolean()) ? obj[key].get<bool>() : defVal;
-}
+const bool GetBool(const nlohmann::json &obj, const std::string &key, const bool defVal = false);
 
 //使用&会地址不正确
 //@return 如果找不到key，会返回一个null object,  可以使用obj.is_null()来判断
-inline const nlohmann::json &GetObject(const nlohmann::json &obj, const std::string &key, const nlohmann::json &defVal = NullObject()) {
-    return (obj.is_object() && obj.contains(key) && obj[key].is_object()) ? obj[key] : defVal;
-}
+const nlohmann::json &GetObject(const nlohmann::json &obj, const std::string &key, const nlohmann::json &defVal = NullObject());
 } // namespace json
 } // namespace xg
 

@@ -8,7 +8,6 @@
 #include "../canvas/Container.h"
 #include "../canvas/Coord.h"
 #include "../shape/Group.h"
-#include "../util/json_data.h"
 #include "../../utils/Tracer.h"
 
 
@@ -52,9 +51,13 @@ class AbstractGeom {
     AbstractGeom &Adjust(const string &adjust);
     AbstractGeom &Style(const std::string &json);
     AbstractGeom &Attrs(const std::string &attrs);
+    AbstractGeom &Selection(const std::string &selection);
     
     AbstractGeom &StyleObject(const nlohmann::json &cfg);
     AbstractGeom &AttrsObject(const nlohmann::json &cfg);
+    AbstractGeom &SelectionObject(const nlohmann::json &cfg);
+    //新增动画参数
+    AbstractGeom &Animate(const nlohmann::json &cfg);
     
 
     const unique_ptr<attr::AttrBase> &GetColor();
@@ -70,20 +73,32 @@ class AbstractGeom {
     std::string GetType() const { return this->type_; }
 
     bool ContainsAttr(attr::AttrType type);
+    
+    const bool isSelectionEnable();
+    const bool isDeselect();
+    const bool isSelected(const nlohmann::json &record);
 
-    XDataArray GetSnapRecords(XChart *chart, util::Point point);
-    const XData &GetLastSnapRecord(XChart *chart);
-    const XData &GetFirstSnapRecord(XChart *chart);
+    const nlohmann::json GetSelectedRecords();
+    nlohmann::json GetSnapRecords(XChart *chart, util::Point point);
+    nlohmann::json GetSnapRecords(XChart *chart, util::Point point, const bool needReMapping);
+    const nlohmann::json GetXSnapRecords(XChart *chart, double invertPointX, const bool needReMapping);
+    const nlohmann::json GetYSnapRecords(XChart *chart, double invertPointY, const bool needReMapping);
+    const nlohmann::json &GetLastSnapRecord(XChart *chart);
+    const nlohmann::json &GetFirstSnapRecord(XChart *chart);
+    const nlohmann::json GetTickRecord(XChart *chart, std::string field, xg::scale::Tick tick);
+    nlohmann::json &getAnimateCfg();
 
     const std::unique_ptr<AttrBase> &GetAttr(AttrType type) { return attrs_[type]; }
+    const bool isAdjustDodge();
 
     virtual void Clear();
-    
-    void ClearInner() {
-        dataArray_.clear();
-    }
 
-    const XDataGroup &GetDataArray() { return dataArray_; }
+    const nlohmann::json &GetDataArray() { return dataArray_; }
+    const nlohmann::json &GetSelectedArray() { return selectedArray_; }
+    void SetSelectedArray(const nlohmann::json &selectedArray);
+    void SetSelectedArray(const nlohmann::json &selectedArray, const bool needReMapping);
+    
+    const Group *GetContainer() { return container_; }
 
     virtual void SetAttrs(const std::string &_attrs) noexcept;
 #if defined(EMSCRIPTEN)
@@ -103,15 +118,16 @@ class AbstractGeom {
     // 数据分组
     void InitAttributes(XChart &chart);
     void ProcessData(XChart &chart);
-    XDataGroup GroupData(XChart &chart);
+    virtual void ProcessScale(XChart &chart) {};
+    nlohmann::json GroupData(XChart &chart);
     const set<string> GetGroupFieldNames(XChart &chart);
     // void GetAttrValues(XChart &chart, const AttrBase &attr, AttrCfg &acfg, DrawCfg &dcfg);
 
-    virtual void Mapping(XChart &chart, XDataArray &dataArray, std::size_t start, std::size_t end);
+    virtual void Mapping(XChart &chart, nlohmann::json &data, std::size_t start, std::size_t end);
 
-    virtual void BeforeMapping(XChart &chart, XDataGroup &groupData) {}
+    virtual void BeforeMapping(XChart &chart, nlohmann::json &dataArray) {}
 
-    virtual void Draw(XChart &chart, const XDataArray &dataArray, std::size_t start, std::size_t end) const;
+    virtual void Draw(XChart &chart, const nlohmann::json &groupData, std::size_t start, std::size_t end) const;
 
     void updateStackRange(XChart &chart);
 
@@ -123,16 +139,24 @@ class AbstractGeom {
     bool sortable_ = false;
     bool visiable_ = true;
     bool connectNulls_ = false;
+    bool enableSelection_ = false;
+    bool deselect_ = false;
+    nlohmann::json selectedArray_ = nullptr;
+    nlohmann::json selectedStyle_ = nullptr;
+    nlohmann::json unSelectedStyle_ = nullptr;
+    string selectedColor_ = "";
     bool ignoreEmptyGroup_ = false;
     string type_ = "";
     string shapeType_ = "";
     nlohmann::json styleConfig_ = {{"startOnZero", true}};
-    
-    XDataGroup dataArray_;
+
+    nlohmann::json dataArray_;
     map<AttrType, unique_ptr<AttrBase>> attrs_{};
 
     Group *container_ = nullptr;
     utils::Tracer *tracker_ = nullptr;
+    
+    nlohmann::json animateCfg_ = {};
 };
 } // namespace geom
 } // namespace xg

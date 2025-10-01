@@ -13,12 +13,13 @@
 namespace utils {
 class Tracer {
   public:
-    Tracer(const std::string &name) : name_(name) {}
+    Tracer(const std::string &name, bool log = true) : name_(name), log_(log) {}
 
     void trace(const char *fmt, ...);
 
   private:
     std::string name_;
+    bool log_;
 };
 } // namespace utils
 

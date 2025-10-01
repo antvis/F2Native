@@ -23,12 +23,12 @@ bool ChartBridge::InvokeMethod(const std::string &methodName,
         chart_->GetLogTracer()->trace("callback is nullptr");
         return false;
     }
-    
+
     if (!railing_) {
-        CallbackError(callback, "railing is nullptr");
+        CallbackError(methodName, callback, "railing is nullptr");
         return false;
     }
-    
+
     commonFunction_ = BridgeChannel::Callback([callback, this](const std::string &functionId,
                                                                const std::string &params) -> const std::string {
         //回调渲染动画
@@ -37,28 +37,30 @@ bool ChartBridge::InvokeMethod(const std::string &methodName,
             return params;
         }
         //内部回调方法
-        else if(callbackFunctions_.find(functionId) != callbackFunctions_.end()) {
+        else if (callbackFunctions_.find(functionId) != callbackFunctions_.end()) {
             auto &function = callbackFunctions_[functionId];
             return function.Execute(functionId, params);
         }
         //直接通过bridge回调出去
         else {
-            nlohmann::json ret = {{"renderCallback", {{"functionId", functionId}, {"param", params}}}};
+            nlohmann::json ret = {{"method","render"}, {"renderCallback", {{"functionId", functionId}, {"param", params}}}};
             callback(ret.dump());
             return params;
         }
     });
     chart_->SetCanvasContext(railing_->GetCanvasContext());
-    
+
     if (methodName == "render") {
         auto chartConfig = json::ParseString(params);
         if (!chartConfig.is_object()) {
-            CallbackError(callback, "dsl is not object");
+            chart_->GetLogTracer()->trace("dsl is not object %s " , params.c_str());
+            CallbackError(methodName, callback, "dsl is not object");
             return false;
         }
-        
+
         if (!chartConfig.contains("chartConfig")) {
-            CallbackError(callback, "dsl is not contains chartConfig key");
+            chart_->GetLogTracer()->trace("dsl is not contains chartConfig %s " , params.c_str());
+            CallbackError(methodName, callback, "dsl is not contains chartConfig key");
             return false;
         }
 
@@ -79,16 +81,39 @@ bool ChartBridge::InvokeMethod(const std::string &methodName,
         auto config = json::ParseString(params);
         const auto &itemData = json::GetObject(config, "itemData");
         callback(std::move(GetPosition(itemData)));
+    } else if (methodName == "getPositions") {
+        auto config = json::ParseString(params);
+        const auto &itemDatas = json::GetArray(config, "itemDatas");
+        const auto &positions = GetPositions(itemDatas);
+        callback(positions);
     } else if (methodName == "getScaleTicks") {
         auto config = json::ParseString(params);
         const auto &field = json::GetString(config, "field");
         const auto &ticks = chart_->GetScaleTicks(field);
-        callback(ticks);
+        callback(nlohmann::json({{"method","getScaleTicks"}, {"ticks",xg::json::ParseString(ticks)}}).dump());
     } else {
-        CallbackError(callback, "unknow method name");
+        CallbackError(methodName, callback, "unknow method name");
         return false;
     }
     return true;
+}
+
+std::string ChartBridge::GetPositions(const nlohmann::json &itemDatas) {
+    nlohmann::json array = {};
+    if (chart_ == nullptr || itemDatas.is_null() || !itemDatas.is_array() || itemDatas.empty()) {
+        return array.dump();
+    }
+    auto ratio = chart_->GetCanvasContext().GetDevicePixelRatio();
+    if (ratio <= 0) {
+        ratio = 1;
+    }
+
+    for (auto it = itemDatas.begin(); it != itemDatas.end(); ++it) {
+        const auto &position = chart_->GetPosition(*it);
+        array.push_back({position.x / ratio / pixelRatio_,
+                         position.y / ratio / pixelRatio_});
+    }
+    return nlohmann::json({{"method","getPositions"}, {"positions",array}}).dump();
 }
 
 nlohmann::json ChartBridge::GetPosition(const nlohmann::json &itemData) {
@@ -97,7 +122,7 @@ nlohmann::json ChartBridge::GetPosition(const nlohmann::json &itemData) {
     }
     const auto &position = chart_->GetPosition(itemData);
     auto ratio = chart_->GetCanvasContext().GetDevicePixelRatio();
-    return nlohmann::json({{"position", {position.x / ratio / pixelRatio_,
+    return nlohmann::json({{"method","getPosition"}, {"position", {position.x / ratio / pixelRatio_,
                                                                     position.y / ratio /
                                                                     pixelRatio_}}}).dump();
 }
@@ -108,7 +133,7 @@ bool ChartBridge::InvokeRender(const nlohmann::json &dsl, const nlohmann::json &
     chart_->SetRequestFrameFuncId(requestFrameFuncId_);
     chart_->SetInvokeFunction(&commonFunction_);
     if (!chart_->ParseObject(dsl)) {
-        CallbackError(callback, "parse dsl error");
+        CallbackError("render", callback, "parse dsl error");
         return false;
     }
 
@@ -120,11 +145,11 @@ bool ChartBridge::InvokeRender(const nlohmann::json &dsl, const nlohmann::json &
     if (chart_->Render()) {
         railing_->Swap();
 
-        CallbackSuccess(callback, GetPosition(itemPosition), chart_->GetRenderCmdCount(),
+        CallbackSuccess("render", callback, GetPosition(itemPosition), chart_->GetRenderCmdCount(),
                         chart_->GetRenderDurationMM());
         return true;
     } else {
-        CallbackError(callback, "render error");
+        CallbackError("render", callback, "render error");
         return false;
     }
 }
@@ -138,14 +163,15 @@ void ChartBridge::CompatToolTip(BridgeCallback callback) {
     auto onPress = BridgeChannel::Callback([callback, this](const std::string &functionId, const std::string &params)-> const std::string {
         auto config = json::ParseString(params);
         auto &tooltip = json::GetArray(config, "tooltip");
-        callback(nlohmann::json({{"tooltip", tooltip.dump()}}).dump());
+        auto &tooltips = json::GetArray(config, "tooltips");
+        callback(nlohmann::json({{"method","render"}, {"tooltip", tooltip.dump()}, {"tooltips", tooltips.dump()}}).dump());
         return params;
     });
 
     auto onPressEnd = BridgeChannel::Callback([callback, this](const std::string &functionId, const std::string &params)-> const std::string {
         auto config = json::ParseString(params);
         auto &tooltip = json::GetArray(config, "tooltip");
-        callback(nlohmann::json({{"tooltipEnd", tooltip.dump()}}).dump());
+        callback(nlohmann::json({{"method","render"}, {"tooltipEnd", tooltip.dump()}}).dump());
         return params;
     });
 
@@ -154,7 +180,7 @@ void ChartBridge::CompatToolTip(BridgeCallback callback) {
     callbackFunctions_[onPress.functionId] = std::move(onPress);
     callbackFunctions_[onPressEnd.functionId] = std::move(onPressEnd);
 
-    chart_->TooltipObject(tooltip);
+    chart_->PatchTooltipsObject(tooltip);
 }
 
 void ChartBridge::CompatScales(const nlohmann::json &dsl) {
@@ -233,8 +259,8 @@ std::string ChartBridge::FormatPrice(const std::string &content, int precision) 
     if (abs(value) >= 10000000000000000.0) {
         value = value / 10000000000000000.0;
         unit = "亿亿";
-    } else if (abs(value) >=  1000000000000.0) {
-        value = value /  1000000000000.0;
+    } else if (abs(value) >= 1000000000000.0) {
+        value = value / 1000000000000.0;
         unit = "万亿";
     } else if (abs(value) >= 100000000.0) {
         value = value / 100000000.0;
@@ -251,7 +277,7 @@ std::string ChartBridge::FormatPrice(const std::string &content, int precision) 
     return ss.str() + unit;
 }
 
-std::string ChartBridge::FormatPercent(const std::string &content,  double divisor, int precision) {
+std::string ChartBridge::FormatPercent(const std::string &content, double divisor, int precision) {
     double value = stod(content);
     double percent = value / divisor * 100;
     std::stringstream ss;
@@ -264,15 +290,38 @@ std::string ChartBridge::FormatTime(const std::string &value, const std::string 
 }
 
 void
-ChartBridge::CallbackSuccess(BridgeCallback callback, const nlohmann::json &itemPosition,
+ChartBridge::CallbackSuccess(const std::string &methodName, BridgeCallback callback, const nlohmann::json &itemPosition,
                              long renderCmdCount, long renderDurationMM) {
-    nlohmann::json ret = {{"renderResult", {
+    nlohmann::json ret = {{"method", methodName},{"renderResult", {
         {"state", true},{"position",itemPosition},{"renderCmdCount", renderCmdCount},{"renderDurationMM", renderDurationMM}}
     }};
     callback(ret.dump());
 }
 
-void ChartBridge::CallbackError(BridgeCallback callback, const std::string &msg) {
-    nlohmann::json ret = {{"error", msg} , {"renderResult", {{"state", false}}}};
+void ChartBridge::CallbackError(const std::string &methodName, BridgeCallback callback, const std::string &msg) {
+    nlohmann::json ret = {{"method", methodName}, {"error", msg} , {"renderResult", {{"state", false}}}};
     callback(ret.dump());
+}
+
+void ChartBridge::SetEnableListConfig(const std::string &params){
+    if (chart_ == nullptr || params.empty()) {
+        return;
+    }
+    chart_->GetLogTracer()->trace("SetEnableListConfig %s ", params.c_str());
+    auto enableCfg = json::ParseString(params);
+    if (!enableCfg.is_object()) {
+        return;
+    }
+    EnableListConfig enableConfig;
+    enableConfig.imageGuideEnable = json::GetBool(enableCfg, "imageGuideEnable");
+    enableConfig.legendCenterEnable = json::GetBool(enableCfg, "legendCenterEnable");
+    enableConfig.candleFirstRenderFixDisable = json::GetBool(enableCfg, "candleFirstRenderFixDisable", false);
+    chart_->SetEnableConfig(enableConfig);
+}
+
+void ChartBridge::SetDarkModeInfo(bool isDark, std::map<int, int> &colors) {
+    if (chart_ == nullptr) {
+        return;
+    }
+    chart_->GetDarkModeManager().SetDarkModeInfo(isDark,colors);
 }

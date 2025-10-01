@@ -8,11 +8,12 @@
 #include "../graphics/canvas/CanvasColorParser.h"
 #include "../graphics/canvas/CanvasContext.h"
 #include "../graphics/canvas/CanvasFontParser.h"
+#include "../token/DarkModeManager.h"
 
 namespace xg {
 namespace canvas {
 
-enum class Gradient { None, Linear, Radial };
+enum class Gradient { None, Linear, Radial, Conic};
 
 // CF对象仍然需要手动管理内存
 //为了保证CF对象不被释放，需要在构造函数中retain, 在析构函数中农release
@@ -46,6 +47,7 @@ class CoreGraphicsContext : public CanvasContext {
   canvas::CanvasFillStrokeStyle gradientStyle_;
   float width_;
   float height_;
+  token::DarkModeManager &darkModeManager_;
 
   //自体对象的创建profile发现比较耗时，所以缓存起来
   //缓存的key是fontSize, value是CTFontRef
@@ -53,22 +55,18 @@ class CoreGraphicsContext : public CanvasContext {
 
  public:
   CoreGraphicsContext(void *_canvasContext, float width, float height,
-                      float devicePixelRatio, utils::Tracer *tracer)
+                      float devicePixelRatio, utils::Tracer *tracer, token::DarkModeManager &manager)
       : CanvasContext(devicePixelRatio, tracer),
         canvasContext_(_canvasContext),
         width_(width),
-        height_(height) {
+        height_(height),
+        darkModeManager_(manager){
     if (tracer != nullptr) {
       tracer->trace("Use CoreGraphicsContext");
     }
   }
 
   ~CoreGraphicsContext() { canvasContext_ = nullptr; }
-    
-  void ChangeSize(float width, float height) override {
-      width_ = width;
-      height_ = height;
-  }
 
   bool IsValid() override;
 
@@ -130,6 +128,8 @@ class CoreGraphicsContext : public CanvasContext {
 
   float MeasureTextWidth(const std::string &text) override;
 
+  float MeasureTextHeight(const std::string &text) override;
+
   void Transform(float a, float b, float c, float d, float e, float f) override;
 
   void SetTransform(float a, float b, float c, float d, float e,
@@ -150,6 +150,8 @@ class CoreGraphicsContext : public CanvasContext {
   void MoveTo(float x, float y) override;
 
   void ClosePath() override;
+    
+    void ReplaceStroke() override;
 
   void LineTo(float x, float y) override;
 
@@ -178,6 +180,7 @@ class CoreGraphicsContext : public CanvasContext {
 
   void DrawLinearGradient(const canvas::CanvasFillStrokeStyle &gradientStyle);
   void DrawRadialGradinet(const canvas::CanvasFillStrokeStyle &gradientStyle);
+  void DrawConicGradinet(const canvas::CanvasFillStrokeStyle &gradientStyle);
 
  private:
   void DrawText(const std::string &text, const CanvasColor &color, float x,

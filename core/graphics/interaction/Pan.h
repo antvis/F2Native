@@ -12,6 +12,8 @@ class Pan : public InteractionBase {
   public:
     Pan(XChart *chart);
 
+    virtual ~Pan();
+
     bool OnPanStart(event::Event &event);
 
     bool OnPan(event::Event &event);

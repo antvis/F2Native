@@ -6,8 +6,8 @@
 //  Copyright © 2021 com.alipay.xgraph. All rights reserved.
 //
 
-#include "Polygon.h"
-#include "../util/Path.h"
+#include "graphics/shape/Polygon.h"
+#include "graphics/util/Path.h"
 
 using namespace xg;
 using namespace std;

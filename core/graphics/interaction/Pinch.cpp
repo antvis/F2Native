@@ -1,6 +1,6 @@
 #include "Pinch.h"
-#include "../XChart.h"
-#include "../../utils/xtime.h"
+#include "graphics/XChart.h"
+#include "utils/xtime.h"
 
 using namespace xg;
 
@@ -10,16 +10,22 @@ interaction::Pinch::Pinch(XChart *chart) : InteractionBase(chart) {
     this->chart_->eventController_->AddCallback("pinchend", XG_MEMBER_CALLBACK_1(interaction::Pinch::onPinchEnd));
 }
 
+interaction::Pinch::~Pinch() {
+    this->chart_->eventController_->RemoveCallback("pinchstart");
+    this->chart_->eventController_->RemoveCallback("pinch");
+    this->chart_->eventController_->RemoveCallback("pinchend");
+}
+
 bool interaction::Pinch::OnPinchStart(event::Event &event) {
-    chart_->interactionContext_->Start();
+    this->chart_->interactionContext_->Start();
     return false;
 }
 
 bool interaction::Pinch::OnPinch(event::Event &event) {
     auto timestamp = xg::CurrentTimestampAtMM();
-    util::Point xAxis = chart_->coord_->GetXAxis();
+    util::Point xAxis = this->chart_->coord_->GetXAxis();
 
-    double coordWidth = chart_->coord_->GetWidth();
+    double coordWidth = this->chart_->coord_->GetWidth();
 
     util::Point center = event.center;
 
@@ -29,12 +35,12 @@ bool interaction::Pinch::OnPinch(event::Event &event) {
     double leftScale = leftLen / coordWidth;
     double rightScale = rightLen / coordWidth;
 
-    bool ret = chart_->interactionContext_->DoZoom(leftScale, rightScale, event.zoom);
-    chart_->GetLogTracer()->trace("pinch duration: %lu-ms", (xg::CurrentTimestampAtMM() - timestamp));
+    bool ret = this->chart_->interactionContext_->DoZoom(leftScale, rightScale, event.zoom);
+    this->chart_->GetLogTracer()->trace("pinch duration: %lu-ms", (xg::CurrentTimestampAtMM() - timestamp));
     return ret;
 }
 
 bool interaction::Pinch::onPinchEnd(event::Event &event) {
-    chart_->interactionContext_->UpdateTicks();
+    this->chart_->interactionContext_->UpdateTicks();
     return false;
 }

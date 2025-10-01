@@ -26,15 +26,15 @@ using namespace utils;
 // graphics/XChart.h
 EMSCRIPTEN_BINDINGS(xchart) {
     class_<XChart>("F2Chart")
-        .constructor<std::string, double, double, double>()
+        .constructor<std::string, double, double, double, bool>()
         .function("source", &XChart::SourceWasm, allow_raw_pointers()) //普通类成员函数
         .function("padding", &XChart::PaddingWasm, allow_raw_pointers())
         .function("margin", &XChart::MarginWasm, allow_raw_pointers())
         .function("parse", &XChart::Parse)
+        .function("parseObject", &XChart::ParseObject)
         .function("render", &XChart::Render)
         .function("clear", &XChart::Clear)
         .function("repaint", &XChart::Repaint)
-        .function("onTouchEvent", &XChart::OnTouchEvent)
         .function("callback", &XChart::SetInvokeFunction, allow_raw_pointers())
         .function("axis", &XChart::AxisWasm, allow_raw_pointers())
         .function("canvas", &XChart::SetCanvasContextWasm, allow_raw_pointers())
@@ -44,8 +44,7 @@ EMSCRIPTEN_BINDINGS(xchart) {
         .function("interval", &XChart::IntervalWasm, allow_raw_pointers())
         .function("area", &XChart::AreaWasm, allow_raw_pointers())
         .function("point", &XChart::PointWasm, allow_raw_pointers())
-        .function("candle", &XChart::CandleWasm, allow_raw_pointers())
-        .function("interaction", &XChart::InteractionWasm, allow_raw_pointers());
+        .function("candle", &XChart::CandleWasm, allow_raw_pointers());
 }
 ////////////////////////////////////////////////////////////////////////
 // graphics/geom/geom.h
@@ -77,14 +76,16 @@ EMSCRIPTEN_BINDINGS(guide) {
         .function("text", &guide::GuideController::Text)
         .function("line", &guide::GuideController::Line)
         .function("background", &guide::GuideController::Background)
-        .function("image", &guide::GuideController::Image)
-        .function("point", &guide::GuideController::Point);
+        .function("image", &guide::GuideController::Image);
 }
 
 ////////////////////////////////////////////////////////////////////////
 // vector
 EMSCRIPTEN_BINDINGS(module) {
     emscripten::register_vector<std::string>("StringVector");
+    emscripten::register_vector<int>("IntVector");
+    emscripten::register_vector<double>("DoubleVector");
+    emscripten::register_vector<float>("FloatVector");
 }
 
 #endif

@@ -29,22 +29,6 @@ template <typename T, size_t N> char (&_xg_ArraySizeHelper(T (&array)[N]))[N];
 namespace xg {
 namespace jni {
 
-#if defined(TARGET_ALIPAY)
-
-// static void NativeCanvasSwap(JNIEnv *env, jclass clazz, jlong view) {
-//    ag::Canvas *canvas = reinterpret_cast<ag::Canvas *>(view);
-//    canvas->swap();
-//}
-//
-// static const JNINativeMethod native_canvas_methods[] = {
-//        {
-//    .name = "nSwap",
-//    .signature = "(J)V",
-//    .fnPtr = reinterpret_cast<void *>(NativeCanvasSwap),
-//}
-//};
-
-#endif // TARGET_ALIPAY
 static ScopedJavaGlobalRef<jclass> *gNativeCanvasProxyClass = nullptr;
 static ScopedJavaGlobalRef<jclass> *gNativeChartProxyClass = nullptr;
 static ScopedJavaGlobalRef<jclass> *gNativeFunctionProxyClass = nullptr;
@@ -97,7 +81,7 @@ static jint SetChartScale(JNIEnv *env, jclass clazz, jlong chart, jstring field,
 
     xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
     _chart->Scale(std::move(_field), std::move(_config));
-    F2_LOG_I(_chart->GetChartName(), "%s", "#SetScaleConfig");
+    F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartScale");
     return 0;
 }
 
@@ -107,7 +91,7 @@ static jint SetChartAxis(JNIEnv *env, jclass clazz, jlong chart, jstring field, 
 
     xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
     _chart->Axis(std::move(_field), std::move(_config));
-    F2_LOG_I(_chart->GetChartName(), "%s", "#SetAxisConfig");
+    F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartAxis");
     return 0;
 }
 
@@ -152,7 +136,7 @@ static jint SetChartLegend(JNIEnv *env, jclass clazz, jlong chart, jstring field
 
     xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
     _chart->Legend(_field, std::move(_config));
-    F2_LOG_I(_chart->GetChartName(), "%s", "#SetAxisConfig");
+    F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartLegend");
     return 0;
 }
 
@@ -176,6 +160,9 @@ static jint SetChartGuideType(JNIEnv *env, jclass clazz, jlong chart, jstring ty
     } else if(_type == "point") {
         _chart->Guide().Point(std::move(_config));
         F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartGuidePoint");
+    } else if(_type == "tag") {
+        _chart->Guide().Tag(std::move(_config));
+        F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartGuideTag");
     } else if(_type == "image") {
         _chart->Guide().Image(std::move(_config));
         F2_LOG_I(_chart->GetChartName(), "%s", "#SetChartGuideImage");
@@ -207,7 +194,7 @@ static jlong CreateChartGeom(JNIEnv *env, jclass clazz, jlong chart, jstring typ
         geom = &_chart->Candle();
     }
 
-    F2_LOG_I(_chart->GetChartName(), "createGeom: %s", _type.data());
+    F2_LOG_I(_chart->GetChartName(), "CreateChartGeom: %s", _type.data());
 
     if(geom == nullptr) {
         return 0;
@@ -416,16 +403,13 @@ static int nConfig(JNIEnv *env, jclass clazz, jlong chart, jstring config) {
     return 0;
 }
 
-static void AdjustScale(JNIEnv *env, jclass clazz, jlong chart, jboolean adjust) {
-    xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
-    _chart->AdjustScale(adjust);
+static int nLoadImageResult(JNIEnv *env, jclass clazz, jlong canvasImage, void *image, jboolean isSuccess) {
+    xg::canvas::CanvasImage *_canvasImage = reinterpret_cast<xg::canvas::CanvasImage *>(canvasImage);
+    if(_canvasImage != nullptr) {
+        _canvasImage->OnLoadFinish(image, isSuccess == JNI_TRUE);
+    }
+    return 0;
 }
-
-static void SyncYScale(JNIEnv *env, jclass clazz, jlong chart, jboolean sync) {
-    xg::XChart *_chart = reinterpret_cast<xg::XChart *>(chart);
-    _chart->SyncYScale(sync);
-}
-
 
 static const JNINativeMethod native_chart_methods[] = {{
                                                            .name = "nCreateNativeChart",
@@ -625,19 +609,14 @@ static const JNINativeMethod native_chart_methods[] = {{
                                                                .fnPtr = reinterpret_cast<void *>(nConfig),
                                                        },
                                                        {
-                                                               .name = "nAdjustScale",
-                                                               .signature = "(JZ)V",
-                                                               .fnPtr = reinterpret_cast<void *>(AdjustScale),
-                                                       },
-                                                       {
-                                                               .name = "nSyncYScale",
-                                                               .signature = "(JZ)V",
-                                                               .fnPtr = reinterpret_cast<void *>(SyncYScale),
+                                                               .name = "nLoadImageResult",
+                                                               .signature = "(JLandroid/graphics/Bitmap;Z)I",
+                                                               .fnPtr = reinterpret_cast<void *>(nLoadImageResult),
                                                        }
                                                       };
 //###################### F2Chart END ###################################
 
-static ScopedJavaGlobalRef<jclass> *gF2LogClass = nullptr;
+static ScopedJavaGlobalRef<jobject> *gF2LogClass = nullptr;
 static jmethodID gF2LogInfoMethod = nullptr;
 static jmethodID gF2LogWarnMethod = nullptr;
 static jmethodID gF2LogErrorMethod = nullptr;
@@ -648,19 +627,40 @@ static bool InitF2Log(JNIEnv *env) {
     }
 
     jclass logClass = env->FindClass("com/antgroup/antv/f2/F2Log");
-
     if(logClass == nullptr) {
         return false;
     }
 
-    gF2LogInfoMethod = env->GetStaticMethodID(logClass, "i", "(Ljava/lang/String;Ljava/lang/String;)V");
-    gF2LogWarnMethod = env->GetStaticMethodID(logClass, "w", "(Ljava/lang/String;Ljava/lang/String;)V");
-    gF2LogErrorMethod = env->GetStaticMethodID(logClass, "e", "(Ljava/lang/String;Ljava/lang/String;)V");
-    if(HasException(env)) {
+    // 获取 get() 方法
+    jmethodID getMethod = env->GetStaticMethodID(logClass, "get", "()Lcom/antgroup/antv/f2/service/F2LogService;");
+    if (getMethod == nullptr || jni::HasException(env)) {
+        jni::ClearException(env);
         return false;
     }
 
-    gF2LogClass = new ScopedJavaGlobalRef<jclass>(env, logClass);
+    // 调用 get() 方法获取 F2LogService 实例
+    jobject f2LogServiceInstance = env->CallStaticObjectMethod(logClass, getMethod);
+    if (f2LogServiceInstance == nullptr || jni::HasException(env)) {
+        jni::ClearException(env);
+        return false;
+    }
+
+    // 获取 F2LogService 接口类
+    jclass f2LogServiceClass = env->FindClass("com/antgroup/antv/f2/service/F2LogService");
+    if (f2LogServiceClass == nullptr || jni::HasException(env)) {
+        jni::ClearException(env);
+        return false;
+    }
+
+    gF2LogInfoMethod = env->GetMethodID(f2LogServiceClass, "i", "(Ljava/lang/String;Ljava/lang/String;)V");
+    gF2LogWarnMethod = env->GetMethodID(f2LogServiceClass, "w", "(Ljava/lang/String;Ljava/lang/String;)V");
+    gF2LogErrorMethod = env->GetMethodID(f2LogServiceClass, "e", "(Ljava/lang/String;Ljava/lang/String;)V");
+    if(HasException(env)) {
+        jni::ClearException(env);
+        return false;
+    }
+
+    gF2LogClass = new ScopedJavaGlobalRef<jobject>(env, f2LogServiceInstance);
 
     return true;
 }
@@ -725,16 +725,23 @@ nChartBridgeDestroy(JNIEnv *env, jclass clazz,
 }
 
 static void
-nChartBridgeInvokeMethod(JNIEnv *env, jclass clazz, jlong bridgeHandle, jobject nativeBridgeObject,
+nChartBridgeInvokeMethod(JNIEnv *env, jclass clazz, jlong bridgeHandle,
+                         jobject nativeBridgeObject,
                          jstring method, jstring config) {
     std::string method_ = JavaStringToString(env, method);
     std::string config_ = JavaStringToString(env, config);
-    F2_LOG_I("#F2NativeJNI", "#F2ChartBridge_nInvokeMethod method: %s config: %s",
-             method_.data(), config_.data());
+    F2_LOG_I("#F2NativeJNI", "#F2ChartBridge %s", "nChartBridgeInvokeMethod");
 
     xg::bridge::ChartBridge *bridge = reinterpret_cast<xg::bridge::ChartBridge *>(bridgeHandle);
     BridgeRailingAndroid *railingAndroid_ = reinterpret_cast<BridgeRailingAndroid *>(bridge->GetRailing());
-    railingAndroid_->InvokeJavaMethod(std::move(method_), std::move(config_), nativeBridgeObject, bridge);
+    JavaChartBridgeCallBack *bridgeCallBack_ = railingAndroid_->GetJavaCallBack(
+            nativeBridgeObject);
+    if (bridgeCallBack_ != nullptr) {
+        bridge->InvokeMethod(
+                std::move(method_), std::move(config_),
+                XG_MEMBER_OWNER_CALLBACK_1(JavaChartBridgeCallBack::BridgeCallback,
+                                           bridgeCallBack_));
+    }
 }
 
 
@@ -742,7 +749,6 @@ static jboolean
 nChartBridgeSendTouchEvent(JNIEnv *env, jclass clazz,
                            jlong bridgeHandle,
                            jstring eventStr) {
-    F2_LOG_I("#F2NativeJNI", "%s", "#F2ChartBridge_nChartBridgeSendTouchEvent ");
     std::string eventJson_ = JavaStringToString(env, eventStr);
 
     xg::bridge::ChartBridge *bridge = reinterpret_cast<xg::bridge::ChartBridge *>(bridgeHandle);
@@ -750,6 +756,14 @@ nChartBridgeSendTouchEvent(JNIEnv *env, jclass clazz,
     return isSuccess ? JNI_TRUE : JNI_FALSE;
 }
 
+static void
+nChartBridgeSetEnableListConfig(JNIEnv *env, jclass clazz, jlong bridgeHandle,
+                                        jstring enableConfig) {
+    F2_LOG_I("#F2NativeJNI", "%s", "#F2ChartBridge_nChartBridgeSetEnableListConfig ");
+    std::string enableConfig_ = JavaStringToString(env, enableConfig);
+    xg::bridge::ChartBridge *bridge = reinterpret_cast<xg::bridge::ChartBridge *>(bridgeHandle);
+    bridge->SetEnableListConfig(std::move(enableConfig_));
+}
 
 static long
 nCreateNativeRailHandle(JNIEnv *env, jclass clazz,
@@ -781,6 +795,30 @@ nChartBridgeSetNeedTooltip(JNIEnv *env, jclass clazz, jlong bridgeHandle,
     bridge->SetNeedTooltip(tooltip == JNI_TRUE);
 }
 
+static jstring
+nChartBridgeOnTapEvent(JNIEnv *env, jclass clazz, jlong bridgeHandle,
+                           jstring tapJson) {
+    F2_LOG_I("#F2NativeJNI", "%s", "#F2ChartBridge_nOnTapEvent ");
+    std::string tapJson_ = JavaStringToString(env, tapJson);
+    xg::bridge::ChartBridge *bridge = reinterpret_cast<xg::bridge::ChartBridge *>(bridgeHandle);
+    std::string tapResult =  bridge->OnTapEvent(std::move(tapJson_));
+    return env->NewStringUTF(tapResult.data());
+}
+
+
+
+static void
+nChartBridgeUpdateThemeToken(JNIEnv* env, jclass clazz, jlong bridgeHandle,
+                             jobject jReplaceColors, jboolean isDark){
+    F2_LOG_I("#F2NativeJNI", "%s", "#F2ChartBridge_nChartBridgeUpdateThemeToken ");
+    xg::bridge::ChartBridge *bridge = reinterpret_cast<xg::bridge::ChartBridge *>(bridgeHandle);
+
+   if (jReplaceColors) {
+       std::map<int,int> replace =  JavaMapIntIntToMap(env,jReplaceColors);
+       bridge->SetDarkModeInfo((bool)isDark,replace);
+   }
+}
+
 static const JNINativeMethod native_chart_bridge_methods[] = {{
                                                                       .name = "nCreate",
                                                                       .signature = "(JJDDDD)J",
@@ -802,6 +840,16 @@ static const JNINativeMethod native_chart_bridge_methods[] = {{
                                                                       .fnPtr = reinterpret_cast<void *>(nChartBridgeSendTouchEvent),
                                                               },
                                                               {
+                                                                      .name = "nSetEnableListConfig",
+                                                                      .signature = "(JLjava/lang/String;)V",
+                                                                      .fnPtr = reinterpret_cast<void *>(nChartBridgeSetEnableListConfig),
+                                                              },
+                                                              {
+                                                                      .name = "nUpdateThemeToken",
+                                                                      .signature = "(JLjava/util/Map;Z)V",
+                                                                      .fnPtr = reinterpret_cast<void *>(nChartBridgeUpdateThemeToken),
+                                                              },
+                                                              {
                                                                       .name = "nCreateNativeRailHandle",
                                                                       .signature = "(Ljava/lang/Object;)J",
                                                                       .fnPtr = reinterpret_cast<void *>(nCreateNativeRailHandle),
@@ -815,6 +863,10 @@ static const JNINativeMethod native_chart_bridge_methods[] = {{
                                                                       .name = "nSetNeedTooltip",
                                                                       .signature = "(JZ)V",
                                                                       .fnPtr = reinterpret_cast<void *>(nChartBridgeSetNeedTooltip),
+                                                              },{
+                                                                      .name = "nOnTapEvent",
+                                                                      .signature = "(JLjava/lang/String;)Ljava/lang/String;",
+                                                                      .fnPtr = reinterpret_cast<void *>(nChartBridgeOnTapEvent),
                                                               }};
 
 //###################### F2ChartBridge End ##################################
@@ -862,7 +914,10 @@ void InnerLog(int level, std::string traceId, const char *fmt, ...) {
     }
     ScopedJavaLocalRef<jstring> tagStr = StringToJavaString(env, _tag);
     ScopedJavaLocalRef<jstring> msgStr = StringToJavaString(env, msg);
-    env->CallStaticVoidMethod(gF2LogClass->obj(), method, tagStr.obj(), msgStr.obj());
+    env->CallVoidMethod(gF2LogClass->obj(), method, tagStr.obj(), msgStr.obj());
+    if(HasException(env)) {
+        jni::ClearException(env);
+    }
 }
 
 static bool OnJniLoad(JNIEnv *env) {

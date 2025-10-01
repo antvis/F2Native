@@ -15,12 +15,20 @@ class Marker : public Shape {
         SetFillColor(fill);
     }
 
+    Marker(const util::Point &center, const float radius, const util::Size &size, const std::string &fill, const std::string &symbol)
+            : radius_(radius),  size_(size), symbol_(symbol) {
+        type_ = "marker";
+        point_ = center;
+        SetFillColor(fill);
+    }
+
     BBox CalculateBox(canvas::CanvasContext &context) const override;
 
   protected:
     void CreatePath(canvas::CanvasContext &context) const override;
 
   public:
+    util::Size size_;
     float radius_;
     std::string symbol_ = "circle";
 };

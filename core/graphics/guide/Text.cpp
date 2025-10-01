@@ -1,8 +1,8 @@
-#include "Text.h"
-#include "../XChart.h"
-#include "../global.h"
-#include "../shape/Text.h"
-#include "../../utils/common.h"
+#include "graphics/guide/Text.h"
+#include "graphics/XChart.h"
+#include "graphics/global.h"
+#include "graphics/shape/Text.h"
+#include <utils/common.h>
 
 using namespace xg;
 
@@ -28,6 +28,20 @@ void guide::Text::Render(XChart &chart, shape::Group *container, canvas::CanvasC
     position.y = position.y - _margin[1] * context.GetDevicePixelRatio();
 
     auto text = xg::make_unique<shape::Text>(content, position, textSize, "", textColor);
+
+    if (config_.contains("font")){
+        nlohmann::json font = json::GetObject(config_, "font");
+        if (!font.is_null()){
+            std::string fontStyle = json::GetString(font, "fontStyle", "");
+            std::string fontVariant = json::GetString(font, "fontVariant", "");
+            std::string fontWeight = json::GetString(font, "fontWeight", "");
+            std::string fontFamily = json::GetString(font, "fontFamily", "");
+            text->SetTextFont(fontStyle, fontVariant, fontWeight, fontFamily);
+        }
+    }
+
+    float fillOpacity = json::GetNumber(config_, "fillOpacity", 1);
+    text->SetFillOpacity(fillOpacity);
     text->SetTextAlign(textAlign);
     text->SetTextBaseline(textBaseLine);
     bbox_ = text->GetBBox(context);

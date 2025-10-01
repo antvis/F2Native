@@ -46,7 +46,7 @@ class MatrixUtil {
         (*out)[5] = matrix[5];
     }
 
-    static void Rotate(Matrix *out, const Matrix &matrix, int r) {
+    static void Rotate(Matrix *out, const Matrix &matrix, double r) {
         double c = std::cos(r);
         double s = std::sin(r);
         double m11 = matrix[0] * c + matrix[2] * s;

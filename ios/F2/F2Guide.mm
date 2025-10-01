@@ -1,6 +1,6 @@
 #import "F2Guide.h"
 #import "F2Utils.h"
-#import "../../core/graphics/guide/GuideController.h"
+#import <graphics/guide/GuideController.h>
 
 @interface F2Guide () {
     xg::guide::GuideController *_guide;
@@ -55,6 +55,13 @@
 - (F2Guide * (^)(NSDictionary *config))point {
     return ^id(NSDictionary *config) {
         self->_guide->Point([F2SafeJson([F2Utils toJsonString:config]) UTF8String]);
+        return self;
+    };
+}
+
+- (F2Guide * (^)(NSDictionary *config))tag {
+    return ^id(NSDictionary *config) {
+        self->_guide->Tag([F2SafeJson([F2Utils toJsonString:config]) UTF8String]);
         return self;
     };
 }

@@ -11,7 +11,7 @@
 #ifndef XG_BRIDGE_RAILINGIOS
 #define XG_BRIDGE_RAILINGIOS
 
-#include "AbstractBridgeRailing.h"
+#include "../bridge/AbstractBridgeRailing.h"
 
 namespace xg {
 namespace bridge {

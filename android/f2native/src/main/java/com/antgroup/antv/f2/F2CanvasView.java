@@ -17,10 +17,13 @@ public class F2CanvasView extends FrameLayout {
     public static boolean mLoadedF2Library = false;
 
     static {
-        if (!mLoadedF2Library) {
-            F2CommonUtils.loadLibrary("f2");
-            mLoadedF2Library = true;
-        }
+        Class<?>[] nativeClasses = new Class<?>[] {
+                F2CanvasView.class,
+                F2ChartBridge.class,
+                NativeChartProxy.class
+        };
+        F2CommonHelper.get().loadLibrary("f2", nativeClasses);
+        mLoadedF2Library = true;
     }
 
     public F2CanvasView(Context context) {
@@ -39,25 +42,19 @@ public class F2CanvasView extends FrameLayout {
     }
 
     // 单位是px
-    public void init(int widthPixel, int heightPixel, F2Config config) {
+    public void setCanvasInfo(int widthPixel, int heightPixel, String canvasBizId) {
         if (mF2BaseCanvasView != null) {
-            mF2BaseCanvasView.init(widthPixel, heightPixel, config);
+            mF2BaseCanvasView.setCanvasInfo(widthPixel, heightPixel, canvasBizId);
         }
     }
 
     private void innerLog(String content) {
-        F2Log.i("F2CanvasView", content);
+        F2Log.get().i("F2CanvasView", content);
     }
 
-    public void initCanvasContext() {
+    public void setCanvasBizId(String canvasBizId) {
         if (mF2BaseCanvasView != null) {
-            mF2BaseCanvasView.initCanvasContext();
-        }
-    }
-
-    public void initCanvasContext(F2Config config) {
-        if (mF2BaseCanvasView != null) {
-            mF2BaseCanvasView.initCanvasContext(config);
+            mF2BaseCanvasView.setCanvasBizId(canvasBizId);
         }
     }
 
@@ -100,6 +97,12 @@ public class F2CanvasView extends FrameLayout {
         }
     }
 
+    public void setOnCanvasGestureListener(final OnCanvasGestureListener onCanvasGestureListener) {
+        if (mF2BaseCanvasView != null) {
+            mF2BaseCanvasView.setOnCanvasGestureListener(onCanvasGestureListener);
+        }
+    }
+
     public boolean hasAdapter() {
         if (mF2BaseCanvasView != null) {
             return mF2BaseCanvasView.hasAdapter();
@@ -134,29 +137,25 @@ public class F2CanvasView extends FrameLayout {
         void onDestroy();
     }
 
-    public static class ConfigBuilder extends F2Config.Builder<ConfigBuilder> {
-        protected static final String KEY_CANVAS_BIZ_ID = "canvasBizId";
-        protected static final String KEY_APP_ID = "appId";
-
-        public ConfigBuilder canvasBizId(String canvasBizId) {
-            return setOption(KEY_CANVAS_BIZ_ID, canvasBizId);
-        }
-
-        public ConfigBuilder appId(String appId) {
-            return setOption(KEY_APP_ID, appId);
-        }
-
-        @Override
-        public F2Config build() {
-            if (!options.has(KEY_CANVAS_BIZ_ID)) {
-                throw new NullPointerException("Not found canvasBizId");
-            }
-            return super.build();
-        }
-    }
-
     public interface OnCanvasTouchListener {
         void onTouch(F2CanvasView canvasView, TouchEvent event);
+    }
+
+    public interface OnCanvasGestureListener {
+
+        String TOUCH_START_TYPE = "touchstart";
+        String TOUCH_MOVE_TYPE = "touchmove";
+        String TOUCH_END_TYPE = "touchend";
+
+        boolean onSingleTapUp(MotionEvent event);
+
+        void onLongPress(MotionEvent e, boolean isPress, String eventType);
+
+        boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY);
+
+        void onTouchChange(MotionEvent event, boolean b);
+
+        boolean onScale(MotionEvent event, boolean isScale, String eventType);
     }
 
     public static class TouchEvent {
@@ -209,7 +208,7 @@ public class F2CanvasView extends FrameLayout {
                     points.put(point);
                 }
             } catch (Exception e) {
-                F2Log.e("F2CanvasView", "#TouchEvent exception " + e.toString());
+                F2Log.get().e("F2CanvasView", "#TouchEvent exception " + e.toString());
             }
 
             builder.setOption("points", points);

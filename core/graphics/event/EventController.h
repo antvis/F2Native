@@ -16,6 +16,7 @@ namespace event {
 
 class Event;
 typedef std::function<bool(Event &event)> EventCallbackType;
+typedef std::function<std::string(Event &event)> EventRetCallbackType;
 
 class Event {
   public:
@@ -33,13 +34,17 @@ class Event {
 class EventController {
   public:
     void AddCallback(std::string type, EventCallbackType callback) { listeners_[type].push_back(callback); }
+    void AddRetCallback(std::string type, EventRetCallbackType callback) { retListeners_[type].push_back(callback); }
 
-    ~EventController() { listeners_.clear(); }
+    void RemoveCallback(std::string type) { listeners_.erase(type); }
+    void RemoveRetCallback(std::string type) { retListeners_.erase(type); }
+
+    ~EventController() { listeners_.clear(); retListeners_.clear(); }
 
     bool OnTouchEvent(Event &event) {
         // TODO 增加安全行校验，当前是否数据 or 状态是否支持能够支持事件分发
 
-        if(event.eventType == "touchstart") {
+        if (event.eventType == "touchstart") {
             bool ret = false;
             // fixed: 上一次的事件序列还未结束又开始新的事件，先结束之前的。
             if(!startEvent_.eventType.empty()) {
@@ -51,10 +56,18 @@ class EventController {
         } else if(event.eventType == "touchend") {
             return this->OnTouchEnd(event);
         } else if(event.eventType == "touchcancel") {
-            //            return this->OnTouchCancel(event);
             return this->OnTouchEnd(event);
         }
         return false;
+    }
+    
+    const std::string OnTapEvent(Event &event) {
+        // TODO 增加安全行校验，当前是否数据 or 状态是否支持能够支持事件分发
+
+        if (event.eventType == "tap") {
+            return this->OnSingleTap(event);
+        }
+        return "";
     }
 
     bool EmitEvent(std::string eventType, Event &event) {
@@ -64,8 +77,25 @@ class EventController {
                       [&](EventCallbackType &callback) -> void { ret = callback(event) || ret; });
         return ret;
     }
+    
+    const std::string EmitTapEvent(std::string eventType, Event &event) {
+        std::string ret = "";
+        auto &callbacks = retListeners_[eventType];
+        std::for_each(callbacks.begin(), callbacks.end(),
+                      [&](EventRetCallbackType &callback) -> void { ret = callback(event); });
+        return ret;
+    }
 
   private:
+    const std::string OnSingleTap(Event &event) {
+        if (event.points.empty())
+            return "";
+        Reset();
+        startEvent_ = event;
+        preEvent_ = event;
+        const std::string ret = EmitTapEvent("click", event);
+        return ret;
+    }
     bool OnTouchStart(Event &event) {
         if(event.points.empty())
             return false;
@@ -203,6 +233,7 @@ class EventController {
 
   private:
     std::map<std::string, std::vector<EventCallbackType>> listeners_;
+    std::map<std::string, std::vector<EventRetCallbackType>> retListeners_;
     Event startEvent_;
     Event preEvent_;
     double startDistance_ = 1;

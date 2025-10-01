@@ -7,7 +7,6 @@ import android.view.View.OnAttachStateChangeListener
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
 import com.antgroup.antv.f2.*
-import com.antgroup.antv.f2.F2CanvasView.ConfigBuilder
 import com.antgroup.antv.f2.F2CanvasView.OnCanvasTouchListener
 import java.util.*
 
@@ -47,7 +46,7 @@ class BridgeControl : OnAttachStateChangeListener {
                 try {
                     handleAttr(obj as HashMap<String, String>?)
                 } catch (e: Exception) {
-                    F2Log.e(TAG, "handleMap e $e")
+                    F2Log.get().e(TAG, "handleMap e $e")
                 }
             }
         }
@@ -61,7 +60,7 @@ class BridgeControl : OnAttachStateChangeListener {
         if (mRatio == 0.0) {
             mRatio = 1.0
         }
-        mCanvasView!!.init(width, height, null)
+        mCanvasView!!.setCanvasInfo(width, height, null)
         mF2BridgeRailing = F2BridgeRailing(mCanvasView)
         val rpxRatio = 1.0
         mF2ChartBridge = F2ChartBridge(
@@ -72,6 +71,11 @@ class BridgeControl : OnAttachStateChangeListener {
             mRatio,
             1 / (rpxRatio * mRatio)
         )
+        mF2ChartBridge!!.setF2ChartInvokeCallback(object : IF2ChartInvokeCallback {
+            override fun onResult(result: String) {
+                handleResult("render", mCanvasBizId ?: "", result)
+            }
+        })
     }
 
     private fun reset() {
@@ -183,7 +187,7 @@ class BridgeControl : OnAttachStateChangeListener {
     }
 
     fun invokeMethod(methodName: String, param: Any?) {
-        F2Log.i(
+        F2Log.get().i(
             TAG,
             "invokeMethod methodName: " + methodName + " param :" + JSONObject.toJSONString(param)
         )
@@ -195,19 +199,7 @@ class BridgeControl : OnAttachStateChangeListener {
 //        }
         val bizId = if (TextUtils.isEmpty(mBizName)) mCanvasBizId else mCanvasBizId + "_" + mBizName
         //        mCSCallback = cSCallback;
-        mF2ChartBridge!!.invokeMethod(
-            methodName,
-            JSONObject.toJSONString(param),
-            object : F2ChartBridgeListener(methodName, bizId) {
-                override fun onResult(methodNameStr: String, bizIdStr: String, result: String) {
-                    F2Log.i(
-                        TAG,
-                        "invokeMethod onResult methodName: $methodNameStr,bizIdStr: $bizIdStr,result:$result"
-                    )
-                    handleResult(methodNameStr, bizIdStr, result)
-                }
-            }
-        )
+        mF2ChartBridge!!.invokeMethod(methodName, JSONObject.toJSONString(param))
     }
 
     private fun handleResult(methodName: String, bizId: String, resultStr: String) {
@@ -227,7 +219,7 @@ class BridgeControl : OnAttachStateChangeListener {
                 // 获取渲染指令耗时
                 val renderDuration = renderResult.getLongValue("renderDurationMM")
                 // 上报绘制检测，包含白屏检测
-                mCanvasView!!.initCanvasContext(ConfigBuilder().canvasBizId(bizId).build())
+                mCanvasView!!.setCanvasBizId(bizId)
                 mCanvasView!!.sendRenderDetectEvent(
                     renderDuration,
                     isRenderSuccess,
@@ -262,9 +254,9 @@ class BridgeControl : OnAttachStateChangeListener {
         try {
             reset()
             instanceCount--
-            F2Log.e(TAG, "onDestroy instanceCount: " + instanceCount)
+            F2Log.get().e(TAG, "onDestroy instanceCount: " + instanceCount)
         } catch (t: Throwable) {
-            F2Log.e(TAG, "onDestroy throwable: " + t.message)
+            F2Log.get().e(TAG, "onDestroy throwable: " + t.message)
         }
     }
 
@@ -289,6 +281,6 @@ class BridgeControl : OnAttachStateChangeListener {
 
     init {
         instanceCount++
-        F2Log.e(TAG, "create instanceCount: " + instanceCount)
+        F2Log.get().e(TAG, "create instanceCount: " + instanceCount)
     }
 }

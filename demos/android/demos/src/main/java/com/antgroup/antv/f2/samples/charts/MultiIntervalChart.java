@@ -16,6 +16,12 @@ public class MultiIntervalChart implements F2CanvasView.Adapter {
     public void onCanvasDraw(F2CanvasView canvasView) {
         if (mChart == null) {
             mChart = F2Chart.create(canvasView.getContext(), "MultiIntervalChart", canvasView.getWidth(), canvasView.getHeight());
+            canvasView.setOnCanvasTouchListener(new F2CanvasView.OnCanvasTouchListener() {
+                @Override
+                public void onTouch(F2CanvasView canvasView, F2CanvasView.TouchEvent event) {
+                    mChart.postTouchEvent(event);
+                }
+            });
         }
 
         mChart.setCanvas(canvasView);
@@ -23,6 +29,7 @@ public class MultiIntervalChart implements F2CanvasView.Adapter {
         mChart.source(Utils.loadAssetFile(canvasView.getContext(), "mockData_multiIntervalsChart.json"));
         mChart.interval().position("月份*月均降雨量").color("name").adjust("dodge");
         mChart.setScale("月份", new F2Chart.ScaleConfigBuilder().range(new double[]{0.065, 0.935}));
+        mChart.tooltip(new F2Chart.ToolTipConfigBuilder());
         mChart.render();
     }
 

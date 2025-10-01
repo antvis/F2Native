@@ -22,11 +22,13 @@ class Element {
     Element &operator=(const Element &) = delete;
 
   protected:
+    /// cfg包含绘制各个shape需要的所有属性
+    /// @param cfg json
     Element();
 
   public:
     static bool IsUnchanged(const Matrix &matrix);
-
+    string identifier;
     /// 绘制
     /// @param context canvas的context
     void Draw(canvas::CanvasContext &context) const;
@@ -47,6 +49,7 @@ class Element {
     virtual void MoveTo(float x, float y);
     virtual void Apply(Vector2D *v);
     virtual void Transform(const std::vector<TransformAction> &actions);
+    virtual void Alpha(float alpha);
 
     /// 子类处理内部绘制逻辑
     /// @param context canvas的context
@@ -66,6 +69,8 @@ class Element {
 
     virtual const BBox &GetBBox(canvas::CanvasContext &context) { return bbox_; };
     virtual BBox CalculateBox(canvas::CanvasContext &context) const { return {static_cast<float>(std::nan(0))}; }
+    
+    virtual nlohmann::json GetSpecifyConfig() const {return {};}
 
     /// set属性
     inline void SetZIndex(int z) { zIndex_ = z; }
@@ -86,17 +91,32 @@ class Element {
 
     virtual void DoClip(canvas::CanvasContext &) const {}
     
+    virtual void DoClipByIdentifier(canvas::CanvasContext &, string identifier) const {}
+    
+    virtual bool NeedShapeClip(canvas::CanvasContext &, const std::function<void(string)>& callback) const {return false;}
+    
+    // 各元素独立实现，用于更新属性值
+    virtual void UpdateAttribute(std::string attrName, double val) {}
+    virtual void UpdateAttribute(std::string attrName, const std::string &val) {}
+    
     virtual void SetFillStrokeStyle(const std::string &strokeColor, const std::string &fillColor) {
         SetStorkColor(strokeColor);
         SetFillColor(fillColor);
     }
-    
     
     /// 设置fillstyle 并解析透明度
     /// @param fillColor 颜色
     virtual void SetFillColor(const std::string &fillColor) {
         if(!fillColor.empty()) {
             SetFillStyle(util::ColorParser(fillColor));
+            SetFillOpacity(OpacityParserString(fillColor));
+        }
+    }
+    
+    virtual void SetFillColor(const std::string &fillColor, canvas::CanvasContext &context) {
+        if(!fillColor.empty()) {
+            BBox bbox = GetBBox(context);
+            SetFillStyle(util::ColorParser(fillColor, &bbox));
             SetFillOpacity(OpacityParserString(fillColor));
         }
     }
@@ -134,7 +154,17 @@ class Element {
     virtual inline void SetLineWidth(const float lineWidth) {
         lineWidth_ = lineWidth;
     }
-
+    
+    virtual inline void SetLineCap(const std::string &lineCap) {
+        lineCap_ = lineCap;
+    }
+    
+    virtual inline void SetLineJoin(const std::string &lineJoin) {
+        lineJoin_ = lineJoin;
+    }
+    
+    virtual inline float GetFillOpacity() { return fillOpacity_;}
+    
   protected:
     util::Point point_;
     canvas::CanvasFillStrokeStyle fillStyle_;
@@ -142,6 +172,8 @@ class Element {
     float strokeOpacity_ = DEFAULT_OPACITY;
     float fillOpacity_ = DEFAULT_OPACITY;
     float lineWidth_ = std::nan("0");
+    string lineCap_ = "butt";
+    string lineJoin_ = "miter";
 
   private:
     void InitElementId();

@@ -4,14 +4,15 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.antgroup.antv.f2.F2CanvasView;
 import com.antgroup.antv.f2.F2Chart;
 import com.antgroup.antv.f2.F2Config;
 import com.antgroup.antv.f2.F2Function;
+import com.antgroup.antv.f2.F2Guide;
 import com.antgroup.antv.f2.F2Log;
 import com.antgroup.antv.f2.samples.Utils;
 
@@ -21,7 +22,6 @@ import java.io.InputStream;
  * 基础折线图
  *
  * @author qingyuan.yl
- * @date 2020-09-27
  */
 public class SingleLineChart_1 implements F2CanvasView.Adapter, F2CanvasView.OnCanvasTouchListener {
     private F2Chart mChart;
@@ -42,20 +42,21 @@ public class SingleLineChart_1 implements F2CanvasView.Adapter, F2CanvasView.OnC
                 .setOption("onPressStart", mChart, new F2Function() {
                     @Override
                     public F2Config execute(String param) {
-                        F2Log.i("tooltip", "onPressStart: " + param);
+                        F2Log.get().i("tooltip", "onPressStart: " + param);
                         return new F2Config.Builder().build();
                     }
                 })
                 .setOption("onPressEnd", mChart, new F2Function() {
                     @Override
                     public F2Config execute(String param) {
-                        F2Log.i("tooltip", "onPressEnd: " + param);
+                        F2Log.get().i("tooltip", "onPressEnd: " + param);
                         return new F2Config.Builder().build();
                     }
                 })
                 .setOption("onPress", mChart, new F2Function() {
                     @Override
                     public F2Config execute(String param) {
+                        F2Log.get().i("tooltip", "onPress: " + param);
                         return new F2Config.Builder().build();
                     }
                 }));
@@ -77,7 +78,8 @@ public class SingleLineChart_1 implements F2CanvasView.Adapter, F2CanvasView.OnC
                             rst = param;
                         }
 
-                        int index = jsonObject.getIntValue("index");
+                        JSONObject params = JSON.parseObject(param);
+                        int index = params.getIntValue("index");
                         return new F2Config.Builder()
                                 .setOption("textColor", (index % 2 == 0 ? "#000000" : "#DC143C"))
                                 .setOption("xOffset", (index % 2 == 0) ? 0 : -30)
@@ -95,6 +97,32 @@ public class SingleLineChart_1 implements F2CanvasView.Adapter, F2CanvasView.OnC
         );
         mChart.setScale("date", new F2Chart.ScaleConfigBuilder().tickCount(5));
         mChart.setScale("value", new F2Chart.ScaleConfigBuilder().setOption("nice", true));
+        String guideJson = "[\n" +
+                "    {\n" +
+                "        \"position\": [\"2017-06-05\",116]\n" +
+                "    },\n" +
+                "    {\n" +
+                "        \"position\": [\"2017-06-10\",85]\n" +
+                "    }\n" +
+                "]";
+        JSONArray flagsData = JSONArray.parseArray(guideJson);
+
+        for (int i = 0; i < flagsData.size(); i++) {
+            try {
+                JSONObject flagCfg = flagsData.getJSONObject(i);
+                F2Guide.GuidePointConfigBuilder cfg = new F2Guide.GuidePointConfigBuilder();
+                JSONArray position = flagCfg.getJSONArray("position");
+                cfg.position(new org.json.JSONArray(position.toJSONString()))
+                        .size(4)
+                        .shape("circle")
+                        .fill("#108EE9")
+                        .lineWidth(0.1f);
+
+                mChart.guide().point(cfg);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         mChart.render();
     }
@@ -121,13 +149,13 @@ public class SingleLineChart_1 implements F2CanvasView.Adapter, F2CanvasView.OnC
             bitmap = BitmapFactory.decodeStream(ins);
             ins.close();
         } catch (Throwable t) {
-            Log.e("SingleLineChart1", "getImageFromAssets error:" + t);
+            F2Log.get().e("SingleLineChart1", "getImageFromAssets error:", t);
         } finally {
             if (ins != null) {
                 try {
                     ins.close();
                 } catch (Throwable e) {
-                    Log.e("SingleLineChart1", "getImageFromAssets close error:" + e);
+                    F2Log.get().e("SingleLineChart1", "getImageFromAssets close error:", e);
                 }
             }
         }

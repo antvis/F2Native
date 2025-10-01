@@ -7,11 +7,11 @@
 //
 
 #include "Linear.h"
-#include "../../XChart.h"
+#include "graphics/XChart.h"
 
 using namespace xg::scale;
 
-std::string Linear::GetTickText(const nlohmann::json &item, XChart *chart) {
+std::string Linear::GetTickText(const nlohmann::json &item, XChart *chart, std::size_t index) {
     if(!this->tickCallbackId.empty() && chart) {
         nlohmann::json content{{"content", item.dump()}};
         auto rst = xg::json::ParseString((chart->InvokeFunction(this->tickCallbackId, content.dump())));

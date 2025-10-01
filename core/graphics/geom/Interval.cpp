@@ -1,7 +1,7 @@
-#include "Interval.h"
-#include "../XChart.h"
-#include "../scale/Scale.h"
-#include "../scale/continuous/Linear.h"
+#include "graphics/geom/Interval.h"
+#include "graphics/XChart.h"
+#include "graphics/scale/Scale.h"
+#include "graphics/scale/continuous/Linear.h"
 
 using namespace xg;
 
@@ -22,7 +22,7 @@ geom::Interval &geom::Interval::Tag(const std::string &json) {
                                  {"textAlign", "center"},
                                  {"textBaseline", "bottom"},
                                  {"fill", "#808080"},
-                                 {"textSize", DEFAULT_FONTSIZE}};
+                                 {"textSize", 10.f}};
 
     if(config.is_object()) {
         defaultCfg.merge_patch(config);
@@ -31,7 +31,7 @@ geom::Interval &geom::Interval::Tag(const std::string &json) {
     return *this;
 }
 
-nlohmann::json geom::Interval::CreateShapePointsCfg(XChart &chart, XData &item, size_t index) {
+nlohmann::json geom::Interval::CreateShapePointsCfg(XChart &chart, nlohmann::json &item, size_t index) {
 
     nlohmann::json rst;
     const std::string &xField = GetXScaleField();
@@ -39,21 +39,11 @@ nlohmann::json geom::Interval::CreateShapePointsCfg(XChart &chart, XData &item, 
 
     scale::AbstractScale &xScale = chart.GetScale(xField);
     scale::AbstractScale &yScale = chart.GetScale(yField);
-    
-    const nlohmann::json &data = (*item.data);
-    double x = item.dodge.size() >= 1 ? xScale.Scale(item.dodge[0]) : xScale.Scale(data[xField]);
 
-    if (!item.adjust.empty()) {
+    double x = xScale.Scale(item[xField]);
+    if(item[yField].is_array()) {
         vector<double> y;
-        for(size_t i = 0; i < item.adjust.size(); i++) {
-            double y_d = item.adjust[i];
-            double y_s = yScale.Scale(y_d);
-            y.push_back(y_s);
-        }
-        rst["y"] = y;
-    } else if(data[yField].is_array()) { //区间柱状图
-        vector<double> y;
-        vector<double> stack_item = data[yField];
+        vector<double> stack_item = item[yField];
         for(size_t i = 0; i < stack_item.size(); i++) {
             double y_d = stack_item[i];
             double y_s = yScale.Scale(y_d);
@@ -61,7 +51,7 @@ nlohmann::json geom::Interval::CreateShapePointsCfg(XChart &chart, XData &item, 
         }
         rst["y"] = y;
     } else {
-        double y = yScale.Scale(data[yField]);
+        double y = yScale.Scale(item[yField]);
         rst["y"] = y;
     }
     double y0 = yScale.Scale(this->GetYMinValue(chart));
@@ -76,7 +66,9 @@ nlohmann::json geom::Interval::CreateShapePointsCfg(XChart &chart, XData &item, 
         widthRatio = size.GetSize(0) * chart.GetCanvasContext().GetDevicePixelRatio() / chart.GetCoord().GetWidth();
     } else {
         normalizeSize = 1.0 / count;
-        if(xScale.GetType() == scale::ScaleType::Linear || xScale.GetType() == scale::ScaleType::TimeSharingLinear) {
+        if(xScale.GetType() == scale::ScaleType::Linear ||
+        xScale.GetType() == scale::ScaleType::TimeSharingLinear||
+                 xScale.GetType() == scale::ScaleType::FiveDaysLinear) {
             normalizeSize *= (xScale.rangeMax - xScale.rangeMin);
         }
     }
@@ -122,7 +114,7 @@ nlohmann::json geom::Interval::getRectPoints(nlohmann::json &cfg) {
     return std::move(rst);
 }
 
-void geom::Interval::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
+void geom::Interval::BeforeMapping(XChart &chart, nlohmann::json &dataArray) {
     auto timestamp = xg::CurrentTimestampAtMM();
     const std::string &yField = this->GetYScaleField();
     auto &xScale = chart.GetScale(GetXScaleField());
@@ -133,7 +125,7 @@ void geom::Interval::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
 
     for(std::size_t index = 0; index < dataArray.size(); ++index) {
 
-        auto &groupData = dataArray[index];
+        nlohmann::json &groupData = dataArray[index];
 
         std::size_t start = 0, end = groupData.size() - 1;
         if(scale::IsCategory(xScale.GetType())) {
@@ -142,37 +134,51 @@ void geom::Interval::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
         }
 
         for(std::size_t position = start; position <= end; ++position) {
-            auto &item = groupData[position];
-            
-            if (!(*item.data).contains(yField)) {
-                continue;;
+            nlohmann::json &item = groupData[position];
+
+            if(!item.contains(yField)) {
+                // 无效点
+                continue;
             }
-     
-            const nlohmann::json &yValue = (*item.data)[yField];
+            nlohmann::json yValue = item[yField];
             nlohmann::json cfg = CreateShapePointsCfg(chart, item, index);
             nlohmann::json points = getRectPoints(cfg);
-            item._points = points;
+            item["_points"] = points;
 
-            if(item._beforeMapped) {
+            if (item.contains("_beforeMapped") && json::GetBool(item, "_beforeMapped", false) && !json::GetBool(item, "_needBeforeMapping", false)) {
                 continue;
             }
 
             if(this->tagConfig_.is_object()) {
-                item._tag = tagConfig_;
-                item._tag["content"] = yValue.dump();
+                item["_tag"] = tagConfig_;
+                item["_tag"]["content"] = yValue.dump();
             }
 
-            item._style = styleConfig_;
-            item._style["content"] = yValue.dump();
-            item._beforeMapped = true;
+            nlohmann::json _styleConfig;
+            _styleConfig.merge_patch(styleConfig_);
+            if (isSelected(item)) {
+                item["_isSelected"] = true;
+                if (selectedStyle_ != nullptr) {
+                    _styleConfig.merge_patch(selectedStyle_);
+                }
+            } else {
+                item["_isSelected"] = false;
+                if (unSelectedStyle_ != nullptr) {
+                    _styleConfig.merge_patch(unSelectedStyle_);
+                }
+            }
+            item["_style"] = _styleConfig;
+            item["_style"]["content"] = yValue.dump();
+            item["_beforeMapped"] = true;
+            item["_needBeforeMapping"] = false;
         }
     }
     chart.GetLogTracer()->trace("Geom#%s Beforemapping duration: %lums", type_.data(), (CurrentTimestampAtMM() - timestamp));
 }
 
-void geom::Interval::Draw(XChart &chart, const XDataArray &groupData, std::size_t start, std::size_t end) const {
+void geom::Interval::Draw(XChart &chart, const nlohmann::json &groupData, std::size_t start, std::size_t end) const {
     for(std::size_t i = start; i <= end; ++i) {
-        const auto &item = groupData[i];
+        const nlohmann::json &item = groupData[i];
         chart.geomShapeFactory_->DrawGeomShape(chart, type_, shapeType_, item, i, i + 1, *this->container_, this->connectNulls_);
     }
 }

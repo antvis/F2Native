@@ -13,6 +13,7 @@ struct AnimateState {
     float width = 0;
     float height = 0;
     float angle = 0.;
+    float alpha = 1.;
 };
 
 struct InterpolateNumber {
@@ -87,7 +88,7 @@ struct Interpolator {
 };
 
 struct AnimInfo {
-    shape::Shape *shape = nullptr;
+    shape::Element *shape = nullptr;
     std::size_t delay = 0;
     std::size_t duration = 0;
     std::string erasing;
@@ -101,7 +102,7 @@ struct AnimInfo {
     std::function<void()> onEnd = nullptr;
 };
 
-static AnimInfo CreateAnimInfo(shape::Shape *shape, const AnimateState &source, const AnimateState &end, nlohmann::json &cfg) {
+static AnimInfo CreateAnimInfo(shape::Element *shape, const AnimateState &source, const AnimateState &end, nlohmann::json &cfg) {
     AnimInfo animInfo;
     animInfo.delay = cfg["delay"];
     animInfo.duration = cfg["duration"];
@@ -115,12 +116,16 @@ static AnimInfo CreateAnimInfo(shape::Shape *shape, const AnimateState &source, 
     if(end.width > 0) {
         interpolator.attrs["width"] = std::make_unique<InterpolateNumber>(source.width, end.width);
     }
-    if(end.height > 0) {
+    if(end.height != 0) {
         interpolator.attrs["height"] = std::make_unique<InterpolateNumber>(source.height, end.height);
     }
 
     if(end.angle > 0) {
         interpolator.attrs["endAngle"] = std::make_unique<InterpolateNumber>(source.angle, end.angle);
+    }
+    
+    if(source.alpha != end.alpha) {
+        interpolator.attrs["alpha"] = std::make_unique<InterpolateNumber>(source.alpha, end.alpha);
     }
 
     animInfo.interpolate = std::move(interpolator);
@@ -270,7 +275,9 @@ static double DoErasing(std::string type, double k) {
         return cubicIn(k);
     } else if(type == "cubicOut") {
         return cubicOut(k);
-    } else if(type == "elasticIn") {
+    } else if(type == "cubicInOut") {
+        return cubicInOut(k);
+    }else if(type == "elasticIn") {
         return elasticIn(k);
     } else if(type == "elasticOut") {
         return elasticOut(k);

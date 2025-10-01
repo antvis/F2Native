@@ -17,6 +17,15 @@ typedef struct BBox_ {
 
 class BBoxUtil {
   public:
+    static const bool IsPointHitBBox(const util::Point &point, const util::BBox &bbox, const std::string &dimType) {
+        // 柱图坐标轴点击，会使用这个函数，但是由于文本的bbox区域与点击区域无法对齐，因此放开文本垂直于坐标轴的空间（点击tick文本上方的柱子也会触发这个函数返回true）
+        if (dimType == "x") {
+            return point.x > bbox.minX && point.x < bbox.maxX;
+        } else {
+            return point.y > bbox.minY && point.y < bbox.maxY;
+        }
+    }
+    
     static BBox GetBBoxFromLine(float x0, float y0, float x1, float y1, float lineWidth) {
         const float hafWidth = lineWidth / 2;
         return {fmin(x0, x1) - hafWidth, fmax(x0, x1) + hafWidth, fmin(y0, y1) - hafWidth, fmax(y0, y1) + hafWidth, .0f, .0f};

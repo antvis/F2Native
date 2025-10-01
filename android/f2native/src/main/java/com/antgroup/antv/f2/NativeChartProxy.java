@@ -1,5 +1,7 @@
 package com.antgroup.antv.f2;
 
+import android.graphics.Bitmap;
+
 /**
  * @author qingyuan.yl
  * @date 2020-09-23
@@ -300,20 +302,6 @@ public final class NativeChartProxy {
         return nDestroyFunction(mNativeChartHandler, nativeFunctionHandle);
     }
 
-    void adjustScale(boolean adjust) {
-        if (mNativeChartHandler == 0) {
-            return ;
-        }
-        nAdjustScale(mNativeChartHandler, adjust);
-    }
-
-    void syncYScale(boolean sync) {
-        if (mNativeChartHandler == 0) {
-            return;
-        }
-        nAdjustScale(mNativeChartHandler, sync);
-    }
-
     long getNativeChartHandler() {
         return mNativeChartHandler;
     }
@@ -396,7 +384,6 @@ public final class NativeChartProxy {
 
     private native static int nConfig(long nativeChartHandler, String config);
 
-    private native static void nAdjustScale(long nativeChartHandler, boolean adjust);
+    public native static int nLoadImageResult(long canvasImageHandler, Bitmap bitmap, boolean isSuccess) ;
 
-    private native static void nSyncYScale(long nativeChartHandler, boolean sync);
 }

@@ -19,12 +19,14 @@ static nlohmann::json DefaultLegendConfig() {
                                  {"lineBottom", 5},
                                  {"itemGap", 10},
                                  {"showTitle", false},
-                                 {"titleStyle", {{"textSize", DEFAULT_FONTSIZE}, {"fill", "#808080"}, {"textAlign", "start"}, {"textBaseline", "top"}}},
-                                 {"nameStyle", {{"textSize", DEFAULT_FONTSIZE}, {"fill", "#808080"}, {"textAlign", "start"}, {"textBaseline", "top"}}},
-                                 {"valueStyle", {{"textSize", DEFAULT_FONTSIZE}, {"fill", "#808080"}, {"textAlign", "start"}, {"textBaseline", "top"}}},
+                                 {"titleStyle", {{"textSize", 12}, {"fill", "#808080"}, {"textAlign", "start"}, {"textBaseline", "top"}}},
+                                 {"nameStyle", {{"textSize", 12}, {"fill", "#808080"}, {"textAlign", "start"}, {"textBaseline", "top"}}},
+                                 {"valueStyle", {{"textSize", 12}, {"fill", "#808080"}, {"textAlign", "start"}, {"textBaseline", "top"}}},
                                  {"itemWidth", "auto"},
                                  {"wordSpace", 6},
                                  {"radius", 3},
+                                 {"width", 0},
+                                 {"height", 0},
                                  {"symbol", "circle"}};
 
     nlohmann::json top = {{
@@ -74,6 +76,8 @@ struct LegendRange {
 struct LegendMarker {
     std::string fill;
     float radius = 3;
+    float width = 0;
+    float height = 0;
     std::string symbol = "circle";
     std::string stroke = "#ffffff";
 };
@@ -99,7 +103,6 @@ class Legend {
 
     float CalLegendWidth(XChart &chart);
     float CalLegendHeight(XChart &chart);
-    float CalLegendStep(XChart &chart);
 
   private:
     std::string field_;
@@ -133,7 +136,7 @@ class LegendController {
   private:
     nlohmann::json legendCfg_;
     bool enable_ = true;
-    std::string position_ = "";
+    std::string position_ = "top";
     LegendRange legendRange_{};
     std::unordered_map<std::string, std::vector<Legend>> legends_;
     float legendWidth_ = 0.f;

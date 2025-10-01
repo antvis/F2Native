@@ -15,8 +15,13 @@ void xg::shape::Rect::CreatePath(canvas::CanvasContext &context) const {
             float width = static_cast<float>(size_.width);
             float x = static_cast<float>(point_.x);
             float y = static_cast<float>(point_.y);
-            context.MoveTo(x + roundings[2], y);
-            context.LineTo(x + width - roundings[3], y);
+            if (width >= 0) {
+                context.MoveTo(x + roundings[2], y);
+                context.LineTo(x + width - roundings[3], y);
+            } else {
+                context.MoveTo(x - roundings[2], y);
+                context.LineTo(x + width + roundings[3], y);
+            }
             if (height < 0) {
                 context.QuadraticCurveTo(x + width, y, x + width, y - roundings[3]);
                 context.LineTo(x + width, y + height + roundings[1]);
@@ -24,17 +29,25 @@ void xg::shape::Rect::CreatePath(canvas::CanvasContext &context) const {
                 context.QuadraticCurveTo(x + width, y, x + width, y + roundings[3]);
                 context.LineTo(x + width, y + height - roundings[1]);
             }
-            context.QuadraticCurveTo(x + width, y + height, x + width - roundings[1], y + height);
-            
-            context.LineTo(x + roundings[0], y + height);
+            if (width >= 0) {
+                context.QuadraticCurveTo(x + width, y + height, x + width - roundings[1], y + height);
+                context.LineTo(x + roundings[0], y + height);
+            } else {
+                context.QuadraticCurveTo(x + width, y + height, x + width + roundings[1], y + height);
+                context.LineTo(x - roundings[0], y + height);
+            }
             if (height < 0) {
                 context.QuadraticCurveTo(x, y + height, x, y + height + roundings[0]);
                 context.LineTo(x, y - roundings[2]);
-            }else {
+            } else {
                 context.QuadraticCurveTo(x, y + height, x, y + height - roundings[0]);
                 context.LineTo(x, y + roundings[2]);
             }
-            context.QuadraticCurveTo(x, y, x + roundings[2], y);
+            if (width >= 0) {
+                context.QuadraticCurveTo(x, y, x + roundings[2], y);
+            } else {
+                context.QuadraticCurveTo(x, y, x - roundings[2], y);
+            }
         } else {
             context.Rect(point_.x, point_.y, size_.width, size_.height);
         }
@@ -79,4 +92,8 @@ void xg::shape::Rect::SetRoundings(float (&_roundings)[4]) {
         _roundings[3] *= scale;
     }
     memcpy(roundings, _roundings, sizeof(float) * 4);
+}
+
+nlohmann::json xg::shape::Rect::GetSpecifyConfig() const{
+    return {{"radius", radius_}, {"radius0", radius0_}, {"startAngle", startAngle_}, {"endAngle", endAngle_}};
 }

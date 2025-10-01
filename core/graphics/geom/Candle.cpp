@@ -1,10 +1,10 @@
-#include "Candle.h"
-#include "../XChart.h"
-#include "../scale/Scale.h"
+#include "graphics/geom/Candle.h"
+#include "graphics/XChart.h"
+#include "graphics/scale/Scale.h"
 
 using namespace xg;
 
-nlohmann::json geom::Candle::CreateShapePointsCfg(XChart &chart, XData &item, size_t index) {
+nlohmann::json geom::Candle::CreateShapePointsCfg(XChart &chart, nlohmann::json &item, size_t index) {
 
     nlohmann::json rst;
     const std::string &xField = GetXScaleField();
@@ -13,10 +13,10 @@ nlohmann::json geom::Candle::CreateShapePointsCfg(XChart &chart, XData &item, si
     scale::AbstractScale &xScale = chart.GetScale(xField);
     scale::AbstractScale &yScale = chart.GetScale(yField);
 
-    double x = xScale.Scale((*item.data)[xField]);
+    double x = xScale.Scale(item[xField]);
     std::size_t state = 0; // 0 - 平, 1 涨， -1 跌
 
-    auto &yVal = (*item.data)[yField];
+    nlohmann::json &yVal = item[yField];
     if(!yVal.is_array() || yVal.empty() || yVal.size() < 4) {
         return {{"x", x}, {"y0", 0}, {"y", 0}, {"size", 0}, {"state", 0}, {"max", 0}, {"min", 0}};
     }
@@ -93,41 +93,63 @@ nlohmann::json geom::Candle::getLinePoints(nlohmann::json &cfg) {
     return rst;
 }
 
-void geom::Candle::BeforeMapping(XChart &chart, XDataGroup &dataArray) {
+void geom::Candle::BeforeMapping(XChart &chart, nlohmann::json &dataArray) {
     auto timestamp = xg::CurrentTimestampAtMM();
     const std::string &yField = this->GetYScaleField();
     auto &xScale = chart.GetScale(GetXScaleField());
     for(std::size_t index = 0; index < dataArray.size(); ++index) {
 
-        auto &groupData = dataArray[index];
+        nlohmann::json &groupData = dataArray[index];
 
         std::size_t start = 0, end = groupData.size() - 1;
         if(scale::IsCategory(xScale.GetType())) {
             start = fmax(start, xScale.min);
             end = fmin(end, xScale.max);
         }
-
+        
         for(std::size_t position = start; position <= end; ++position) {
-            auto &item = groupData[position];
-            auto &yValue = (*item.data)[yField];
+            nlohmann::json &item = groupData[position];
+
+            if(!item.contains(yField)) {
+                // 无效点
+                continue;
+            }
+            nlohmann::json yValue = item[yField];
             nlohmann::json cfg = CreateShapePointsCfg(chart, item, index);
             nlohmann::json rect = getRectPoints(cfg);
             nlohmann::json line = getLinePoints(cfg);
 
-            item._rect = rect;
-            item._line = line;
-            item._state = cfg["state"];
-            if(!item._style.is_object()) {
-                item._style = styleConfig_;
+            item["_rect"] = rect;
+            item["_line"] = line;
+            item["_state"] = cfg["state"];
+            if(!item.contains("_style")) {
+                item["_style"] = styleConfig_;
             }
         }
     }
     chart.GetLogTracer()->trace("Geom#%s Beforemapping duration: %lums", type_.data(), (CurrentTimestampAtMM() - timestamp));
 }
 
-void geom::Candle::Draw(XChart &chart, const XDataArray &groupData, std::size_t start, std::size_t end) const {
+void geom::Candle::Draw(XChart &chart, const nlohmann::json &groupData, std::size_t start, std::size_t end) const {
     for(std::size_t i = start; i <= end; ++i) {
-        auto &item = groupData[i];
+        const nlohmann::json &item = groupData[i];
         chart.geomShapeFactory_->DrawGeomShape(chart, type_, shapeType_, item, i, i + 1, *this->container_, this->connectNulls_);
+    }
+}
+
+void geom::Candle::ProcessScale(XChart &chart) {
+    const std::string &yField = this->GetYScaleField();
+    auto &yScale = chart.GetScale(yField);
+    auto &xScale = chart.GetScale(this->GetXScaleField());
+    auto &dataArray = this->GetDataArray();
+    for (auto &groupData : dataArray) {
+        std::size_t start = 0, end = groupData.size() - 1;
+        if (scale::IsCategory(xScale.GetType())) {
+            start = fmax(start, xScale.min);
+            end = fmin(end, xScale.max);
+        }
+        double rangeMin = DBL_MAX, rangeMax = DBL_MIN;
+        util::JsonRangeInGeomDataArray(dataArray, yField, start, end, &rangeMin, &rangeMax);
+        yScale.Change({{"min", rangeMin}, {"max", rangeMax}});
     }
 }

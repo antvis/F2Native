@@ -18,10 +18,7 @@ public class SampleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sample);
         mCanvasView = findViewById(R.id.canvasView);
 
-        mCanvasView.initCanvasContext(new F2CanvasView.ConfigBuilder()
-                .setOption("canvasBizId", "F2NativeDemo")
-                .setOption("appId", "1000")
-                .build());
+        mCanvasView.setCanvasBizId("F2NativeDemo");
 
         ChartModel chartModel = (ChartModel) getIntent().getSerializableExtra("ChartModel");
         setTitle(chartModel.title);

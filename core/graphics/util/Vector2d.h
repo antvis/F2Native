@@ -102,6 +102,14 @@ class Vector2DUtil {
         }
         return M_PI * 2 - angle;
     }
+    
+    static Vector2D Normalize(Vector2D &v) {
+        double length = Length(v);
+        if(xg::IsZero(length)) {
+            return {0, 0};
+        }
+        return {v[0] / length, v[1] / length};
+    }
 };
 } // namespace util
 } // namespace xg

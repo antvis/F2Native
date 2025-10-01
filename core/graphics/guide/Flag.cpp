@@ -1,11 +1,11 @@
-#include "Flag.h"
-#include "../XChart.h"
-#include "../shape/Circle.h"
-#include "../shape/Group.h"
-#include "../shape/Line.h"
-#include "../shape/Rect.h"
-#include "../shape/Text.h"
-#include "../../utils/common.h"
+#include "graphics/guide/Flag.h"
+#include "graphics/XChart.h"
+#include "graphics/shape/Circle.h"
+#include "graphics/shape/Group.h"
+#include "graphics/shape/Line.h"
+#include "graphics/shape/Rect.h"
+#include "graphics/shape/Text.h"
+#include <utils/common.h>
 
 using namespace xg;
 using namespace xg::guide;
@@ -161,6 +161,17 @@ void Flag::DrawFragContent(XChart &chart, shape::Group *container, canvas::Canva
     std::string textColor = config_["textColor"];
     
     auto text = xg::make_unique<shape::Text>(content, util::Point(0, 0), fontSize, "", textColor);
+
+    if (config_.contains("font")){
+        nlohmann::json font = json::GetObject(config_, "font");
+        if (!font.is_null()){
+            std::string fontStyle = json::GetString(font, "fontStyle", "");
+            std::string fontVariant = json::GetString(font, "fontVariant", "");
+            std::string fontWeight = json::GetString(font, "fontWeight", "");
+            std::string fontFamily = json::GetString(font, "fontFamily", "");
+            text->SetTextFont(fontStyle, fontVariant, fontWeight, fontFamily);
+        }
+    }
 
     text->SetPoint(util::Point(contentRect_.x + padding[0], contentRect_.y + contentRect_.height - padding[3] - 1));
     text->SetTextAlign(textAlign);

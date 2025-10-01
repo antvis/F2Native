@@ -8,7 +8,7 @@ class InteractionBase {
   public:
     InteractionBase(XChart *chart) : chart_(chart) {}
 
-    virtual ~InteractionBase() { chart_ = nullptr; }
+    virtual ~InteractionBase() {}
 
   protected:
     XChart *chart_ = nullptr;

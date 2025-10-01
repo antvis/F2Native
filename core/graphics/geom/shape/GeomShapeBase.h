@@ -6,7 +6,6 @@
 #include "../../canvas/CanvasContext.h"
 #include "../../canvas/Coord.h"
 #include "../../shape/Group.h"
-#include "../../util/json_data.h"
 #include "../../../nlohmann/json.hpp"
 #include "../../../utils/common.h"
 
@@ -21,25 +20,14 @@ class GeomShapeBase {
     GeomShapeBase() {}
     virtual ~GeomShapeBase() {}
 
-    //绘制一组数据 比如线
     virtual void Draw(std::string shapeType,
                       canvas::coord::AbstractCoord &coord,
                       canvas::CanvasContext &context,
-                      const XDataArray &data,
+                      const nlohmann::json &data,
                       std::size_t start,
                       std::size_t end,
                       xg::shape::Group &container,
-                      bool connectNulls) {};
-    
-    //绘制一个数据 比如柱
-    virtual void Draw(std::string shapeType,
-                      canvas::coord::AbstractCoord &coord,
-                      canvas::CanvasContext &context,
-                      const XData &data,
-                      std::size_t start,
-                      std::size_t end,
-                      xg::shape::Group &container,
-                      bool connectNulls) {};
+                      bool connectNulls) = 0;
 
     // // line暂未用到
     util::Point ParsePoint(canvas::coord::AbstractCoord &coord, const util::Point &point) {

@@ -16,7 +16,7 @@
 #endif
 
 #ifdef DEBUG
-#include <assert.h>
+#include <cassert>
 #   define F2ASSERT(condition, message) \
    do { \
     if (!(condition)) { printf((message)); } \
@@ -33,11 +33,10 @@ namespace canvas {
  */
 class CanvasContext {
   public:
-    CanvasContext(float devicePixelRatio, utils::Tracer *tracer) : devicePixelRatio_(devicePixelRatio), tracer_(tracer) {}
+    CanvasContext(float devicePixelRatio, utils::Tracer *tracer)
+    : devicePixelRatio_(devicePixelRatio), tracer_(tracer) {}
 
     virtual ~CanvasContext() { tracer_ = nullptr; }
-    
-    virtual void ChangeSize(float width, float height) = 0;
 
     virtual bool IsValid() = 0;
 
@@ -97,6 +96,8 @@ class CanvasContext {
 
     virtual float MeasureTextWidth(const std::string &text) = 0;
 
+    virtual float MeasureTextHeight(const std::string &text) = 0;
+
     virtual void Transform(float a, float b, float c, float d, float e, float f) = 0;
 
     virtual void SetTransform(float a, float b, float c, float d, float e, float f) = 0;
@@ -116,6 +117,8 @@ class CanvasContext {
     virtual void MoveTo(float x, float y) = 0;
 
     virtual void ClosePath() = 0;
+    
+    virtual void ReplaceStroke() = 0;
 
     virtual void LineTo(float x, float y) = 0;
 
@@ -155,7 +158,7 @@ class CanvasContext {
             tracer_->trace("%s", cmd.c_str());
         }
     }
-    
+
     inline void AppendCommandCount() {
         cmdCount_++;
     }

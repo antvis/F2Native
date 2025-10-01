@@ -12,6 +12,7 @@
 #include "graphics/canvas/CanvasColorParser.h"
 #include "graphics/canvas/CanvasContext.h"
 #include "graphics/canvas/CanvasFontParser.h"
+#include "../token/DarkModeManager.h"
 #include <jni.h>
 
 #define F2SafeCallVoidMethod(env, obj, method, ...) if(env && obj && method) {env->CallVoidMethod(obj, method, __VA_ARGS__);}
@@ -40,6 +41,7 @@ class BitmapCanvasContext : public CanvasContext {
     std::string fillColorCache_;
     CanvasColor strokeColor_;
     std::string strokeColorCache_;
+    token::DarkModeManager &darkModeManager_;
 
     // JNI
     JNIEnv *env_;
@@ -82,16 +84,20 @@ class BitmapCanvasContext : public CanvasContext {
     jmethodID setLineDash_ = nullptr;
     jmethodID setLinearGradient_ = nullptr;
     jmethodID setRadialGradient_ = nullptr;
+    jmethodID setConicGradient_ = nullptr;
     jmethodID clip_ = nullptr;
+    jmethodID drawImage_ = nullptr;
+    jmethodID drawImageRect_ = nullptr;
+    jmethodID setLineCap_ = nullptr;
+    jmethodID setLineJoin_ = nullptr;
+    jmethodID measureTextHeight_ = nullptr;
 
   public:
-    BitmapCanvasContext(jobject canvasContext, float devicePixelRatio) ;
+    BitmapCanvasContext(jobject canvasContext, float devicePixelRatio, token::DarkModeManager &manager) ;
 
     ~BitmapCanvasContext();
 
     bool IsValid() override;
-
-    void ChangeSize(float width, float height) override;
 
     void SetFillStyle(const std::string &color) override;
 
@@ -149,6 +155,8 @@ class BitmapCanvasContext : public CanvasContext {
 
     float MeasureTextWidth(const std::string &text) override;
 
+    float MeasureTextHeight(const std::string &text) override;
+
     void Transform(float a, float b, float c, float d, float e, float f) override;
 
     void SetTransform(float a, float b, float c, float d, float e, float f) override;
@@ -191,9 +199,11 @@ class BitmapCanvasContext : public CanvasContext {
 
     void DrawImage(CanvasImage *image, float dx, float dy, float width, float height) override;
 
+    void ReplaceStroke() ;
+
 private:
     static ScopedJavaLocalRef<jfloatArray> GetGradientPositions(JNIEnv *env, const CanvasGradient &gradient);
-    static ScopedJavaLocalRef<jintArray> GetGradientColors(JNIEnv *env, const CanvasGradient &gradient);
+    static ScopedJavaLocalRef<jintArray> GetGradientColors(JNIEnv *env, const CanvasGradient &gradient, token::DarkModeManager &darkModeManager);
 };
 
 } // namespace canvas

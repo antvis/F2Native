@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.antgroup.antv.f2.samples.charts.CandleChart_klineDay;
 import com.antgroup.antv.f2.samples.charts.CirclePieChart;
+import com.antgroup.antv.f2.samples.charts.KLineDayCandleChart;
+import com.antgroup.antv.f2.samples.charts.KLineWeekCandleChart;
 import com.antgroup.antv.f2.samples.charts.MKTrendChart;
 import com.antgroup.antv.f2.samples.charts.MultiAreasChart;
 import com.antgroup.antv.f2.samples.charts.MultiIntervalChart;
@@ -147,7 +149,9 @@ public class MainActivity extends AppCompatActivity {
                 new ChartModel("折线图(分时度量&手势)", SingleLineChart_TimeSharing_ToolTip.class),
                 new ChartModel("上证指数异动分时图", MKTrendChart.class),
                 new ChartModel("股票日K趋势图", SingleLineChart_KLine.class),
-                new ChartModel("蜡烛图(日K)", CandleChart_klineDay.class, true)
+                new ChartModel("日K-竖屏", KLineDayCandleChart.class),
+                new ChartModel("周K-竖屏", KLineWeekCandleChart.class),
+                new ChartModel("日K-蜡烛图-横屏", CandleChart_klineDay.class, true)
         );
     }
 

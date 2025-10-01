@@ -1,5 +1,5 @@
-#include "Text.h"
-#include "../../utils/StringUtil.h"
+#include "graphics/shape/Text.h"
+#include <utils/StringUtil.h>
 
 xg::shape::Text::Text(const std::string &text, const Point &pt, const float fontSize, const std::string &strokeColor, const std::string &fillColor) {
     type_ = "text";
@@ -112,11 +112,32 @@ float xg::shape::Text::GetTextWidth(canvas::CanvasContext &context) const {
     }
 }
 
+float xg::shape::Text::GetTextHeightWithContext(canvas::CanvasContext &context) const {
+    if(!std::isnan(height_)) {
+        return height_;
+    }
 
-std::string xg::shape::CreateFontStyle(float fontSize,
-                                        const std::string &fontStyle,
-                                        const std::string &fontVariant,
-                                        const std::string &fontWeight,
-                                        const std::string &fontFamily)  {
-    return fontStyle + " " + fontVariant + " " + fontWeight + " " + std::to_string(fontSize) + "px " + fontFamily;
+    context.SetFont(font_);
+    if(textArr_.size()) {
+        float maxWidth = 0;
+        for_each(textArr_.begin(), textArr_.end(),
+                 [&maxWidth, &context](const std::string &t) { maxWidth = std::max(maxWidth, context.MeasureTextHeight(t)); });
+        return maxWidth;
+    } else {
+        return context.MeasureTextHeight(text_);
+    }
+}
+
+void xg::shape::Text::AdaptTextFontSize(canvas::CanvasContext &context,
+                                        int padding, int minSize, int maxWidth) {
+    if (minSize < 1 || fontSize_ < 1 || maxWidth < 1) {
+        return;
+    }
+    for (int i = fontSize_; i >= minSize; i--) {
+        SetTextFontSize(i);
+        float textWidth = GetTextWidth(context);
+        if (maxWidth - textWidth - padding > 0) {
+            break;
+        }
+    }
 }

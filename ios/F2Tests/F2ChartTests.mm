@@ -10,10 +10,10 @@
 #import "F2.h"
 #import "F2TestUtil.h"
 #import "F2PixelMatch.h"
-#import "../../tests/e2e/Baseline.h"
-#import "../../tests/e2e/BaseInterval.h"
-#import "../../tests/e2e/MarketMoving.h"
-#import "../../tests/unit/XChart.h"
+#import "e2e/Baseline.h"
+#import "e2e/BaseInterval.h"
+#import "e2e/MarketMoving.h"
+#import "unit/XChart.h"
 
 
 @interface F2ChartTests : XCTestCase
@@ -47,7 +47,7 @@
     e2e::Baseline::Case1(frame.size.width, frame.size.height, F2NativeScale, path.UTF8String, canvasView.canvasContext.context2d);
     
     //for baseline
-//    [F2TestUtil saveImage:canvasView.snapshot name:@"baseLine.jpeg"];
+    //[self saveImage:canvasView.snapshot];
     
     UIImage *diff;
     BOOL match = [F2PixelMatch match:canvasView.snapshot
@@ -65,7 +65,7 @@
     e2e::BaseInterval::Case1(frame.size.width, frame.size.height, F2NativeScale, path.UTF8String, canvasView.canvasContext.context2d);
     
     //for baseline
-    [F2TestUtil saveImage:canvasView.snapshot name:@"baseInterval.jpeg"];
+//    [self saveImage:canvasView.snapshot];
     
     UIImage *diff;
     BOOL match = [F2PixelMatch match:canvasView.snapshot
@@ -82,7 +82,7 @@
     e2e::MarketMoving::Case1(frame.size.width, frame.size.height, F2NativeScale, path.UTF8String, canvasView.canvasContext.context2d);
     
     //for baseline
-    [F2TestUtil saveImage:canvasView.snapshot name:@"marketMoving.jpeg"];
+//    [self saveImage:canvasView.snapshot];
     
     UIImage *diff;
     BOOL match = [F2PixelMatch match:canvasView.snapshot

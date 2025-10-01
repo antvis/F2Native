@@ -1,0 +1,100 @@
+{
+  "animate": true,
+  "axises": [
+    {
+      "config": {
+        "grid": false,
+        "label": {
+          "labelOffset": 10,
+          "textAlign": [
+            "start",
+            "center",
+            "end"
+          ],
+          "textColor": "#D0D0D0",
+          "textSize": 12
+        },
+        "line": {
+          "color": "#D8D8D8",
+          "lineWidth": 0.5
+        }
+      },
+      "field": "date"
+    },
+    {
+      "config": {
+        "grid": {
+          "dash": [
+            3,
+            3
+          ],
+          "lineWidth": 0.5,
+          "stroke": "#D8D8D8",
+          "type": "dash"
+        },
+        "label": {
+          "labelOffset": -5,
+          "textColor": "#D0D0D0",
+          "textSize": 12
+        },
+        "line": false
+      },
+      "field": "mainNetIn"
+    }
+  ],
+  "data": "[{\"date\":1619073900000,\"mainNetIn\":-61400166,\"formatPrice\":\"-6140.02万\"},{\"date\":1619073840000,\"mainNetIn\":-61971037,\"formatPrice\":\"-6197.10万\"},{\"date\":1619073780000,\"mainNetIn\":-64704493,\"formatPrice\":\"-6470.45万\"},{\"date\":1619073720000,\"mainNetIn\":-64969658,\"formatPrice\":\"-6496.97万\"},{\"date\":1619073660000,\"mainNetIn\":-64577484,\"formatPrice\":\"-6457.75万\"},{\"date\":1619073600000,\"mainNetIn\":-64281022,\"formatPrice\":\"-6428.10万\"},{\"date\":1619073540000,\"mainNetIn\":-63585316,\"formatPrice\":\"-6358.53万\"},{\"date\":1619073480000,\"mainNetIn\":-65165562,\"formatPrice\":\"-6516.56万\"},{\"date\":1619073420000,\"mainNetIn\":-65040925,\"formatPrice\":\"-6504.09万\"},{\"date\":1619073360000,\"mainNetIn\":-65447591,\"formatPrice\":\"-6544.76万\"},{\"date\":1619073300000,\"mainNetIn\":-66031930,\"formatPrice\":\"-6603.19万\"},{\"date\":1619073240000,\"mainNetIn\":-65013640,\"formatPrice\":\"-6501.36万\"},{\"date\":1619073180000,\"mainNetIn\":-64893665,\"formatPrice\":\"-6489.37万\"},{\"date\":1619073120000,\"mainNetIn\":-64603329,\"formatPrice\":\"-6460.33万\"},{\"date\":1619073060000,\"mainNetIn\":-63853073,\"formatPrice\":\"-6385.31万\"},{\"date\":1619073000000,\"mainNetIn\":-64526857,\"formatPrice\":\"-6452.69万\"},{\"date\":1619072940000,\"mainNetIn\":-65151229,\"formatPrice\":\"-6515.12万\"},{\"date\":1619072880000,\"mainNetIn\":-66876425,\"formatPrice\":\"-6687.64万\"},{\"date\":1619072820000,\"mainNetIn\":-67699236,\"formatPrice\":\"-6769.92万\"},{\"date\":1619072760000,\"mainNetIn\":-67653622,\"formatPrice\":\"-6765.36万\"},{\"date\":1619072700000,\"mainNetIn\":-68590851,\"formatPrice\":\"-6859.09万\"},{\"date\":1619072640000,\"mainNetIn\":-70475719,\"formatPrice\":\"-7047.57万\"},{\"date\":1619072580000,\"mainNetIn\":-70897933,\"formatPrice\":\"-7089.79万\"},{\"date\":1619072520000,\"mainNetIn\":-71500577,\"formatPrice\":\"-7150.06万\"},{\"date\":1619072460000,\"mainNetIn\":-71255510,\"formatPrice\":\"-7125.55万\"},{\"date\":1619072400000,\"mainNetIn\":-70497530,\"formatPrice\":\"-7049.75万\"},{\"date\":1619072340000,\"mainNetIn\":-68287879,\"formatPrice\":\"-6828.79万\"},{\"date\":1619072280000,\"mainNetIn\":-67372442,\"formatPrice\":\"-6737.24万\"},{\"date\":1619072220000,\"mainNetIn\":-68149342,\"formatPrice\":\"-6814.93万\"},{\"date\":1619072160000,\"mainNetIn\":-67332474,\"formatPrice\":\"-6733.25万\"},{\"date\":1619072100000,\"mainNetIn\":-67150182,\"formatPrice\":\"-6715.02万\"},{\"date\":1619072040000,\"mainNetIn\":-67877025,\"formatPrice\":\"-6787.70万\"},{\"date\":1619071980000,\"mainNetIn\":-67483726,\"formatPrice\":\"-6748.37万\"},{\"date\":1619071920000,\"mainNetIn\":-67565999,\"formatPrice\":\"-6756.60万\"},{\"date\":1619071860000,\"mainNetIn\":-64603346,\"formatPrice\":\"-6460.33万\"},{\"date\":1619071800000,\"mainNetIn\":-64121638,\"formatPrice\":\"-6412.16万\"},{\"date\":1619071740000,\"mainNetIn\":-63902347,\"formatPrice\":\"-6390.23万\"},{\"date\":1619071680000,\"mainNetIn\":-63068790,\"formatPrice\":\"-6306.88万\"},{\"date\":1619071620000,\"mainNetIn\":-63237275,\"formatPrice\":\"-6323.73万\"},{\"date\":1619071560000,\"mainNetIn\":-60747748,\"formatPrice\":\"-6074.77万\"},{\"date\":1619071500000,\"mainNetIn\":-60032811,\"formatPrice\":\"-6003.28万\"},{\"date\":1619071440000,\"mainNetIn\":-62211242,\"formatPrice\":\"-6221.12万\"},{\"date\":1619071380000,\"mainNetIn\":-61312695,\"formatPrice\":\"-6131.27万\"},{\"date\":1619071320000,\"mainNetIn\":-60864632,\"formatPrice\":\"-6086.46万\"},{\"date\":1619071260000,\"mainNetIn\":-61207743,\"formatPrice\":\"-6120.77万\"},{\"date\":1619071200000,\"mainNetIn\":-60513451,\"formatPrice\":\"-6051.35万\"},{\"date\":1619071140000,\"mainNetIn\":-59454622,\"formatPrice\":\"-5945.46万\"},{\"date\":1619071080000,\"mainNetIn\":-59004906,\"formatPrice\":\"-5900.49万\"},{\"date\":1619071020000,\"mainNetIn\":-58409822,\"formatPrice\":\"-5840.98万\"},{\"date\":1619070960000,\"mainNetIn\":-58175020,\"formatPrice\":\"-5817.50万\"},{\"date\":1619070900000,\"mainNetIn\":-60802808,\"formatPrice\":\"-6080.28万\"},{\"date\":1619070840000,\"mainNetIn\":-60603624,\"formatPrice\":\"-6060.36万\"},{\"date\":1619070780000,\"mainNetIn\":-60211109,\"formatPrice\":\"-6021.11万\"},{\"date\":1619070720000,\"mainNetIn\":-60054396,\"formatPrice\":\"-6005.44万\"},{\"date\":1619070660000,\"mainNetIn\":-59920729,\"formatPrice\":\"-5992.07万\"},{\"date\":1619070600000,\"mainNetIn\":-60223268,\"formatPrice\":\"-6022.33万\"},{\"date\":1619070540000,\"mainNetIn\":-60821131,\"formatPrice\":\"-6082.11万\"},{\"date\":1619070480000,\"mainNetIn\":-59306658,\"formatPrice\":\"-5930.67万\"},{\"date\":1619070420000,\"mainNetIn\":-57977648,\"formatPrice\":\"-5797.76万\"},{\"date\":1619070360000,\"mainNetIn\":-58606332,\"formatPrice\":\"-5860.63万\"},{\"date\":1619070300000,\"mainNetIn\":-58534364,\"formatPrice\":\"-5853.44万\"},{\"date\":1619070240000,\"mainNetIn\":-58723797,\"formatPrice\":\"-5872.38万\"},{\"date\":1619070180000,\"mainNetIn\":-57858432,\"formatPrice\":\"-5785.84万\"},{\"date\":1619070120000,\"mainNetIn\":-56882426,\"formatPrice\":\"-5688.24万\"},{\"date\":1619070060000,\"mainNetIn\":-55585264,\"formatPrice\":\"-5558.53万\"},{\"date\":1619070000000,\"mainNetIn\":-55056517,\"formatPrice\":\"-5505.65万\"},{\"date\":1619069940000,\"mainNetIn\":-53610566,\"formatPrice\":\"-5361.06万\"},{\"date\":1619069880000,\"mainNetIn\":-50485165,\"formatPrice\":\"-5048.52万\"},{\"date\":1619069820000,\"mainNetIn\":-49477856,\"formatPrice\":\"-4947.79万\"},{\"date\":1619069760000,\"mainNetIn\":-49641062,\"formatPrice\":\"-4964.11万\"},{\"date\":1619069700000,\"mainNetIn\":-50090084,\"formatPrice\":\"-5009.01万\"},{\"date\":1619069640000,\"mainNetIn\":-49795148,\"formatPrice\":\"-4979.51万\"},{\"date\":1619069580000,\"mainNetIn\":-51012372,\"formatPrice\":\"-5101.24万\"},{\"date\":1619069520000,\"mainNetIn\":-51768483,\"formatPrice\":\"-5176.85万\"},{\"date\":1619069460000,\"mainNetIn\":-51406533,\"formatPrice\":\"-5140.65万\"},{\"date\":1619069400000,\"mainNetIn\":-51154313,\"formatPrice\":\"-5115.43万\"},{\"date\":1619069340000,\"mainNetIn\":-52015805,\"formatPrice\":\"-5201.58万\"},{\"date\":1619069280000,\"mainNetIn\":-52136909,\"formatPrice\":\"-5213.69万\"},{\"date\":1619069220000,\"mainNetIn\":-51825224,\"formatPrice\":\"-5182.52万\"},{\"date\":1619069160000,\"mainNetIn\":-52098462,\"formatPrice\":\"-5209.85万\"},{\"date\":1619069100000,\"mainNetIn\":-51977415,\"formatPrice\":\"-5197.74万\"},{\"date\":1619069040000,\"mainNetIn\":-52294788,\"formatPrice\":\"-5229.48万\"},{\"date\":1619068980000,\"mainNetIn\":-53564286,\"formatPrice\":\"-5356.43万\"},{\"date\":1619068920000,\"mainNetIn\":-53298370,\"formatPrice\":\"-5329.84万\"},{\"date\":1619068860000,\"mainNetIn\":-53124134,\"formatPrice\":\"-5312.41万\"},{\"date\":1619068800000,\"mainNetIn\":-52920713,\"formatPrice\":\"-5292.07万\"},{\"date\":1619068740000,\"mainNetIn\":-52320176,\"formatPrice\":\"-5232.02万\"},{\"date\":1619068680000,\"mainNetIn\":-52045193,\"formatPrice\":\"-5204.52万\"},{\"date\":1619068620000,\"mainNetIn\":-50889662,\"formatPrice\":\"-5088.97万\"},{\"date\":1619068560000,\"mainNetIn\":-50957115,\"formatPrice\":\"-5095.71万\"},{\"date\":1619068500000,\"mainNetIn\":-49508109,\"formatPrice\":\"-4950.81万\"},{\"date\":1619068440000,\"mainNetIn\":-51131547,\"formatPrice\":\"-5113.15万\"},{\"date\":1619068380000,\"mainNetIn\":-51144997,\"formatPrice\":\"-5114.50万\"},{\"date\":1619068320000,\"mainNetIn\":-50817684,\"formatPrice\":\"-5081.77万\"},{\"date\":1619068260000,\"mainNetIn\":-50663728,\"formatPrice\":\"-5066.37万\"},{\"date\":1619068200000,\"mainNetIn\":-50638706,\"formatPrice\":\"-5063.87万\"},{\"date\":1619068140000,\"mainNetIn\":-50725628,\"formatPrice\":\"-5072.56万\"},{\"date\":1619068080000,\"mainNetIn\":-50184071,\"formatPrice\":\"-5018.41万\"},{\"date\":1619068020000,\"mainNetIn\":-50161726,\"formatPrice\":\"-5016.17万\"},{\"date\":1619067960000,\"mainNetIn\":-50036941,\"formatPrice\":\"-5003.69万\"},{\"date\":1619067900000,\"mainNetIn\":-50256593,\"formatPrice\":\"-5025.66万\"},{\"date\":1619067840000,\"mainNetIn\":-50032777,\"formatPrice\":\"-5003.28万\"},{\"date\":1619067780000,\"mainNetIn\":-50219290,\"formatPrice\":\"-5021.93万\"},{\"date\":1619067720000,\"mainNetIn\":-49312770,\"formatPrice\":\"-4931.28万\"},{\"date\":1619067660000,\"mainNetIn\":-48858817,\"formatPrice\":\"-4885.88万\"},{\"date\":1619067600000,\"mainNetIn\":-48675241,\"formatPrice\":\"-4867.52万\"},{\"date\":1619062200000,\"mainNetIn\":-48426818,\"formatPrice\":\"-4842.68万\"},{\"date\":1619062140000,\"mainNetIn\":-48673664,\"formatPrice\":\"-4867.37万\"},{\"date\":1619062080000,\"mainNetIn\":-48720683,\"formatPrice\":\"-4872.07万\"},{\"date\":1619062020000,\"mainNetIn\":-47469560,\"formatPrice\":\"-4746.96万\"},{\"date\":1619061960000,\"mainNetIn\":-48142689,\"formatPrice\":\"-4814.27万\"},{\"date\":1619061900000,\"mainNetIn\":-47378716,\"formatPrice\":\"-4737.87万\"},{\"date\":1619061840000,\"mainNetIn\":-48610348,\"formatPrice\":\"-4861.03万\"},{\"date\":1619061780000,\"mainNetIn\":-48232805,\"formatPrice\":\"-4823.28万\"},{\"date\":1619061720000,\"mainNetIn\":-48119002,\"formatPrice\":\"-4811.90万\"},{\"date\":1619061660000,\"mainNetIn\":-47736600,\"formatPrice\":\"-4773.66万\"},{\"date\":1619061600000,\"mainNetIn\":-47732196,\"formatPrice\":\"-4773.22万\"},{\"date\":1619061540000,\"mainNetIn\":-47552190,\"formatPrice\":\"-4755.22万\"},{\"date\":1619061480000,\"mainNetIn\":-47425099,\"formatPrice\":\"-4742.51万\"},{\"date\":1619061420000,\"mainNetIn\":-47139976,\"formatPrice\":\"-4714.00万\"},{\"date\":1619061360000,\"mainNetIn\":-46311175,\"formatPrice\":\"-4631.12万\"},{\"date\":1619061300000,\"mainNetIn\":-46199531,\"formatPrice\":\"-4619.95万\"},{\"date\":1619061240000,\"mainNetIn\":-45144756,\"formatPrice\":\"-4514.48万\"},{\"date\":1619061180000,\"mainNetIn\":-44849578,\"formatPrice\":\"-4484.96万\"},{\"date\":1619061120000,\"mainNetIn\":-44455690,\"formatPrice\":\"-4445.57万\"},{\"date\":1619061060000,\"mainNetIn\":-43841549,\"formatPrice\":\"-4384.15万\"},{\"date\":1619061000000,\"mainNetIn\":-43964267,\"formatPrice\":\"-4396.43万\"},{\"date\":1619060940000,\"mainNetIn\":-44543596,\"formatPrice\":\"-4454.36万\"},{\"date\":1619060880000,\"mainNetIn\":-45304761,\"formatPrice\":\"-4530.48万\"},{\"date\":1619060820000,\"mainNetIn\":-44805240,\"formatPrice\":\"-4480.52万\"},{\"date\":1619060760000,\"mainNetIn\":-44781275,\"formatPrice\":\"-4478.13万\"},{\"date\":1619060700000,\"mainNetIn\":-44466973,\"formatPrice\":\"-4446.70万\"},{\"date\":1619060640000,\"mainNetIn\":-44884961,\"formatPrice\":\"-4488.50万\"},{\"date\":1619060580000,\"mainNetIn\":-45094721,\"formatPrice\":\"-4509.47万\"},{\"date\":1619060520000,\"mainNetIn\":-45071128,\"formatPrice\":\"-4507.11万\"},{\"date\":1619060460000,\"mainNetIn\":-45008753,\"formatPrice\":\"-4500.88万\"},{\"date\":1619060400000,\"mainNetIn\":-44734739,\"formatPrice\":\"-4473.47万\"},{\"date\":1619060340000,\"mainNetIn\":-42978038,\"formatPrice\":\"-4297.80万\"},{\"date\":1619060280000,\"mainNetIn\":-42306541,\"formatPrice\":\"-4230.65万\"},{\"date\":1619060220000,\"mainNetIn\":-42050408,\"formatPrice\":\"-4205.04万\"},{\"date\":1619060160000,\"mainNetIn\":-41821497,\"formatPrice\":\"-4182.15万\"},{\"date\":1619060100000,\"mainNetIn\":-42533423,\"formatPrice\":\"-4253.34万\"},{\"date\":1619060040000,\"mainNetIn\":-41145144,\"formatPrice\":\"-4114.51万\"},{\"date\":1619059980000,\"mainNetIn\":-40027788,\"formatPrice\":\"-4002.78万\"},{\"date\":1619059920000,\"mainNetIn\":-39813984,\"formatPrice\":\"-3981.40万\"},{\"date\":1619059860000,\"mainNetIn\":-39484131,\"formatPrice\":\"-3948.41万\"},{\"date\":1619059800000,\"mainNetIn\":-38811562,\"formatPrice\":\"-3881.16万\"},{\"date\":1619059740000,\"mainNetIn\":-37621351,\"formatPrice\":\"-3762.14万\"},{\"date\":1619059680000,\"mainNetIn\":-37339786,\"formatPrice\":\"-3733.98万\"},{\"date\":1619059620000,\"mainNetIn\":-37532697,\"formatPrice\":\"-3753.27万\"},{\"date\":1619059560000,\"mainNetIn\":-37663005,\"formatPrice\":\"-3766.30万\"},{\"date\":1619059500000,\"mainNetIn\":-37374857,\"formatPrice\":\"-3737.49万\"},{\"date\":1619059440000,\"mainNetIn\":-37467149,\"formatPrice\":\"-3746.71万\"},{\"date\":1619059380000,\"mainNetIn\":-38198731,\"formatPrice\":\"-3819.87万\"},{\"date\":1619059320000,\"mainNetIn\":-40026595,\"formatPrice\":\"-4002.66万\"},{\"date\":1619059260000,\"mainNetIn\":-38370956,\"formatPrice\":\"-3837.10万\"},{\"date\":1619059200000,\"mainNetIn\":-38469961,\"formatPrice\":\"-3847.00万\"},{\"date\":1619059140000,\"mainNetIn\":-39103620,\"formatPrice\":\"-3910.36万\"},{\"date\":1619059080000,\"mainNetIn\":-38139276,\"formatPrice\":\"-3813.93万\"},{\"date\":1619059020000,\"mainNetIn\":-37596783,\"formatPrice\":\"-3759.68万\"},{\"date\":1619058960000,\"mainNetIn\":-37752406,\"formatPrice\":\"-3775.24万\"},{\"date\":1619058900000,\"mainNetIn\":-38186060,\"formatPrice\":\"-3818.61万\"},{\"date\":1619058840000,\"mainNetIn\":-37260129,\"formatPrice\":\"-3726.01万\"},{\"date\":1619058780000,\"mainNetIn\":-35799323,\"formatPrice\":\"-3579.93万\"},{\"date\":1619058720000,\"mainNetIn\":-34693670,\"formatPrice\":\"-3469.37万\"},{\"date\":1619058660000,\"mainNetIn\":-36134906,\"formatPrice\":\"-3613.49万\"},{\"date\":1619058600000,\"mainNetIn\":-35816606,\"formatPrice\":\"-3581.66万\"},{\"date\":1619058540000,\"mainNetIn\":-35758692,\"formatPrice\":\"-3575.87万\"},{\"date\":1619058480000,\"mainNetIn\":-34653428,\"formatPrice\":\"-3465.34万\"},{\"date\":1619058420000,\"mainNetIn\":-34294505,\"formatPrice\":\"-3429.45万\"},{\"date\":1619058360000,\"mainNetIn\":-35639877,\"formatPrice\":\"-3563.99万\"},{\"date\":1619058300000,\"mainNetIn\":-37219803,\"formatPrice\":\"-3721.98万\"},{\"date\":1619058240000,\"mainNetIn\":-40821290,\"formatPrice\":\"-4082.13万\"},{\"date\":1619058180000,\"mainNetIn\":-45371095,\"formatPrice\":\"-4537.11万\"},{\"date\":1619058120000,\"mainNetIn\":-47046143,\"formatPrice\":\"-4704.61万\"},{\"date\":1619058060000,\"mainNetIn\":-48184672,\"formatPrice\":\"-4818.47万\"},{\"date\":1619058000000,\"mainNetIn\":-48430392,\"formatPrice\":\"-4843.04万\"},{\"date\":1619057940000,\"mainNetIn\":-47674222,\"formatPrice\":\"-4767.42万\"},{\"date\":1619057880000,\"mainNetIn\":-47978113,\"formatPrice\":\"-4797.81万\"},{\"date\":1619057820000,\"mainNetIn\":-47421589,\"formatPrice\":\"-4742.16万\"},{\"date\":1619057760000,\"mainNetIn\":-47477098,\"formatPrice\":\"-4747.71万\"},{\"date\":1619057700000,\"mainNetIn\":-46137987,\"formatPrice\":\"-4613.80万\"},{\"date\":1619057640000,\"mainNetIn\":-46026013,\"formatPrice\":\"-4602.60万\"},{\"date\":1619057580000,\"mainNetIn\":-44560449,\"formatPrice\":\"-4456.04万\"},{\"date\":1619057520000,\"mainNetIn\":-42812688,\"formatPrice\":\"-4281.27万\"},{\"date\":1619057460000,\"mainNetIn\":-43072566,\"formatPrice\":\"-4307.26万\"},{\"date\":1619057400000,\"mainNetIn\":-43016868,\"formatPrice\":\"-4301.69万\"},{\"date\":1619057340000,\"mainNetIn\":-45029380,\"formatPrice\":\"-4502.94万\"},{\"date\":1619057280000,\"mainNetIn\":-44939514,\"formatPrice\":\"-4493.95万\"},{\"date\":1619057220000,\"mainNetIn\":-41118869,\"formatPrice\":\"-4111.89万\"},{\"date\":1619057160000,\"mainNetIn\":-37809398,\"formatPrice\":\"-3780.94万\"},{\"date\":1619057100000,\"mainNetIn\":-35591423,\"formatPrice\":\"-3559.14万\"},{\"date\":1619057040000,\"mainNetIn\":-33952388,\"formatPrice\":\"-3395.24万\"},{\"date\":1619056980000,\"mainNetIn\":-32778547,\"formatPrice\":\"-3277.85万\"},{\"date\":1619056920000,\"mainNetIn\":-31911946,\"formatPrice\":\"-3191.19万\"},{\"date\":1619056860000,\"mainNetIn\":-32371052,\"formatPrice\":\"-3237.11万\"},{\"date\":1619056800000,\"mainNetIn\":-33228704,\"formatPrice\":\"-3322.87万\"},{\"date\":1619056740000,\"mainNetIn\":-33428014,\"formatPrice\":\"-3342.80万\"},{\"date\":1619056680000,\"mainNetIn\":-31489475,\"formatPrice\":\"-3148.95万\"},{\"date\":1619056620000,\"mainNetIn\":-30343446,\"formatPrice\":\"-3034.34万\"},{\"date\":1619056560000,\"mainNetIn\":-30404979,\"formatPrice\":\"-3040.50万\"},{\"date\":1619056500000,\"mainNetIn\":-30194663,\"formatPrice\":\"-3019.47万\"},{\"date\":1619056440000,\"mainNetIn\":-29890050,\"formatPrice\":\"-2989.01万\"},{\"date\":1619056380000,\"mainNetIn\":-27168631,\"formatPrice\":\"-2716.86万\"},{\"date\":1619056320000,\"mainNetIn\":-26862052,\"formatPrice\":\"-2686.21万\"},{\"date\":1619056260000,\"mainNetIn\":-26384555,\"formatPrice\":\"-2638.46万\"},{\"date\":1619056200000,\"mainNetIn\":-22332477,\"formatPrice\":\"-2233.25万\"},{\"date\":1619056140000,\"mainNetIn\":-21513474,\"formatPrice\":\"-2151.35万\"},{\"date\":1619056080000,\"mainNetIn\":-18688145,\"formatPrice\":\"-1868.81万\"},{\"date\":1619056020000,\"mainNetIn\":-16243954,\"formatPrice\":\"-1624.40万\"},{\"date\":1619055960000,\"mainNetIn\":-14255338,\"formatPrice\":\"-1425.53万\"},{\"date\":1619055900000,\"mainNetIn\":-11666461,\"formatPrice\":\"-1166.65万\"},{\"date\":1619055840000,\"mainNetIn\":-10012006,\"formatPrice\":\"-1001.20万\"},{\"date\":1619055780000,\"mainNetIn\":-9300301,\"formatPrice\":\"-930.03万\"},{\"date\":1619055720000,\"mainNetIn\":-9073146,\"formatPrice\":\"-907.31万\"},{\"date\":1619055660000,\"mainNetIn\":-6165702,\"formatPrice\":\"-616.57万\"},{\"date\":1619055600000,\"mainNetIn\":-1712027,\"formatPrice\":\"-171.20万\"},{\"date\":1619055540000,\"mainNetIn\":2800524,\"formatPrice\":\"280.05万\"},{\"date\":1619055480000,\"mainNetIn\":3099087,\"formatPrice\":\"309.91万\"},{\"date\":1619055420000,\"mainNetIn\":2450741,\"formatPrice\":\"245.07万\"},{\"date\":1619055360000,\"mainNetIn\":4775226,\"formatPrice\":\"477.52万\"},{\"date\":1619055300000,\"mainNetIn\":6133201,\"formatPrice\":\"613.32万\"},{\"date\":1619055240000,\"mainNetIn\":4521352,\"formatPrice\":\"452.14万\"},{\"date\":1619055180000,\"mainNetIn\":4662058,\"formatPrice\":\"466.21万\"},{\"date\":1619055120000,\"mainNetIn\":1790054,\"formatPrice\":\"179.01万\"},{\"date\":1619055060000,\"mainNetIn\":3481761,\"formatPrice\":\"348.18万\"},{\"date\":1619055000000,\"mainNetIn\":3528387,\"formatPrice\":\"352.84万\"}]",
+  "geoms": [
+    {
+      "attrs": {
+        "connectNulls": true
+      },
+      "fixedColor": "{\"colorStops\":[{\"offset\":0,\"color\":\"#EBFAFF\"},{\"offset\":0.33,\"color\":\"#3ACCFF\"},{\"offset\":0.66,\"color\":\"#FF8EBF\"},{\"offset\":1,\"color\":\"#FFB500\"}],\"position\":[0,0,0,700]}",
+      "fixedShape": "smooth",
+      "fixedSize": 3,
+      "position": "date*mainNetIn",
+      "style": {
+        "lineCap": "round",
+        "lineJoin": "round"
+      },
+      "type": "line"
+    }
+  ],
+  "name": "lineChart",
+  "padding": [
+    20,
+    20,
+    20,
+    10
+  ],
+  "scales": [
+    {
+      "config": {
+        "nice": true,
+        "precision": 2,
+        "tickCount": 5,
+        "tickType": "price",
+        "tickTypePricePrecision": 2,
+        "type": "linear"
+      },
+      "field": "mainNetIn"
+    },
+    {
+      "config": {
+        "tickCount": 5,
+        "timeRange": [
+          [
+            1619055000000,
+            1619062200000
+          ],
+          [
+            1619067600000,
+            1619076600000
+          ]
+        ],
+        "timeZoneOffset": 28800,
+        "type": "timeSharing"
+      },
+      "field": "date"
+    }
+  ]
+}

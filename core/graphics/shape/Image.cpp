@@ -6,7 +6,7 @@
 //  Copyright © 2021 com.alipay.xgraph. All rights reserved.
 //
 
-#include "Image.h"
+#include "graphics/shape/Image.h"
 
 using namespace xg;
 
@@ -27,23 +27,17 @@ BBox shape::Image::CalculateBox(canvas::CanvasContext &context) const {
 }
 
 void xg::shape::Image::DrawInner(canvas::CanvasContext &context) const {
-    if (image_->IsValid()) {
-        DrawImage(context);
-    } else{
-        image_->OnLoad([&](void) {
-            DrawImage(context);
-            if (callback_) {
-                callback_();
-            }
-        });
-    }
-}
-
-void xg::shape::Image::DrawImage(canvas::CanvasContext &context) const {
+    // size无效不绘制
     if (std::isnan(size_.width) || std::isnan(size_.height)) {
-        //todo size_赋值？
-        context.DrawImage(image_.get(), point_.x, point_.y);
-    } else {
-        context.DrawImage(image_.get(), point_.x, point_.y, size_.width, size_.height);
+        return;
     }
+    image_->OnLoad([&](void) {
+        if (!std::isnan(size_.width) && !std::isnan(size_.height)) {
+            context.DrawImage(image_.get(), point_.x, point_.y, size_.width, size_.height);
+        }
+
+        if (callback_) {
+            callback_();
+        }
+    });
 }

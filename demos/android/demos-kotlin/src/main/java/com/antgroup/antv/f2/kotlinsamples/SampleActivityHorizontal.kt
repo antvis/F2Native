@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.antgroup.antv.f2.F2CanvasView
-import com.antgroup.antv.f2.F2CanvasView.ConfigBuilder
 
 class SampleActivityHorizontal : AppCompatActivity() {
     private var mCanvasView: F2CanvasView? = null
@@ -13,12 +12,7 @@ class SampleActivityHorizontal : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         setContentView(R.layout.activity_sample_horizontal)
         mCanvasView = findViewById(R.id.canvasView)
-        mCanvasView!!.initCanvasContext(
-            ConfigBuilder()
-                .setOption("canvasBizId", "F2NativeDemo")
-                .setOption("appId", "1000")
-                .build()
-        )
+        mCanvasView!!.setCanvasBizId("F2NativeDemo")
         val chartModel = intent.getSerializableExtra("ChartModel") as ChartModel
         title = chartModel.title
         try {

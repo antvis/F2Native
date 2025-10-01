@@ -1,4 +1,4 @@
-#include "Shape.h"
+#include "graphics/shape/Shape.h"
 
 xg::shape::Shape::Shape() : Element() { isShape_ = true; }
 

@@ -32,10 +32,11 @@ class Image : public Shape {
     
     inline canvas::CanvasImage *GetImage() { return image_.get(); }
 
+    inline void SetPoint(const util::Point &pt) { point_ = pt; }
+
   protected:
     void DrawInner(canvas::CanvasContext &context) const override;
 
-    void DrawImage(canvas::CanvasContext &context) const;
   public:
     std::string url_;
     util::Point point_;

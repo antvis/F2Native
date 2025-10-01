@@ -6,8 +6,8 @@
 using namespace xg;
 using namespace xg::canvas;
 
-WebCanvasContext::WebCanvasContext(const std::string &contextName, float width, float height, double devicePixelRatio)
-    : CanvasContext(devicePixelRatio, nullptr) {
+WebCanvasContext::WebCanvasContext(const std::string &contextName, float width, float height, double devicePixelRatio, token::DarkModeManager &manager)
+    : CanvasContext(devicePixelRatio, nullptr, manager) {
     canvasContext_ = contextName;
     EM_ASM(
         {
@@ -25,10 +25,6 @@ WebCanvasContext::~WebCanvasContext() {}
 bool WebCanvasContext::IsValid() {
     // cause js error EM_ASM_INT({ return document.getElementById(UTF8ToString($0)); }, canvasContext_.c_str());
     return !canvasContext_.empty();
-}
-
-void WebCanvasContext::ChangeSize(float width, float height) {
-
 }
 
 void WebCanvasContext::SetFillStyle(const std::string &color) {
@@ -210,7 +206,7 @@ void WebCanvasContext::SetShadowColor(const char *v) {}
 void WebCanvasContext::SetShadowBlur(float v) {}
 
 float WebCanvasContext::MeasureTextWidth(const std::string &text) {
-    return EM_ASM_DOUBLE({ return document.getElementById(UTF8ToString($0)).getContext('2d').measureText($1).width; },
+    return EM_ASM_DOUBLE({ return document.getElementById(UTF8ToString($0)).getContext('2d').measureText(UTF8ToString($1)).width; },
                          canvasContext_.c_str(), text.c_str());
 }
 

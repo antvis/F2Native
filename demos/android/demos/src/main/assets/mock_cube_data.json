@@ -1,183 +1,243 @@
 {
-  "name": "minuteChart#trend",
+  "animate": true,
+  "name": "f2native#baseline",
   "padding": [
-    0,
-    5,
-    0,
+    40,
+    10,
+    40,
     0
   ],
-  "data":"[{\"amount\":13086386034.1,\"averagePrice\":null,\"date\":1653615000000,\"index\":0,\"price\":3136.0648,\"volume\":1377641900},{\"amount\":6050498469.5,\"averagePrice\":null,\"date\":1653615060000,\"index\":1,\"price\":3140.0379,\"volume\":549929200},{\"amount\":5327551649.9,\"averagePrice\":null,\"date\":1653615120000,\"index\":2,\"price\":3138.4342,\"volume\":476005700},{\"amount\":5919729850.3,\"averagePrice\":null,\"date\":1653615180000,\"index\":3,\"price\":3146.9654,\"volume\":530937600},{\"amount\":5257266150.5,\"averagePrice\":null,\"date\":1653615240000,\"index\":4,\"price\":3144.3816,\"volume\":444504500},{\"amount\":5120068084.6,\"averagePrice\":null,\"date\":1653615300000,\"index\":5,\"price\":3147.2528,\"volume\":458008200},{\"amount\":4786406183.9,\"averagePrice\":null,\"date\":1653615360000,\"index\":6,\"price\":3149.2004,\"volume\":426545500},{\"amount\":4227338304.8,\"averagePrice\":null,\"date\":1653615420000,\"index\":7,\"price\":3147.5358,\"volume\":371171200},{\"amount\":3887005390.2,\"averagePrice\":null,\"date\":1653615480000,\"index\":8,\"price\":3141.5166,\"volume\":371536400},{\"amount\":3725566833,\"averagePrice\":null,\"date\":1653615540000,\"index\":9,\"price\":3141.9521,\"volume\":346166600},{\"amount\":4312655213.5,\"averagePrice\":null,\"date\":1653615600000,\"index\":10,\"price\":3147.4649,\"volume\":393471200},{\"amount\":3746312139.9,\"averagePrice\":null,\"date\":1653615660000,\"index\":11,\"price\":3144.1229,\"volume\":362481800},{\"amount\":3535256800.9,\"averagePrice\":null,\"date\":1653615720000,\"index\":12,\"price\":3148.1529,\"volume\":336402700},{\"amount\":2976899393.2,\"averagePrice\":null,\"date\":1653615780000,\"index\":13,\"price\":3145.8493,\"volume\":280777300},{\"amount\":2859631877.2,\"averagePrice\":null,\"date\":1653615840000,\"index\":14,\"price\":3144.9249,\"volume\":274786700},{\"amount\":3236044696.1,\"averagePrice\":null,\"date\":1653615900000,\"index\":15,\"price\":3147.795,\"volume\":277912400},{\"amount\":2953588982.1,\"averagePrice\":null,\"date\":1653615960000,\"index\":16,\"price\":3145.6617,\"volume\":262240300},{\"amount\":2464526907.1,\"averagePrice\":null,\"date\":1653616020000,\"index\":17,\"price\":3143.624,\"volume\":231644000},{\"amount\":2663340908.7,\"averagePrice\":null,\"date\":1653616080000,\"index\":18,\"price\":3142.2868,\"volume\":235186900},{\"amount\":2395747259.8,\"averagePrice\":null,\"date\":1653616140000,\"index\":19,\"price\":3141.7774,\"volume\":222951000},{\"amount\":2844043983.3,\"averagePrice\":null,\"date\":1653616200000,\"index\":20,\"price\":3141.9367,\"volume\":259758200},{\"amount\":2828323865.8,\"averagePrice\":null,\"date\":1653616260000,\"index\":21,\"price\":3145.1198,\"volume\":244758100},{\"amount\":2344203319.3,\"averagePrice\":null,\"date\":1653616320000,\"index\":22,\"price\":3141.6627,\"volume\":218156700},{\"amount\":2326093885.1,\"averagePrice\":null,\"date\":1653616380000,\"index\":23,\"price\":3140.8296,\"volume\":210336400},{\"amount\":2451473336.3,\"averagePrice\":null,\"date\":1653616440000,\"index\":24,\"price\":3139.1323,\"volume\":224518400},{\"amount\":2446050169.3,\"averagePrice\":null,\"date\":1653616500000,\"index\":25,\"price\":3140.0493,\"volume\":230019600},{\"amount\":2161489538.1,\"averagePrice\":null,\"date\":1653616560000,\"index\":26,\"price\":3141.3925,\"volume\":195706400},{\"amount\":2133403375,\"averagePrice\":null,\"date\":1653616620000,\"index\":27,\"price\":3143.3686,\"volume\":190980100},{\"amount\":2187573357.4,\"averagePrice\":null,\"date\":1653616680000,\"index\":28,\"price\":3140.1742,\"volume\":192327900},{\"amount\":2206868200,\"averagePrice\":null,\"date\":1653616740000,\"index\":29,\"price\":3138.2706,\"volume\":220530200},{\"amount\":2722882290.5,\"averagePrice\":null,\"date\":1653616800000,\"index\":30,\"price\":3136.4993,\"volume\":247855400},{\"amount\":2543779850.8,\"averagePrice\":null,\"date\":1653616860000,\"index\":31,\"price\":3138.207,\"volume\":237457500},{\"amount\":2077923219.8,\"averagePrice\":null,\"date\":1653616920000,\"index\":32,\"price\":3138.2916,\"volume\":189768600},{\"amount\":1851994394.2,\"averagePrice\":null,\"date\":1653616980000,\"index\":33,\"price\":3139.7159,\"volume\":180226300},{\"amount\":1836092453.6,\"averagePrice\":null,\"date\":1653617040000,\"index\":34,\"price\":3141.2293,\"volume\":163758900},{\"amount\":1979338184.1,\"averagePrice\":null,\"date\":1653617100000,\"index\":35,\"price\":3143.4901,\"volume\":171991200},{\"amount\":2074108681.1,\"averagePrice\":null,\"date\":1653617160000,\"index\":36,\"price\":3143.7642,\"volume\":178146200},{\"amount\":2179750846.7,\"averagePrice\":null,\"date\":1653617220000,\"index\":37,\"price\":3147.1187,\"volume\":203647600},{\"amount\":1895953398.2,\"averagePrice\":null,\"date\":1653617280000,\"index\":38,\"price\":3143.8065,\"volume\":159005800},{\"amount\":1493604824.1,\"averagePrice\":null,\"date\":1653617340000,\"index\":39,\"price\":3144.6018,\"volume\":138897400},{\"amount\":1989001983,\"averagePrice\":null,\"date\":1653617400000,\"index\":40,\"price\":3147.5875,\"volume\":174303000},{\"amount\":1760369670.1,\"averagePrice\":null,\"date\":1653617460000,\"index\":41,\"price\":3146.3607,\"volume\":153890700},{\"amount\":2016450588.9,\"averagePrice\":null,\"date\":1653617520000,\"index\":42,\"price\":3146.5354,\"volume\":196601800},{\"amount\":1949726726.3,\"averagePrice\":null,\"date\":1653617580000,\"index\":43,\"price\":3144.8482,\"volume\":195083400},{\"amount\":1654872957.4,\"averagePrice\":null,\"date\":1653617640000,\"index\":44,\"price\":3144.0795,\"volume\":169430000},{\"amount\":1660898190.6,\"averagePrice\":null,\"date\":1653617700000,\"index\":45,\"price\":3144.1522,\"volume\":163785300},{\"amount\":1989824280.1,\"averagePrice\":null,\"date\":1653617760000,\"index\":46,\"price\":3142.8391,\"volume\":188333100},{\"amount\":1605653646.6,\"averagePrice\":null,\"date\":1653617820000,\"index\":47,\"price\":3143.2205,\"volume\":147074300},{\"amount\":1487932378.1,\"averagePrice\":null,\"date\":1653617880000,\"index\":48,\"price\":3143.9833,\"volume\":145704900},{\"amount\":1654679037.8,\"averagePrice\":null,\"date\":1653617940000,\"index\":49,\"price\":3142.6406,\"volume\":169606900},{\"amount\":1877390797.6,\"averagePrice\":null,\"date\":1653618000000,\"index\":50,\"price\":3143.3258,\"volume\":184156000},{\"amount\":1614982785.2,\"averagePrice\":null,\"date\":1653618060000,\"index\":51,\"price\":3144.236,\"volume\":162101600},{\"amount\":1716634027.2,\"averagePrice\":null,\"date\":1653618120000,\"index\":52,\"price\":3146.46,\"volume\":168175000},{\"amount\":1436300154.1,\"averagePrice\":null,\"date\":1653618180000,\"index\":53,\"price\":3146.6826,\"volume\":141234400},{\"amount\":1509486285.6,\"averagePrice\":null,\"date\":1653618240000,\"index\":54,\"price\":3145.5856,\"volume\":157011800},{\"amount\":1423430206.6,\"averagePrice\":null,\"date\":1653618300000,\"index\":55,\"price\":3144.7228,\"volume\":139107200},{\"amount\":1421667619.4,\"averagePrice\":null,\"date\":1653618360000,\"index\":56,\"price\":3146.2182,\"volume\":147006000},{\"amount\":1473041271.9,\"averagePrice\":null,\"date\":1653618420000,\"index\":57,\"price\":3148.1223,\"volume\":148833700},{\"amount\":1383569586.3,\"averagePrice\":null,\"date\":1653618480000,\"index\":58,\"price\":3146.4819,\"volume\":132827200},{\"amount\":1183812718.7,\"averagePrice\":null,\"date\":1653618540000,\"index\":59,\"price\":3145.9335,\"volume\":117771500},{\"amount\":1482515379,\"averagePrice\":null,\"date\":1653618600000,\"index\":60,\"price\":3144.1404,\"volume\":134486000},{\"amount\":1313195729,\"averagePrice\":null,\"date\":1653618660000,\"index\":61,\"price\":3144.0353,\"volume\":127784800},{\"amount\":1303165016.7,\"averagePrice\":null,\"date\":1653618720000,\"index\":62,\"price\":3142.6649,\"volume\":122610600},{\"amount\":1295270157.4,\"averagePrice\":null,\"date\":1653618780000,\"index\":63,\"price\":3142.8689,\"volume\":123098700},{\"amount\":1287134632.5,\"averagePrice\":null,\"date\":1653618840000,\"index\":64,\"price\":3141.2652,\"volume\":116263300},{\"amount\":1719935475.5,\"averagePrice\":null,\"date\":1653618900000,\"index\":65,\"price\":3138.2677,\"volume\":176225600},{\"amount\":1565251354.6,\"averagePrice\":null,\"date\":1653618960000,\"index\":66,\"price\":3136.055,\"volume\":148257600},{\"amount\":1406999062.4,\"averagePrice\":null,\"date\":1653619020000,\"index\":67,\"price\":3136.8592,\"volume\":144014200},{\"amount\":1193686613.5,\"averagePrice\":null,\"date\":1653619080000,\"index\":68,\"price\":3137.1872,\"volume\":120605400},{\"amount\":1551970469.8,\"averagePrice\":null,\"date\":1653619140000,\"index\":69,\"price\":3140.4098,\"volume\":173043100},{\"amount\":1466389134.5,\"averagePrice\":null,\"date\":1653619200000,\"index\":70,\"price\":3140.065,\"volume\":156051500},{\"amount\":1568360238.7,\"averagePrice\":null,\"date\":1653619260000,\"index\":71,\"price\":3139.3146,\"volume\":155990400},{\"amount\":1301502575.7,\"averagePrice\":null,\"date\":1653619320000,\"index\":72,\"price\":3139.7427,\"volume\":144239800},{\"amount\":1146690743.9,\"averagePrice\":null,\"date\":1653619380000,\"index\":73,\"price\":3139.6063,\"volume\":108192000},{\"amount\":1236408302.5,\"averagePrice\":null,\"date\":1653619440000,\"index\":74,\"price\":3139.0172,\"volume\":115964600},{\"amount\":1231056386.4,\"averagePrice\":null,\"date\":1653619500000,\"index\":75,\"price\":3137.6098,\"volume\":117598000},{\"amount\":1427936110.9,\"averagePrice\":null,\"date\":1653619560000,\"index\":76,\"price\":3139.5173,\"volume\":131017000},{\"amount\":1165238561.9,\"averagePrice\":null,\"date\":1653619620000,\"index\":77,\"price\":3140.1874,\"volume\":114230400},{\"amount\":1241791633.6,\"averagePrice\":null,\"date\":1653619680000,\"index\":78,\"price\":3141.6666,\"volume\":135497100},{\"amount\":1097914381.3,\"averagePrice\":null,\"date\":1653619740000,\"index\":79,\"price\":3142.737,\"volume\":109722500},{\"amount\":1241172287.6,\"averagePrice\":null,\"date\":1653619800000,\"index\":80,\"price\":3143.505,\"volume\":131125900},{\"amount\":1154270450.1,\"averagePrice\":null,\"date\":1653619860000,\"index\":81,\"price\":3143.0179,\"volume\":141849600},{\"amount\":1180339357.5,\"averagePrice\":null,\"date\":1653619920000,\"index\":82,\"price\":3142.875,\"volume\":129203300},{\"amount\":1166308761.2,\"averagePrice\":null,\"date\":1653619980000,\"index\":83,\"price\":3142.2468,\"volume\":127974900},{\"amount\":1053817556.9,\"averagePrice\":null,\"date\":1653620040000,\"index\":84,\"price\":3142.5447,\"volume\":116747400},{\"amount\":1101172345.1,\"averagePrice\":null,\"date\":1653620100000,\"index\":85,\"price\":3140.649,\"volume\":118494300},{\"amount\":1060462780.1,\"averagePrice\":null,\"date\":1653620160000,\"index\":86,\"price\":3139.7353,\"volume\":109102400},{\"amount\":952558472,\"averagePrice\":null,\"date\":1653620220000,\"index\":87,\"price\":3139.8769,\"volume\":93369800},{\"amount\":894836144.4,\"averagePrice\":null,\"date\":1653620280000,\"index\":88,\"price\":3139.8338,\"volume\":89555200},{\"amount\":917397410,\"averagePrice\":null,\"date\":1653620340000,\"index\":89,\"price\":3139.5852,\"volume\":86714600},{\"amount\":1174020594.6,\"averagePrice\":null,\"date\":1653620400000,\"index\":90,\"price\":3137.8333,\"volume\":105748400},{\"amount\":1123108310,\"averagePrice\":null,\"date\":1653620460000,\"index\":91,\"price\":3136.9861,\"volume\":101462400},{\"amount\":1247011034.7,\"averagePrice\":null,\"date\":1653620520000,\"index\":92,\"price\":3135.6752,\"volume\":117197600},{\"amount\":1210909698.6,\"averagePrice\":null,\"date\":1653620580000,\"index\":93,\"price\":3137.9571,\"volume\":106293800},{\"amount\":938528518,\"averagePrice\":null,\"date\":1653620640000,\"index\":94,\"price\":3138.0172,\"volume\":84487000},{\"amount\":927767291.6,\"averagePrice\":null,\"date\":1653620700000,\"index\":95,\"price\":3137.4446,\"volume\":85222300},{\"amount\":1205367302.7,\"averagePrice\":null,\"date\":1653620760000,\"index\":96,\"price\":3140.5378,\"volume\":102086700},{\"amount\":1021802923.2,\"averagePrice\":null,\"date\":1653620820000,\"index\":97,\"price\":3140.511,\"volume\":93295700},{\"amount\":931804156.6,\"averagePrice\":null,\"date\":1653620880000,\"index\":98,\"price\":3141.6025,\"volume\":95607900},{\"amount\":822337050.4,\"averagePrice\":null,\"date\":1653620940000,\"index\":99,\"price\":3140.7283,\"volume\":71651000},{\"amount\":797344555,\"averagePrice\":null,\"date\":1653621000000,\"index\":100,\"price\":3139.9621,\"volume\":75606100},{\"amount\":785196050.2,\"averagePrice\":null,\"date\":1653621060000,\"index\":101,\"price\":3139.8227,\"volume\":73079200},{\"amount\":953193499.6,\"averagePrice\":null,\"date\":1653621120000,\"index\":102,\"price\":3139.4394,\"volume\":79567900},{\"amount\":951334433.6,\"averagePrice\":null,\"date\":1653621180000,\"index\":103,\"price\":3138.986,\"volume\":93227500},{\"amount\":813180746.4,\"averagePrice\":null,\"date\":1653621240000,\"index\":104,\"price\":3139.5536,\"volume\":90255300},{\"amount\":956700951.8,\"averagePrice\":null,\"date\":1653621300000,\"index\":105,\"price\":3141.1611,\"volume\":96474100},{\"amount\":978086839.6,\"averagePrice\":null,\"date\":1653621360000,\"index\":106,\"price\":3141.5394,\"volume\":110131000},{\"amount\":856149754.3,\"averagePrice\":null,\"date\":1653621420000,\"index\":107,\"price\":3141.4236,\"volume\":96061800},{\"amount\":1558419221.9,\"averagePrice\":null,\"date\":1653621480000,\"index\":108,\"price\":3145.1037,\"volume\":187602200},{\"amount\":1022259260.2,\"averagePrice\":null,\"date\":1653621540000,\"index\":109,\"price\":3144.751,\"volume\":112062100},{\"amount\":944248949.6,\"averagePrice\":null,\"date\":1653621600000,\"index\":110,\"price\":3144.3443,\"volume\":100450500},{\"amount\":950003691.2,\"averagePrice\":null,\"date\":1653621660000,\"index\":111,\"price\":3142.7275,\"volume\":94599900},{\"amount\":955744671,\"averagePrice\":null,\"date\":1653621720000,\"index\":112,\"price\":3141.9849,\"volume\":94233100},{\"amount\":886313222.8,\"averagePrice\":null,\"date\":1653621780000,\"index\":113,\"price\":3140.915,\"volume\":98416800},{\"amount\":886791199.4,\"averagePrice\":null,\"date\":1653621840000,\"index\":114,\"price\":3140.5789,\"volume\":91319900},{\"amount\":796918252.4,\"averagePrice\":null,\"date\":1653621900000,\"index\":115,\"price\":3140.1348,\"volume\":77836900},{\"amount\":876596652.7,\"averagePrice\":null,\"date\":1653621960000,\"index\":116,\"price\":3139.7664,\"volume\":92728700},{\"amount\":848621462.2,\"averagePrice\":null,\"date\":1653622020000,\"index\":117,\"price\":3139.3487,\"volume\":85834000},{\"amount\":960409630.8,\"averagePrice\":null,\"date\":1653622080000,\"index\":118,\"price\":3138.6447,\"volume\":102675800},{\"amount\":862107627.7,\"averagePrice\":null,\"date\":1653622140000,\"index\":119,\"price\":3139.3044,\"volume\":89465500},{\"amount\":23331825.2,\"averagePrice\":null,\"date\":1653622200000,\"index\":120,\"price\":3139.4425,\"volume\":2306300},{\"amount\":2670953789.9,\"averagePrice\":null,\"date\":1653627600000,\"index\":121,\"price\":3138.5616,\"volume\":299955200},{\"amount\":1023234646.4,\"averagePrice\":null,\"date\":1653627660000,\"index\":122,\"price\":3138.9628,\"volume\":94495800},{\"amount\":1101747494.3,\"averagePrice\":null,\"date\":1653627720000,\"index\":123,\"price\":3137.2429,\"volume\":101534600},{\"amount\":1276319280,\"averagePrice\":null,\"date\":1653627780000,\"index\":124,\"price\":3136.4726,\"volume\":130592100},{\"amount\":1141453752.8,\"averagePrice\":null,\"date\":1653627840000,\"index\":125,\"price\":3138.6999,\"volume\":109791400},{\"amount\":1033646651.3,\"averagePrice\":null,\"date\":1653627900000,\"index\":126,\"price\":3138.868,\"volume\":101242800},{\"amount\":945549944.4,\"averagePrice\":null,\"date\":1653627960000,\"index\":127,\"price\":3138.9134,\"volume\":101898400},{\"amount\":860911306.9,\"averagePrice\":null,\"date\":1653628020000,\"index\":128,\"price\":3140.1569,\"volume\":84368300},{\"amount\":900150802.5,\"averagePrice\":null,\"date\":1653628080000,\"index\":129,\"price\":3141.3623,\"volume\":83469300},{\"amount\":910258818.6,\"averagePrice\":null,\"date\":1653628140000,\"index\":130,\"price\":3141.1138,\"volume\":85014900},{\"amount\":994079024.1,\"averagePrice\":null,\"date\":1653628200000,\"index\":131,\"price\":3140.9756,\"volume\":92775500},{\"amount\":895338315.5,\"averagePrice\":null,\"date\":1653628260000,\"index\":132,\"price\":3141.5219,\"volume\":93999000},{\"amount\":1000247439.2,\"averagePrice\":null,\"date\":1653628320000,\"index\":133,\"price\":3142.3417,\"volume\":102292400},{\"amount\":899145125.9,\"averagePrice\":null,\"date\":1653628380000,\"index\":134,\"price\":3141.9633,\"volume\":90582600},{\"amount\":816458888.8,\"averagePrice\":null,\"date\":1653628440000,\"index\":135,\"price\":3142.0716,\"volume\":81314100},{\"amount\":838902055.5,\"averagePrice\":null,\"date\":1653628500000,\"index\":136,\"price\":3141.4774,\"volume\":83522000},{\"amount\":861438034,\"averagePrice\":null,\"date\":1653628560000,\"index\":137,\"price\":3141.4459,\"volume\":87202100},{\"amount\":953867424,\"averagePrice\":null,\"date\":1653628620000,\"index\":138,\"price\":3143.2466,\"volume\":88718000},{\"amount\":1045897870.6,\"averagePrice\":null,\"date\":1653628680000,\"index\":139,\"price\":3144.592,\"volume\":96254500},{\"amount\":986755429.6,\"averagePrice\":null,\"date\":1653628740000,\"index\":140,\"price\":3142.7746,\"volume\":99850800},{\"amount\":1381416754.5,\"averagePrice\":null,\"date\":1653628800000,\"index\":141,\"price\":3138.5473,\"volume\":154204000},{\"amount\":1010927128.6,\"averagePrice\":null,\"date\":1653628860000,\"index\":142,\"price\":3138.1449,\"volume\":106195700},{\"amount\":866180543.3,\"averagePrice\":null,\"date\":1653628920000,\"index\":143,\"price\":3138.311,\"volume\":83358900},{\"amount\":1008563571,\"averagePrice\":null,\"date\":1653628980000,\"index\":144,\"price\":3136.3645,\"volume\":102773600},{\"amount\":1085620482.3,\"averagePrice\":null,\"date\":1653629040000,\"index\":145,\"price\":3135.1806,\"volume\":115396000},{\"amount\":1004298853,\"averagePrice\":null,\"date\":1653629100000,\"index\":146,\"price\":3135.3665,\"volume\":99463900},{\"amount\":1237078864.4,\"averagePrice\":null,\"date\":1653629160000,\"index\":147,\"price\":3133.0281,\"volume\":123950700},{\"amount\":1128172605.8,\"averagePrice\":null,\"date\":1653629220000,\"index\":148,\"price\":3133.0048,\"volume\":109587800},{\"amount\":1436757295.8,\"averagePrice\":null,\"date\":1653629280000,\"index\":149,\"price\":3130.5161,\"volume\":156883400},{\"amount\":1720134183.9,\"averagePrice\":null,\"date\":1653629340000,\"index\":150,\"price\":3128.0612,\"volume\":182442800},{\"amount\":2100027872,\"averagePrice\":null,\"date\":1653629400000,\"index\":151,\"price\":3125.478,\"volume\":217032100},{\"amount\":1734531877.7,\"averagePrice\":null,\"date\":1653629460000,\"index\":152,\"price\":3127.3993,\"volume\":174452800},{\"amount\":1213692432.4,\"averagePrice\":null,\"date\":1653629520000,\"index\":153,\"price\":3127.8176,\"volume\":115778100},{\"amount\":1204774790.8,\"averagePrice\":null,\"date\":1653629580000,\"index\":154,\"price\":3128.4933,\"volume\":111646200},{\"amount\":1518846754.4,\"averagePrice\":null,\"date\":1653629640000,\"index\":155,\"price\":3125.2278,\"volume\":148929500},{\"amount\":1561139428.2,\"averagePrice\":null,\"date\":1653629700000,\"index\":156,\"price\":3124.3654,\"volume\":172668000},{\"amount\":1395013326.8,\"averagePrice\":null,\"date\":1653629760000,\"index\":157,\"price\":3125.7693,\"volume\":133233200},{\"amount\":1005861752.1,\"averagePrice\":null,\"date\":1653629820000,\"index\":158,\"price\":3126.0404,\"volume\":99532700},{\"amount\":1039022238.2,\"averagePrice\":null,\"date\":1653629880000,\"index\":159,\"price\":3127.4262,\"volume\":104750900},{\"amount\":964273981.5,\"averagePrice\":null,\"date\":1653629940000,\"index\":160,\"price\":3128.0403,\"volume\":97622200},{\"amount\":1005762187.8,\"averagePrice\":null,\"date\":1653630000000,\"index\":161,\"price\":3129.3986,\"volume\":107763800},{\"amount\":894532759,\"averagePrice\":null,\"date\":1653630060000,\"index\":162,\"price\":3128.6676,\"volume\":87686400},{\"amount\":811138922.3,\"averagePrice\":null,\"date\":1653630120000,\"index\":163,\"price\":3128.5749,\"volume\":78053700},{\"amount\":894905104.8,\"averagePrice\":null,\"date\":1653630180000,\"index\":164,\"price\":3129.3607,\"volume\":96101800},{\"amount\":726125805.3,\"averagePrice\":null,\"date\":1653630240000,\"index\":165,\"price\":3130.0606,\"volume\":71390300},{\"amount\":865324597.1,\"averagePrice\":null,\"date\":1653630300000,\"index\":166,\"price\":3128.1741,\"volume\":79091100},{\"amount\":866377095.7,\"averagePrice\":null,\"date\":1653630360000,\"index\":167,\"price\":3127.7041,\"volume\":80083600},{\"amount\":754120727.6,\"averagePrice\":null,\"date\":1653630420000,\"index\":168,\"price\":3127.4962,\"volume\":72903900},{\"amount\":888807972.6,\"averagePrice\":null,\"date\":1653630480000,\"index\":169,\"price\":3125.6176,\"volume\":80613200},{\"amount\":1029442160.2,\"averagePrice\":null,\"date\":1653630540000,\"index\":170,\"price\":3125.7713,\"volume\":95839900},{\"amount\":906529391.2,\"averagePrice\":null,\"date\":1653630600000,\"index\":171,\"price\":3125.0526,\"volume\":85270000},{\"amount\":963679333.3,\"averagePrice\":null,\"date\":1653630660000,\"index\":172,\"price\":3127.4543,\"volume\":86409600},{\"amount\":987623102,\"averagePrice\":null,\"date\":1653630720000,\"index\":173,\"price\":3128.9519,\"volume\":102817700},{\"amount\":852682423.3,\"averagePrice\":null,\"date\":1653630780000,\"index\":174,\"price\":3127.4392,\"volume\":92097200},{\"amount\":741732489.4,\"averagePrice\":null,\"date\":1653630840000,\"index\":175,\"price\":3127.6043,\"volume\":84042400},{\"amount\":837929760.5,\"averagePrice\":null,\"date\":1653630900000,\"index\":176,\"price\":3128.6909,\"volume\":80888500},{\"amount\":815929253.3,\"averagePrice\":null,\"date\":1653630960000,\"index\":177,\"price\":3128.6701,\"volume\":84679200},{\"amount\":797433473.6,\"averagePrice\":null,\"date\":1653631020000,\"index\":178,\"price\":3128.9745,\"volume\":79813500},{\"amount\":935979567,\"averagePrice\":null,\"date\":1653631080000,\"index\":179,\"price\":3127.7585,\"volume\":90855700},{\"amount\":885495713,\"averagePrice\":null,\"date\":1653631140000,\"index\":180,\"price\":3127.7654,\"volume\":77129100},{\"amount\":971938578.8,\"averagePrice\":null,\"date\":1653631200000,\"index\":181,\"price\":3128.4792,\"volume\":84806500},{\"amount\":824648836,\"averagePrice\":null,\"date\":1653631260000,\"index\":182,\"price\":3127.6305,\"volume\":82698800},{\"amount\":787217643,\"averagePrice\":null,\"date\":1653631320000,\"index\":183,\"price\":3127.9345,\"volume\":79905800},{\"amount\":792640360.5,\"averagePrice\":null,\"date\":1653631380000,\"index\":184,\"price\":3126.8599,\"volume\":76424600},{\"amount\":1062667192.5,\"averagePrice\":null,\"date\":1653631440000,\"index\":185,\"price\":3124.9287,\"volume\":104023700},{\"amount\":1347635730.5,\"averagePrice\":null,\"date\":1653631500000,\"index\":186,\"price\":3122.7626,\"volume\":147469000},{\"amount\":2157330536.7,\"averagePrice\":null,\"date\":1653631560000,\"index\":187,\"price\":3118.8959,\"volume\":226991300},{\"amount\":2208314238.8,\"averagePrice\":null,\"date\":1653631620000,\"index\":188,\"price\":3116.071,\"volume\":230333200},{\"amount\":1833825332.3,\"averagePrice\":null,\"date\":1653631680000,\"index\":189,\"price\":3116.2719,\"volume\":171613900},{\"amount\":1535038983.5,\"averagePrice\":null,\"date\":1653631740000,\"index\":190,\"price\":3118.5249,\"volume\":140138600},{\"amount\":1237093612.2,\"averagePrice\":null,\"date\":1653631800000,\"index\":191,\"price\":3117.8659,\"volume\":115110400},{\"amount\":1038420456.3,\"averagePrice\":null,\"date\":1653631860000,\"index\":192,\"price\":3118.1361,\"volume\":91571200},{\"amount\":1214966383.6,\"averagePrice\":null,\"date\":1653631920000,\"index\":193,\"price\":3116.5775,\"volume\":108971700},{\"amount\":1680355267.7,\"averagePrice\":null,\"date\":1653631980000,\"index\":194,\"price\":3113.5624,\"volume\":154974900},{\"amount\":1508645821.3,\"averagePrice\":null,\"date\":1653632040000,\"index\":195,\"price\":3112.7102,\"volume\":142335400},{\"amount\":1497434579.6,\"averagePrice\":null,\"date\":1653632100000,\"index\":196,\"price\":3114.0731,\"volume\":135701400},{\"amount\":1196129485.7,\"averagePrice\":null,\"date\":1653632160000,\"index\":197,\"price\":3115.536,\"volume\":112254100},{\"amount\":959364074.4,\"averagePrice\":null,\"date\":1653632220000,\"index\":198,\"price\":3115.8203,\"volume\":89002800},{\"amount\":961528363.2,\"averagePrice\":null,\"date\":1653632280000,\"index\":199,\"price\":3114.2153,\"volume\":93841800},{\"amount\":1039907058,\"averagePrice\":null,\"date\":1653632340000,\"index\":200,\"price\":3116.7571,\"volume\":94689900},{\"amount\":1112601614.7,\"averagePrice\":null,\"date\":1653632400000,\"index\":201,\"price\":3119.0235,\"volume\":106534600},{\"amount\":971357511.4,\"averagePrice\":null,\"date\":1653632460000,\"index\":202,\"price\":3119.0337,\"volume\":87047100},{\"amount\":851379596.2,\"averagePrice\":null,\"date\":1653632520000,\"index\":203,\"price\":3119.5761,\"volume\":83564300},{\"amount\":1206557017.1,\"averagePrice\":null,\"date\":1653632580000,\"index\":204,\"price\":3120.8553,\"volume\":109334800},{\"amount\":965199279.2,\"averagePrice\":null,\"date\":1653632640000,\"index\":205,\"price\":3120.2501,\"volume\":86601600},{\"amount\":819310127.7,\"averagePrice\":null,\"date\":1653632700000,\"index\":206,\"price\":3120.4923,\"volume\":76042900},{\"amount\":981618844.3,\"averagePrice\":null,\"date\":1653632760000,\"index\":207,\"price\":3122.7404,\"volume\":93749300},{\"amount\":1264061322.2,\"averagePrice\":null,\"date\":1653632820000,\"index\":208,\"price\":3124.9123,\"volume\":137859200},{\"amount\":1015174522.2,\"averagePrice\":null,\"date\":1653632880000,\"index\":209,\"price\":3123.9617,\"volume\":92453600},{\"amount\":882730467.8,\"averagePrice\":null,\"date\":1653632940000,\"index\":210,\"price\":3125.4424,\"volume\":81035300},{\"amount\":1091610068.7,\"averagePrice\":null,\"date\":1653633000000,\"index\":211,\"price\":3126.639,\"volume\":103136000},{\"amount\":1394129825.9,\"averagePrice\":null,\"date\":1653633060000,\"index\":212,\"price\":3123.185,\"volume\":128620700},{\"amount\":836688994.9,\"averagePrice\":null,\"date\":1653633120000,\"index\":213,\"price\":3122.9171,\"volume\":76028200},{\"amount\":978473328.1,\"averagePrice\":null,\"date\":1653633180000,\"index\":214,\"price\":3124.2129,\"volume\":87285300},{\"amount\":1478735609,\"averagePrice\":null,\"date\":1653633240000,\"index\":215,\"price\":3127.8123,\"volume\":168336100},{\"amount\":1137759170.9,\"averagePrice\":null,\"date\":1653633300000,\"index\":216,\"price\":3129.0155,\"volume\":115741700},{\"amount\":1041439593,\"averagePrice\":null,\"date\":1653633360000,\"index\":217,\"price\":3129.8241,\"volume\":111153100},{\"amount\":1120040244.5,\"averagePrice\":null,\"date\":1653633420000,\"index\":218,\"price\":3129.0667,\"volume\":105461200},{\"amount\":1107188643.8,\"averagePrice\":null,\"date\":1653633480000,\"index\":219,\"price\":3126.8814,\"volume\":100247600},{\"amount\":952894053.3,\"averagePrice\":null,\"date\":1653633540000,\"index\":220,\"price\":3126.6209,\"volume\":86628200},{\"amount\":1032088597.2,\"averagePrice\":null,\"date\":1653633600000,\"index\":221,\"price\":3127.6466,\"volume\":89380200},{\"amount\":1309402982.2,\"averagePrice\":null,\"date\":1653633660000,\"index\":222,\"price\":3124.8177,\"volume\":126891400},{\"amount\":1092076636.5,\"averagePrice\":null,\"date\":1653633720000,\"index\":223,\"price\":3124.4815,\"volume\":101322500},{\"amount\":1031012084.7,\"averagePrice\":null,\"date\":1653633780000,\"index\":224,\"price\":3125.3354,\"volume\":88075500},{\"amount\":1014677294.6,\"averagePrice\":null,\"date\":1653633840000,\"index\":225,\"price\":3125.7872,\"volume\":93377400},{\"amount\":1347027445.6,\"averagePrice\":null,\"date\":1653633900000,\"index\":226,\"price\":3125.5899,\"volume\":121463500},{\"amount\":1141882359.1,\"averagePrice\":null,\"date\":1653633960000,\"index\":227,\"price\":3126.0111,\"volume\":110327000},{\"amount\":1176161963.3,\"averagePrice\":null,\"date\":1653634020000,\"index\":228,\"price\":3126.672,\"volume\":112151800},{\"amount\":1243534864.9,\"averagePrice\":null,\"date\":1653634080000,\"index\":229,\"price\":3126.6332,\"volume\":118456200},{\"amount\":1237572067.2,\"averagePrice\":null,\"date\":1653634140000,\"index\":230,\"price\":3126.4003,\"volume\":119682300},{\"amount\":1631256218.6,\"averagePrice\":null,\"date\":1653634200000,\"index\":231,\"price\":3127.8431,\"volume\":160698400},{\"amount\":1558767286.7,\"averagePrice\":null,\"date\":1653634260000,\"index\":232,\"price\":3128.1917,\"volume\":163026100},{\"amount\":1627770274.4,\"averagePrice\":null,\"date\":1653634320000,\"index\":233,\"price\":3128.5337,\"volume\":155843500},{\"amount\":1705931614,\"averagePrice\":null,\"date\":1653634380000,\"index\":234,\"price\":3128.4762,\"volume\":169958400},{\"amount\":1920857846.4,\"averagePrice\":null,\"date\":1653634440000,\"index\":235,\"price\":3128.6133,\"volume\":190767400},{\"amount\":2096591533.1,\"averagePrice\":null,\"date\":1653634500000,\"index\":236,\"price\":3129.3452,\"volume\":213684800},{\"amount\":2239886976,\"averagePrice\":null,\"date\":1653634560000,\"index\":237,\"price\":3130.1397,\"volume\":236415600},{\"amount\":54075351.9,\"averagePrice\":null,\"date\":1653634620000,\"index\":238,\"price\":3130.049,\"volume\":5121000},{\"amount\":0,\"averagePrice\":null,\"date\":1653634680000,\"index\":239,\"price\":3130.049,\"volume\":0},{\"amount\":0,\"averagePrice\":null,\"date\":1653634740000,\"index\":240,\"price\":3130.049,\"volume\":0},{\"amount\":3955872975,\"averagePrice\":null,\"date\":1653634800000,\"index\":241,\"price\":3130.2394,\"volume\":401513700}]",
+  "data": "[{\"date\":\"2017年\",\"value1\":0.02,\"value\":0.01},{\"date\":\"2018年\",\"value1\":0.3,\"value\":0.229},{\"date\":\"2019年\",\"value1\":0.5,\"value\":0.19},{\"date\":\"2020年\",\"value1\":0.1,\"value\":0.335},{\"date\":\"2021年\",\"value1\":0.6,\"value\":0.86},{\"date\":\"2022年\",\"value1\":0.8,\"value\":0.73}]",
   "geoms": [
     {
       "type": "line",
-      "position": "date*price",
-      "connectNulls": true,
-      "fixedColor": "#528EFFE5",
-      "fixedSize": 1,
-      "fixedShape": "smooth"
+      "position": "date*value",
+      "fixedSize": 2,
+      "fixedColor": "#E62C3B",
+      "attrs": {
+        "connectNulls": true
+      }
     },
     {
       "type": "area",
-      "position": "date*price",
-      "fixedColor": "#528EFF33"
+      "position": "date*value",
+      "style": {
+        "fillOpacity": 0.4
+      },
+      "fixedColor": "{\"colorStops\":[{\"offset\":0,\"color\":\"#E62C3B\"},{\"offset\":1,\"color\":\"#FFFFFF\"}],\"position\":[0,0,0,500]}",
+      "attrs": {
+        "connectNulls": true
+      }
+    },
+    {
+      "type": "line",
+      "position": "date*value1",
+      "fixedSize": 2,
+      "fixedColor": "#528EFF",
+      "attrs": {
+        "connectNulls": true
+      }
+    },
+    {
+      "type": "area",
+      "position": "date*value1",
+      "style": {
+        "fillOpacity": 0.4
+      },
+      "fixedColor": "{\"colorStops\":[{\"offset\":0,\"color\":\"#528EFF\"},{\"offset\":1,\"color\":\"#FFFFFF\"}],\"position\":[0,0,0,500]}",
+      "attrs": {
+        "connectNulls": true
+      }
     }
   ],
   "guides": [
     {
-      "type": "line",
+      "type": "text",
       "position": [
-        "min",
-        3123.1079
+        "2017年",
+        0.01
       ],
-      "color": "#CCCCCC",
-      "lineWidth": 1,
-      "orientation": "horizontal",
-      "dash": [
+      "textAlign": "right",
+      "textBaseline": "bottom",
+      "content": "哈哈",
+      "textColor": "#999999",
+      "font": {
+        "fontFamily": "sans-serif",
+        "fontStyle": "oblique",
+        "fontWeight": "100"
+      },
+      "margin": [
         6,
-        2
-      ]
-    },
-    {
-      "type": "line",
-      "position": [
-        1653618600000,
-        "max"
+        10
       ],
-      "color": "#F5F5F5FF",
-      "lineWidth": 0.5,
-      "orientation": "vertical",
-      "top": false
-    },
-    {
-      "type": "line",
-      "position": [
-        1653631200000,
-        "max"
-      ],
-      "color": "#F5F5F5FF",
-      "lineWidth": 0.5,
-      "orientation": "vertical",
-      "top": false
+      "textSize": 16
     },
     {
       "type": "text",
       "position": [
-        "min",
-        "max"
+        "2018年",
+        0.229
       ],
-      "textBaseline": "top",
-      "content": "3149.20",
+      "textAlign": "right",
+      "textBaseline": "bottom",
+      "content": "哈哈哈",
       "textColor": "#999999",
+      "font": {
+        "fontFamily": "serif",
+        "fontStyle": "oblique",
+        "fontWeight": "200"
+      },
       "margin": [
-        -5,
-        -5
+        6,
+        10
       ],
-      "textSize": 10
+      "textSize": 16
     },
     {
       "type": "text",
       "position": [
-        "min",
-        "min"
+        "2019年",
+        0.19
       ],
-      "content": "3097.02",
+      "textAlign": "right",
+      "textBaseline": "bottom",
+      "font": {
+        "fontFamily": "monospace",
+        "fontStyle": "oblique",
+        "fontWeight": "300"
+      },
+      "content": "哈哈哈哈",
       "textColor": "#999999",
       "margin": [
-        -5,
-        5
+        6,
+        10
       ],
-      "textSize": 10
+      "textSize": 16
     },
     {
       "type": "text",
       "position": [
-        "max",
-        "max"
+        "2020年",
+        0.335
       ],
-      "textAlign": "end",
-      "textBaseline": "top",
-      "content": "0.84%",
+      "textAlign": "right",
+      "textBaseline": "bottom",
+      "font": {
+        "fontFamily": "monospace",
+        "fontStyle": "italic",
+        "fontWeight": "400"
+      },
+      "content": "哈哈哈哈哈",
       "textColor": "#999999",
       "margin": [
-        5,
-        -5
+        6,
+        10
       ],
-      "textSize": 10
+      "textSize": 16
     },
     {
       "type": "text",
       "position": [
-        "max",
-        "min"
+        "2021年",
+        0.86
       ],
-      "textAlign": "end",
-      "content": "-0.84%",
+      "textAlign": "right",
+      "textBaseline": "bottom",
+      "font": {
+        "fontFamily": "serif",
+        "fontStyle": "italic",
+        "fontWeight": "500"
+      },
+      "content": "哈哈哈哈哈哈",
       "textColor": "#999999",
       "margin": [
-        5,
-        5
+        6,
+        10
       ],
-      "textSize": 10
+      "textSize": 16
+    },
+    {
+      "type": "text",
+      "position": [
+        "2022年",
+        0.73
+      ],
+      "textAlign": "right",
+      "textBaseline": "bottom",
+      "font": {
+        "fontFamily": "sans-serif",
+        "fontStyle": "italic",
+        "fontWeight": "600"
+      },
+      "content": "哈哈哈哈哈哈哈",
+      "textColor": "#999999",
+      "margin": [
+        6,
+        10
+      ],
+      "textSize": 16
     }
   ],
   "axises": [
     {
       "field": "date",
       "config": {
-        "line": false,
         "grid": {
-          "stroke": "#F5F5F5FF",
-          "lineWidth": 0.5
-        },
-        "label": {
-          "textSize": 10,
-          "labelOffset": 5,
-          "textColor": "#999999",
-          "textAlign": [
-            "start",
-            "center",
-            "end"
+          "stroke": "#999999",
+          "type": "dash",
+          "dash": [
+            4,
+            4
           ]
-        }
+        },
+        "label": false,
+        "line": false
       }
     },
     {
-      "field": "price",
+      "field": "value",
       "config": {
+        "grid": false,
         "line": false,
-        "grid": {
-          "stroke": "#F5F5F5FF",
-          "lineWidth": 0.5
-        },
+        "label": false
+      }
+    },
+    {
+      "field": "value1",
+      "config": {
+        "grid": false,
+        "line": false,
         "label": false
       }
     }
   ],
   "scales": [
     {
-      "field": "price",
+      "field": "date",
       "config": {
-        "max": 3149.2004,
-        "min": 3097.0153999999998,
-        "type": "linear"
+        "nice": true,
+        "range": [
+          0.1,
+          0.9
+        ]
       }
     },
     {
-      "field": "date",
+      "field": "value",
       "config": {
-        "tickCount": 5,
-        "type": "timeSharing",
-        "timeZone": "Asia/Shanghai",
-        "timeRange": [
-          [
-            1653615000000,
-            1653622200000
-          ],
-          [
-            1653627600000,
-            1653634800000
-          ]
-        ]
+        "max": 1.032,
+        "min": 0.008,
+        "nice": true,
+        "precision": 2
+      }
+    },
+    {
+      "field": "value1",
+      "config": {
+        "max": 1.032,
+        "min": 0.008,
+        "nice": true,
+        "precision": 2
       }
     }
   ]

@@ -1,5 +1,5 @@
-#include "Polyline.h"
-#include "../util/Path.h"
+#include "graphics/shape/Polyline.h"
+#include "graphics/util/Path.h"
 
 using namespace xg;
 using namespace std;
@@ -40,6 +40,14 @@ void xg::shape::Polyline::CreatePath(canvas::CanvasContext &context) const {
         } else {
             auto lineTo = [&](const Point &point) { context.LineTo(point.x + point_.x, point.y + point_.y); };
             std::for_each(points_.begin() + 1, points_.end(), lineTo);
+        }
+        
+        if(strokeStyle_.type != canvas::CanvasFillStrokeStyleType::kNone && strokeStyle_.type != canvas::CanvasFillStrokeStyleType::kColor) {
+            if (!strokeStyle_.linearGradient.gradientColor.empty() || !strokeStyle_.conicGradient.gradientColor.empty() || !strokeStyle_.radialGradient.gradientColor.empty()) {
+                //如果不是纯色填充色，则新增渐变色专用调用函数，填充一个路径的描边区域，而不仅仅是描边本身
+                //如果外部显示指定了gradient，才走最新逻辑
+                context.ReplaceStroke();
+            }
         }
     }
 }

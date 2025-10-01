@@ -9,7 +9,6 @@
 #include <set>
 #include <string>
 #include <unordered_map>
-#include "json_data.h"
 #include "../../nlohmann/json.hpp"
 
 using namespace std;
@@ -57,7 +56,7 @@ static nlohmann::json JsonArrayByKey(const nlohmann::json &data, const std::stri
     return rst;
 }
 
-static std::array<double, 2> JsonArrayRange(const nlohmann::json &data) {
+static std::array<double, 2> JsonArrayRange(nlohmann::json &data) {
     if(!data.is_array() || data.size() <= 0) {
         return std::array<double, 2>{0, 0};
     }
@@ -92,7 +91,7 @@ static std::array<double, 2> JsonArrayRange(const nlohmann::json &data) {
     return std::array<double, 2>{_min, _max};
 }
 
-static std::string GenerateRowUniqueKey(const nlohmann::json &row, const std::set<std::string> &fields) {
+static std::string GenerateRowUniqueKey(nlohmann::json &row, std::set<std::string> &fields) {
 
     std::string unique = "_";
 
@@ -106,23 +105,28 @@ static std::string GenerateRowUniqueKey(const nlohmann::json &row, const std::se
     return unique;
 }
 
-static XDataGroup JsonGroupByFields(const nlohmann::json &data, const std::set<std::string> &fields) {
-    XDataGroup rst;
-    std::map<std::string, std::vector<XData>> group;
+static nlohmann::json JsonGroupByFields(const nlohmann::json &data, std::set<std::string> fields) {
+    if(fields.empty()) {
+        nlohmann::json rst;
+        rst.push_back(data);
+        return rst;
+    }
+
+    nlohmann::json group;
     std::set<std::string> rowKeys;
     std::vector<std::string> rowKeysOrder;
 
     size_t size = data.size();
     for(size_t index = 0; index < size; ++index) {
-        const nlohmann::json &row = data[index];
+        nlohmann::json row = data[index];
 
         std::string key = GenerateRowUniqueKey(row, fields);
-        if(group.count(key)) {
-            group[key].push_back({&row});
+        if(group.contains(key)) {
+            group[key].push_back(row);
         } else {
-            std::vector<XData> array;
-            array.push_back({&row});
-            group[key] = std::move(array);
+            nlohmann::json array;
+            array.push_back(row);
+            group[key] = array;
         }
 
         if(std::find(rowKeys.begin(), rowKeys.end(), key) == rowKeys.end()) {
@@ -131,8 +135,13 @@ static XDataGroup JsonGroupByFields(const nlohmann::json &data, const std::set<s
         rowKeys.insert(key);
     }
 
-    for(auto it = rowKeysOrder.begin(); it != rowKeysOrder.end(); ++it) {
-        rst.push_back(group[*it]);
+    nlohmann::json rst;
+    if(group.is_object() && group.size() > 0) {
+        for(auto it = rowKeysOrder.begin(); it != rowKeysOrder.end(); ++it) {
+            rst.push_back(group[*it]);
+        }
+    } else {
+        rst.push_back(data);
     }
     return rst;
 }
@@ -166,20 +175,20 @@ static bool isEqualsQuick(nlohmann::json &data1, nlohmann::json &data2) {
     return (data1[0] == data2[0] && data1[lastIndex] == data2[lastIndex]);
 }
 
-static void JsonRangeInGeomDataArray(const XDataGroup &geomDataArray,
+static void JsonRangeInGeomDataArray(const nlohmann::json &geomDataArray,
                                      const std::string &field,
                                      std::size_t start,
                                      std::size_t end,
                                      double *rangeMin,
                                      double *rangeMax) {
-    if(geomDataArray.size() > 0) {
+    if(geomDataArray.is_array() && geomDataArray.size() > 0) {
         for(std::size_t index = 0; index < geomDataArray.size(); ++index) {
-            auto &groupData = geomDataArray[index];
+            const nlohmann::json &groupData = geomDataArray[index];
 
             std::size_t _end = fmin(end, groupData.size() - 1);
-            if(_end > start) {
+            if(groupData.is_array() && _end > start) {
                 for(std::size_t column = start; column <= _end; ++column) {
-                    auto &item = (*groupData[column].data);
+                    const nlohmann::json item = groupData[column];
                     if(item.contains(field)) {
                         if(item[field].is_number()) {
                             double val = item[field];

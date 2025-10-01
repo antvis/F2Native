@@ -14,26 +14,15 @@
     return jsonString;
 }
 
-+ (id)toJsonObject:(NSString *)jsonString defValye:(id)defValue{
++ (id)toJsonObject:(NSString *)jsonString {
+    id jsonObj = nil;
     @try {
         NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
-        return [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        jsonObj = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
     } @catch(NSException *exception) {
         NSLog(@"Json Invalid , Error %@", [exception description]);
-        return defValue;
     }
-}
-
-+ (id)toJsonObject:(NSString *)jsonString {
-    return [F2Utils toJsonObject:jsonString defValye:nil];
-}
-
-+ (NSDictionary *)toJsonDictionary:(NSString *)jsonString {
-    return [F2Utils toJsonObject:jsonString defValye:@{}];
-}
-
-+ (NSArray *)toJsonArray:(NSString *)jsonString {
-    return [F2Utils toJsonObject:jsonString defValye:@[]];
+    return jsonObj;
 }
 
 + (NSDictionary *)resetCallbacksFromOld:(NSDictionary *)config host:(F2Chart *)chart {
@@ -46,7 +35,7 @@
         if([obj isKindOfClass:[F2Callback class]]) {
             F2Callback *callbackObj = obj;
             newDic[key] = callbackObj.functionId;
-            [chart bindCallback:callbackObj];
+            [chart bindF2CallbackObj:callbackObj];
         } else if([obj isKindOfClass:[NSDictionary class]]) {
             NSMutableDictionary *sub = [NSMutableDictionary dictionary];
             [self resetCallbacksFromOld:obj new:sub host:chart];
@@ -66,7 +55,7 @@
     [old enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if([obj isKindOfClass:[F2Callback class]]) {
             F2Callback *callbackObj = obj;
-            [chart bindCallback:callbackObj];
+            [chart bindF2CallbackObj:callbackObj];
             [newArray addObject:callbackObj];
         } else if([obj isKindOfClass:[NSDictionary class]]) {
             NSMutableDictionary *sub = [NSMutableDictionary dictionary];

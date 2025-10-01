@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -12,7 +11,7 @@ import com.antgroup.antv.f2.F2CanvasView;
 import com.antgroup.antv.f2.F2Chart;
 import com.antgroup.antv.f2.F2Config;
 import com.antgroup.antv.f2.F2Function;
-import com.antgroup.antv.f2.F2Util;
+import com.antgroup.antv.f2.F2Log;
 import com.antgroup.antv.f2.samples.Utils;
 
 import java.io.InputStream;
@@ -41,18 +40,19 @@ public class SingleLineChart_KLine implements F2CanvasView.Adapter, F2CanvasView
         mChart.padding(10, 30, 10, 20);
         mChart.source(Utils.loadAssetFile(canvasView.getContext(), "mockData_line_kline.json"));
         mChart.line().position("date*price");
-        mChart.area().position("date*price").fixedShape("smooth").fixedColor(new F2Util.ColorLinearGradient()
-                .addColorStop(0.f, "red")
-//                .addColorStop(0.5f, "#FFE0E0")
-                .addColorStop(1.f, "white")
-                .setPosition(0, 0, 0, canvasView.getHeight()));
+
         F2Chart.ScaleConfigBuilder scaleConfigBuilder = new F2Chart.ScaleConfigBuilder();
         scaleConfigBuilder
                 .tickCount(5)
                 .type("kline-day")
                 .setOption("timeZoneOffset", 28800)
-                .setOption("domain", new double[]{1, 20})
-                .tick(mChart, new F2Function() {
+                .setOption("domain", new double[]{1, 20});
+
+
+        mChart.setScale("date", scaleConfigBuilder);
+
+        mChart.setAxis("date", new F2Chart.AxisConfigBuilder()
+                .label(new F2Chart.AxisLabelConfigBuilder().item(mChart, new F2Function() {
                     @Override
                     public F2Config execute(String paramStr) {
                         JSONObject jsonObject = JSON.parseObject(paramStr);
@@ -61,8 +61,7 @@ public class SingleLineChart_KLine implements F2CanvasView.Adapter, F2CanvasView
                         String content = DateFormat.getDateInstance().format(new Date(timestamp));
                         return new F2Config.Builder().setOption("content", content).build();
                     }
-                });
-        mChart.setScale("date", scaleConfigBuilder);
+                })));
 
         mChart.setScale("price", new F2Chart.ScaleConfigBuilder()
                 .tickCount(2).nice(true));
@@ -94,13 +93,13 @@ public class SingleLineChart_KLine implements F2CanvasView.Adapter, F2CanvasView
             bitmap = BitmapFactory.decodeStream(ins);
             ins.close();
         } catch (Throwable t) {
-            Log.e("SingleLineChart1", "getImageFromAssets error:" + t);
+            F2Log.get().e("SingleLineChart1", "getImageFromAssets error:", t);
         } finally {
             if (ins != null) {
                 try {
                     ins.close();
                 } catch (Throwable e) {
-                    Log.e("SingleLineChart1", "getImageFromAssets close error:" + e);
+                    F2Log.get().e("SingleLineChart1", "getImageFromAssets close error:", e);
                 }
             }
         }

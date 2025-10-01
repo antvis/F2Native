@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.antgroup.antv.f2.F2CanvasView
-import com.antgroup.antv.f2.F2CanvasView.ConfigBuilder
 import com.antgroup.antv.f2.F2Log
 import com.antgroup.antv.f2.kotlinsamples.MainActivity.Companion.chartModels
 import java.lang.ref.WeakReference
@@ -31,7 +30,7 @@ class ChartListActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        F2Log.i("ChartListActivity", "canvasViews Size: " + canvasViews.size)
+        F2Log.get().i("ChartListActivity", "canvasViews Size: " + canvasViews.size)
         for (canvasView in canvasViews) {
             if (canvasView.get() != null) {
                 canvasView.get()!!.destroy()
@@ -56,12 +55,7 @@ class ChartListActivity : AppCompatActivity() {
         init {
             chartName = itemView.findViewById(R.id.chart_name)
             canvasView = itemView.findViewById(R.id.canvasView)
-            canvasView.initCanvasContext(
-                ConfigBuilder()
-                    .setOption("canvasBizId", "ChartListActivity")
-                    .setOption("appId", "1000")
-                    .build()
-            )
+            canvasView.setCanvasBizId("ChartListActivity")
             canvasViews.add(WeakReference(canvasView))
         }
     }

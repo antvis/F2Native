@@ -16,6 +16,12 @@ public class SingleIntervalChart_2 implements F2CanvasView.Adapter {
     public void onCanvasDraw(F2CanvasView canvasView) {
         if (mChart == null) {
             mChart = F2Chart.create(canvasView.getContext(), "SingleIntervalChart_2", canvasView.getWidth(), canvasView.getHeight());
+            canvasView.setOnCanvasTouchListener(new F2CanvasView.OnCanvasTouchListener() {
+                @Override
+                public void onTouch(F2CanvasView canvasView, F2CanvasView.TouchEvent event) {
+                    mChart.postTouchEvent(event);
+                }
+            });
         }
 
         mChart.setCanvas(canvasView);
@@ -25,6 +31,8 @@ public class SingleIntervalChart_2 implements F2CanvasView.Adapter {
         mChart.setScale("sold", new F2Chart.ScaleConfigBuilder().min(0));
         mChart.setScale("genre", new F2Chart.ScaleConfigBuilder().range(new double[]{0.1, 0.9}));
         mChart.legend("genre", new F2Chart.LegendConfigBuild().enable(true).position("top").symbol("circle").setOption("radius", 3));
+        mChart.tooltip(new F2Chart.ToolTipConfigBuilder());
+
         mChart.render();
     }
 

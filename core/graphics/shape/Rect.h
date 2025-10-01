@@ -58,6 +58,8 @@ class Rect : public Shape {
     void SetRoundings(float (&roundings)[4]);
     
     void SetDashLine(const std::vector<float> &params) { this->dash_ = params; }
+    
+    virtual nlohmann::json GetSpecifyConfig() const override;
 
   protected:
     void CreatePath(canvas::CanvasContext &context) const override;

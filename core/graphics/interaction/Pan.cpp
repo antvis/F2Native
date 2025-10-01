@@ -1,5 +1,6 @@
+
 #include "Pan.h"
-#include "../XChart.h"
+#include "graphics/XChart.h"
 
 using namespace xg;
 
@@ -7,6 +8,12 @@ interaction::Pan::Pan(XChart *chart) : InteractionBase(chart) {
     this->chart_->eventController_->AddCallback("panstart", XG_MEMBER_CALLBACK_1(interaction::Pan::OnPanStart));
     this->chart_->eventController_->AddCallback("pan", XG_MEMBER_CALLBACK_1(interaction::Pan::OnPan));
     this->chart_->eventController_->AddCallback("panend", XG_MEMBER_CALLBACK_1(interaction::Pan::onPanEnd));
+}
+
+interaction::Pan::~Pan() {
+    this->chart_->eventController_->RemoveCallback("panstart");
+    this->chart_->eventController_->RemoveCallback("pan");
+    this->chart_->eventController_->RemoveCallback("panend");
 }
 
 bool interaction::Pan::OnPanStart(event::Event &event) {

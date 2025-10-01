@@ -36,6 +36,20 @@ static string TimeStampToHHmm(long long tsMM, bool timeZone = false) {
     return std::string(s);
 }
 
+static string TimeStampToFormat(long long tsMM, bool timeZone = false, const char *format = "%Y-%m-%d %H:%M:%S") {
+    struct tm *p;
+    time_t t;
+    t = tsMM / 1000;
+    if(timeZone) {
+        p = gmtime(&t);
+    } else {
+        p = localtime(&t);
+    }
+    char s[100];
+    strftime(s, 100, format, p);
+    return std::string(s);
+}
+
 /// 字符串格式转化为秒级时间戳
 /// 2020-01-01 14:00:00 --> 1577858400
 static time_t DateParserAtSecond(std::string date, std::string format = "%Y-%m-%d %H:%M:%S") {
@@ -54,12 +68,13 @@ static time_t DateParserAtSecond(std::string date, std::string format = "%Y-%m-%
 /// 2020-01-01 14:00:00 --> std::tm
 static tm DateParserAtTM(std::string date, std::string format = "%Y-%m-%d %H:%M:%S") {
     tm tm_;
+    time_t t_;
     char buf[128] = {0};
 
     strcpy(buf, date.data());
     strptime(buf, format.data(), &tm_); //将字符串转换为tm时间
     tm_.tm_isdst = -1;
-    return tm_;
+    return std::move(tm_);
 }
 
 static tm DateParserTimeStamp(long long timestamp, bool timeZone = false) {
@@ -71,7 +86,7 @@ static tm DateParserTimeStamp(long long timestamp, bool timeZone = false) {
     } else {
         localtime_r(&t, &rt);
     }
-    return rt;
+    return std::move(rt);
 }
 
 } // namespace xg

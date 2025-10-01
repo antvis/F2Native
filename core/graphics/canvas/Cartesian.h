@@ -16,25 +16,46 @@ class Cartesian : public AbstractCoord {
     // @param start -- 左下角坐标
     // @param end -- 右上角坐标
     // @param transposed -- 坐标系是否翻转
-    Cartesian(util::Point start, util::Point end, bool transposed = false) : AbstractCoord() {
+    Cartesian(util::Point start, util::Point end, bool transposed = false, nlohmann::json config = {}) : AbstractCoord() {
         xAxis_.Reset(start.x, end.x);
         yAxis_.Reset(start.y, end.y);
         center_.Reset(xAxis_.x + (xAxis_.y - xAxis_.x) / 2, yAxis_.x + (yAxis_.y - yAxis_.x) / 2);
         util::MatrixUtil::Reset(&this->matrix_);
         transposed_ = transposed;
+        isConvertPointV2_ = json::GetBool(config, "_isConvertPointV2", false);
     }
 
     // @param point -- 度量坐标值[0~1]
     // @return  实际坐标值
     util::Point ConvertPoint(util::Point point) const override {
-        double x = xAxis_.x + (xAxis_.y - xAxis_.x) * (transposed_ ? point.y : point.x);
-        double y = yAxis_.x + (yAxis_.y - yAxis_.x) * (transposed_ ? point.x : point.y);
-
-        util::Vector2D v;
-        util::Vector2DUtil::Reset(&v, x, y);
-        util::Vector2DUtil::TransformMat2D(&v, v, this->matrix_);
-
-        return util::Point{v[0], v[1]};
+        if (this->isConvertPointV2_) {
+            bool isXNan = false, isYNan = false;
+            if (std::isnan(point.x)) {
+                point.x = 0;
+                isXNan = true;
+            }
+            if (std::isnan(point.y)) {
+                point.y = 0;
+                isYNan = true;
+            }
+            double x = xAxis_.x + (xAxis_.y - xAxis_.x) * (transposed_ ? point.y : point.x);
+            double y = yAxis_.x + (yAxis_.y - yAxis_.x) * (transposed_ ? point.x : point.y);
+            
+            util::Vector2D v;
+            util::Vector2DUtil::Reset(&v, x, y);
+            util::Vector2DUtil::TransformMat2D(&v, v, this->matrix_);
+            
+            return util::Point{isXNan ? NAN : v[0], isYNan ? NAN : v[1]};
+        } else {
+            double x = xAxis_.x + (xAxis_.y - xAxis_.x) * (transposed_ ? point.y : point.x);
+            double y = yAxis_.x + (yAxis_.y - yAxis_.x) * (transposed_ ? point.x : point.y);
+            
+            util::Vector2D v;
+            util::Vector2DUtil::Reset(&v, x, y);
+            util::Vector2DUtil::TransformMat2D(&v, v, this->matrix_);
+            
+            return util::Point{v[0], v[1]};
+        }
     }
 
     // @param point -- 实际坐标值

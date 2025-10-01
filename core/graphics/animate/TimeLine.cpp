@@ -99,7 +99,6 @@ void animate::TimeLine::OnUpdate() {
     time_ = CurrentTimestampAtMM();
 
     // remove if anim ended.
-    animInfos_.erase(std::remove_if(animInfos_.begin(), animInfos_.end(),
-                                    [&](auto &animInfo) -> bool { return animInfo.hasEnded; }),
+    animInfos_.erase(std::remove_if(animInfos_.begin(), animInfos_.end(), [&](auto &animInfo) -> bool { return animInfo.hasEnded; }),
                      animInfos_.end());
 }

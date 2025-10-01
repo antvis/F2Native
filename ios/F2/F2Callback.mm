@@ -9,7 +9,7 @@
 #import "F2CanvasView.h"
 #import "F2Chart.h"
 #import "F2Utils.h"
-#import "../../core/graphics/func/Command.h"
+#import <graphics/func/Command.h>
 
 @interface F2Callback ()
 @property (nonatomic, copy) NSString *functionId;
@@ -80,7 +80,7 @@
     xg::func::Command *command = reinterpret_cast<xg::func::Command *>(commandPointer);
     if (self.canvasView && self.canvasView.canvasContext) {
         command->run();
-        [self.canvasView setNeedsDisplay];
+        [self.canvasView drawFrame];
     }
     delete command;
 }

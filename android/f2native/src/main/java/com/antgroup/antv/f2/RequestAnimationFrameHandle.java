@@ -12,7 +12,7 @@ import java.util.Set;
  * @author qingyuan.yl
  * @date 2021/2/23
  */
-public final class RequestAnimationFrameHandle extends F2Function {
+final class RequestAnimationFrameHandle extends F2Function {
     private F2Chart mChart;
     private F2CanvasView mCanvasView;
     private String mChartName;
@@ -38,7 +38,7 @@ public final class RequestAnimationFrameHandle extends F2Function {
 
     @Override
     protected void finalize() throws Throwable {
-        F2Log.i(mChartName + "", "RequestAnimationFrameHandle finalize .. " + functionId);
+        F2Log.get().i(mChartName + "", "RequestAnimationFrameHandle finalize .. " + functionId);
         super.finalize();
     }
 

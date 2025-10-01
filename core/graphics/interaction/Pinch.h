@@ -12,6 +12,8 @@ class Pinch : public InteractionBase {
   public:
     Pinch(XChart *chart);
 
+    virtual ~Pinch();
+
     bool OnPinchStart(event::Event &event);
 
     bool OnPinch(event::Event &event);

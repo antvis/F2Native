@@ -1,12 +1,16 @@
-#include "GuideController.h"
-#include "Background.h"
-#include "Flag.h"
-#include "Line.h"
-#include "Text.h"
-#include "Image.h"
-#include "Point.h"
-#include "../util/BBox.h"
-#include "../util/json.h"
+
+
+#include "graphics/guide/GuideController.h"
+#include "graphics/guide/Background.h"
+#include "graphics/guide/Flag.h"
+#include "graphics/guide/Line.h"
+#include "graphics/guide/Text.h"
+#include "graphics/guide/Image.h"
+#include "graphics/guide/Point.h"
+#include "graphics/guide/Tag.h"
+#include "graphics/util/BBox.h"
+#include "graphics/util/json.h"
+#include "graphics/guide/RefLine.h"
 
 void xg::guide::GuideController::Render(xg::XChart &chart, canvas::CanvasContext &context) {
     std::for_each(guides.begin(), guides.end(), [&](const std::unique_ptr<xg::guide::GuideBase> &guide) -> void {
@@ -45,6 +49,14 @@ void xg::guide::GuideController::Image(const std::string &json) {
 
 void xg::guide::GuideController::Point(const std::string &json) {
     PointObject(xg::json::ParseString(json));
+}
+
+void xg::guide::GuideController::Tag(const std::string &json) {
+    TagObject(xg::json::ParseString(json));
+}
+
+void xg::guide::GuideController::RefLine(const std::string &json) {
+    RefLine(xg::json::ParseString(json));
 }
 
 void xg::guide::GuideController::FlagObject(const nlohmann::json &config) {
@@ -87,4 +99,18 @@ void xg::guide::GuideController::PointObject(const nlohmann::json &config) {
         return;
     auto point = xg::make_unique<xg::guide::Point>(config);
     this->guides.push_back(std::move(point));
+}
+
+void xg::guide::GuideController::TagObject(const nlohmann::json &config) {
+    if(!config.is_object())
+        return;
+    auto tag = xg::make_unique<xg::guide::Tag>(config);
+    this->guides.push_back(std::move(tag));
+}
+
+void xg::guide::GuideController::RefLineObject(const nlohmann::json &config) {
+    if(!config.is_object())
+        return;
+    auto tag = xg::make_unique<xg::guide::RefLine>(config);
+    this->guides.push_back(std::move(tag));
 }

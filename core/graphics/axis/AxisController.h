@@ -29,6 +29,7 @@ class Axis {
     std::string type;
     std::string dimType;
     std::string position;
+    std::vector<BBox> labelBBoxes;
     std::vector<std::unique_ptr<shape::Text>> labels;
 
     double maxWidth = 0;
@@ -39,6 +40,12 @@ class Axis {
     nlohmann::json gridCfg;
     nlohmann::json labelCfg;
     nlohmann::json lineCfg;
+    nlohmann::json selectedLabelCfg;
+    nlohmann::json selectedGridCfg;
+    nlohmann::json selectedArray;
+    bool selectionEnable = false;
+    bool associateRecord = true;
+    bool deselect = false;
     std::string field;
     std::string verticalField; // 相对垂直边 field
     std::vector<scale::Tick> ticks;
@@ -49,6 +56,13 @@ class Axis {
         point.y = start.y + (end.y - start.y) * value;
         return point;
     }
+    
+    const bool IsSelected(const int tickIndex);
+    inline const nlohmann::json &GetLabelCfg();
+    const nlohmann::json GetLabelCfg(const bool isSelected);
+    const nlohmann::json GetLabelCfgForIndex(const int tickIndex);
+    
+    const std::tuple<std::vector<size_t>, std::vector<xg::scale::Tick>> GetSnapTicks(XChart *chart, util::Point point, const bool needReMapping);
 };
 
 
@@ -79,17 +93,32 @@ class AxisController {
     ~AxisController() { container_ = nullptr; }
 
     void DrawAxes(XChart *chart, canvas::CanvasContext &context);
+    
+    void associateGeomTap(XChart *chart, util::Point point, nlohmann::json &geomRecords);
+    const std::tuple<const bool, const bool, const nlohmann::json, const xg::scale::Tick> onTap(XChart *chart, util::Point point);
 
     void SetFieldConfig(const std::string &field, const nlohmann::json &config = {}) { axisConfig_[field] = MergeDefaultConfig(config); }
+    
+    void SetFieldSelection(const std::string &field, const nlohmann::json &selection = {}) { axisSelection_[field] = MergeDefaultSelection(selection); }
 
     void Clear();
+    
+    const std::string GetAxisPosition(const std::string &field);
 
   protected:
+    static nlohmann::json MergeDefaultSelection(const nlohmann::json &selection) {
+        nlohmann::json cfg = {{"enable", false}};
+        if (selection.is_object()) {
+            cfg.merge_patch(selection);
+            cfg["enable"] = true;
+        }
+        return cfg;
+    }
     static nlohmann::json MergeDefaultConfig(const nlohmann::json &config) {
         nlohmann::json gridCfg = {{"type", "line"},      // 网格线类型
                                   {"lineWidth", .6f},    // 网格线线宽
                                   {"stroke", "#E8E8E8"}, // 网格线颜色
-                                  {"dash", {10, 10}}};
+                                  {"dash", {10, 10}}}; 
 
         nlohmann::json line = {// 轴线配置
                                {"color", "#999999"},
@@ -100,8 +129,9 @@ class AxisController {
         nlohmann::json label = {
             // 轴标签配置
             {"textColor", "#808080"}, // 标签文字颜色
-            {"textSize", DEFAULT_FONTSIZE},       // 标签文字字号
-            {"labelOffset", 5.f},     // 轴上标签的垂直方向偏移量。x 轴为上下的整体偏移量， y 轴为左右的整体偏移量
+            {"textSize", 10.f},       // 标签文字字号
+            {"labelMargin", 0.f},     // 轴上标签的外边距. x 轴为左右外边距， y 轴为上下外边距
+            {"labelOffset", 0.f},     // 轴上标签的垂直方向偏移量。x 轴为上下的整体偏移量， y 轴为左右的整体偏移量
             {"textAlign", "center"},  //文字水平对齐方式 start center end
             {"textBaseline", "bottom"},//文字垂直对齐方式 top middle bottom
             {"inner", false}            //轴上的文字是否在图表内部
@@ -200,7 +230,10 @@ class AxisController {
   private:
     std::vector<std::unique_ptr<Axis>> axes;
     nlohmann::json axisConfig_;
+    nlohmann::json axisSelection_;
     shape::Group *container_ = nullptr;
+    nlohmann::json fieldSelectedArray_;
+    bool isRepainting = false;
 };
 } // namespace axis
 } // namespace xg

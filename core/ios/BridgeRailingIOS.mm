@@ -9,7 +9,7 @@
 #include <UIKit/UIKit.h>
 #include "F2Utils.h"
 #include "BridgeRailingIOS.h"
-#include "../graphics/func/Command.h"
+#include "../graphics/XChart.h"
 
 @interface F2RailingProxy : NSObject
 

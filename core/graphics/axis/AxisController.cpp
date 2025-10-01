@@ -1,14 +1,14 @@
-#include "AxisController.h"
-#include "../XChart.h"
-#include "../func/Func.h"
-#include "../shape/Circle.h"
-#include "../shape/Line.h"
-#include "../shape/Polyline.h"
-#include "../shape/Text.h"
-#include "../shape/Rect.h"
-#include "../shape/Polygon.h"
-#include "../../utils/common.h"
-#include "../../utils/xtime.h"
+#include "graphics/axis/AxisController.h"
+#include "graphics/XChart.h"
+#include "graphics/func/Func.h"
+#include "graphics/shape/Circle.h"
+#include "graphics/shape/Line.h"
+#include "graphics/shape/Polyline.h"
+#include "graphics/shape/Text.h"
+#include "graphics/shape/Rect.h"
+#include "graphics/shape/Polygon.h"
+#include "utils/common.h"
+#include "utils/xtime.h"
 
 // 网格线绘制始终是从 0 - 1， 数据不足时主动补齐
 static std::vector<xg::scale::Tick> FormatTicks(std::vector<xg::scale::Tick> ticks) {
@@ -47,6 +47,59 @@ static std::vector<std::string> GetFillColor(const nlohmann::json &config) {
     return fill;
 }
 
+const bool xg::axis::Axis::IsSelected(const int tickIndex) {
+    bool isSelected = false;
+    if (this->selectedLabelCfg.size() > 0 && this->selectedArray.size() > 0) {
+        for (nlohmann::json &defaultSelectedItem : this->selectedArray) {
+            int index = json::GetIntNumber(defaultSelectedItem, "tickIndex", -1);
+            if (tickIndex == index) {
+                isSelected = true;
+                break;
+            }
+        }
+    }
+    return isSelected;
+}
+
+inline const nlohmann::json &xg::axis::Axis::GetLabelCfg() {
+    return this->labelCfg;
+}
+
+const nlohmann::json xg::axis::Axis::GetLabelCfg(const bool isSelected) {
+    if (isSelected) {
+        nlohmann::json config = this->labelCfg;
+        config.merge_patch(this->selectedLabelCfg);
+        return config;
+    } else {
+        return this->labelCfg;
+    }
+}
+
+const nlohmann::json xg::axis::Axis::GetLabelCfgForIndex(const int tickIndex) {
+    const bool isSelected = this->IsSelected(tickIndex);
+    return this->GetLabelCfg(isSelected);
+}
+
+const std::tuple<std::vector<size_t>, std::vector<xg::scale::Tick>> xg::axis::Axis::GetSnapTicks(XChart *chart, util::Point point, const bool needReMapping) {
+    std::vector<scale::Tick> rst{};
+    std::vector<size_t> rstIdx{};
+    const size_t labelsSize = this->labelBBoxes.size();
+    for (size_t i = 0; i < this->labelBBoxes.size(); i++) {
+        const BBox &bbox = this->labelBBoxes[i];
+        bool labelCanHandle = false;
+        labelCanHandle = util::BBoxUtil::IsPointHitBBox(point, bbox, this->dimType);
+        if (labelCanHandle) {
+            const size_t ticksSize = ticks.size();
+            if (i < ticksSize && ticksSize == labelsSize) {
+                rst.push_back(this->ticks[i]);
+                rstIdx.push_back(i);
+            }
+        }
+    }
+    return std::make_tuple(rstIdx, rst);
+}
+
+
 void xg::axis::AxisController::DrawAxes(xg::XChart *chart, canvas::CanvasContext &context) {
     utils::Tracer *tracer = chart->GetLogTracer();
 
@@ -67,6 +120,7 @@ void xg::axis::AxisController::DrawAxes(xg::XChart *chart, canvas::CanvasContext
         const std::string &yField = yFields[index];
         if(!axisConfig_.contains(yField)) {
             axisConfig_[yField] = AxisController::MergeDefaultConfig({});
+            axisConfig_[yField]["grid"] = false; // y 轴默认不显示网格
         }
 
         if(!axisConfig_[yField]["hidden"]) {
@@ -80,6 +134,103 @@ void xg::axis::AxisController::DrawAxes(xg::XChart *chart, canvas::CanvasContext
     InitAxisConfig(*chart);
 
     std::for_each(axes.begin(), axes.end(), [&](std::unique_ptr<xg::axis::Axis> &axis) { DrawAxis(*chart, axis, context); });
+}
+
+void xg::axis::AxisController::associateGeomTap(XChart *chart, util::Point point, nlohmann::json &geomRecords) {
+    bool canHandle = false;
+    for (auto &record : geomRecords) {
+        const int recordIndex = json::GetIntNumber(record, "recordIndex", -1);
+        if (recordIndex >= 0) {
+            for (std::unique_ptr<xg::axis::Axis> &axis : this->axes) {
+                if (!axis->associateRecord) {
+                    break;
+                }
+                std::vector<xg::scale::Tick> ticks;
+                nlohmann::json newSelectedArray = {};
+                const size_t ticksSize = axis->ticks.size();
+                if (recordIndex < ticksSize) {
+                    canHandle = true;
+                    ticks.push_back(axis->ticks[recordIndex]);
+                    nlohmann::json newSelectedArray = {};
+                    newSelectedArray.push_back({{"tickIndex", recordIndex}});
+                    axis->selectedArray = newSelectedArray;
+                    this->fieldSelectedArray_[axis->field] = newSelectedArray;
+                }
+            }
+        }
+    }
+    
+    if (canHandle) {
+        this->isRepainting = true;
+    }
+}
+
+const std::tuple<const bool, const bool, const nlohmann::json, const xg::scale::Tick> xg::axis::AxisController::onTap(XChart *chart, util::Point point) {
+    bool canHandle = false;
+    bool isSelect = true;
+    nlohmann::json tickInfo = {};
+    scale::Tick tickObj;
+    for (std::unique_ptr<xg::axis::Axis> &axis : this->axes) {
+        std::vector<size_t> indexes;
+        std::vector<xg::scale::Tick> ticks;
+        std::tie(indexes, ticks) = axis->GetSnapTicks(chart, point, true);
+        if (indexes.size() > 0) {
+            canHandle = true;
+            const scale::Tick &tick = ticks[0];
+            const size_t tickIdx = indexes[0];
+            
+            nlohmann::json newSelectedArray = {};
+            for (const nlohmann::json &selectedItem : axis->selectedArray) {
+                if (tickIdx == json::GetIntNumber(selectedItem, "tickIndex", -1)) {
+                    isSelect = false;
+                    if (!axis->deselect) {
+                        canHandle = false;
+                    }
+                } else {
+//                    newSelectedArray.push_back(selectedItem);
+                }
+            }
+            
+            if (canHandle) {
+                if (isSelect) {
+                    newSelectedArray.push_back({{"tickIndex", tickIdx}});
+                }
+                axis->selectedArray = newSelectedArray;
+                this->fieldSelectedArray_[axis->field] = newSelectedArray;
+                if (axis->associateRecord) {
+                    tickInfo = {
+                        {"tickIndex", tickIdx},
+                        {"recordIndex", tickIdx},
+                        {"field", axis->field},
+                    };
+                    tickObj = tick;
+                } else {
+                    tickInfo = {
+                        {"tickIndex", tickIdx},
+                        {"field", axis->field},
+                    };
+                    tickObj = tick;
+                }
+                break;
+            }
+        }
+    };
+    
+    if (canHandle) {
+        this->isRepainting = true;
+    }
+    
+    return std::make_tuple(canHandle, isSelect, tickInfo, tickObj);
+}
+
+const std::string xg::axis::AxisController::GetAxisPosition(const std::string &field) {
+    std::string position;
+    std::for_each(this->axes.begin(), this->axes.end(), [&](std::unique_ptr<xg::axis::Axis> &axis){
+        if (axis->field == field) {
+            position = axis->position;
+        }
+    });
+    return position;
 }
 
 void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field, std::size_t index, const std::string &dimType, const std::string &verticalField) {
@@ -111,15 +262,45 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
     axis->verticalField = verticalField;
 
     nlohmann::json &fieldCfg = axisConfig_[axis->field];
+    nlohmann::json &fieldSlt = axisSelection_[axis->field];
+    
+    if (this->isRepainting) {
+        axis->selectedArray = this->fieldSelectedArray_[axis->field];
+    } else if (fieldSlt["defaultSelected"].is_array()) {
+        axis->selectedArray = fieldSlt["defaultSelected"];
+        this->fieldSelectedArray_[axis->field] = axis->selectedArray;
+    }
+    
+    if (fieldSlt["associateRecord"].is_boolean()) {
+        axis->associateRecord = json::GetBool(fieldSlt, "associateRecord", true);
+    }
+    
+    if (fieldSlt["deselect"].is_boolean()) {
+        axis->deselect = json::GetBool(fieldSlt, "deselect", false);
+    }
+    
+    if (fieldSlt["enable"].is_boolean()) {
+        axis->selectionEnable = json::GetBool(fieldSlt, "enable", false);
+    }
 
     bool showGrid = axis->position == "bottom"; // bottom 默认显示轴
     if(fieldCfg["grid"].is_object()) {
         showGrid = true;
+    }
+
+    if(showGrid) {
+        // 默认值
         axis->gridCfg = fieldCfg["grid"];
+        if (fieldSlt["selectedGrid"].is_object()) {
+            axis->selectedGridCfg = fieldSlt["selectedGrid"];
+        }
     }
 
     if(fieldCfg["label"].is_object()) {
         axis->labelCfg = fieldCfg["label"];
+        if (fieldSlt["selectedLabel"].is_object()) {
+            axis->selectedLabelCfg = fieldSlt["selectedLabel"];
+        }
         //            if(axis->key == "left") {
         //                axis->labelCfg["textAlign"] = "end";
         //            } else if(axis->key == "right") {
@@ -130,6 +311,8 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
     if(fieldCfg["line"].is_object()) {
         axis->lineCfg = fieldCfg["line"];
     }
+    
+    this->isRepainting = false;
 
     scale::AbstractScale &scale = chart.GetScale(axis->field);
     axis->ticks = scale.GetTicks(&chart);
@@ -139,29 +322,24 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
         ticksTmp = 200;
     }
 
-    if(axis->labelCfg.is_object()) {
-        float labelOffset = axis->labelCfg["labelOffset"];
-        labelOffset *= chart.GetCanvasContext().GetDevicePixelRatio();
-
-        const std::string &labelColor = axis->labelCfg["textColor"];
-        float labelFontSize = axis->labelCfg["textSize"];
-        labelFontSize *= chart.GetCanvasContext().GetDevicePixelRatio();
-
-        const auto &textAlign = axis->labelCfg["textAlign"];
-        const auto &textBaseline = axis->labelCfg["textBaseline"];
-        
-        bool inner = json::GetBool(axis->labelCfg, "inner");
+    const nlohmann::json &labelCfg = axis->GetLabelCfg();
+    if (labelCfg.is_object()) {
+        const float pixelRatio = chart.GetCanvasContext().GetDevicePixelRatio();
 
         std::string labelItemFuncId;
-        if(axis->labelCfg.contains("item")) {
-            labelItemFuncId = axis->labelCfg["item"];
+        if(labelCfg.contains("item")) {
+            labelItemFuncId = labelCfg["item"];
         }
 
         for(std::size_t index = 0; index < axis->ticks.size(); ++index) {
             if(index == 0 || index == (axis->ticks.size() - 1) || index % ticksTmp == 0) {
                 const xg::scale::Tick &tick = axis->ticks[index];
+                nlohmann::json itemStyle = axis->GetLabelCfgForIndex((int)index);
+                const float maxWidth = json::GetNumber(itemStyle, "maxWidth", 0) * pixelRatio;
+                const auto &textAlign = itemStyle["textAlign"];
+                const auto &textBaseline = itemStyle["textBaseline"];
+                const bool inner = json::GetBool(itemStyle, "inner");
                 if(!labelItemFuncId.empty()) {
-                    nlohmann::json itemStyle = axis->labelCfg;
                     nlohmann::json param = {{"text", tick.text}, {"index", index}, {"count", axis->ticks.size()}, {"content", tick.text}};
                     param.merge_patch(itemStyle);
                     
@@ -174,17 +352,19 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
                     }
 
                     float textSize = itemStyle["textSize"];
-                    textSize *= chart.GetCanvasContext().GetDevicePixelRatio();
+                    textSize *= pixelRatio;
 
                     float xOffset = itemStyle["xOffset"];
                     float yOffset = itemStyle["yOffset"];
-                    xOffset *= chart.GetCanvasContext().GetDevicePixelRatio();
-                    yOffset *= chart.GetCanvasContext().GetDevicePixelRatio();
+                    xOffset *= pixelRatio;
+                    yOffset *= pixelRatio;
 
                     std::string textContent = json::GetString(itemStyle, "content", tick.text);
 
                     std::unique_ptr<xg::shape::Text> text =
                         xg::make_unique<xg::shape::Text>(textContent, util::Point{xOffset, yOffset}, textSize, "", itemStyle["textColor"]);
+                    // maxWidth_<1不会改变文字大小
+                    text->AdaptTextFontSize(chart.GetCanvasContext(), 0, 1, maxWidth);
 
                     text->ext["tickValue"] = tick.value;
                     if(itemStyle["textAlign"].is_string()) {
@@ -193,7 +373,19 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
                     
                     if (itemStyle["textBaseline"].is_string()) {
                         text->SetTextBaseline(itemStyle["textBaseline"]);
-                    }                    
+                    }
+
+                    if (itemStyle.contains("font")){
+                        nlohmann::json font = json::GetObject(itemStyle, "font");
+                        if (!font.is_null()){
+                            std::string fontStyle = json::GetString(font, "fontStyle", "");
+                            std::string fontVariant = json::GetString(font, "fontVariant", "");
+                            std::string fontWeight = json::GetString(font, "fontWeight", "");
+                            std::string fontFamily = json::GetString(font, "fontFamily", "");
+                            text->SetTextFont(fontStyle, fontVariant, fontWeight, fontFamily);
+                        }
+                    }
+
                     xg::util::BBox bbox = text->GetBBox(chart.GetCanvasContext());
 
                     axis->maxWidth = inner ? 0 : fmax(axis->maxWidth, static_cast<double>(bbox.width));
@@ -201,8 +393,14 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
 
                     axis->labels.push_back(std::move(text));
                 } else {
+                    float labelFontSize = itemStyle["textSize"];
+                    labelFontSize *= pixelRatio;
+                    const std::string &labelColor = itemStyle["textColor"];
                     std::unique_ptr<xg::shape::Text> text =
-                        xg::make_unique<xg::shape::Text>(tick.text, util::Point{0, 0}, labelFontSize, "", labelColor);
+                    xg::make_unique<xg::shape::Text>(tick.text, util::Point{0, 0}, labelFontSize, "", labelColor);
+                    // maxWidth_<1不会改变文字大小
+                    text->AdaptTextFontSize(chart.GetCanvasContext(), 0, 1, maxWidth);
+
                     text->ext["tickValue"] = tick.value;
                     if (textAlign.is_string()) {
                         text->SetTextAlign(textAlign);
@@ -215,7 +413,18 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
                     }else if(textBaseline.is_array() && textBaseline.size() > index) {
                         text->SetTextBaseline(textBaseline[index]);
                     }
-                        
+
+                    if (itemStyle.contains("font")){
+                        nlohmann::json font = json::GetObject(itemStyle, "font");
+                        if (!font.is_null()){
+                            std::string fontStyle = json::GetString(font, "fontStyle", "");
+                            std::string fontVariant = json::GetString(font, "fontVariant", "");
+                            std::string fontWeight = json::GetString(font, "fontWeight", "");
+                            std::string fontFamily = json::GetString(font, "fontFamily", "");
+                            text->SetTextFont(fontStyle, fontVariant, fontWeight, fontFamily);
+                        }
+                    }
+
                     xg::util::BBox bbox = text->GetBBox(chart.GetCanvasContext());
 
                     axis->maxWidth = inner ? 0 : fmax(axis->maxWidth, static_cast<double>(bbox.width));
@@ -224,6 +433,12 @@ void xg::axis::AxisController::InitAxis(XChart &chart, const std::string &field,
                     axis->labels.push_back(std::move(text));
                 }
             }
+        }
+        
+        float maxWidth_ = json::GetNumber(labelCfg, "maxWidth", 0) * pixelRatio;
+        // 标签在轴线外不，使用业务传入的宽度
+        if (maxWidth_ >= 1 && !json::GetBool(labelCfg, "inner")) {
+            axis->maxWidth = maxWidth_;
         }
     }
 
@@ -449,19 +664,36 @@ void xg::axis::AxisController::DrawLabel(XChart &chart, std::unique_ptr<xg::axis
     // std::unique_ptr<xg::shape::Text> text = xg::make_unique<xg::shape::Text>(label.text.c_str(), xg::util::Point(start.x,
     // start.y), label.fontSize, "", label.fill);
 
-    float labelOffset = 0.f;
-    if(axis->labelCfg.is_object()) {
-        labelOffset = axis->labelCfg["labelOffset"];
-    }
-    labelOffset *= context.GetDevicePixelRatio();
-
     auto &coord = chart.GetCoord();
+    size_t size = axis->labels.size();
     
     //textAlign 默认center textBaseline 默认bottom
     //pt默认对应的是字体中下方的锚点
+    int index = 0;
+    axis->labelBBoxes.clear();
     while(axis->labels.size() > 0) {
         auto text = std::move(axis->labels[0]);
         axis->labels.erase(axis->labels.begin());
+        index++;
+
+        bool isFirst = axis->labels.size() == (size - 1);
+        bool isLast = axis->labels.size() == 0;
+        
+        const nlohmann::json &labelCfg = axis->GetLabelCfgForIndex(index);
+        float labelMargin = 0.f;
+        // 是否每个label都可设置labelMargin，默认只有首位两个label,true的化每个label都可使用
+        bool labelMarginUseAll = false;
+        if (labelCfg.is_object()) {
+            labelMargin = labelCfg["labelMargin"];
+            labelMarginUseAll = json::GetBool(labelCfg, "labelMarginUseAll", false);
+        }
+        labelMargin *= context.GetDevicePixelRatio();
+
+        float labelOffset = 0.f;
+        if (labelCfg.is_object()) {
+            labelOffset = labelCfg["labelOffset"];
+        }
+        labelOffset *= context.GetDevicePixelRatio();
 
         double tickValue = text->ext["tickValue"];
         xg::util::Point pt = axis->GetOffsetPoint(tickValue, labelOffset);
@@ -470,30 +702,49 @@ void xg::axis::AxisController::DrawLabel(XChart &chart, std::unique_ptr<xg::axis
             dimType = axis->dimType == "x" ? "y" : "x";
         }
         
-        bool inner = json::GetBool(axis->labelCfg, "inner");
-        xg::util::BBox bbox = text->GetBBox(context);
+        bool inner = json::GetBool(labelCfg, "inner");
         
         //等于把pt.y轴下移了5个dp，textbaseline变成了middle
         //这时候textAlign是center textBaseline是middle，等于pt对应了字体中心的锚点
-//        GetSidePoint(pt, inner ? 0 : bbox.height / 2, dimType);
+        GetSidePoint(pt, inner ? 0 : 5 * chart.GetCanvasContext().GetDevicePixelRatio(), dimType);
         auto txtPoint = text->GetPoint();
         pt.x += txtPoint.x;
         pt.y += txtPoint.y;
 
+        xg::util::BBox bbox = text->GetBBox(context);
+
         if(axis->position == "bottom") {
+             if (labelMarginUseAll){
+                pt.x += labelMargin;
+            } else if(isFirst) {
+                pt.x += labelMargin;
+            } else if(isLast) {
+                pt.x -= labelMargin;
+            }
             pt.y += labelOffset;
-            pt.y += bbox.height;
+            pt.y += bbox.height / 2;
             pt.y += (text->GetLineCount() - 1) * text->GetSpacingY() * context.GetDevicePixelRatio();
         } else if(axis->position == "left") {
+            if(isFirst) {
+                pt.y -= labelMargin;
+            } else if(isLast) {
+                pt.y += labelMargin;
+            }
             pt.y += bbox.height / 2;
-            pt.x -= labelOffset;
+            pt.x += labelOffset;
 
             if(text->GetTextAlign() == "center") {
                 pt.x -= axis->maxWidth / 2;
             } else if(text->GetTextAlign() == "left" || text->GetTextAlign() == "start") {
                 pt.x -= axis->maxWidth;
             }
+
         } else if(axis->position == "right") {
+            if(isFirst) {
+                pt.y -= labelMargin;
+            } else if(isLast) {
+                pt.y += labelMargin;
+            }
             pt.y += bbox.height / 2;
             pt.x += labelOffset; // + bbox.width / 2;
 
@@ -542,6 +793,11 @@ void xg::axis::AxisController::DrawLabel(XChart &chart, std::unique_ptr<xg::axis
             pt.x -= labelOffset;
         }
         text->SetPoint(pt);
+        
+        // 这里要重新计算bbox，但是老的逻辑一般都是GetBBox获取，axis的text在这里一直有问题
+        xg::util::BBox bboxNew = text->CalculateBox(context);
+        axis->labelBBoxes.push_back(std::move(bboxNew));
+        
         this->container_->AddElement(std::move(text));
     }
 }

@@ -176,6 +176,167 @@ ScopedJavaLocalRef<jstring> StringToJavaString(JNIEnv *env, const std::string &d
     }
 }
 
+std::map<int, int> JavaMapIntIntToMap(JNIEnv *env, jobject hashMap) {
+    std::map<int, int> resultMap;
+    if (hashMap == nullptr) {
+        return resultMap;
+    }
+    jclass hashMapClass = env->GetObjectClass(hashMap);
+    if (hashMapClass == nullptr) {
+        return resultMap;
+    }
+    jmethodID entrySetMethodID = env->GetMethodID(hashMapClass, "entrySet",
+                                                  "()Ljava/util/Set;");
+    if (entrySetMethodID == nullptr) {
+        env->DeleteLocalRef(hashMapClass);
+        return resultMap;
+    }
+    jobject entrySet = env->CallObjectMethod(hashMap, entrySetMethodID);
+    if (env->ExceptionCheck()) {
+        env->ExceptionDescribe();
+        env->ExceptionClear();
+        env->DeleteLocalRef(hashMapClass);
+        return resultMap;
+    }
+    jclass setClass = env->FindClass("java/util/Set");
+    jmethodID iteratorMethodID = env->GetMethodID(setClass, "iterator",
+                                                  "()Ljava/util/Iterator;");
+    jobject iterator = env->CallObjectMethod(entrySet, iteratorMethodID);
+    if (env->ExceptionCheck() || iterator == nullptr) {
+        env->ExceptionDescribe();
+        env->ExceptionClear();
+        env->DeleteLocalRef(hashMapClass);
+        env->DeleteLocalRef(entrySet);
+        env->DeleteLocalRef(setClass);
+        return resultMap; // 空map
+    }
+    jclass iteratorClass = env->FindClass("java/util/Iterator");
+    jmethodID hasNextMethodID = env->GetMethodID(iteratorClass, "hasNext", "()Z");
+    jmethodID nextMethodID = env->GetMethodID(iteratorClass, "next",
+                                              "()Ljava/lang/Object;");
+
+    jclass mapEntryClass = env->FindClass("java/util/Map$Entry");
+    jmethodID getKeyMethodID = env->GetMethodID(mapEntryClass, "getKey",
+                                                "()Ljava/lang/Object;");
+    jmethodID getValueMethodID = env->GetMethodID(mapEntryClass, "getValue",
+                                                  "()Ljava/lang/Object;");
+
+
+    jclass integerClass = env->FindClass("java/lang/Integer");
+    jmethodID intValueMethodID = env->GetMethodID(integerClass, "intValue", "()I");
+
+    while (env->CallBooleanMethod(iterator, hasNextMethodID)) {
+        jobject entry = env->CallObjectMethod(iterator, nextMethodID);
+        if (env->ExceptionCheck() || entry == nullptr) {
+            env->ExceptionDescribe();
+            env->ExceptionClear();
+            break; // 跳出循环
+        }
+        jobject keyObejct = (env->CallObjectMethod(entry, getKeyMethodID));
+        if (!env->IsInstanceOf(keyObejct, integerClass)) {
+            continue;
+        }
+        jint keyInt = env->CallIntMethod(keyObejct, intValueMethodID);
+
+        jobject valueObject = env->CallObjectMethod(entry, getValueMethodID);
+        if (!env->IsInstanceOf(valueObject, integerClass)) {
+            continue;
+        }
+        jint valueInt = env->CallIntMethod(valueObject, intValueMethodID);
+
+        resultMap[keyInt] = valueInt;
+        env->DeleteLocalRef(entry);
+    }
+    env->DeleteLocalRef(hashMapClass);
+    env->DeleteLocalRef(entrySet);
+    env->DeleteLocalRef(setClass);
+    env->DeleteLocalRef(iterator);
+    env->DeleteLocalRef(mapEntryClass);
+    return resultMap;
+}
+
+std::map<std::string, int> JavaMapStringIntToMap(JNIEnv *env, jobject hashMap) {
+    std::map<std::string, int> resultMap;
+    if (hashMap == nullptr) {
+        return resultMap;
+    }
+    jclass hashMapClass = env->GetObjectClass(hashMap);
+    if (hashMapClass == nullptr) {
+        return resultMap;
+    }
+    jmethodID entrySetMethodID = env->GetMethodID(hashMapClass, "entrySet",
+                                                  "()Ljava/util/Set;");
+    if (entrySetMethodID == nullptr) {
+        env->DeleteLocalRef(hashMapClass);
+        return resultMap;
+    }
+    jobject entrySet = env->CallObjectMethod(hashMap, entrySetMethodID);
+    if (env->ExceptionCheck()) {
+        env->ExceptionDescribe();
+        env->ExceptionClear();
+        env->DeleteLocalRef(hashMapClass);
+        return resultMap;
+    }
+    jclass setClass = env->FindClass("java/util/Set");
+    jmethodID iteratorMethodID = env->GetMethodID(setClass, "iterator",
+                                                  "()Ljava/util/Iterator;");
+    jobject iterator = env->CallObjectMethod(entrySet, iteratorMethodID);
+    if (env->ExceptionCheck() || iterator == nullptr) {
+        env->ExceptionDescribe();
+        env->ExceptionClear();
+        env->DeleteLocalRef(hashMapClass);
+        env->DeleteLocalRef(entrySet);
+        env->DeleteLocalRef(setClass);
+        return resultMap; // 空map
+    }
+    jclass iteratorClass = env->FindClass("java/util/Iterator");
+    jmethodID hasNextMethodID = env->GetMethodID(iteratorClass, "hasNext", "()Z");
+    jmethodID nextMethodID = env->GetMethodID(iteratorClass, "next",
+                                              "()Ljava/lang/Object;");
+
+    jclass mapEntryClass = env->FindClass("java/util/Map$Entry");
+    jmethodID getKeyMethodID = env->GetMethodID(mapEntryClass, "getKey",
+                                                "()Ljava/lang/Object;");
+    jmethodID getValueMethodID = env->GetMethodID(mapEntryClass, "getValue",
+                                                  "()Ljava/lang/Object;");
+
+
+    jclass stringClass = env->FindClass("java/lang/String");
+    jclass integerClass = env->FindClass("java/lang/Integer");
+    jmethodID intValueMethodID = env->GetMethodID(integerClass, "intValue", "()I");
+
+    jmethodID toStringMethodID = env->GetMethodID(stringClass, "toString",
+                                                  "()Ljava/lang/String;");
+    while (env->CallBooleanMethod(iterator, hasNextMethodID)) {
+        jobject entry = env->CallObjectMethod(iterator, nextMethodID);
+        if (env->ExceptionCheck() || entry == nullptr) {
+            env->ExceptionDescribe();
+            env->ExceptionClear();
+            break; // 跳出循环
+        }
+        jobject keyObejct = (env->CallObjectMethod(entry, getKeyMethodID));
+        if (!env->IsInstanceOf(keyObejct, stringClass)) {
+            continue;
+        }
+        jstring keyJavaString = (jstring) env->CallObjectMethod(keyObejct,
+                                                                toStringMethodID);
+
+        jobject valueObject = env->CallObjectMethod(entry, getValueMethodID);
+        if (!env->IsInstanceOf(valueObject, integerClass)) {
+            continue;
+        }
+        jint valueInt = env->CallIntMethod(valueObject, intValueMethodID);
+        resultMap[std::string(JavaStringToString(env, keyJavaString))] = valueInt;
+        env->DeleteLocalRef(entry);
+    }
+    env->DeleteLocalRef(hashMapClass);
+    env->DeleteLocalRef(entrySet);
+    env->DeleteLocalRef(setClass);
+    env->DeleteLocalRef(iterator);
+    env->DeleteLocalRef(mapEntryClass);
+    return resultMap;
+}
+
 ScopedJavaLocalRef<jfloatArray> VectorToJFloatArray(JNIEnv *env, const std::vector<float> &params) {
     auto jArray = ScopedJavaLocalRef<jfloatArray>(env, env->NewFloatArray(params.size()));
     env->SetFloatArrayRegion(jArray.obj(), 0, params.size(), params.data());
@@ -189,6 +350,101 @@ ScopedJavaLocalRef<jintArray> VectorToJIntArray(JNIEnv *env, const std::vector<i
 }
 
 void native_clog(int level, const char *tag, const char *msg) { __android_log_write(level, tag, msg); }
+
+struct offset_pt {
+    int offset;
+    char32_t pt;
+};
+
+static constexpr const offset_pt invalid_pt = { -1, 0 };
+
+static offset_pt utf8_decode_check(const std::string & str, std::string::size_type i) {
+    uint32_t b0, b1, b2, b3;
+
+    b0 = static_cast<unsigned char>(str[i]);
+
+    if (b0 < 0x80) {
+        // 1-byte character
+        return { 1, b0 };
+    } else if (b0 < 0xC0) {
+        // Unexpected continuation byte
+        return invalid_pt;
+    } else if (b0 < 0xE0) {
+        // 2-byte character
+        if (((b1 = str[i+1]) & 0xC0) != 0x80)
+            return invalid_pt;
+
+        char32_t pt = (b0 & 0x1F) << 6 | (b1 & 0x3F);
+        if (pt < 0x80)
+            return invalid_pt;
+
+        return { 2, pt };
+    } else if (b0 < 0xF0) {
+        // 3-byte character
+        if (((b1 = str[i+1]) & 0xC0) != 0x80)
+            return invalid_pt;
+        if (((b2 = str[i+2]) & 0xC0) != 0x80)
+            return invalid_pt;
+
+        char32_t pt = (b0 & 0x0F) << 12 | (b1 & 0x3F) << 6 | (b2 & 0x3F);
+        if (pt < 0x800)
+            return invalid_pt;
+
+        return { 3, pt };
+    } else if (b0 < 0xF8) {
+        // 4-byte character
+        if (((b1 = str[i+1]) & 0xC0) != 0x80)
+            return invalid_pt;
+        if (((b2 = str[i+2]) & 0xC0) != 0x80)
+            return invalid_pt;
+        if (((b3 = str[i+3]) & 0xC0) != 0x80)
+            return invalid_pt;
+
+        char32_t pt = (b0 & 0x0F) << 18 | (b1 & 0x3F) << 12
+                      | (b2 & 0x3F) << 6  | (b3 & 0x3F);
+        if (pt < 0x10000 || pt >= 0x110000)
+            return invalid_pt;
+
+        return { 4, pt };
+    } else {
+        // Codepoint out of range
+        return invalid_pt;
+    }
+}
+
+static char32_t utf8_decode(const std::string & str, std::string::size_type & i) {
+    offset_pt res = utf8_decode_check(str, i);
+    if (res.offset < 0) {
+        i += 1;
+        return 0xFFFD;
+    } else {
+        i += res.offset;
+        return res.pt;
+    }
+}
+
+static void utf16_encode(char32_t pt, std::u16string & out) {
+    if (pt < 0x10000) {
+        out += static_cast<char16_t>(pt);
+    } else if (pt < 0x110000) {
+        out += { static_cast<char16_t>(((pt - 0x10000) >> 10) + 0xD800),
+                static_cast<char16_t>((pt & 0x3FF) + 0xDC00) };
+    } else {
+        out += 0xFFFD;
+    }
+}
+
+// 替代StringToJavaString函数，解决jni里string乱码的问题
+jstring jniStringFromUTF8(JNIEnv * env, const std::string & str) {
+    std::u16string utf16;
+    utf16.reserve(str.length()); // likely overallocate
+    for (std::string::size_type i = 0; i < str.length(); )
+        utf16_encode(utf8_decode(str, i), utf16);
+
+    jstring res = env->NewString(
+        reinterpret_cast<const jchar *>(utf16.data()), jsize(utf16.length()));
+    return res;
+}
 
 /*
 std::string GetJavaExceptionInfo(JNIEnv *env, jthrowable java_throwable)

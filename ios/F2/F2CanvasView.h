@@ -15,13 +15,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 初始化view
 /// @param frame 视图大小
-+ (instancetype)canvas:(CGRect)frame;
++ (instancetype)canvasWithFrame:(CGRect)frame;
 
 /// 不要使用init方法初始化
 - (instancetype)init NS_UNAVAILABLE;
 
-///修改canvasView及canvasContext的size, 会重新生成新的CGContextRef
-- (void)changeSize:(CGSize)size;
+/// 使用 GCanvas实现的canvas渲染
+/// @return YES 渲染成功 NO 渲染失败
+- (BOOL)drawFrame;
 
 ///检测view是否是白屏, 方法首先会截屏，其次通过像素来分析
 ///@return UIImage说明是白屏 nil 说明不是白屏

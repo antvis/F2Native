@@ -1,0 +1,92 @@
+{
+  "name": "feedsCapitalFlow",
+  "needCallback": true,
+  "geoms": [
+    {
+      "type": "interval",
+      "position": "index*percent",
+      "adjust": "stack",
+      "color": {
+        "field": "name",
+        "attrs": [
+          "{\"colorStops\":[{\"offset\":0,\"color\":\"#FFB500\"},{\"offset\":0.33,\"color\":\"#FF8EBF\"},{\"offset\":0.66,\"color\":\"#3ACCFF\"},{\"offset\":1,\"color\":\"#EBFAFF\"}],\"isConic\":true}",
+          "{\"colorStops\":[{\"offset\":0,\"color\":\"#FFB500\"},{\"offset\":0.33,\"color\":\"#FF8EBF\"},{\"offset\":0.66,\"color\":\"#3ACCFF\"},{\"offset\":1,\"color\":\"#EBFAFF\"}],\"isConic\":true}",
+          "{\"colorStops\":[{\"offset\":0,\"color\":\"#FFB500\"},{\"offset\":0.33,\"color\":\"#FF8EBF\"},{\"offset\":0.66,\"color\":\"#3ACCFF\"},{\"offset\":1,\"color\":\"#EBFAFF\"}],\"isConic\":true}",
+          "{\"colorStops\":[{\"offset\":0,\"color\":\"#FFB500\"},{\"offset\":0.33,\"color\":\"#FF8EBF\"},{\"offset\":0.66,\"color\":\"#3ACCFF\"},{\"offset\":1,\"color\":\"#EBFAFF\"}],\"isConic\":true}"
+        ]
+      },
+      "style": {
+        "lineWidth": 3,
+        "r0": 40,
+        "r": 60
+      },
+      "selection": {
+        "defaultSelected": [
+          {
+            "dataArrayIndex": 0
+          }
+        ],
+        "selectedStyle": {
+          "rZoomFactor": 1.1
+        },
+        "unSelectedStyle": {
+          "rZoomFactor": 1
+        }
+      }
+    }
+  ],
+  "scales": [
+    {
+      "field": "percent",
+      "config": {
+        "min": 0,
+        "max": 1
+      }
+    }
+  ],
+  "data": "[{\"yName\":\"34.4%\",\"value\":\"0.84375331145351221608\",\"index\":\"主营构成\",\"percent\":0.444,\"name\":\"茅台酒348亿元\",\"color\":\"#00B7F4\"},{\"yName\":\"50%\",\"value\":\"0.84375331145351221608\",\"index\":\"主营构成\",\"percent\":0.4,\"name\":\"泸州老窖500亿元\",\"color\":\"#FF9F18\"},{\"yName\":\"10.5%\",\"value\":\"0.10526284574495138774\",\"index\":\"主营构成\",\"percent\":0.105,\"name\":\"其他系列酒99.9亿元\",\"color\":\"#FF6430\"},{\"yName\":\"5.1%\",\"value\":\"0.05098384280153639618\",\"index\":\"主营构成\",\"percent\":0.051,\"name\":\"其他业务9338万元\",\"color\":\"#F4333C\"}]",
+  "guides": [
+    {
+      "type": "refline",
+      "anchorOffset": 15,
+      "inflectionOffset": 15,
+      "anchorStyle": {
+        "anchorShape": "circle",
+        "radius": 2
+      },
+      "refLineWidth": 1,
+      "sidePadding": 25,
+      "textBaseline": "bottom"
+    }
+  ],
+  "coord": {
+    "type": "polar",
+    "transposed": true
+  },
+  "legend": {
+    "enable": false
+  },
+  "axises": [
+    {
+      "field": "index",
+      "config": {
+        "line": false,
+        "label": false,
+        "grid": false
+      }
+    },
+    {
+      "field": "percent",
+      "config": {
+        "line": false,
+        "label": false,
+        "grid": false
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "type": "tap"
+    }
+  ]
+}

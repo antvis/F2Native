@@ -75,16 +75,12 @@ BridgeRailingAndroid::FormatTime(const std::string &value, const std::string &ti
 }
 
 
-void BridgeRailingAndroid::InvokeJavaMethod(const std::string &methodName,
-                                            const std::string &params,
-                                            jobject nativeBridgeObject,
-                                            ChartBridge *chartBridge) {
-    if(chartBridge == nullptr || nativeBridgeObject == nullptr){
-        return;
+JavaChartBridgeCallBack* BridgeRailingAndroid::GetJavaCallBack(jobject nativeBridgeObject) {
+    if (nativeBridgeObject == nullptr) {
+        return nullptr;
     }
     XG_RELEASE_POINTER(bridgeCallBack_);
     bridgeCallBack_ = new JavaChartBridgeCallBack(nativeBridgeObject);
-    chartBridge->InvokeMethod(
-            methodName, params,
-            XG_MEMBER_OWNER_CALLBACK_1(JavaChartBridgeCallBack::BridgeCallback, bridgeCallBack_));
+    return bridgeCallBack_;
+
 }

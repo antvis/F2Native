@@ -6,8 +6,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.antgroup.antv.f2.F2CanvasView;
 import com.antgroup.antv.f2.F2Chart;
+import com.antgroup.antv.f2.F2Guide;
 import com.antgroup.antv.f2.samples.Utils;
 
 import java.io.InputStream;
@@ -17,7 +20,6 @@ import java.io.InputStream;
  * 基础折线图-1
  *
  * @author qingyuan.yl
- * @date 2020-09-27
  */
 public class SingleLineChart_1688 implements F2CanvasView.Adapter, F2CanvasView.OnCanvasTouchListener {
     private F2Chart mChart;
@@ -58,6 +60,39 @@ public class SingleLineChart_1688 implements F2CanvasView.Adapter, F2CanvasView.
                 new F2Chart.ScaleConfigBuilder()
                         .setOption("nice", true)
                         .tickCount(3));
+
+        JSONArray imagesData = JSONArray.parseArray(Utils.loadAssetFile(canvasView.getContext(), "mockData_1688_image.json"));
+        for (int i = 0; i < imagesData.size(); i++) {
+            try {
+                JSONObject flagCfg = imagesData.getJSONObject(i);
+                F2Guide.GuideImageConfigBuilder cfg = new F2Guide.GuideImageConfigBuilder();
+                JSONArray position = flagCfg.getJSONArray("position");
+                cfg.position(new org.json.JSONArray(position.toJSONString()))
+                        .src(flagCfg.getString("image"))
+                        .margin(new double[]{-1, -1})
+                        .width(69)
+                        .height(32);
+
+                mChart.guide().image(cfg);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        F2Guide.GuideImageConfigBuilder cfg = new F2Guide.GuideImageConfigBuilder();
+        org.json.JSONArray position = new org.json.JSONArray();
+        position.put("median");
+        position.put("max");
+
+        cfg.position(position)
+                .margin(new double[]{15, -10})
+                .src("https://gw.alipayobjects.com/zos/antfincdn/FLrTNDvlna/antv.png")
+                .width(30)
+                .height(30)
+        ;
+        mChart.guide().image(cfg);
+
+
         mChart.render();
     }
 

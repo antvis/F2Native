@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.antgroup.antv.f2.base.F2BaseCanvasView;
+import com.antgroup.antv.f2.gesture.F2GestureListener;
 
 /**
  * android native canvas需要的CanvasView
@@ -26,20 +27,23 @@ public class F2AndroidCanvasView extends View implements F2BaseCanvasView {
     //画布
     private F2AndroidCanvasContext mCanvasContext;
     //屏幕密度
-    private float mRatio;
+    protected float mRatio;
     //F2CanvasContext在JNI中对应的地址
     private long mCanvasHolder;
     private F2CanvasView.Adapter mAdapter;
     private F2CanvasView.OnCanvasTouchListener mOnCanvasTouchListener;
+    private F2CanvasView.OnCanvasGestureListener mOnCanvasGestureListener;
+    private F2GestureListener mF2GestureListener;
+
     private boolean isTouchProcessing = false;
 
     private int mHeight; // View的宽
     private int mWidth; // View的高
     private F2CanvasView mF2CanvasView;
-    private String mAppId = "";
-    private String mCanvasBizId = "";
-    private F2DetectManager mF2DetectManager;
-    private boolean mNeedAdapter = true;
+    protected String mCanvasBizId = "";
+    // 是否首次绘制
+    private boolean mFirstRender = true;
+    protected String TAG = "F2AndroidCanvasView";
 
     public F2AndroidCanvasView(Context context) {
         this(context, null);
@@ -53,20 +57,16 @@ public class F2AndroidCanvasView extends View implements F2BaseCanvasView {
         super(context, attrs);
         this.mF2CanvasView = f2CanvasView;
         mRatio = context.getResources().getDisplayMetrics().density;
-        mF2DetectManager = new F2DetectManager();
     }
 
-    public void init(int widthPixel, int heightPixel, F2Config config) {
-        initCanvasContext(config);
-        if (setCanvasSize(widthPixel, heightPixel)) {
-            mNeedAdapter = false;
-            postCanvasDraw();
-        }
+    public void setCanvasInfo(int widthPixel, int heightPixel, String canvasBizId) {
+        setCanvasBizId(canvasBizId);
+        setCanvasSize(widthPixel, heightPixel);
     }
 
-    private boolean setCanvasSize(int width, int height) {
+    protected boolean setCanvasSize(int width, int height) {
         if (0 == width || 0 == height) {
-            innerLog("#setCanvasSize width or height is 0");
+            innerLog("#setCanvasSize width or height is 0 " + mCanvasBizId);
             return false;
         }
         if (mHeight == height && mWidth == width) {
@@ -74,7 +74,7 @@ public class F2AndroidCanvasView extends View implements F2BaseCanvasView {
         }
         mHeight = height;
         mWidth = width;
-        innerLog("#setCanvasSize  width=" + width + ",height=" + height);
+        innerLog("#setCanvasSize  width = " + width + ", height = " + height + ", bizId = " + mCanvasBizId);
         long startTime = System.currentTimeMillis();
         mCanvasContext = new F2AndroidCanvasContext(width, height, mRatio);
         try {
@@ -82,7 +82,7 @@ public class F2AndroidCanvasView extends View implements F2BaseCanvasView {
                 mCanvasHolder = F2CanvasView.nCreateCanvasContextHandle(mCanvasContext);
             }
         } catch (Exception e) {
-            innerLog("#setCanvasSize catch exception:" + e);
+            innerLog("#setCanvasSize " + mCanvasBizId + " ,catch exception:" + e.getMessage());
             return false;
         }
         //通知业务渲染
@@ -94,14 +94,18 @@ public class F2AndroidCanvasView extends View implements F2BaseCanvasView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.setDrawFilter(paintFlagsDrawFilter);
-        boolean change = setCanvasSize(getWidth() - (getPaddingLeft() + getPaddingRight()), getHeight() - (getPaddingTop() + getPaddingBottom()));
-        if (change) {
-            postCanvasDraw();
+        if (F2CommonHelper.get().isChartSizeChangeEnable()) {
+            boolean change = setCanvasSize(getWidth() - (getPaddingLeft() + getPaddingRight()), getHeight() - (getPaddingTop() + getPaddingBottom()));
+            if (change) {
+                innerLog("#onDraw change ");
+                postCanvasDraw();
+            }
         }
         if (null != mCanvasContext && null != mCanvasContext.bitmap) {
             canvas.drawBitmap(mCanvasContext.bitmap, getPaddingLeft(), getPaddingTop(), null);
+            innerLog("#onDraw success " + mCanvasBizId);
         } else {
-            innerLog("#onDraw canvasContext is null");
+            innerLog("#onDraw canvasContext is null " + mCanvasBizId);
         }
     }
 
@@ -109,17 +113,17 @@ public class F2AndroidCanvasView extends View implements F2BaseCanvasView {
     public void sendRenderDetectEvent(final long renderDuration, final boolean renderSuccess, final int renderCmdCount,
                                       final boolean drawSuccess, final String chartId) {
         // 开关打开 && 上屏成功，才进行白屏检测
-        if (F2CommonUtils.isDetectEnable() && drawSuccess && mCanvasContext != null && mCanvasContext.bitmap != null && mCanvasHolder != 0) {
-//            F2CommonUtils.showTestToast("F2Native白屏检测开启");
-            mF2DetectManager.sendRenderDetectEvent(mCanvasContext.bitmap.copy(Bitmap.Config.ARGB_8888, false),
-                    mAppId, mCanvasBizId, renderDuration, renderSuccess,
-                    renderCmdCount, drawSuccess, mWidth, mHeight, mRatio, chartId);
+        if (F2CommonHelper.get().isDetectEnable() && drawSuccess && mCanvasContext != null && mCanvasContext.bitmap != null && mCanvasHolder != 0) {
+            F2CommonHelper.get().sendRenderDetectEvent(mCanvasContext.bitmap.copy(Bitmap.Config.ARGB_8888, false),
+                    mCanvasBizId, renderDuration, renderSuccess,
+                    renderCmdCount, drawSuccess, mWidth, mHeight, mRatio, chartId, mFirstRender);
         } else {
             // 说明开关关闭 || 上屏失败
             String desc = chartId + (mCanvasContext != null && mCanvasContext.mHadOOM ? "_OOM" : "");
-            F2CommonUtils.eventDetectRender(mAppId, mCanvasBizId, renderDuration, renderSuccess,
-                    renderCmdCount, drawSuccess, null, 0, mWidth, mHeight, mRatio, desc);
+            F2CommonHelper.get().eventDetectRender(mCanvasBizId, renderDuration, renderSuccess,
+                    renderCmdCount, drawSuccess, null, 0, mWidth, mHeight, mRatio, desc, mFirstRender);
         }
+        mFirstRender = false;
     }
 
     @Override
@@ -142,7 +146,7 @@ public class F2AndroidCanvasView extends View implements F2BaseCanvasView {
         if (mAdapter != null && mAdapter != adapter) {
             mAdapter.onDestroy();
         }
-        mNeedAdapter = true;
+        innerLog("#setAdapter " + mCanvasBizId);
         mAdapter = adapter;
         postCanvasDraw();
     }
@@ -153,22 +157,20 @@ public class F2AndroidCanvasView extends View implements F2BaseCanvasView {
     }
 
     @Override
-    public void initCanvasContext() {
-        initCanvasContext(null);
+    public void setOnCanvasGestureListener(F2CanvasView.OnCanvasGestureListener onCanvasGestureListener) {
+        mOnCanvasGestureListener = onCanvasGestureListener;
+        createGestureDetector();
     }
 
     @Override
-    public void initCanvasContext(F2Config config) {
-        innerLog("#initCanvasContext F2Config threadFactory");
-        if (config != null) {
-            mAppId = config.getStringField(F2CanvasView.ConfigBuilder.KEY_APP_ID);
-            mCanvasBizId = config.getStringField(F2CanvasView.ConfigBuilder.KEY_CANVAS_BIZ_ID);
-        }
+    public void setCanvasBizId(String canvasBizId) {
+        innerLog("#setCanvasBizId " + canvasBizId);
+        mCanvasBizId = canvasBizId;
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (mOnCanvasTouchListener != null) {
+        if (!useNewTouch() && mOnCanvasTouchListener != null) {
             final MotionEvent copyEvent = MotionEvent.obtain(event);
             if (event.getActionMasked() == MotionEvent.ACTION_DOWN && isTouchProcessing) {
                 return true;
@@ -187,14 +189,11 @@ public class F2AndroidCanvasView extends View implements F2BaseCanvasView {
 
     @Override
     public void postCanvasDraw() {
-        if (mCanvasContext != null) {
-            // 不需要adapter或者需要adapter并且有adapter有值
-            if (!mNeedAdapter) {
-                mCanvasContext.resetContext();
-            } else if (mNeedAdapter && hasAdapter()) {
-                mCanvasContext.resetContext();
-                mAdapter.onCanvasDraw(mF2CanvasView);
-            }
+        innerLog("#postCanvasDraw " + mCanvasBizId);
+        if (mCanvasContext != null && hasAdapter()) {
+            innerLog("#postCanvasDraw resetContext " + mCanvasBizId);
+            mCanvasContext.resetContext();
+            mAdapter.onCanvasDraw(mF2CanvasView);
         }
     }
 
@@ -205,14 +204,17 @@ public class F2AndroidCanvasView extends View implements F2BaseCanvasView {
 
     @Override
     public void destroy() {
-        innerLog("#destroy");
+        innerLog("#destroy " + mCanvasBizId);
         innerDestroy();
+        mFirstRender = true;
         mOnCanvasTouchListener = null;
         if (mCanvasContext != null && mCanvasContext.bitmap != null) {
             mCanvasContext.bitmap.recycle();
             mCanvasContext.bitmap = null;
             mCanvasContext = null;
         }
+        // 销毁图片下载
+        F2ImageLoadUtil.removeHandlerCallbacks();
         //销毁对应的JNI对象
         if (mCanvasHolder != 0) {
             F2CanvasView.nDestroyCanvasContextHandle(mCanvasHolder);
@@ -229,6 +231,7 @@ public class F2AndroidCanvasView extends View implements F2BaseCanvasView {
     @Override
     public boolean swapBuffer() {
         invalidate();
+        innerLog("#swapBuffer");
         return null != mCanvasContext && null != mCanvasContext.bitmap && mCanvasHolder != 0;
     }
 
@@ -238,7 +241,7 @@ public class F2AndroidCanvasView extends View implements F2BaseCanvasView {
     }
 
     private void innerLog(String content) {
-        F2Log.i("F2AndroidCanvasView", content);
+        F2Log.get().i(TAG, hashCode() + ", " + content);
     }
 
     @Override
@@ -247,10 +250,21 @@ public class F2AndroidCanvasView extends View implements F2BaseCanvasView {
             innerLog("finalize...");
             destroy();
         } catch (Exception e) {
-            F2Log.e("F2AndroidCanvasView", "#finalize exception " + e.toString());
+            F2Log.get().e(TAG, "#finalize exception " + e.toString());
         } finally {
             super.finalize();
         }
     }
 
+    private boolean useNewTouch() {
+        return mOnCanvasGestureListener != null && mF2GestureListener != null;
+    }
+
+    private void createGestureDetector() {
+        if (mF2GestureListener == null) {
+            mF2GestureListener = new F2GestureListener(getContext());
+            setOnTouchListener(mF2GestureListener);
+        }
+        mF2GestureListener.setOnCanvasGestureListener(mOnCanvasGestureListener);
+    }
 }

@@ -7,9 +7,9 @@
 //
 
 #include "Image.h"
-#include "../XChart.h"
-#include "../global.h"
-#include "../shape/Image.h"
+#include "graphics/XChart.h"
+#include "graphics/global.h"
+#include "graphics/shape/Image.h"
 
 using namespace xg;
 
@@ -22,16 +22,20 @@ void guide::Image::Render(XChart &chart, shape::Group *container, canvas::Canvas
     const nlohmann::json &margin = config_["margin"];
     std::array<float, 2> _margin = margin;
     
-    double width = json::GetNumber(config_, "width", NAN) * context.GetDevicePixelRatio();
-    double height = json::GetNumber(config_, "height", NAN) * context.GetDevicePixelRatio();
-    
+    double width = json::GetNumber(config_, "width", 12) * context.GetDevicePixelRatio();
+    double height = json::GetNumber(config_, "height", 12) * context.GetDevicePixelRatio();
+    if (width <= 0 || height <= 0) {
+        return;
+    }
     const std::string &src = json::GetString(config_, "src");
     if (src.empty()) {
         return;
     }
-
-    position.x = position.x - _margin[0] * context.GetDevicePixelRatio();
-    position.y = position.y - _margin[1] * context.GetDevicePixelRatio();
+    float  marginLeft = _margin[0] * context.GetDevicePixelRatio();
+    float  marginTop = _margin[1] * context.GetDevicePixelRatio();
+    // 显示image的位置点的上方居中，因此x偏移x/2，y偏移y
+    position.x = position.x - width / 2 - marginLeft;
+    position.y = position.y - height - marginTop;
     auto image = xg::make_unique<shape::Image>(src, position, util::Size {width, height});
     
     //上屏

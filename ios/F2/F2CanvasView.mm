@@ -3,7 +3,7 @@
 #import "F2Utils.h"
 #import "xtime.h"
 
-#if defined(TARGET_ALIPAY)
+#if defined(PRODUCT_WALLET)
 #import "F2CSUtil.h"
 #import "XGEventLogger.h"
 #endif
@@ -15,33 +15,31 @@
 
 @implementation F2CanvasView
 
-+ (instancetype)canvas:(CGRect)frame {
++ (instancetype)canvasWithFrame:(CGRect)frame {
     return [[F2CanvasView alloc] initWithFrame:frame];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if(self = [super initWithFrame:frame]) {
-        self.canvasContext = [[F2CanvasContext alloc] initWithSize:frame.size];
+        self.canvasContext = [[F2CanvasContext alloc] initWithFrame:frame];
         self.listener = [[F2GestureListener alloc] initWithView:self];
-        self.backgroundColor = UIColor.clearColor;
+        self.userInteractionEnabled = YES;
+        self.multipleTouchEnabled = YES;
     }
     return self;
 }
 
-- (void)drawRect:(CGRect)rect {
-    if(self.canvasContext.bitmap) {
-        CGContextRef ctx = UIGraphicsGetCurrentContext();
-        CGContextDrawImage(ctx, rect, self.canvasContext.bitmap);
+- (BOOL)drawFrame {
+    UIImage *snapshot = self.canvasContext.snapshot;
+    if(snapshot) {
+        self.layer.contents = (__bridge id)snapshot.CGImage;
     }
-}
-
-- (void)changeSize:(CGSize)size {
-    [self.canvasContext changeSize:size];
-    [self setFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y, size.width, size.height)];
+    
+    return !!snapshot;
 }
 
 - (UIImage *)detectView {
-#if defined(TARGET_ALIPAY)
+#if defined(PRODUCT_WALLET)
     UIImage *image = self.snapshot;
     return [F2CSUtil isPureColor:image] ? image : nil;
 #endif
@@ -49,7 +47,7 @@
 }
 
 - (UIImage *)snapshot {
-    return [UIImage imageWithCGImage:self.canvasContext.bitmap];
+    return self.canvasContext.snapshot;
 }
 
 - (void)logPerformance:(NSString *)chartId
@@ -59,7 +57,7 @@
            drawSuccess:(BOOL)drawSuccess
               snapshot:(nullable UIImage *)snapshot
           snapshotCost:(NSTimeInterval)cost {
-#if defined(TARGET_ALIPAY)
+#if defined(PRODUCT_WALLET)
     [F2CSUtil logPerformance:chartId
                        bizId:self.bizId
                     viewSize:self.frame.size

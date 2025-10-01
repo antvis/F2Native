@@ -37,13 +37,13 @@ class SingleLineChart_1 : F2CanvasView.Adapter, OnCanvasTouchListener {
         mChart!!.tooltip(ToolTipConfigBuilder()
             .setOption("onPressStart", mChart, object : F2Function() {
                 override fun execute(param: String): F2Config {
-                    F2Log.i("tooltip", "onPressStart: $param")
+                    F2Log.get().i("tooltip", "onPressStart: $param")
                     return F2Config.Builder<F2Config.Builder<*>>().build()
                 }
             })
             .setOption("onPressEnd", mChart, object : F2Function() {
                 override fun execute(param: String): F2Config {
-                    F2Log.i("tooltip", "onPressEnd: $param")
+                    F2Log.get().i("tooltip", "onPressEnd: $param")
                     return F2Config.Builder<F2Config.Builder<*>>().build()
                 }
             })

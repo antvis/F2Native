@@ -12,7 +12,7 @@ class SampleActivity : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         setContentView(R.layout.activity_sample)
         mCanvasView = findViewById(R.id.canvasView)
-        mCanvasView!!.initCanvasContext()
+        mCanvasView!!.setCanvasBizId("F2NativeDemo")
         val chartModel = intent.getSerializableExtra("ChartModel") as ChartModel
         title = chartModel.title
         try {

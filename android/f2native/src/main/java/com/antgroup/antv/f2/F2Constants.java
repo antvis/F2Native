@@ -4,7 +4,7 @@ package com.antgroup.antv.f2;
  * @author qingyuan.yl
  * @date 2020-09-22
  */
-public class F2Constants {
+class F2Constants {
 
     public static final int CODE_SUCCESS = 0;
     public static final int CODE_FAIL_UNKNOWN = -1;

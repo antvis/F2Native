@@ -14,12 +14,12 @@
 #include "webassembly/WebCanvasContext.h"
 #endif
 
-#include <cstring>
 #include <algorithm>
 #include <map>
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include "../utils/Tracer.h"
 #include "animate/GeomAnimate.h"
 #include "animate/TimeLine.h"
 #include "axis/AxisController.h"
@@ -37,13 +37,14 @@
 #include "guide/GuideController.h"
 #include "interaction/InteractionBase.h"
 #include "interaction/InteractionContext.h"
+#include "interaction/Tap.h"
 #include "interaction/Pan.h"
 #include "interaction/Pinch.h"
 #include "legend/LegendController.h"
 #include "scale/ScaleController.h"
 #include "tooltip/TooltipController.h"
-#include "../utils/Tracer.h"
 #include "../nlohmann/json.hpp"
+#include "../token/DarkModeManager.h"
 
 
 #define XG_MEMBER_CALLBACK(funPtr) std::bind(&funPtr, this)
@@ -68,16 +69,10 @@ namespace xg {
 
 typedef std::function<void()> ChartActionCallback;
 
-struct XConfig final {
-    //当geom中有interval的时候自动调整max, min, range三个参数
-    bool adjustScale_ = true;
-    //当geom中有过个图形时，是否同步他们的最值
-    //默认为false 因为shape为stack的时候不能sync
-    bool syncY_ = false;
-    
-    //coord setting
-    std::string coordType = "cartesian";
-    bool transposed = false;
+struct EnableListConfig {
+    bool imageGuideEnable = false;
+    bool legendCenterEnable = false;
+    bool candleFirstRenderFixDisable = false;
 };
 
 class XChart {
@@ -91,6 +86,7 @@ class XChart {
     friend legend::LegendController;
     friend event::EventController;
     friend tooltip::ToolTipController;
+    friend interaction::Tap;
     friend interaction::Pan;
     friend interaction::Pinch;
     friend interaction::InteractionContext;
@@ -98,7 +94,7 @@ class XChart {
     friend animate::GeomAnimate;
 
   public:
-    XChart(const std::string &name, double width, double height, double ratio = 1.0);
+    XChart(const std::string &name, double width, double height, double ratio = 1.0, bool log = true);
     virtual ~XChart();
 
     // emscript 编译需要
@@ -112,7 +108,7 @@ class XChart {
     ///方便降级 稳定后改回SetCanvasContext
     XChart &SetCanvasContext(void *context) {
         XG_RELEASE_POINTER(canvasContext_);
-        canvasContext_ = new canvas::BitmapCanvasContext((jobject)context, static_cast<float>(ratio_));
+        canvasContext_ = new canvas::BitmapCanvasContext((jobject)context, static_cast<float>(ratio_), GetDarkModeManager());
         return *this;
     }
 #endif
@@ -122,7 +118,7 @@ class XChart {
     /// context == CGContextRef
     XChart &SetCanvasContext(void *context) {
         XG_RELEASE_POINTER(canvasContext_);
-        canvasContext_ = new canvas::CoreGraphicsContext(context, width_, height_, static_cast<float>(ratio_), nullptr);
+        canvasContext_ = new canvas::CoreGraphicsContext(context, width_, height_, static_cast<float>(ratio_), nullptr, GetDarkModeManager());
         return *this;
     }
 #endif
@@ -130,11 +126,11 @@ class XChart {
 #if defined(__EMSCRIPTEN__)
     XChart &SetCanvasContext(const std::string &canvasName) {
         XG_RELEASE_POINTER(canvasContext_);
-        canvasContext_ = new canvas::WebCanvasContext(canvasName, width_, height_, ratio_);
+        canvasContext_ = new canvas::WebCanvasContext(canvasName, width_, height_, ratio_, GetDarkModeManager());
         return *this;
     }
 #endif // __EMSCRIPTEN__
-    
+
     /// 设置chart的canvasConext，这里和上面的方法增加了一个ownCanvasContext_来区分谁创建的canvasContext
     /// @param canvasContext 绘制的context
     XChart &SetCanvasContext(canvas::CanvasContext *canvasContext) {
@@ -165,6 +161,8 @@ class XChart {
     XChart &Animate(const std::string &json = "");
 
     bool OnTouchEvent(const std::string &json = "");
+    
+    const std::string OnTapEvent(const std::string &json = "");
 
     geom::Line &Line();
     geom::Interval &Interval();
@@ -181,52 +179,36 @@ class XChart {
 
     /// 内部会清理对象，然后再次调用render对象渲染
     void Repaint();
-    
+
     /// 直接调用canvasContext进行绘制
     void Redraw();
 
     /// 清除所有的配置项
     void Clear();
-    
-    /// 改变chart的大小，会清理绘制的内容，但不会清理配置，所以可以在changeSize后直接调用render方法
-    /// @param width chart的宽度
-    /// @param height chart的高度
-    void ChangeSize(double width, double height);
-    
-    /// 改变数据源
-    /// @param json json数组
-    void ChangeData(const std::string &json);
-    
-    ///设置当geom中有interval的时候，是否调整max, min, range三个参数, 默认是true
-    ///@param adjust 是否调整，默认是调整的，可设置false 关闭
-    inline void AdjustScale(bool adjust) { config_.adjustScale_ = adjust; }
-    
-    ///是否同步多个y轴的最值，默认为false
-    ///@param sync 可设置false关闭
-    inline void SyncYScale(bool sync) { config_.syncY_ = sync; }
-    
+
+
     /// 注册业务测的回调函数，所有回调都会通过这个callback回调
     /// @param callback 回调函数
-    inline void SetInvokeFunction(func::F2Function *callback) { invokeFunction_ = callback; }
-    
-    
+    inline void SetInvokeFunction(func::F2Function *callback) { _invokeFunction = callback; }
+
+
     /// 调用callback
     /// @param functionId  回调函数的id
     /// @param param  参数，是一个json string
     inline const std::string InvokeFunction(const std::string &functionId, const std::string &param = "{}") {
-        if(invokeFunction_) {
-            return invokeFunction_->Execute(functionId, param);
+        if(_invokeFunction) {
+            return _invokeFunction->Execute(functionId, param);
         }else {
             return "{}";
         }
     }
-    
-    
+
+
     /// 设置动画的函数id
     /// @param funcId 回调函数的id
     inline void SetRequestFrameFuncId(const std::string &funcId) noexcept { this->requestFrameHandleId_ = funcId; }
     inline const std::string GetRequestFrameFuncId() noexcept { return this->requestFrameHandleId_; }
-    
+
     /// 执行动画的回调函数
     /// @param c 动画的command
     std::size_t RequestAnimationFrame(func::Command *c, long delay = 16);
@@ -246,6 +228,10 @@ class XChart {
     ///chart的唯一id chartName_+ uniqueId
     ///@return chartId_
     inline const std::string &GetChartId() { return this->chartId_; }
+    /// 设置开关配置 json string
+    inline void SetEnableConfig(EnableListConfig &enableCfg) noexcept { this->enableCfg_ = enableCfg; };
+
+    inline EnableListConfig &GetEnableConfig() noexcept { return this->enableCfg_; }
 
     inline utils::Tracer *GetLogTracer() const { return this->logTracer_; }
 
@@ -256,8 +242,12 @@ class XChart {
 
     // 计算某一项数据对应的坐标位置
     const util::Point GetPosition(const nlohmann::json &item);
+    // 找到某个geom中选中的那个record
+    const nlohmann::json GetSelectedRecordsForGeom(const size_t index);
 
     canvas::CanvasContext &GetCanvasContext() const { return *canvasContext_; }
+
+    inline token::DarkModeManager &GetDarkModeManager() const { return *darkModeManager_; }
 
     void AddMonitor(const std::string &action, ChartActionCallback callback, bool forChart = true) {
         if(forChart) {
@@ -272,7 +262,7 @@ class XChart {
 
     /// bind long long to webassembly会报错，所以改成long,渲染时间用long表示也够用了
     inline long GetRenderDurationMM() const { return renderDurationMM_;}
-    inline long GetRenderCmdCount() const { return canvasContext_ ? canvasContext_->GetRenderCount() : 0;}
+    inline long GetRenderCmdCount() const { return canvasContext_->GetRenderCount();}
 
     /// 返回所有的几何对象
     inline const std::vector<std::unique_ptr<geom::AbstractGeom>> &GetGeoms() const { return geoms_;}
@@ -305,7 +295,7 @@ class XChart {
     geom::Point *PointWasm() { return &Point(); }
     geom::Candle *CandleWasm() { return &Candle(); }
 #endif
-    
+
     /*
      为了能解析DSL，需要提供一些便捷方法
     */
@@ -314,9 +304,11 @@ class XChart {
     XChart &SourceObject(const nlohmann::json &data);
     XChart &ScaleObject(const std::string &field, const nlohmann::json &json);
     XChart &AxisObject(const std::string &field, const nlohmann::json &json);
+    XChart &AxisObject(const std::string &field, const nlohmann::json &json, const nlohmann::json &selection);
     XChart &LegendObject(const std::string &field, const nlohmann::json &json);
     XChart &InteractionObject(const std::string &type, const nlohmann::json &json);
-    XChart &TooltipObject(const nlohmann::json &json);
+    XChart &TooltipObject(const nlohmann::json &json, bool isTooltips);
+    XChart &PatchTooltipsObject(const nlohmann::json &json);
     XChart &CoordObject(const nlohmann::json &json);
     XChart &AnimateObject(const nlohmann::json &json);
 
@@ -325,7 +317,7 @@ class XChart {
         this->chartId_ = name + "_" + std::to_string(CreateChartId());
         return  *this;
     }
-    
+
     static long long CreateChartId() {
         static std::atomic<long long> id(1);
         return id.fetch_add(+1);
@@ -356,7 +348,6 @@ class XChart {
     }
 
   protected:
-    
     bool rendered_ = false;
     nlohmann::json data_;
     std::unique_ptr<canvas::coord::AbstractCoord> coord_ = nullptr;
@@ -391,7 +382,12 @@ class XChart {
     bool ownCanvasContext_ = true;
 
     utils::Tracer *logTracer_ = nullptr;
+
+    token::DarkModeManager *darkModeManager_ = nullptr;
+
     std::unique_ptr<geom::shape::GeomShapeFactory> geomShapeFactory_ = nullptr;
+
+    nlohmann::json coordCfg_ = {{"type", "cartesian"}, {"transposed", false}};
 
     std::map<std::string, std::vector<ChartActionCallback>> renderActionListeners_{}; // 针对每次渲染的监听事件， clear 时会清除
     std::map<std::string, std::vector<ChartActionCallback>> chartActionListeners_{}; // 针对 chart 实例的监听事件，只有在 chart 回收时才清除
@@ -399,8 +395,9 @@ class XChart {
 
     std::string chartId_;
     std::string requestFrameHandleId_ = "";
-    func::F2Function *invokeFunction_ = nullptr;
-    XConfig config_;
+    nlohmann::json animateCfg_ = false;
+    func::F2Function *_invokeFunction;
+    EnableListConfig enableCfg_;
 };
 } // namespace xg
 

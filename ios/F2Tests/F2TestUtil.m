@@ -10,9 +10,10 @@
 
 @implementation F2TestUtil
 
-+ (BOOL)saveImage:(UIImage *)image name:(NSString *)name {
++ (BOOL)saveImage:(UIImage *)image {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES);
-    NSString *filePath = [[paths objectAtIndex:0]stringByAppendingPathComponent:name];  // 保存文件的名称
+    NSString *filePath = [[paths objectAtIndex:0]stringByAppendingPathComponent:
+                          [NSString stringWithFormat:@"demo.jpeg"]];  // 保存文件的名称
     NSLog(@"saveImage: %@", filePath);
     BOOL result =[UIImageJPEGRepresentation(image, 1) writeToFile:filePath  atomically:YES]; // 保存成功会返回YES
     NSCAssert(result, @"saveImage failure");

@@ -16,7 +16,7 @@ class TimeCategory : public Category {
 
     ScaleType GetType() const noexcept override { return ScaleType::TimeCat; }
 
-    std::string GetTickText(const nlohmann::json &item, XChart *chart) override {
+    std::string GetTickText(const nlohmann::json &item, XChart *chart, std::size_t index) override {
         if(item.is_string()) {
             return item.get<std::string>();
         } else if(item.is_number()) {

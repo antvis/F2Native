@@ -21,17 +21,17 @@ class Line : public GeomShapeBase {
     void Draw(std::string shapeType,
               canvas::coord::AbstractCoord &coord,
               canvas::CanvasContext &context,
-              const XDataArray &data,
+              const nlohmann::json &data,
               std::size_t start,
               std::size_t end,
               xg::shape::Group &container,
               bool connectNulls) override {
-        this->DrawLines(coord, data, start, end, context, container, connectNulls);
+        this->drawLines(coord, data, start, end, context, container, connectNulls);
     }
 
   private:
     void DrawCircle(canvas::coord::AbstractCoord &coord,
-                    const XDataArray &data,
+                    const nlohmann::json &data,
                     std::size_t start,
                     std::size_t end,
                     canvas::CanvasContext &canvasContext,
@@ -39,30 +39,34 @@ class Line : public GeomShapeBase {
                     bool connectNulls) {
       
         util::Point center(NAN, NAN);
-        if(!data[start]._y0.empty()) {
-            if(data[start]._y0.size() != 2) {
+        if(data[start]["_y"].is_array()) {
+            const nlohmann::json &item = data[start];
+            double x = item["_x"];
+            const nlohmann::json &yVal = item["_y"];
+            if(yVal.size() != 2) {
                 return;;
             }
-            center = util::Point{data[start]._x, data[start]._y0[1]};
+            center = util::Point{x, yVal[1]};
         } else {
-            center = util::Point{ data[start]._x, data[start]._y};
+            const nlohmann::json &item = data[start];
+            center = util::Point{ item["_x"], item["_y"]};
         }
         
         if (std::isnan(center.x) || std::isnan(center.y)) {
             return;
         }
         
-        std::string color = data[start]._color.empty() ? GLOBAL_COLORS[0] : data[start]._color;
+        canvas::CanvasFillStrokeStyle colorStyle = util::ColorParser(data[start], "_color");
         //使用线宽的一般作为半径来画点，避免出现第二个点的时候 有明显的大小变化的跳动感觉
-        float radius = (std::isnan(data[start]._size) ? 1 :data[start]._size) * canvasContext.GetDevicePixelRatio() / 2.0;
+        float radius = json::GetNumber(data[start], "_size", 1.0) * canvasContext.GetDevicePixelRatio() / 2.0;
         auto circle = std::make_unique<xg::shape::Circle>(center, radius);
-        circle->SetFillColor(color);
+        circle->SetFillStyle(colorStyle);
         container.AddElement(std::move(circle));
     }
     
     // 还缺一个style
-    void DrawLines(canvas::coord::AbstractCoord &coord,
-                   const XDataArray &data,
+    void drawLines(canvas::coord::AbstractCoord &coord,
+                   const nlohmann::json &data,
                    std::size_t start,
                    std::size_t end,
                    canvas::CanvasContext &canvasContext,
@@ -76,22 +80,38 @@ class Line : public GeomShapeBase {
             return;
         }
 
-        std::string color = data[start]._color.empty() ? GLOBAL_COLORS[0] : data[start]._color;
+        float lineWidth = 1.0;
+        if(data[start].contains("_size")) {
+            lineWidth = data[start]["_size"];
+        }
+        
+        std::string lineCap = "butt";
+        std::string lineJoin = "miter";
+        if(data[start].contains("_style")) {
+            if(data[start]["_style"].contains("lineCap")) {
+                lineCap = json::GetString(data[start]["_style"], "lineCap", "butt");
+            }
+            if(data[start]["_style"].contains("lineJoin")) {
+                lineJoin = json::GetString(data[start]["_style"], "lineJoin", "miter");
+            }
+        }
+        
 
-        float lineWidth = std::isnan(data[start]._size) ? 1 : data[start]._size;
-
-        string shapeType = data[start]._shape; // [line, smooth]
+        string shapeType = "line"; // [line, smooth]
+        if(data[start].contains("_shape")) {
+            shapeType = data[start]["_shape"];
+        }
         bool smooth = shapeType == "smooth";
 
-        if(!data[0]._y0.empty()) {
+        if(data[start]["_y"].is_array()) {
             // stack 下的多组线
             vector<xg::util::Point> topPoints;
             vector<xg::util::Point> bottomPoints;
 
             for(std::size_t i = start; i <= end; i++) {
-                const auto &item = data[i];
-                double x = item._x;
-                auto &yVal = item._y0;
+                const nlohmann::json &item = data[i];
+                double x = item["_x"];
+                const nlohmann::json &yVal = item["_y"];
                 if(yVal.size() != 2) {
                     continue;
                 }
@@ -100,20 +120,18 @@ class Line : public GeomShapeBase {
             }
 
             auto topLine = xg::make_unique<xg::shape::Polyline>(lineWidth * canvasContext.GetDevicePixelRatio(), topPoints, smooth);
-            if(data[start]._style.contains("dash")) {
-                topLine->SetDashLine(json::ParseDashArray(data[start]._style["dash"], canvasContext.GetDevicePixelRatio()));
+            if(data[start].contains("_style") && data[start]["_style"].contains("dash")) {
+                topLine->SetDashLine(json::ParseDashArray(data[start]["_style"]["dash"], canvasContext.GetDevicePixelRatio()));
             }
 
-            topLine->SetStorkColor(color);
+            //判断是否有position
+            canvas::CanvasFillStrokeStyle colorStyle = util::ColorParser(data[start], "_color");
+
+            topLine->SetStorkStyle(colorStyle);
+            topLine->SetLineCap(lineCap);
+            topLine->SetLineJoin(lineJoin);
             container.AddElement(std::move(topLine));
 
-            // auto bottomLine =
-            //     xg::make_unique<xg::shape::Polyline>(lineWidth * canvasContext.GetDevicePixelRatio(), bottomPoints, color,
-            //     "", smooth);
-            // if(shapeType == "dash") {
-            //     bottomLine->SetDashLine(xg::GLOBAL_LINE_DASH);
-            // }
-            // container.AddElement(std::move(bottomLine));
             return;
         }
 
@@ -121,26 +139,32 @@ class Line : public GeomShapeBase {
 
         // todo 这里有一个判断 如果线是循环的 会将第一个点复制成新点插入队尾 形成循环 目前没有这个判断 后续添加
         for(std::size_t i = start; i <= end; i++) {
-            const auto &item = data[i];
+            const nlohmann::json &item = data[i];
             if(connectNulls) {
-                if(!std::isnan(item._x) && !std::isnan(item._y)) {
-                    points.push_back(util::Point(item._x, item._y));
+                if(item["_x"].is_number() && !std::isnan(item["_x"]) && item["_y"].is_number() && !std::isnan(item["_y"])) {
+                    points.push_back(util::Point(item["_x"], item["_y"]));
                 }
             } else {
-                points.push_back(util::Point(item._x, item._y));
+                points.push_back(util::Point(item["_x"], item["_y"]));
             }
         }
-        
+
+        BBox bbox = BBoxUtil::GetBBoxFromPoints(points, lineWidth);
+        //判断是否有position
+        canvas::CanvasFillStrokeStyle colorStyle = util::ColorParser(data[start], "_color", &bbox);
+
         //雷达图 闭合折线
         if (coord.GetType() == CoordType::Polar) {
             points.push_back(points[0]);
         }
 
         auto l = xg::make_unique<xg::shape::Polyline>(lineWidth * canvasContext.GetDevicePixelRatio(), points, smooth);
-        if(data[start]._style.contains("dash")) {
-            l->SetDashLine(json::ParseDashArray(data[start]._style["dash"], canvasContext.GetDevicePixelRatio()));
+        if(data[start].contains("_style") && data[start]["_style"].contains("dash")) {
+            l->SetDashLine(json::ParseDashArray(data[start]["_style"]["dash"], canvasContext.GetDevicePixelRatio()));
         }
-        l->SetStorkColor(color);
+        l->SetStorkStyle(colorStyle);
+        l->SetLineCap(lineCap);
+        l->SetLineJoin(lineJoin);
         container.AddElement(std::move(l));
     }
 };

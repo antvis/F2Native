@@ -1,6 +1,6 @@
+#include "graphics/shape/Group.h"
+#include "graphics/util/Vector2d.h"
 #include <float.h>
-#include "Group.h"
-#include "../util/Vector2d.h"
 
 using namespace xg::util;
 
@@ -67,6 +67,28 @@ void xg::shape::Group::DoClip(canvas::CanvasContext &context) const {
     }
 }
 
+void xg::shape::Group::DoClipByIdentifier(canvas::CanvasContext &context, string identifier) const {
+    auto it = shapeAnimationDictionary.find(identifier);
+    if (it != shapeAnimationDictionary.end()) {
+        it->second->ResetTransform(context);
+        it->second->CreatePath(context);
+        context.Clip();
+    }
+}
+
+bool xg::shape::Group::NeedShapeClip(canvas::CanvasContext &, const std::function<void(string)>& callback) const {
+    if (!shapeAnimationDictionary.empty()) {
+        //到这说明这个group的子shape有动画
+        //所以要根据shape，分别去clip，再去draw
+        for (auto it = shapeAnimationDictionary.begin(); it != shapeAnimationDictionary.end(); ++it) {
+            //回调给Element，把子动画的identifier传出去，外面拿到之后找到clip区域
+            callback(it->first);
+        }
+        return true;
+    }
+    return false;
+}
+
 void xg::shape::Group::Translate(float x, float y) {
     if(!this->IsVisible())
         return;
@@ -98,9 +120,21 @@ void xg::shape::Group::Apply(Vector2D *v) {
     std::for_each(children_.begin(), children_.end(), [&](std::unique_ptr<Element> &element) -> void { element->Apply(v); });
 }
 
+void xg::shape::Group::Alpha(float alpha) {
+    if(!this->IsVisible())
+        return;
+    std::for_each(children_.begin(), children_.end(), [&](std::unique_ptr<Element> &element) -> void { element->Alpha(alpha); });
+}
+
 xg::shape::Group *xg::shape::Group::AddGroup() {
     auto g = std::make_unique<xg::shape::Group>();
     xg::shape::Group *gp = g.get();
     this->AddElement(std::move(g));
     return gp;
+}
+
+void xg::shape::Group::UpdateAttribute(std::string attrName, double val) {
+    if(attrName == "alpha") {
+        this->Alpha(val);
+    } 
 }

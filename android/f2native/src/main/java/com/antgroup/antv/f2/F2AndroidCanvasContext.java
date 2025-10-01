@@ -13,12 +13,17 @@ import android.graphics.PorterDuff;
 import android.graphics.RadialGradient;
 import android.graphics.RectF;
 import android.graphics.Shader;
+import android.graphics.SweepGradient;
 import android.graphics.Typeface;
+import android.os.Build;
+import android.text.TextUtils;
+
+import com.antgroup.antv.f2.base.F2BaseCanvasContext;
 
 /**
  * android native canvas需要的CanvasContext
  */
-public class F2AndroidCanvasContext {
+public class F2AndroidCanvasContext implements F2BaseCanvasContext {
     public Bitmap bitmap = null;
     private Canvas bitmapCanvas = null;
     private Paint paint = null;
@@ -35,7 +40,7 @@ public class F2AndroidCanvasContext {
     private static float M_DEGREE = 57.295776F;//180.0F/(float)Math.PI;
     public boolean mHadOOM;
 
-    F2AndroidCanvasContext(int width, int height, float ratio) {
+    public F2AndroidCanvasContext(int width, int height, float ratio) {
         height = Math.max(height, 1);
         width = Math.max(width, 1);
         this.ratio = ratio;
@@ -44,40 +49,53 @@ public class F2AndroidCanvasContext {
             this.bitmapCanvas = new Canvas(this.bitmap);
         } catch (OutOfMemoryError e) {
             mHadOOM = true;
-            F2Log.e("F2AndroidCanvasContext", "createBitmap OutOfMemoryError");
+            F2Log.get().e("F2AndroidCanvasContext", "createBitmap OutOfMemoryError");
         }
+        resetContext();
+    }
+
+    private void debugLog(String content) {
+
     }
 
     private void innerLog(String content) {
-//        F2Log.i("F2AndroidCanvasContext", content);
+        F2Log.get().i("F2AndroidCanvasContext", hashCode() + ", " + content);
     }
 
     //set
     public void setStrokeStyle(String style) {
-        innerLog("setStrokeStyle style:" + style);
+        debugLog("setStrokeStyle style:" + style);
         if (this.bitmapCanvas == null) {
+            innerLog("setStrokeStyle null");
             return;
         }
         try {
             int color = Color.parseColor(style);
             setStrokeStyle(color);
         } catch (Exception e) {
-            F2Log.e("F2AndroidCanvasContext", "#setStrokeStyle exception " + e.toString());
+            F2Log.get().e("F2AndroidCanvasContext", "#setStrokeStyle exception " + e.toString());
         }
     }
 
     public void setStrokeStyle(int color) {
-        innerLog("setStrokeStyle color:");
+        debugLog("setStrokeStyle darkModeColor:" + color);
+        if (this.paint == null) {
+            innerLog("setStrokeStyle 2 null");
+            return;
+        }
         this.strokeStyle = color;
+        this.paint.setShader(null);
     }
 
     //线性渐变
     public void setLinearGradient(float sx, float sy, float ex, float ey, int[] colors, float[] positions) {
-        innerLog("setLinearGradient sx:" + sx + " sy:" + sy + " ex:" + ex + " ey:" + ey);
-        if (this.bitmapCanvas == null) {
+        debugLog("setLinearGradient sx:" + sx + " sy:" + sy + " ex:" + ex + " ey:" + ey);
+        if (this.bitmapCanvas == null || this.paint == null) {
+            innerLog("setLinearGradient null");
             return;
         }
         if (colors.length != positions.length && colors.length < 2) {
+            innerLog("setLinearGradient length = 0 ");
             return;
         }
         LinearGradient gradient = new LinearGradient(sx, sy, ex, ey, colors, positions, Shader.TileMode.CLAMP);
@@ -86,38 +104,67 @@ public class F2AndroidCanvasContext {
 
     //雷达渐变
     public void setRadialGradient(float sx, float sy, float sr, float ex, float ey, float er, int[] colors, float[] positions) {
-        innerLog("setRadialGradient sx:" + sx + " sy:" + sy + " sr:" + sr + " ex:" + ex + " ey:" + ey + " er:" + er);
-        if (this.bitmapCanvas == null) {
+        debugLog("setRadialGradient sx:" + sx + " sy:" + sy + " sr:" + sr + " ex:" + ex + " ey:" + ey + " er:" + er);
+        if (this.bitmapCanvas == null || this.paint == null) {
+            innerLog("setRadialGradient null");
             return;
         }
         if (colors.length != positions.length && colors.length < 2) {
+            innerLog("setRadialGradient length = 0 ");
             return;
         }
         RadialGradient gradient = new RadialGradient(sx, sy, sr, colors, positions, Shader.TileMode.CLAMP);
         this.paint.setShader(gradient);
     }
 
+    //扫描渐变
+    public void setConicGradient(float cx, float cy, int[] colors, float[] positions) {
+        debugLog("setConicGradient cx:" + cx + " cy:" + cy);
+        if (this.bitmapCanvas == null || this.paint == null) {
+            innerLog("setConicGradient null");
+            return;
+        }
+        if (colors.length != positions.length && colors.length < 2) {
+            innerLog("setConicGradient length = 0 ");
+            return;
+        }
+        SweepGradient gradient = new SweepGradient(cx, cy, colors, positions);
+
+        Matrix matrix = new Matrix();
+        matrix.setRotate(-90, cx, cy);
+        gradient.setLocalMatrix(matrix);
+
+        this.paint.setShader(gradient);
+    }
+
     public void setFillStyle(String style) {
-        innerLog("setFillStyle style:" + style);
+        debugLog("setFillStyle style:" + style);
         if (this.bitmapCanvas == null) {
+            innerLog("setFillStyle null");
             return;
         }
         try {
             int color = Color.parseColor(style);
             setFillStyle(color);
         } catch (Exception e) {
-            F2Log.e("F2AndroidCanvasContext", "#setFillStyle exception " + e.toString());
+            F2Log.get().e("F2AndroidCanvasContext", "#setFillStyle exception " + e.toString());
         }
     }
 
     public void setFillStyle(int color) {
-        innerLog("setFillStyle color:");
+        debugLog("setFillStyle darkModeColor:" + color);
+        if (this.paint == null) {
+            innerLog("setFillStyle 2 null");
+            return;
+        }
         this.fillStyle = color;
+        this.paint.setShader(null);
     }
 
     public void rect(float x, float y, float width, float height) {
-        innerLog("rect x:" + x + " y:" + y + " width:" + width + " height:" + height);
-        if (this.bitmapCanvas == null) {
+        debugLog("rect x:" + x + " y:" + y + " width:" + width + " height:" + height);
+        if (this.bitmapCanvas == null || this.path == null) {
+            innerLog("rect null");
             return;
         }
         //cw?
@@ -125,8 +172,9 @@ public class F2AndroidCanvasContext {
     }
 
     public void fillRect(float x, float y, float width, float height) {
-        innerLog("fillRect float x:" + x + " y:" + y + " width:" + width + " height:" + height);
-        if (this.bitmapCanvas == null) {
+        debugLog("fillRect float x:" + x + " y:" + y + " width:" + width + " height:" + height);
+        if (this.bitmapCanvas == null || this.paint == null) {
+            innerLog("fillRect null");
             return;
         }
         setFillPaint();
@@ -134,8 +182,9 @@ public class F2AndroidCanvasContext {
     }
 
     public void fillRect(int x, int y, int width, int height) {
-        innerLog("fillRect int x:" + x + " y:" + y + " width:" + width + " height:" + height);
-        if (this.bitmapCanvas == null) {
+        debugLog("fillRect int x:" + x + " y:" + y + " width:" + width + " height:" + height);
+        if (this.bitmapCanvas == null || this.paint == null) {
+            innerLog("fillRect int null");
             return;
         }
         setFillPaint();
@@ -143,8 +192,9 @@ public class F2AndroidCanvasContext {
     }
 
     public void strokeRect(float x, float y, float width, float height) {
-        innerLog("strokeRect x:" + x + " y:" + y + " width:" + width + " height:" + height);
-        if (this.bitmapCanvas == null) {
+        debugLog("strokeRect x:" + x + " y:" + y + " width:" + width + " height:" + height);
+        if (this.bitmapCanvas == null || this.paint == null) {
+            innerLog("strokeRect null");
             return;
         }
         setStrokePaint();
@@ -152,8 +202,9 @@ public class F2AndroidCanvasContext {
     }
 
     public void clearRect(float x, float y, float width, float height) {
-        innerLog("clearRect x:" + x + " y:" + y + " width:" + width + " height:" + height);
+        debugLog("clearRect x:" + x + " y:" + y + " width:" + width + " height:" + height);
         if (this.bitmapCanvas == null) {
+            innerLog("clearRect null");
             return;
         }
         this.bitmapCanvas.save();
@@ -164,62 +215,65 @@ public class F2AndroidCanvasContext {
     }
 
     public void stroke() {
-        innerLog("stroke");
-        if (this.bitmapCanvas == null) {
+        debugLog("stroke");
+        if (this.bitmapCanvas == null || this.paint == null || this.path == null) {
+            innerLog("stroke null");
             return;
         }
         setStrokePaint();
         this.bitmapCanvas.drawPath(this.path, this.paint);
-        //重置gradient
-        this.paint.setShader(null);
     }
 
     public void fill() {
-        innerLog("fill");
-        if (this.bitmapCanvas == null) {
+        debugLog("fill");
+        if (this.bitmapCanvas == null || this.paint == null || this.path == null) {
+            innerLog("fill null");
             return;
         }
         setFillPaint();
         this.bitmapCanvas.drawPath(this.path, this.paint);
-        //重置gradient
-        this.paint.setShader(null);
     }
 
     public void beginPath() {
-        innerLog("beginPath");
+        debugLog("beginPath");
         if (this.bitmapCanvas == null) {
+            innerLog("beginPath null");
             return;
         }
         this.path = new Path();
     }
 
     public void closePath() {
-        innerLog("closePath");
-        if (this.bitmapCanvas == null) {
+        debugLog("closePath");
+        if (this.bitmapCanvas == null || this.path == null) {
+            innerLog("closePath null");
             return;
         }
         this.path.close();
     }
 
     public void lineTo(float x, float y) {
-        innerLog("lineTo x:" + x + " y:" + y);
-        if (this.bitmapCanvas == null) {
+        debugLog("lineTo x:" + x + " y:" + y);
+        if (this.bitmapCanvas == null || this.path == null) {
+            innerLog("lineTo null");
             return;
         }
         this.path.lineTo(x, y);
     }
 
     public void moveTo(float x, float y) {
-        innerLog("moveTo x:" + x + " y:" + y);
-        if (this.bitmapCanvas == null) {
+        debugLog("moveTo x:" + x + " y:" + y);
+        if (this.bitmapCanvas == null || this.path == null) {
+            innerLog("moveTo null");
             return;
         }
         this.path.moveTo(x, y);
     }
 
     public void clip() {
-        innerLog("clip");
-        if (this.bitmapCanvas == null) {
+        debugLog("clip");
+        if (this.bitmapCanvas == null || this.path == null) {
+            innerLog("clip null");
             return;
         }
         this.bitmapCanvas.clipPath(this.path);
@@ -228,24 +282,27 @@ public class F2AndroidCanvasContext {
     }
 
     public void quadraticCurveTo(float cpx, float cpy, float x, float y) {
-        innerLog("quadraticCurveTo cpx:" + cpx + " cpy:" + cpy + " x:" + x + " y:" + y);
-        if (this.bitmapCanvas == null) {
+        debugLog("quadraticCurveTo cpx:" + cpx + " cpy:" + cpy + " x:" + x + " y:" + y);
+        if (this.bitmapCanvas == null || this.path == null) {
+            innerLog("quadraticCurveTo null");
             return;
         }
         this.path.quadTo(cpx, cpy, x, y);
     }
 
     public void bezierCurveTo(float cp1x, float cp1y, float cp2x, float cp2y, float x, float y) {
-        innerLog("bezierCurveTo cp1x:" + cp1x + " cp1y:" + cp1y + "cp2x:" + cp2x + " cp2y:" + cp2y + " x:" + x + " y:" + y);
-        if (this.bitmapCanvas == null) {
+        debugLog("bezierCurveTo cp1x:" + cp1x + " cp1y:" + cp1y + "cp2x:" + cp2x + " cp2y:" + cp2y + " x:" + x + " y:" + y);
+        if (this.bitmapCanvas == null || this.path == null) {
+            innerLog("bezierCurveTo null");
             return;
         }
         this.path.cubicTo(cp1x, cp1y, cp2x, cp2y, x, y);
     }
 
     public void arc(float x, float y, float r, float sAngle, float eAngle, boolean antiClockwise) {
-        innerLog("arc x:" + x + " y:" + y);
-        if (this.bitmapCanvas == null) {
+        debugLog("arc x:" + x + " y:" + y + " sAngle：" + sAngle + " eAngle：" + eAngle);
+        if (this.bitmapCanvas == null || this.path == null) {
+            innerLog("arc null");
             return;
         }
         float s = sAngle * M_DEGREE;
@@ -260,40 +317,45 @@ public class F2AndroidCanvasContext {
     }
 
     public void arcTo(float x1, float y1, float x2, float y2, float r) {
-        innerLog("arcTo x1:" + x1 + " y1:" + y1 + " x2:" + x2 + " y2:" + y2);
-        if (this.bitmapCanvas == null) {
+        debugLog("arcTo x1:" + x1 + " y1:" + y1 + " x2:" + x2 + " y2:" + y2);
+        if (this.bitmapCanvas == null || this.path == null) {
+            innerLog("arcTo null");
             return;
         }
         this.path.arcTo(new RectF(x1 - 2 * r, y1, x2, y2 + r), -90, 90, false);
     }
 
     public void scale(float sw, float sh) {
-        innerLog("scale sw:" + sw + " sh:" + sh);
+        debugLog("scale sw:" + sw + " sh:" + sh);
         if (this.bitmapCanvas == null) {
+            innerLog("scale null");
             return;
         }
         this.bitmapCanvas.scale(sw, sh);
     }
 
     public void rotate(float angle) {
-        innerLog("rotate angle:" + angle);
+        debugLog("rotate angle:" + angle);
         if (this.bitmapCanvas == null) {
+            innerLog("rotate null");
             return;
         }
         this.bitmapCanvas.rotate(angle);
     }
 
     public void translate(float x, float y) {
-        innerLog("translate x:" + x + " y:" + y);
+        debugLog("translate x:" + x + " y:" + y);
         if (this.bitmapCanvas == null) {
+            innerLog("translate null");
             return;
         }
         this.bitmapCanvas.translate(x, y);
     }
 
     public void transform(float a, float b, float c, float d, float e, float f) {
-        innerLog("transform a:" + a + " b:" + b + " c:" + c + " d:" + d);
+        debugLog("transform a:" + a + " b:" + b + " c:" + c + " d:" + d);
         if (this.bitmapCanvas == null) {
+            innerLog("transform null");
             return;
         }
         Matrix m = new Matrix();
@@ -307,8 +369,9 @@ public class F2AndroidCanvasContext {
     }
 
     public void setTransform(float a, float b, float c, float d, float e, float f) {
-        innerLog("setTransform a:" + a + " b:" + b + " c:" + c + " d:" + d);
+        debugLog("setTransform a:" + a + " b:" + b + " c:" + c + " d:" + d);
         if (this.bitmapCanvas == null) {
+            innerLog("setTransform null");
             return;
         }
         Matrix m = new Matrix();
@@ -319,80 +382,74 @@ public class F2AndroidCanvasContext {
         this.bitmapCanvas.setMatrix(m);
     }
 
-    public void setLineCap(String lineCap) {
-        //todo unsupport
-        throw new AssertionError("setLineCap not support");
-    }
-
-    public void setLineJoin(String lineJoin) {
-        //todo unsupport
-        throw new AssertionError("setLineJoin not support");
-    }
-
     public void setLineWidth(float lineWidth) {
-        innerLog("setLineWidth lineWidth:" + lineWidth);
-        if (this.bitmapCanvas == null) {
+        debugLog("setLineWidth lineWidth:" + lineWidth);
+        if (this.bitmapCanvas == null || this.paint == null) {
+            innerLog("setLineWidth null");
             return;
         }
         this.paint.setStrokeWidth(lineWidth);
     }
 
     public void setLineDash(float[] dashes) {
-        innerLog("setLineWidth dashes:");
-        if (this.bitmapCanvas == null) {
+        debugLog("setLineDash dashes: " + (dashes == null ? 0 : dashes.length));
+        if (this.bitmapCanvas == null || this.paint == null) {
+            innerLog("setLineDash null");
             return;
         }
-        if (dashes.length == 0) {
+        if (dashes == null || dashes.length == 0) {
             //clear path effect
             this.paint.setPathEffect(new PathEffect());
         } else if (dashes.length == 1) {
-            //<=2 DashPathEffect会抛出异常
-            this.paint.setPathEffect(new DashPathEffect(new float[]{dashes[0], dashes[1]}, 0));
+            //<2 DashPathEffect会抛出异常
+            this.paint.setPathEffect(new DashPathEffect(new float[]{dashes[0], dashes[0]}, 0));
         } else {
             this.paint.setPathEffect(new DashPathEffect(dashes, 0));
         }
     }
 
-    public void setLineDashOffset(float[] lineDashOffset) {
-        //todo unsupport
-        throw new AssertionError("setLineDashOffset not support");
-    }
-
     public void setMiterLimit(float miterLimit) {
-        innerLog("setMiterLimit miterLimit:" + miterLimit);
-        if (this.bitmapCanvas == null) {
+        debugLog("setMiterLimit miterLimit:" + miterLimit);
+        if (this.bitmapCanvas == null || this.paint == null) {
+            innerLog("setMiterLimit null");
             return;
         }
         this.paint.setStrokeMiter(miterLimit);
     }
 
-    public void setFont(String font) {
-        //todo unsupport
-        throw new AssertionError("setFont not support");
-    }
-
     public void setFont(int style, int variant, int weight, String name, float size) {
-        innerLog("setFont style:" + style + " name:" + name + " size:" + size);
-        if (this.bitmapCanvas == null) {
+        debugLog("setFont style:" + style + " variant:" + variant + " weight:" + weight + " name:" + name + " size:" + size);
+        if (this.bitmapCanvas == null || this.paint == null) {
+            innerLog("setFont null");
             return;
         }
-        //todo support variant weight
-
-        if (name == null) {
+        if (TextUtils.isEmpty(name)) {
             return;
         }
-        //NDK 16只支持这个方式创建Typeface
-        Typeface face = Typeface.create(name, style);
-        this.paint.setTypeface(face);
+        Typeface typeface;
+        Typeface baseFace = F2CommonHelper.get().getAlipayNumber(name);
+        if (baseFace == null) {
+            //NDK 16只支持这个方式创建Typeface
+            baseFace = Typeface.create(name, style);
+        }
+        // Android 9 才生效
+        if (weight >= 50 && weight <= 1000 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            typeface = Typeface.create(baseFace, weight, false);
+        } else {
+            typeface = baseFace;
+        }
+        this.paint.setTypeface(typeface);
         this.paint.setTextSize(size);
     }
 
     public void setTextAlign(String textAlign) {
-        innerLog("setTextAlign textAlign:" + textAlign);
-        if (this.bitmapCanvas == null) {
+        debugLog("setTextAlign textAlign:" + textAlign);
+        if (this.bitmapCanvas == null || this.paint == null) {
+            innerLog("setTextAlign null");
             return;
         }
-        if (textAlign == null) {
+        if (TextUtils.isEmpty(textAlign)) {
+            innerLog("setTextAlign " + textAlign);
             return;
         }
         Paint.Align align = Paint.Align.LEFT;
@@ -408,26 +465,28 @@ public class F2AndroidCanvasContext {
     }
 
     public String getTextAlign() {
-        innerLog("getTextAlign ");
+        debugLog("getTextAlign ");
         return textAlign;
     }
 
     public void setTextBaseline(String textBaseline) {
-        innerLog("setTextBaseline textBaseline:" + textBaseline);
-        if (textBaseline == null) {
+        debugLog("setTextBaseline textBaseline:" + textBaseline);
+        if (TextUtils.isEmpty(textBaseline)) {
+            innerLog("setTextBaseline " + textBaseline);
             return;
         }
         this.textBaseline = textBaseline;
     }
 
     public String getTextBaseline() {
-        innerLog("getTextBaseline");
+        debugLog("getTextBaseline");
         return textBaseline;
     }
 
     public void drawText(String text, float x, float y) {
-        innerLog("drawText text:" + text + " x:" + x + " y:" + y);
-        if (this.bitmapCanvas == null) {
+        debugLog("drawText text:" + text + " x:" + x + " y:" + y);
+        if (this.bitmapCanvas == null || this.paint == null) {
+            innerLog("drawText null");
             return;
         }
         if (text == null) {
@@ -448,7 +507,7 @@ public class F2AndroidCanvasContext {
     }
 
     public void fillText(String text, float x, float y) {
-        innerLog("fillText text:" + text + " x:" + x + " y:" + y);
+        debugLog("fillText text:" + text + " x:" + x + " y:" + y);
         if (text == null) {
             return;
         }
@@ -457,7 +516,7 @@ public class F2AndroidCanvasContext {
     }
 
     public void strokeText(String text, float x, float y) {
-        innerLog("strokeText text:" + text + " x:" + x + " y:" + y);
+        debugLog("strokeText text:" + text + " x:" + x + " y:" + y);
         if (text == null) {
             return;
         }
@@ -466,8 +525,9 @@ public class F2AndroidCanvasContext {
     }
 
     public float measureText(String text) {
-        innerLog("measureText text:" + text);
-        if (this.bitmapCanvas == null) {
+        debugLog("measureText text:" + text);
+        if (this.bitmapCanvas == null || this.paint == null) {
+            innerLog("measureText null");
             return 0;
         }
         if (text == null) {
@@ -476,71 +536,71 @@ public class F2AndroidCanvasContext {
         return this.paint.measureText(text);
     }
 
+    public float measureTextHeight(String text) {
+        debugLog("measureTextHeight text:" + text);
+        if (this.bitmapCanvas == null || this.paint == null) {
+            innerLog("measureTextHeight null");
+            return 0;
+        }
+        if (text == null) {
+            return 0;
+        }
+        Paint.FontMetrics fm = this.paint.getFontMetrics();
+        return fm.descent - fm.ascent;
+    }
+
     public void setGlobalAlpha(float alpha) {
-        innerLog("setGlobalAlpha alpha:" + alpha);
+        debugLog("setGlobalAlpha alpha:" + alpha);
         alpha = Math.max(alpha, 0);
         alpha = Math.min(alpha, 1);
         this.globalAlpha = alpha;
     }
 
     public float getGlobalAlpha() {
-        innerLog("getGlobalAlpha");
+        debugLog("getGlobalAlpha");
         return this.globalAlpha;
     }
 
     public void save() {
-        innerLog("save");
+        debugLog("save");
         if (this.bitmapCanvas == null) {
+            innerLog("save null");
             return;
         }
         this.bitmapCanvas.save();
     }
 
     public void restore() {
-        innerLog("restore ");
+        debugLog("restore ");
         if (this.bitmapCanvas == null) {
+            innerLog("restore null");
             return;
         }
         this.bitmapCanvas.restore();
     }
 
-    public void setShadowColor(String color) {
-        //warning unsupport
-        throw new AssertionError("setShadowColor not support");
-    }
-
-    public void setShadowBlur(int v) {
-        //warning unsupport
-        throw new AssertionError("setShadowBlur not support");
-    }
-
-    public void setShadowOffsetX(float v) {
-        //warning unsupport
-        throw new AssertionError("setShadowOffsetX not support");
-    }
-
-    public void setShadowOffsetY(float v) {
-        //warning unsupport
-        throw new AssertionError("setShadowOffsetY not support");
-    }
-
     public void drawImage(Bitmap bitmap, float dx, float dy) {
-        innerLog("drawImage ");
-        if (this.bitmapCanvas == null) {
+        debugLog("drawImage ");
+        if (this.bitmapCanvas == null || this.paint == null) {
+            innerLog("drawImage null");
             return;
         }
         this.bitmapCanvas.drawBitmap(bitmap, dx, dy, this.paint);
     }
 
-    public void drawImage(Bitmap bitmap, float dx, float dy, float sw, float sh) {
-        innerLog("drawImage ");
-//        bitmapCanvas.drawBitmap(bitmap, new Rect);
-        throw new AssertionError("drawImage not support");
+    public void drawImageRect(Bitmap bitmap, float dx, float dy, float sw, float sh) {
+        debugLog("drawImageRect dx: " + dx + ",dy: " + dy + ",sw: " + sw + ",sh: " + sh);
+        if (this.bitmapCanvas == null || this.paint == null) {
+            innerLog("drawImageRect null");
+            return;
+        }
+        this.bitmapCanvas.drawBitmap(bitmap, null, new RectF(dx, dy, dx + sw, dy + sh), this.paint);
     }
 
-    private void setFillPaint() {
-        innerLog("setFillPaint");
-        if (this.bitmapCanvas == null) {
+    public void setFillPaint() {
+        debugLog("setFillPaint");
+        if (this.bitmapCanvas == null || this.paint == null) {
+            innerLog("setFillPaint null");
             return;
         }
         this.paint.setColor(this.fillStyle);
@@ -548,9 +608,48 @@ public class F2AndroidCanvasContext {
         this.paint.setStyle(Paint.Style.FILL);
     }
 
-    private void setStrokePaint() {
-        innerLog("setStrokePaint");
-        if (this.bitmapCanvas == null) {
+    public void setLineJoin(String lineJoin) {
+        debugLog("setLineJoin " + lineJoin);
+        if (this.bitmapCanvas == null || this.paint == null) {
+            innerLog("setLineJoin null");
+            return;
+        }
+        if (TextUtils.isEmpty(lineJoin)) {
+            innerLog("setLineJoin empty");
+            return;
+        }
+        if ("miter".equalsIgnoreCase(lineJoin)) {
+            this.paint.setStrokeJoin(Paint.Join.MITER);
+        } else if ("round".equalsIgnoreCase(lineJoin)) {
+            this.paint.setStrokeJoin(Paint.Join.ROUND);
+        } else if ("bevel".equalsIgnoreCase(lineJoin)) {
+            this.paint.setStrokeJoin(Paint.Join.BEVEL);
+        }
+    }
+
+    public void setLineCap(String lineCap) {
+        debugLog("setLineCap " + lineCap);
+        if (this.bitmapCanvas == null || this.paint == null) {
+            innerLog("setLineCap null");
+            return;
+        }
+        if (TextUtils.isEmpty(lineCap)) {
+            innerLog("setLineCap empty");
+            return;
+        }
+        if ("butt".equalsIgnoreCase(lineCap)) {
+            this.paint.setStrokeCap(Paint.Cap.BUTT);
+        } else if ("round".equalsIgnoreCase(lineCap)) {
+            this.paint.setStrokeCap(Paint.Cap.ROUND);
+        } else if ("square".equalsIgnoreCase(lineCap)) {
+            this.paint.setStrokeCap(Paint.Cap.SQUARE);
+        }
+    }
+
+    public void setStrokePaint() {
+        debugLog("setStrokePaint");
+        if (this.bitmapCanvas == null || this.paint == null) {
+            innerLog("setStrokePaint null");
             return;
         }
         this.paint.setColor(this.strokeStyle);
@@ -558,7 +657,8 @@ public class F2AndroidCanvasContext {
         this.paint.setStyle(Paint.Style.STROKE);
     }
 
-    void resetContext() {
+    public void resetContext() {
+        innerLog("resetContext");
         this.paint = new Paint();
         this.paint.setStrokeWidth(1 * ratio);
         this.paint.setAntiAlias(true);

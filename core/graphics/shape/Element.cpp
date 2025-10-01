@@ -1,5 +1,5 @@
-#include "Element.h"
-#include "../../utils/common.h"
+#include "graphics/shape/Element.h"
+#include "utils/common.h"
 
 #pragma mark static
 bool xg::shape::Element::IsUnchanged(const Matrix &m) {
@@ -16,9 +16,24 @@ void xg::shape::Element::Draw(canvas::CanvasContext &context) const {
     }
 
     if(IsVisible()) {
-        SetContext(context);
-        DrawInner(context);
-        RestoreContext(context);
+        //clip之前需要看是否需要有子shape的多段切割
+//        SetContext(context);
+        if (NeedShapeClip(context, [&](string value) {
+            context.Save();
+            DoClipByIdentifier(context, value);
+            ResetContext(context);
+            ResetTransform(context);
+            DrawInner(context);
+            RestoreContext(context);
+        })) {
+            //
+        } else {
+            SetContext(context);
+            //Group 或者 Shape
+            //如果是Group的话，继续调用链路
+            DrawInner(context);
+            RestoreContext(context);
+        }
     }
 }
 
@@ -53,8 +68,12 @@ void xg::shape::Element::Apply(Vector2D *v) { util::Vector2DUtil::TransformMat2D
 
 void xg::shape::Element::Transform(const std::vector<TransformAction> &actions) { MatrixUtil::Transform(&matrix_, actions); }
 
+void xg::shape::Element::Alpha(float alpha) { fillOpacity_ = alpha; }
+
 #pragma mark private
-void xg::shape::Element::InitTransform() { matrix_ = {1, 0, 0, 1, 0, 0}; }
+void xg::shape::Element::InitTransform() {
+    matrix_ = {1, 0, 0, 1, 0, 0};
+}
 
 void xg::shape::Element::ResetTransform(canvas::CanvasContext &context) const {
     if(!MatrixUtil::IsUnchanged(matrix_)) {
@@ -94,6 +113,14 @@ void xg::shape::Element::ResetContext(canvas::CanvasContext &context) const {
 
         if(!std::isnan(lineWidth_)) {
             context.SetLineWidth(lineWidth_);
+        }
+        
+        if(!lineCap_.empty()) {
+            context.SetLineCap(lineCap_);
+        }
+        
+        if(!lineJoin_.empty()) {
+            context.SetLineJoin(lineJoin_);
         }
 
         // line dash set

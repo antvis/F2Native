@@ -66,6 +66,7 @@ class AbstractCoord {
   protected:
     util::Point center_; // 中心点
     bool transposed_;    // 是否翻转
+    bool isConvertPointV2_ = false; // 是否使用优化nan处理逻辑的转换函数
 };
 } // namespace coord
 } // namespace canvas

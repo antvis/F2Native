@@ -1,13 +1,13 @@
 #include "InteractionContext.h"
-#include "../XChart.h"
-#include "../util/json_util.h"
-#include "../../utils/xtime.h"
+#include "graphics/XChart.h"
+#include "graphics/util/json_util.h"
+#include "utils/xtime.h"
 
 using namespace xg;
 
 interaction::InteractionContext::InteractionContext(XChart *chart) {
     this->chart_ = chart;
-    chart_->AddMonitor(ACTION_CHART_AFTER_INIT, XG_MEMBER_CALLBACK(interaction::InteractionContext::OnAfterChartInit));
+    this->chart_->AddMonitor(ACTION_CHART_AFTER_INIT, XG_MEMBER_CALLBACK(interaction::InteractionContext::OnAfterChartInit));
 }
 
 interaction::InteractionContext::~InteractionContext() { this->chart_ = nullptr; }
@@ -18,8 +18,8 @@ void interaction::InteractionContext::OnAfterChartInit() {
     if (config_.is_null()) {
         return;
     }
-    const std::string &xField = chart_->GetXScaleField();
-    auto &scale = chart_->GetScale(xField);
+    const std::string &xField = this->chart_->GetXScaleField();
+    auto &scale = this->chart_->GetScale(xField);
     this->values_ = scale.values;
     double size = fmax(values_.size(), 1.0);
     this->minScale_ = static_cast<double>(this->minCount_) / size;
@@ -27,13 +27,13 @@ void interaction::InteractionContext::OnAfterChartInit() {
     std::size_t _minCount = minCount_;
     std::size_t _maxCount = size;
 
-    if(config_.contains("pinch")) {
+    if (config_.contains("pinch")) {
         nlohmann::json &pinchCfg = config_["pinch"];
-        if(pinchCfg.contains("minCount")) {
+        if (pinchCfg.contains("minCount")) {
             _minCount = pinchCfg["minCount"];
         }
 
-        if(pinchCfg.contains("maxCount")) {
+        if (pinchCfg.contains("maxCount")) {
             _maxCount = pinchCfg["maxCount"];
         }
     }
@@ -47,16 +47,16 @@ void interaction::InteractionContext::OnAfterChartInit() {
 
 void interaction::InteractionContext::Start() {
     //    this->startRange_ = this->range_;
-    const std::string &xField = chart_->GetXScaleField();
-    auto &scale = chart_->GetScale(xField);
+    const std::string &xField = this->chart_->GetXScaleField();
+    auto &scale = this->chart_->GetScale(xField);
     lastTickCount_ = scale.tickCount;
-    chart_->GetLogTracer()->trace("InteractionContext#Start range:{%lf, %lf} ", range_[0], range_[1]);
+    this->chart_->GetLogTracer()->trace("InteractionContext#Start range:{%lf, %lf} ", range_[0], range_[1]);
 }
 
 bool interaction::InteractionContext::DoMove(double deltaX, double deltaY) {
 //    chart_->GetLogTracer()->trace("DoMove deltaX %lf ", deltaX);
     // long timestamp = xg::CurrentTimestampAtMM();
-    double ratio = deltaX / chart_->GetCoord().GetWidth();
+    double ratio = deltaX / this->chart_->GetCoord().GetWidth();
 
     double rangeStart = range_[0];
     double rangeEnd = range_[1];
@@ -123,8 +123,8 @@ bool interaction::InteractionContext::UpdateRange(std::array<double, 2> newRange
 }
 
 bool interaction::InteractionContext::Repaint(nlohmann::json &newValues, std::size_t valueStart, std::size_t valueEnd) {
-    const std::string &xField = chart_->GetXScaleField();
-    auto &scale = chart_->GetScale(xField);
+    const std::string &xField = this->chart_->GetXScaleField();
+    auto &scale = this->chart_->GetScale(xField);
 
     if(util::isEqualsQuick(scale.values, newValues))
         return false;
@@ -133,7 +133,7 @@ bool interaction::InteractionContext::Repaint(nlohmann::json &newValues, std::si
     // TODO 平移或者缩放过程中，ticks 的变化应该由每个度量自行决定。 逻辑暂时保持 ticks 不变
     UpdateScale(xField, {{"ticks", scale.ticks}, {"domain", {valueStart, valueEnd}}});
     UpdateFollowScale(scale, newValues, valueStart, valueEnd);
-    chart_->Repaint();
+    this->chart_->Repaint();
     return true;
 }
 
@@ -142,9 +142,9 @@ void interaction::InteractionContext::UpdateFollowScale(scale::AbstractScale &pi
                                                         std::size_t valueStart,
                                                         std::size_t valueEnd) {
 
-    const std::string &pinchField = pinchScale.field;
+//    const std::string &pinchField = pinchScale.field;
 
-    std::string followField = chart_->getYScaleFields()[0];
+    std::string followField = this->chart_->getYScaleFields()[0];
 
     // nlohmann::json pinchValuesMap;
     // for(std::size_t index = 0; index < pinchValues.size(); ++index) {
@@ -165,15 +165,15 @@ void interaction::InteractionContext::UpdateFollowScale(scale::AbstractScale &pi
     //     }
     // }
 
-//    double rangeMin = DBL_MAX, rangeMax = DBL_MIN;
-//    std::for_each(chart_->geoms_.begin(), chart_->geoms_.end(), [&](auto &geom) -> void {
-//        util::JsonRangeInGeomDataArray(geom->GetDataArray(), followField, valueStart, valueEnd, &rangeMin, &rangeMax);
-//    });
-//    UpdateScale(followField, {{"min", rangeMin}, {"max", rangeMax}, {"nice", true}});
+    double rangeMin = DBL_MAX, rangeMax = DBL_MIN;
+    std::for_each(this->chart_->geoms_.begin(), this->chart_->geoms_.end(), [&](auto &geom) -> void {
+        util::JsonRangeInGeomDataArray(geom->GetDataArray(), followField, valueStart, valueEnd, &rangeMin, &rangeMax);
+    });
+    UpdateScale(followField, {{"min", rangeMin}, {"max", rangeMax}, {"nice", true}});
 }
 
 void interaction::InteractionContext::UpdateScale(const std::string &field, nlohmann::json cfg) {
-    auto &scale = chart_->GetScale(field);
+    auto &scale = this->chart_->GetScale(field);
     scale.Change(cfg);
 }
 

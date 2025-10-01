@@ -69,8 +69,8 @@
 
 - (NSArray *)buglist {
     return @[
-        @{@"type": @"KLineTrendBugFix1", @"name": @"K线趋势图", @"view": @"KLineTrendBugFix1"},
-        @{@"type": @"TimeSharingBugFix1", @"name": @"顶部折线被裁", @"view": @"TimeSharingBugFix1"},
+//        @{@"type": @"KLineTrendBugFix1", @"name": @"K线趋势图", @"view": @"KLineTrendBugFix1"},
+//        @{@"type": @"TimeSharingBugFix1", @"name": @"顶部折线被裁", @"view": @"TimeSharingBugFix1"},
         @{@"type": @"MarketMovingBugFix1", @"name": @"大盘异动旗子布局", @"view": @"MarketMovingBugFix1"},
     ];
 }

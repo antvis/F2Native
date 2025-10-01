@@ -110,13 +110,13 @@
       "size" : "32x32"
     },
     {
-      "filename" : "64x64.png",
+     "filename" : "64x64.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "32x32"
     },
     {
-      "filename" : "128x128.png",
+     "filename" : "128x128.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "128x128"
@@ -128,7 +128,7 @@
       "size" : "128x128"
     },
     {
-      "filename" : "256x256.png",
+    "filename" : "256x256.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "256x256"

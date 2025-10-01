@@ -2,11 +2,11 @@
     解决大盘异动旗子的布局问题
  */
 
-#import "BaseLineChart.h"
+#import "BaseLineUIView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MarketMovingBugFix1 : BaseLineChart
+@interface MarketMovingBugFix1 : BaseLineUIView
 
 @end
 

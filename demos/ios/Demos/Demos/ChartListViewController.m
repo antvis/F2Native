@@ -20,7 +20,7 @@
     [super viewDidLoad];
     self.edgesForExtendedLayout = UIRectEdgeNone;
     self.navigationController.navigationBar.backgroundColor = [UIColor whiteColor];
-    self.title = NSLocalizedString(@"ChartList", @"ChartList");
+    self.title = @"多图列表";
     [self.view addSubview:self.demoTable];
 }
 

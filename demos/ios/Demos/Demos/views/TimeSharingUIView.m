@@ -2,42 +2,50 @@
 //  TimeSharingUIView.m
 //  F2Native
 //
-//  Created by ruize on 2022/2/7.
-//  Copyright © 2022 com.alipay.xgraph. All rights reserved.
+//  Created by 青原 on 2021/6/28.
+//  Copyright © 2021 com.alipay.xgraph. All rights reserved.
 //
 
-#import "TimeSharingBugFix1.h"
+#import "TimeSharingUIView.h"
 
-@interface TimeSharingBugFix1()
+@interface TimeSharingUIView()
 @property (nonatomic, strong) F2Chart *priceChart;
 @property (nonatomic, strong) F2Chart *subChart;
 @end
 
-@implementation TimeSharingBugFix1
-
--(instancetype)initWithFrame:(CGRect)frame {
-    CGRect chartFrame = CGRectMake(0, 0, 168.67, 110.33);
-    if (self = [super initWithFrame:chartFrame]) {}
-    return self;
-}
+@implementation TimeSharingUIView
 
 - (void)chartRender {
-    NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"Res/bugfix/mockData_timeSharingBugfix1" ofType:@"json"];
+    NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"Res/mockData_timeSharing" ofType:@"json"];
     NSString *jsonData = [NSString stringWithContentsOfFile:jsonPath encoding:NSUTF8StringEncoding error:nil];
-    self.priceChart.canvas(self.canvasView).padding(0, 0, 0, 0.f).source(jsonData);
-    self.priceChart.line().position(@"date*price").fixedColor(@"#E62C3B").attrs(@{@"connectNulls": @(YES)}).fixedShape(@"smooth").fixedSize(1);
-    self.priceChart.area().position(@"date*price").fixedColor(@"#E62C3B18").attrs(@{@"connectNulls": @(YES)}).fixedShape(@"smooth");
+    self.priceChart.canvas(self.canvasView).padding(15, 10, 15, 0.f).source(jsonData);
+    self.priceChart.line().position(@"date*price").fixedColor(@"#528EFF").attrs(@{@"connectNulls": @(YES)});
+    self.priceChart.area().position(@"date*price").fixedColor(@"#108EE9").attrs(@{@"connectNulls": @(YES)});
 
     self.priceChart.scale(@"date", @{
         @"type": @"timeSharing",
-        @"timeRange": @[@[@(1644197400000), @(1644204600000)], @[@(1644210000000), @(1644217200000)]]
+        @"timeRange": @[@[@(1608687000000), @(1608694200000)], @[@(1608699600000), @(1608706800000)]]
     });
-    self.priceChart.scale(@"price",@{@"max":@3.942, @"min":@3.51});
     self.priceChart.axis(@"price", @{@"hidden": @(YES)});
     self.priceChart.axis(@"date", @{
-        @"hidden":@YES
+        @"label": @{            
+            @"textColor": @"#999999",
+            @"item": [F2Callback callback:^NSDictionary *_Nonnull(NSDictionary *_Nonnull param) {
+               
+                NSNumber *index = [param objectForKey:@"index"];
+                if([index isEqual:@(0)]) {
+                    return @{@"content": @"09:30", @"textAlign":@"start"};
+                } else if([index isEqual:@(1)]) {
+                    return @{@"content": @"11:30/13:00", @"textAlign":@"center"};
+                } else if([index isEqual:@(2)]) {
+                    return @{@"content": @"15:00", @"textAlign":@"end"};
+                } else {
+                    return @{@"content": @""};
+                }
+            }]
+        }
     });
-    self.priceChart.guide().line(@{@"orientation":@"horizontal" , @"position":@[@"min", @3.87], @"lineWidth":@1, @"dash":@[@4, @4], @"color":@"#E62C3B"});
+    
     self.priceChart.tooltip(@{@"yTip":@{@"inner":@(YES)}});
     self.priceChart.render();
     
@@ -52,8 +60,6 @@
         @"type": @"timeSharing",
         @"timeRange": @[@[@(1608687000000), @(1608694200000)], @[@(1608699600000), @(1608706800000)]]
     });
-    self.subChart.interaction(@"pan", @{});
-    self.subChart.interaction(@"pinch", @{});
     self.subChart.tooltip(@{@"yTip":@{@"inner":@(YES)}});
     self.subChart.render();
 }

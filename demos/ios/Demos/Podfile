@@ -1,6 +1,0 @@
-platform :ios, '13.0'
-
-target "F2Native" do
-	pod 'F2'
-end
-

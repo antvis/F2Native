@@ -7,7 +7,7 @@ include_directories(../../core)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -flto=thin")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -flto=thin")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--gc-sections -flto=thin")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--gc-sections -flto=thin -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384")
 
 # g++
 add_definitions(-ffunction-sections)

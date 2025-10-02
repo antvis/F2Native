@@ -64,3 +64,18 @@ android {
 dependencies {
     compileOnly rootProject.extensions.dependencies.fastjson
 }
+
+
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId = 'com.github.antvis'
+            artifactId = 'F2Native'
+            version = '2.1.22'
+
+            afterEvaluate {
+                artifact bundleReleaseAar
+            }
+        }
+    }
+}

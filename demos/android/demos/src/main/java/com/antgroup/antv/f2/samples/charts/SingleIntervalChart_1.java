@@ -28,23 +28,23 @@ public class SingleIntervalChart_1 implements F2CanvasView.Adapter {
         mChart.setCanvas(canvasView);
         mChart.padding(10, 0, 0, 0);
         mChart.source(Utils.loadAssetFile(canvasView.getContext(), "mockData_singleIntervalChart.json"));
-        mChart.interval().position("xStr*value")
-                .color("xStr", new String[]{"#00A97F",
-                        "#00A97F",
-                        "#00A97F",
-                        "#00A97F"})
+        mChart.interval().position("year*sales")
+                .color("year", new String[]{"#00A97F",
+                        "#00ff00",
+                        "#ff0000",
+                        "#0000ff"})
                 .style(new F2Config.Builder()
                         .setOption("radius", new float[]{2, 2, 2, 2}) // [tl, tr, bl, br]
                         .build());
-        mChart.setAxis("xStr", new F2Chart.AxisConfigBuilder()
+        mChart.setAxis("year", new F2Chart.AxisConfigBuilder()
                 .label(new F2Chart.AxisLabelConfigBuilder()
                         .labelOffset(10.f).textSize(10))
         );
 
-        mChart.setAxis("value", new F2Chart.AxisConfigBuilder()
+        mChart.setAxis("sales", new F2Chart.AxisConfigBuilder()
                 .grid(new F2Chart.AxisGridConfigBuilder().type("dash")));
-        mChart.setScale("xStr", new F2Chart.ScaleConfigBuilder().tickCount(4).type("cat").range(new double[]{0.1, 0.9}));
-        mChart.setScale("value", new F2Chart.ScaleConfigBuilder().tickCount(5).nice(true));
+        mChart.setScale("year", new F2Chart.ScaleConfigBuilder().tickCount(4).type("cat").range(new double[]{0.1, 0.9}));
+        mChart.setScale("sales", new F2Chart.ScaleConfigBuilder().tickCount(5).nice(true));
         mChart.tooltip(new F2Chart.ToolTipConfigBuilder());
         mChart.render();
     }
